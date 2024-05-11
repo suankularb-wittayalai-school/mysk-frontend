@@ -1,7 +1,7 @@
 import { OptionsType } from "@/components/classes/StudentListPrintout";
 import StudentListTableBody from "@/components/classes/StudentListTableBody";
 import StudentListTableHead from "@/components/classes/StudentListTableHead";
-import PaperPreview from "@/components/common/print/PaperPreview";
+import PrintPage from "@/components/common/print/PrintPage";
 import cn from "@/utils/helpers/cn";
 import { LangCode, StylableFC } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
@@ -18,7 +18,7 @@ const StudentsListPaper: StylableFC<{
   students: Student[];
   options: OptionsType;
 }> = ({ header: PrintoutHeader, students, options, style, className }) => (
-  <PaperPreview style={style} className={cn(className, "p-4")}>
+  <PrintPage style={style} className={cn(className, "p-4")}>
     {/* Header */}
     {PrintoutHeader && <PrintoutHeader locale={options.language} />}
 
@@ -47,7 +47,7 @@ const StudentsListPaper: StylableFC<{
         })}
       </time>
     )}
-  </PaperPreview>
+  </PrintPage>
 );
 
 export default StudentsListPaper;

@@ -1,6 +1,7 @@
 import StudentsListPaper from "@/components/classes/StudentsListPaper";
 import StudentsPrintOptions from "@/components/classes/StudentsPrintOptions";
-import PrintPage from "@/components/common/print/PrintPage";
+import PrintPagesFeed from "@/components/common/print/PrintPagesFeed";
+import PrintPreviewLayout from "@/components/common/print/PrintPreviewLayout";
 import useForm from "@/utils/helpers/useForm";
 import useLocale from "@/utils/helpers/useLocale";
 import { LangCode, StylableFC } from "@/utils/types/common";
@@ -89,15 +90,17 @@ const StudentListPrintout: StylableFC<{
   ]);
 
   return (
-    <PrintPage style={style} className={className}>
-      {data.map(({ header, students }, index) => (
-        <StudentsListPaper
-          key={index}
-          header={header}
-          students={students}
-          options={form}
-        />
-      ))}
+    <PrintPreviewLayout style={style} className={className}>
+      <PrintPagesFeed>
+        {data.map(({ header, students }, index) => (
+          <StudentsListPaper
+            key={index}
+            header={header}
+            students={students}
+            options={form}
+          />
+        ))}
+      </PrintPagesFeed>
       <StudentsPrintOptions
         form={form}
         allowedColumns={columns}
@@ -106,7 +109,7 @@ const StudentListPrintout: StylableFC<{
         setForm={setForm}
         formProps={formProps}
       />
-    </PrintPage>
+    </PrintPreviewLayout>
   );
 };
 
