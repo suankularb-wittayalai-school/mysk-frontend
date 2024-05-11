@@ -40,19 +40,17 @@ export const MAXIMUM_EMPTY_COLUMNS = 20;
 /**
  * The preview page for the Student List Printout.
  *
- * @param classroom The Classroom to display the Student List for.
+ * @param data An array of objects containing the header and the list of Students. Each item represents a page.
  * @param columns The columns the user can choose to display.
  * @param filters The filters the user can choose to apply.
  * @param parentURL The URL of the parent page.
- * @param students The list of all Students in this Class.
  */
 const StudentListPrintout: StylableFC<{
-  header: StylableFC<{ locale: LangCode }>;
+  data: { header: StylableFC<{ locale: LangCode }>; students: Student[] }[];
   columns: OptionsType["columns"];
   filters: OptionsType["filters"];
   parentURL: string;
-  students: Student[];
-}> = ({ header, columns, filters, students, parentURL, style, className }) => {
+}> = ({ data, columns, filters, parentURL, style, className }) => {
   const locale = useLocale();
 
   // Form control for the options.
@@ -92,7 +90,14 @@ const StudentListPrintout: StylableFC<{
 
   return (
     <PrintPage style={style} className={className}>
-      <StudentsListPaper header={header} students={students} options={form} />
+      {data.map(({ header, students }, index) => (
+        <StudentsListPaper
+          key={index}
+          header={header}
+          students={students}
+          options={form}
+        />
+      ))}
       <StudentsPrintOptions
         form={form}
         allowedColumns={columns}

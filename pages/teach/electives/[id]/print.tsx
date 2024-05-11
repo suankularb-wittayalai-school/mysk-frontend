@@ -40,12 +40,17 @@ const EnrollmentListPrintPage: CustomPage<{
       </Head>
       <h1 className="sr-only">{t("title")}</h1>
       <StudentListPrintout
-        header={({ locale }) => (
-          <EnrollmentPrintoutHeader
-            electiveSubject={electiveSubject}
-            locale={locale}
-          />
-        )}
+        data={[
+          {
+            header: ({ locale }) => (
+              <EnrollmentPrintoutHeader
+                electiveSubject={electiveSubject}
+                locale={locale}
+              />
+            ),
+            students,
+          },
+        ]}
         columns={sift([
           "index",
           canSeeSensitive && "studentID",
@@ -60,7 +65,6 @@ const EnrollmentListPrintPage: CustomPage<{
         ])}
         filters={["hasAllergies"]}
         parentURL="/teach/electives"
-        students={students}
       />
     </>
   );
