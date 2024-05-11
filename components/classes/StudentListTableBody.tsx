@@ -138,6 +138,7 @@ const StudentListTableBody: StylableFC<{
                     ? "Not chosen"
                     : "ยังไม่ได้เลือก"}
               </td>
+              <td className="w-8">{student.chosen_elective?.room}</td>
             </>
           )}
 
