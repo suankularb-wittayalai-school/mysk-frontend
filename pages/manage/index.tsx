@@ -69,6 +69,22 @@ const ManagePage: CustomPage = () => {
             </Button>
           </ManagePageCard>
           <ManagePageCard
+            icon={<MaterialIcon icon="collections_bookmark" size={48} />}
+            title={t("electives.title")}
+            desc={t("electives.desc")}
+          >
+            <Button appearance="filled" href="/manage/electives" element={Link}>
+              {t("electives.action.showMore")}
+            </Button>
+            <Button
+              appearance="outlined"
+              href="/manage/electives/print"
+              element={Link}
+            >
+              {t("electives.action.print")}
+            </Button>
+          </ManagePageCard>
+          <ManagePageCard
             icon={<MaterialIcon icon="person_check" size={48} />}
             title={t("participation.title")}
             desc={t("participation.desc")}
@@ -79,15 +95,6 @@ const ManagePage: CustomPage = () => {
               element={Link}
             >
               {t("participation.action.showMore")}
-            </Button>
-          </ManagePageCard>
-          <ManagePageCard
-            icon={<MaterialIcon icon="collections_bookmark" size={48} />}
-            title={t("elective.title")}
-            desc={t("elective.desc")}
-          >
-            <Button appearance="filled" href="/manage/electives" element={Link}>
-              {t("elective.action.showMore")}
             </Button>
           </ManagePageCard>
         </Columns>
