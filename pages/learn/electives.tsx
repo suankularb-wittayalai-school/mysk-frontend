@@ -253,6 +253,9 @@ export const getServerSideProps: GetServerSideProps = async ({
     await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"),
   ]);
 
+  // If there are no Elective Subjects available, return a 404.
+  if (!electiveSubjects?.length) return { notFound: true };
+
   const trades = {
     incomingTrades: [] as ElectiveTradeOffer[],
     outgoingTrades: [] as ElectiveTradeOffer[],

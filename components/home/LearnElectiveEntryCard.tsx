@@ -1,8 +1,9 @@
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
-import { ElectiveSubject } from "@/utils/types/elective";
+import { Student } from "@/utils/types/person";
 import {
   Actions,
   Button,
@@ -17,16 +18,17 @@ import Link from "next/link";
  * A Card that links to a page where the user can choose an Elective Subject.
  *
  * @param inEnrollmentPeriod Whether the time now is in an Enrollment Period.
- * @param enrolledElective The Elective Subject this Student is enrolled in.
  */
 const LearnElectiveEntryCard: StylableFC<{
   inEnrollmentPeriod?: boolean;
-  enrolledElective: ElectiveSubject | null;
-}> = ({ inEnrollmentPeriod, enrolledElective, style, className }) => {
+}> = ({ inEnrollmentPeriod, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("schedule", {
     keyPrefix: "subjectList.elective",
   });
+
+  const mysk = useMySKClient();
+  const enrolledElective = (mysk.person as Student)?.chosen_elective || null;
 
   return (
     <Card
