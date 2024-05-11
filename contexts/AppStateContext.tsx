@@ -1,8 +1,5 @@
-// External libraries
-import { createContext } from "react";
-
-// Types
 import { ColorScheme } from "@/utils/types/common";
+import { createContext } from "react";
 
 /**
  * A context to read and control the state of the app, like dark mode and
@@ -13,15 +10,11 @@ const AppStateContext = createContext<{
   setColorScheme: (mode: ColorScheme) => void;
   navOpen: boolean;
   setNavOpen: (open: boolean) => void;
-  accountNotFoundOpen: boolean;
-  setAccountNotFoundOpen: (open: boolean) => void;
 }>({
   colorScheme: "auto",
   setColorScheme: () => {},
   navOpen: false,
   setNavOpen: () => {},
-  accountNotFoundOpen: false,
-  setAccountNotFoundOpen: () => {},
 });
 
 export default AppStateContext;

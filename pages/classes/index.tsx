@@ -41,6 +41,7 @@ const ClassesPage: NextPage<{
 
   const supabase = useSupabaseClient();
   const mysk = useMySKClient();
+  const { atBreakpoint } = useBreakpoint();
 
   const userClassroom =
     (mysk.person &&
@@ -49,12 +50,14 @@ const ClassesPage: NextPage<{
       )) ||
     null;
 
-  const [selectedID, setSelectedID] = useState<string | undefined>(
-    userClassroom?.id || first(classrooms)?.id,
-  );
+  // Default the selected Classroom to the user’s Classroom or the first
+  // Classroom on the list. Ignore if on mobile.
+  const [selectedID, setSelectedID] = useState<string | undefined>();
   useEffect(() => {
+    if (atBreakpoint === "base") return;
     if (userClassroom) setSelectedID(userClassroom.id);
-  }, [userClassroom]);
+    else setSelectedID(first(classrooms)?.id);
+  }, [userClassroom, atBreakpoint]);
 
   /**
    * Fetch data for the selected Classroom.
@@ -72,7 +75,7 @@ const ClassesPage: NextPage<{
 
   const [selectedClassroom, setSelectedClassroom] =
     useState<Omit<Classroom, "year" | "subjects">>();
-  // Fetch the selected Classroom when the selected Classroom ID changes
+  // Fetch the selected Classroom when the selected Classroom ID changes.
   useEffect(() => {
     setSelectedClassroom(undefined);
     fetchSelectedClass();
@@ -80,11 +83,11 @@ const ClassesPage: NextPage<{
 
   const [detailsOpen, setDetailsOpen] = useState(false);
 
-  // Open the Teacher Details Dialog on mobile, otherwise close it
-  const { atBreakpoint } = useBreakpoint();
+  // Open the Teacher Details Dialog on mobile, otherwise close it.
   useEffect(() => {
     if (atBreakpoint !== "base") setDetailsOpen(false);
-    else if (selectedID !== userClassroom?.id) setDetailsOpen(true);
+    else if (selectedID && selectedID !== userClassroom?.id)
+      setDetailsOpen(true);
   }, [atBreakpoint === "base"]);
 
   return (

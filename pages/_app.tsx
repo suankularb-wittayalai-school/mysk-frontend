@@ -1,5 +1,4 @@
 import Layout from "@/components/Layout";
-import AccountNotFoundDialog from "@/components/account/AccountNotFoundDialog";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import PageFallback from "@/components/error/PageFallback";
 import AppStateContext from "@/contexts/AppStateContext";
@@ -76,7 +75,6 @@ const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
 
   const [colorScheme, setColorScheme] = useState<ColorScheme>();
   const [navOpen, setNavOpen] = useState(false);
-  const [accountNotFoundOpen, setAccountNotFoundOpen] = useState(false);
 
   return (
     <PreviousRouteContext.Provider value={previousPath}>
@@ -90,15 +88,9 @@ const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
               setColorScheme,
               navOpen,
               setNavOpen,
-              accountNotFoundOpen,
-              setAccountNotFoundOpen,
             }}
           >
             <BalancerProvider>{children}</BalancerProvider>
-            <AccountNotFoundDialog
-              open={accountNotFoundOpen}
-              onClose={() => setAccountNotFoundOpen(false)}
-            />
           </AppStateContext.Provider>
         </SnackbarContext.Provider>
       </UserContext.Provider>

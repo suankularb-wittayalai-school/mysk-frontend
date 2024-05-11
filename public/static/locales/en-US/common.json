@@ -36,7 +36,6 @@
     }
   },
   "appDrawer": {
-    "toggle": "Apps",
     "mysk": {
       "title": "MySK apps",
       "mysk": "MySK",
@@ -174,10 +173,6 @@
     "failure": "Task failed, please try again",
     "formInvalid": "Check the form and try again",
     "copiedToClipboard": "Copied to clipboard",
-    "languageRedirect": {
-      "message": "กำลังเปลี่ยนภาษาเป็นภาษาไทย…",
-      "action": "Stay in English"
-    },
     "common": {
       "action": {
         "close": "Close",
@@ -186,15 +181,6 @@
     }
   },
   "dialog": {
-    "accountNotFound": {
-      "title": "You need to use a MySK account",
-      "desc": "You didn’t use a MySK account. Make sure you log in with <strong>an email that ends with “@student.sk.ac.th” or “@sk.ac.th.”</strong>",
-      "contact": "Contact us if you think this is a mistake.",
-      "action": {
-        "report": "Report an issue",
-        "tryAgain": "Try again"
-      }
-    },
     "confirmDelete": {
       "title": "Confirm deletion",
       "desc": "This action cannot be undone.",

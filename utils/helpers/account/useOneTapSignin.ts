@@ -1,4 +1,3 @@
-import AppStateContext from "@/contexts/AppStateContext";
 import UserContext from "@/contexts/UserContext";
 import { GSIStatus } from "@/pages";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
@@ -23,6 +22,7 @@ import { useContext, useState } from "react";
  * @param options.parentButtonId The HTML ID of the Sign in Button.
  * @param options.buttonWidth The width of the Sign in Button in pixels.
  * @param options.onStateChange Triggers when the state of the Google Sign in changes.
+ * @param options.onNotFound Triggers when the account is not found.
  *
  * @see {@link SignInOptions} for more options.
  *
@@ -34,6 +34,7 @@ export default function useOneTapSignin(
     parentButtonID?: string;
     buttonWidth?: number;
     onStateChange?: (state: GSIStatus) => void;
+    onNotFound?: () => void;
   } & Pick<SignInOptions, "redirect" | "callbackUrl">,
 ) {
   const { parentButtonID, buttonWidth, onStateChange } = options || {};
@@ -46,8 +47,6 @@ export default function useOneTapSignin(
   const mysk = useMySKClient();
   const { setUser, setPerson } = useContext(UserContext);
   const router = useRouter();
-
-  const { setAccountNotFoundOpen } = useContext(AppStateContext);
 
   const [loading, setLoading] = useState(false);
 
@@ -68,8 +67,9 @@ export default function useOneTapSignin(
       ...options,
     }))!;
     if (status === 401) {
+      plausible("Account Not Found");
       setTimeout(() => onStateChange?.(GSIStatus.initial), 400);
-      setAccountNotFoundOpen(true);
+      options?.onNotFound?.();
       return;
     }
 
