@@ -15,7 +15,8 @@
       "choose_change": "Change elective"
     },
     "snackbar": {
-      "notAllowed": "You can’t enroll in that elective"
+      "notAllowed": "You can’t enroll in that elective",
+      "enrolled": "Successfully enrolled"
     }
   },
   "detail": {

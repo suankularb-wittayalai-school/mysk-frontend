@@ -1,58 +1,62 @@
-// Imports
-import { DialogFC } from "@/utils/types/component";
+import { StylableFC } from "@/utils/types/common";
 import {
   Actions,
   Button,
   Dialog,
-  DialogContent,
   DialogHeader,
   MaterialIcon,
-  Text,
 } from "@suankularb-components/react";
-import { forwardRef } from "react";
 import { Trans, useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 
-const AccountNotFoundDialog: DialogFC = ({ open, onClose }) => {
-  const { t } = useTranslation("common", {
+/**
+ * A Dialog that shows when GSI succeeds but the account is not found within
+ * MySK.
+ *
+ * @param open Whether the Dialog is open and shown.
+ * @param onClose Triggers when the Dialog is closed.
+ */
+const AccountNotFoundDialog: StylableFC<{
+  open?: boolean;
+  onClose: () => void;
+}> = ({ open, onClose, style, className }) => {
+  const { t } = useTranslation("landing", {
     keyPrefix: "dialog.accountNotFound",
   });
 
+  const plausible = usePlausible();
+
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog
+      open={open}
+      width={312}
+      onClose={onClose}
+      style={style}
+      className={className}
+    >
       <DialogHeader
         icon={<MaterialIcon icon="error" />}
         title={t("title")}
         desc={
-          <Trans
-            i18nKey="dialog.accountNotFound.desc"
-            ns="common"
-            components={{ strong: <strong className="text-tertiary" /> }}
-          />
+          <Trans i18nKey="desc" t={t}>
+            <a
+              href={process.env.NEXT_PUBLIC_HELP_FORM_URL}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => {
+                onClose();
+                plausible("Open Report Form", {
+                  props: { location: "Account Not Found Dialog" },
+                });
+              }}
+              className="link"
+            />
+          </Trans>
         }
       />
-      <DialogContent className="-mt-3 px-6">
-        <Text
-          type="body-medium"
-          element="p"
-          className="text-on-surface-variant"
-        >
-          {t("contact")}
-        </Text>
-      </DialogContent>
-      <Actions className="!justify-between">
-        <Button
-          appearance="text"
-          onClick={onClose}
-          href={process.env.NEXT_PUBLIC_HELP_FORM_URL}
-          // eslint-disable-next-line react/display-name
-          element={forwardRef((props, ref) => (
-            <a ref={ref} {...props} target="_blank" rel="noreferrer" />
-          ))}
-        >
-          {t("action.report")}
-        </Button>
+      <Actions>
         <Button appearance="text" onClick={onClose}>
-          {t("action.tryAgain")}
+          {t("action.gotIt")}
         </Button>
       </Actions>
     </Dialog>

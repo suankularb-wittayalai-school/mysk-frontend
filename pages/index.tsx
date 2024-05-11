@@ -1,3 +1,4 @@
+import AccountNotFoundDialog from "@/components/account/AccountNotFoundDialog";
 import AppDrawer from "@/components/common/AppDrawer";
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import GSIButton from "@/components/landing/GSIButton";
@@ -65,6 +66,7 @@ const LandingPage: CustomPage = () => {
   }, [session.status, mysk.user]);
 
   const [state, setState] = useState<GSIStatus>(GSIStatus.initial);
+  const [accountNotFoundOpen, setAccountNotFoundOpen] = useState(false);
 
   // Determine if and where to redirect depending on user status.
   useEffect(() => {
@@ -157,7 +159,11 @@ const LandingPage: CustomPage = () => {
                   {
                     // Show GSI Button initially.
                     [GSIStatus.initial]: (
-                      <GSIButton onStateChange={setState} className="mt-5" />
+                      <GSIButton
+                        onStateChange={setState}
+                        onNotFound={() => setAccountNotFoundOpen(true)}
+                        className="mt-5"
+                      />
                     ),
                     // Show Cancel Button when waiting for the user to use their
                     // Google account.
@@ -222,6 +228,12 @@ const LandingPage: CustomPage = () => {
           }
         `}</style>
       </div>
+
+      {/* Account Not Found Dialog */}
+      <AccountNotFoundDialog
+        open={accountNotFoundOpen}
+        onClose={() => setAccountNotFoundOpen(false)}
+      />
     </>
   );
 };

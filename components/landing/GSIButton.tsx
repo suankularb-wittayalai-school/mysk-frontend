@@ -8,10 +8,12 @@ import { useEffect, useRef, useState } from "react";
  * A Google Sign In Button.
  *
  * @param onStateChange Triggers when the button's state changes. Passes the new state as the `GSIStatus` enum.
+ * @param onNotFound Triggers when the account is not found.
  */
 const GSIButton: StylableFC<{
   onStateChange?: (state: GSIStatus) => void;
-}> = ({ onStateChange, style, className }) => {
+  onNotFound?: () => void;
+}> = ({ onStateChange, onNotFound, style, className }) => {
   const [buttonWidth, setButtonWidth] = useState<number>();
 
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -29,6 +31,7 @@ const GSIButton: StylableFC<{
     parentButtonID: "button-google-sign-in",
     buttonWidth,
     onStateChange,
+    onNotFound,
   });
 
   return (
