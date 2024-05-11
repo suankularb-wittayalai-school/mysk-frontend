@@ -1,3 +1,4 @@
+import cn from "@/utils/helpers/cn";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -37,7 +38,13 @@ const EnrollmentPrintoutHeader: StylableFC<{
       </div>
 
       {/* Class number and Advisors */}
-      <div className="flex flex-row pl-16">
+      <div className="flex flex-row">
+        <span
+          className={cn(`-mt-2 ml-4 mr-14 inline-block self-end
+            whitespace-nowrap text-xl font-medium`)}
+        >
+          {electiveSubject.session_code}
+        </span>
         <span className="mr-4 whitespace-nowrap font-bold">
           {locale === "en-US" ? "Teachers" : "ครูผู้สอน"}
         </span>
