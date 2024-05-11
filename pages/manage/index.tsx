@@ -86,7 +86,7 @@ const ManagePage: CustomPage = () => {
             title={t("elective.title")}
             desc={t("elective.desc")}
           >
-            <Button appearance="filled" href="/manage/elective" element={Link}>
+            <Button appearance="filled" href="/manage/electives" element={Link}>
               {t("elective.action.showMore")}
             </Button>
           </ManagePageCard>
