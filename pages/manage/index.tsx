@@ -49,7 +49,7 @@ const ManagePage: CustomPage = () => {
       </Head>
       <PageHeader>{title}</PageHeader>
       <ContentLayout>
-        <Columns columns={2} className="mx-4 !items-stretch !gap-6 sm:mx-0">
+        <Columns columns={2} className="mx-4 !items-stretch sm:mx-0 sm:!gap-6">
           <ManagePageCard
             icon={<MaterialIcon icon="assignment_turned_in" size={48} />}
             title={t("attendance.title")}
