@@ -45,7 +45,7 @@ const ManagePage: CustomPage = () => {
   return (
     <>
       <Head>
-        <title>{title}</title>
+        <title>{tx("tabName", { tabName: title })}</title>
       </Head>
       <PageHeader>{title}</PageHeader>
       <ContentLayout>
