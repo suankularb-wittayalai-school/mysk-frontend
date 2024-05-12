@@ -55,7 +55,7 @@ const ElectivesBulkPrintPage: CustomPage<{
           "randomized",
         ]}
         filters={["hasAllergies"]}
-        parentURL="/teach/electives"
+        parentURL="/manage"
       />
     </>
   );
