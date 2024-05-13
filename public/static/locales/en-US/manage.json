@@ -38,6 +38,21 @@
       "print": "Print"
     }
   },
+  "electives": {
+    "title": "Elective subjects",
+    "desc": "Students take elective classes based on what they’ve chosen. See all of the subjects and students list.",
+    "action": {
+      "showMore": "Show more",
+      "print": "Print"
+    }
+  },
+  "classrooms": {
+    "title": "Classrooms",
+    "desc": "Students are grouped into classrooms. Bulk create student list printous here.",
+    "action": {
+      "print": "Print"
+    }
+  },
   "participation": {
     "title": "Participation",
     "desc": "Metrics on students and teachers participation in using the MySK infrastructure.",
@@ -61,14 +76,6 @@
     },
     "action": {
       "showMore": "Show more"
-    }
-  },
-  "electives": {
-    "title": "Elective subjects",
-    "desc": "Students take elective classes based on what they’ve chosen. See all of the subjects and students list.",
-    "action": {
-      "showMore": "Show more",
-      "print": "Print"
     }
   }
 }

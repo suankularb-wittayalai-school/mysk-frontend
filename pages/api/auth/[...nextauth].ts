@@ -1,5 +1,6 @@
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import { supabase } from "@/utils/supabase-backend";
+import { PostgrestError } from "@supabase/supabase-js";
 import { OAuth2Client } from "google-auth-library";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -55,7 +56,7 @@ export const authOptions: NextAuthOptions = {
         // get the user
 
         if (error) {
-          throw new Error(error.message);
+          throw new Error((error as PostgrestError).message);
         }
 
         return { id: user!.id, email, name, image };

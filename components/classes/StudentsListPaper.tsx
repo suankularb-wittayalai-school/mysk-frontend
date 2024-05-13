@@ -18,7 +18,11 @@ const StudentsListPaper: StylableFC<{
   students: Student[];
   options: OptionsType;
 }> = ({ header: PrintoutHeader, students, options, style, className }) => (
-  <PrintPage style={style} className={cn(className, "p-4")}>
+  <PrintPage
+    options={{ avoidBreakAfter: students.length === 36 }}
+    style={style}
+    className={cn(className, "p-4")}
+  >
     {/* Header */}
     {PrintoutHeader && <PrintoutHeader locale={options.language} />}
 
