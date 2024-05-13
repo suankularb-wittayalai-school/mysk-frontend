@@ -67,8 +67,7 @@ export async function getStudentsByIDs(
     });
     if (electivesError) {
       logError("getStudentsByIDs (electives)", electivesError);
-      // Sorry I just can’t handle this right now.
-      return { data: [], error: null };
+      return { data: null, error: electivesError };
     }
 
     studentElectiveMap = Object.fromEntries(
