@@ -1,69 +1,31 @@
-import PaperPreview from "@/components/common/print/PaperPreview";
-import PrintOptions from "@/components/common/print/PrintOptions";
+import PrintPreviewLayout from "@/components/common/print/PrintPreviewLayout";
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
-import { Columns, ContentLayout } from "@suankularb-components/react";
-import Head from "next/head";
 import { ReactNode } from "react";
 
 /**
- * A page for previewing a print job, which allows the user to review options
- * before printing.
+ * A simulation of an A4 paper. The first child of
+ * {@link PrintPreviewLayout Print Preview Layout} and the only element visible to printers.
  *
- * @param children A {@link PaperPreview Paper Preview} and a {@link PrintOptions Print Options}.
+ * @param children The contents of the print preview.
  */
 const PrintPage: StylableFC<{
   children: ReactNode;
 }> = ({ children, style, className }) => (
   <>
-    <Head>
-      {/* App bar color */}
-      <meta
-        name="theme-color"
-        content="#ebeef3" // surface-container
-        media="(prefers-color-scheme: light)"
-        key="theme-light"
-      />
-      <meta
-        name="theme-color"
-        content="#1c2024" // surface-container
-        media="(prefers-color-scheme: dark)"
-        key="theme-dark"
-      />
-    </Head>
-
-    <ContentLayout
+    <article
       style={style}
       className={cn(
-        `min-h-dvh sm:bg-surface-container print:-mb-20 print:contents
-        print:bg-white print:!py-0`,
+        `aspect-[1/sqrt(2)] min-w-[42rem] bg-white p-8 font-print text-black
+        sm:mr-[26rem] sm:shadow-3 md:col-span-2 lg:mr-0 print:m-0 print:!block
+        print:aspect-auto print:w-full print:min-w-0 print:p-0
+        print:!shadow-none`,
         className,
       )}
     >
-      <Columns columns={3}>{children}</Columns>
-    </ContentLayout>
-
-    <style jsx global>{`
-      body {
-        background-color: var(--surface-container);
-      }
-
-      @media only screen and (min-width: 600px) {
-        .skc-nav-bar::before {
-          background-color: transparent !important;
-        }
-      }
-
-      @media print {
-        body {
-          background-color: var(--white);
-        }
-
-        .skc-root-layout {
-          padding-bottom: 0;
-        }
-      }
-    `}</style>
+      {children}
+    </article>
+    <div aria-hidden className="hidden break-after-page print:block" />
   </>
 );
 

@@ -1,8 +1,9 @@
 {
   "title_student": "Choose elective",
   "title_teacher": "Your electives",
-  "title_admin": "Electives",
+  "title_management": "Electives",
   "list": {
+    "searchAlt": "Search electives",
     "enrolled": "Currently enrolled",
     "enrollment": {
       "alt": "{{count}} enrolled out of {{max}}",

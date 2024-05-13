@@ -1,8 +1,9 @@
 {
   "title_student": "เลือกวิชาเลือก",
   "title_teacher": "วิชาเลือกของคุณ",
-  "title_admin": "วิชาเลือก",
+  "title_management": "วิชาเลือก",
   "list": {
+    "searchAlt": "ค้นหาวิชาเลือก",
     "enrolled": "ที่ลงทะเบียนอยู่",
     "enrollment": {
       "alt": "ลงทะเบียนแล้ว {{count}} คน จาก {{max}} คน",

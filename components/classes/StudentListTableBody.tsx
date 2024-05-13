@@ -97,7 +97,7 @@ const StudentListTableBody: StylableFC<{
                   (options.language === "en-US" ? "M." : "ม.") +
                     student.classroom.number}
               </td>
-              <td className="w-4 text-center">{student.class_no}</td>
+              <td className="w-4 text-end">{student.class_no}</td>
             </>
           )}
 
@@ -138,6 +138,7 @@ const StudentListTableBody: StylableFC<{
                     ? "Not chosen"
                     : "ยังไม่ได้เลือก"}
               </td>
+              <td className="w-8">{student.chosen_elective?.room}</td>
             </>
           )}
 

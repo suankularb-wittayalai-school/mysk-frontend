@@ -94,7 +94,7 @@ const StudentListTableHead: StylableFC<{
 
       {/* Elective */}
       {options.columns.includes("elective") && (
-        <th colSpan={2}>
+        <th colSpan={3}>
           {options.language === "en-US" ? "Chosen elective" : "วิชาเลือก"}
         </th>
       )}
