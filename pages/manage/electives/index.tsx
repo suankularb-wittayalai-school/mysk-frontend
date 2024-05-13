@@ -129,7 +129,7 @@ const ManageElectivesPage: CustomPage<{
                   }}
                 />
               ))}
-              <div aria-hidden className="h-9" />
+              <div aria-hidden className="h-28 sm:h-9" />
             </ul>
           </section>
         </section>
