@@ -8,7 +8,6 @@ import {
   Dialog,
   DialogHeader,
 } from "@suankularb-components/react";
-import { signOut } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
 import { useRouter } from "next/router";
@@ -34,8 +33,7 @@ const LogOutDialog: DialogFC = ({ open, onClose }) => {
         // Track event
         plausible("Log out");
 
-        // Log the user out (without reload)
-        await signOut({ redirect: false });
+        // Log the user out
         setUser(null);
         document.cookie =
           "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
