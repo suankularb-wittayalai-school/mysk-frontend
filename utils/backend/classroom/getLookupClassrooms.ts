@@ -12,7 +12,7 @@ import { Classroom } from "@/utils/types/classroom";
  *
  * @returns A Backend Return of an array of Classrooms.
  */
-export default async function getClassrooms(
+export default async function getLookupClassrooms(
   supabase: DatabaseClient,
   options?: Partial<{ year: number }>,
 ): Promise<BackendReturn<Pick<Classroom, "id" | "number" | "main_room">[]>> {

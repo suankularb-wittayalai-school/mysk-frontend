@@ -6,7 +6,7 @@ import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupListSide from "@/components/lookup/LookupListSide";
 import LookupResultsList from "@/components/lookup/LookupResultsList";
 import getClassroomByID from "@/utils/backend/classroom/getClassroomByID";
-import getClassrooms from "@/utils/backend/classroom/getLookupClassrooms";
+import getLookupClassrooms from "@/utils/backend/classroom/getLookupClassrooms";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import classroomOfPerson from "@/utils/helpers/classroom/classroomOfPerson";
 import { supabase } from "@/utils/supabase-backend";
@@ -172,7 +172,7 @@ const ClassesPage: NextPage<{
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  const { data: classrooms } = await getClassrooms(supabase);
+  const { data: classrooms } = await getLookupClassrooms(supabase);
 
   return {
     props: {
