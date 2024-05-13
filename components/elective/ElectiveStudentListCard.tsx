@@ -1,12 +1,9 @@
+import ElectiveStudentList from "@/components/elective/ElectiveStudentList";
 import EnrollmentIndicator from "@/components/elective/EnrollmentIndicator";
-import PersonCard from "@/components/person/PersonCard";
 import cn from "@/utils/helpers/cn";
-import getLocaleName from "@/utils/helpers/getLocaleName";
-import sortStudents from "@/utils/helpers/person/sortStudents";
 import useLocale from "@/utils/helpers/useLocale";
-import { LangCode, StylableFC } from "@/utils/types/common";
+import { StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
-import { UserRole } from "@/utils/types/person";
 import {
   AssistChip,
   ChipSet,
@@ -20,7 +17,6 @@ import {
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import shortUUID from "short-uuid";
 
@@ -34,42 +30,11 @@ const ElectiveStudentListCard: StylableFC<{
   electiveSubject: ElectiveSubject;
 }> = ({ electiveSubject, style, className }) => {
   const locale = useLocale();
-  const { locales } = useRouter();
   const { t } = useTranslation("elective", { keyPrefix: "detail.students" });
 
   const { fromUUID } = shortUUID();
 
   const [query, setQuery] = useState("");
-
-  /** Convert `applicable_classrooms` into an indexable format. */
-  const classrooms = Object.fromEntries(
-    electiveSubject.applicable_classrooms.map((classroom) => [
-      classroom.id,
-      classroom,
-    ]),
-  );
-
-  /** Treat `students` for mapping. */
-  const students = sortStudents(
-    electiveSubject.students
-      // Filter by name.
-      .filter(
-        (student) =>
-          // Show all if there is no query.
-          !query ||
-          // Show if the query matches the student's name in at least one
-          // locale.
-          locales?.some((locale) =>
-            getLocaleName(locale as LangCode, student).includes(query),
-          ),
-      )
-      // Add Classroom information (API only returns ID).
-      .map((student) => ({
-        ...student,
-        classroom: student.classroom ? classrooms[student.classroom.id] : null,
-        role: UserRole.student,
-      })),
-  );
 
   return (
     <section style={style} className={cn(`grid grid-cols-2 gap-6`, className)}>
@@ -114,24 +79,11 @@ const ElectiveStudentListCard: StylableFC<{
           transition={transition(DURATION.medium2, EASING.standardDecelerate)}
           className="space-y-1 pb-4 pr-4"
         >
-          {students.map((student) => (
-            <PersonCard
-              key={student.id}
-              person={student}
-              options={{
-                // Show an asterisk if the Student is enrolled via
-                // randomization.
-                suffix: electiveSubject.randomized_students.some(
-                  (randomizedStudent) => student.id === randomizedStudent.id,
-                ) ? (
-                  <span title={t("randomized")} className="text-tertiary">
-                    *
-                  </span>
-                ) : undefined,
-              }}
-              className="w-full !border-0 !bg-surface-container"
-            />
-          ))}
+          <ElectiveStudentList
+            electiveSubject={electiveSubject}
+            query={query}
+            className="[&_button]:!border-0 [&_button]:!bg-surface-container"
+          />
         </motion.div>
       </div>
     </section>
