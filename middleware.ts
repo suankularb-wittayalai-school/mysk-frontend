@@ -83,9 +83,6 @@ export async function middleware(req: NextRequest) {
 
   // Decide on destination based on user and page protection type
   const destination = (() => {
-    // Default Search page to Students tab
-    if (route === "/search") return "/search/students";
-
     // Disallow public users from visiting private pages
     if (pageRole !== "public" && !user) return "/";
 
