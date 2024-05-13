@@ -1,6 +1,7 @@
 import MultilangText from "@/components/common/MultilingualText";
 import ChooseButton from "@/components/elective/ChooseButton";
 import ElectiveDetailsHeader from "@/components/elective/ElectiveDetailsHeader";
+import ElectiveStudentList from "@/components/elective/ElectiveStudentList";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
 import InformationCard from "@/components/lookup/people/InformationCard";
 import PeopleChipSet from "@/components/person/PeopleChipSet";
@@ -11,8 +12,9 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { UserRole } from "@/utils/types/person";
-import { Actions, ChipSet, Text } from "@suankularb-components/react";
+import { Actions, ChipSet, Search, Text } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
+import { useState } from "react";
 
 /**
  * A card similar to a Lookup Details Card that displays details of an Elective
@@ -38,6 +40,8 @@ const ElectiveDetailsCard: StylableFC<{
 }) => {
   const locale = useLocale();
   const { t } = useTranslation("elective", { keyPrefix: "detail.information" });
+
+  const [query, setQuery] = useState("");
 
   return (
     <section style={style} className={cn(`flex flex-col`, className)}>
@@ -101,6 +105,26 @@ const ElectiveDetailsCard: StylableFC<{
                 </Text>
               </section>
             )}
+
+            <section className="space-y-2 md:hidden">
+              <Text type="title-medium" element="h3">
+                {t("students")}
+              </Text>
+              <Search
+                value={query}
+                alt={t("students.searchAlt")}
+                onChange={setQuery}
+                locale={locale}
+              />
+              <ElectiveStudentList
+                electiveSubject={electiveSubject}
+                query={query}
+                className={cn(`[&_button:focus]:m-[-1px]
+                  [&_button:focus]:!border-1 [&_button:hover]:m-[-1px]
+                  [&_button:hover]:!border-1 [&_button]:!border-0
+                  [&_button]:bg-surface-bright`)}
+              />
+            </section>
 
             {inEnrollmentPeriod && enrolledElective !== undefined && (
               <div
