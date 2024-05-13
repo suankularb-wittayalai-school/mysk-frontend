@@ -85,6 +85,19 @@ const ManagePage: CustomPage = () => {
             </Button>
           </ManagePageCard>
           <ManagePageCard
+            icon={<MaterialIcon icon="groups" size={48} />}
+            title={t("classrooms.title")}
+            desc={t("classrooms.desc")}
+          >
+            <Button
+              appearance="filled"
+              href="/manage/classrooms/print"
+              element={Link}
+            >
+              {t("classrooms.action.print")}
+            </Button>
+          </ManagePageCard>
+          <ManagePageCard
             icon={<MaterialIcon icon="person_check" size={48} />}
             title={t("participation.title")}
             desc={t("participation.desc")}
