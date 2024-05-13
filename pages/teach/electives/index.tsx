@@ -75,7 +75,7 @@ const TeachElectivesPage: CustomPage<{
             ))}
             {/* There’s probably a better solution. If there is, I don’t know
                 what it is. */}
-            <div aria-hidden className="h-9" />
+            <div aria-hidden className="h-28 sm:h-9" />
           </ul>
         </section>
 

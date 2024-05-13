@@ -67,7 +67,7 @@ const ManageElectivesPage: CustomPage<{
       {
         query: {
           fetch_level: "detailed",
-          descendant_fetch_level: "compact",
+          descendant_fetch_level: "default",
         },
       },
     );
@@ -116,7 +116,6 @@ const ManageElectivesPage: CustomPage<{
                   electiveSubject={electiveSubject}
                   selected={selectedID === electiveSubject.id}
                   onClick={() => {
-                    if (selectedID === electiveSubject.id) return;
                     plausible("View Elective", {
                       props: {
                         subject: getLocaleString(electiveSubject.name, "en-US"),
@@ -125,11 +124,12 @@ const ManageElectivesPage: CustomPage<{
                     setSelectedID(electiveSubject.id);
                     if (DIALOG_BREAKPOINTS.includes(atBreakpoint))
                       setDetailsOpen(true);
-                    fetchByID(electiveSubject.id);
+                    if (selectedID !== electiveSubject.id)
+                      fetchByID(electiveSubject.id);
                   }}
                 />
               ))}
-              <div aria-hidden className="h-9" />
+              <div aria-hidden className="h-28 sm:h-9" />
             </ul>
           </section>
         </section>
