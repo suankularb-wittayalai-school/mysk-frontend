@@ -11,7 +11,8 @@ import { ReactNode } from "react";
  */
 const PrintPage: StylableFC<{
   children: ReactNode;
-}> = ({ children, style, className }) => (
+  options?: Partial<{ avoidBreakAfter: boolean }>;
+}> = ({ children, options, style, className }) => (
   <>
     <article
       style={style}
@@ -25,7 +26,12 @@ const PrintPage: StylableFC<{
     >
       {children}
     </article>
-    <div aria-hidden className="hidden break-after-page print:block" />
+    {!options?.avoidBreakAfter && (
+      <div
+        aria-hidden
+        className="hidden break-before-avoid-page break-after-page print:block"
+      />
+    )}
   </>
 );
 
