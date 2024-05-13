@@ -12,9 +12,18 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { UserRole } from "@/utils/types/person";
-import { Actions, ChipSet, Search, Text } from "@suankularb-components/react";
+import {
+  Actions,
+  AssistChip,
+  ChipSet,
+  MaterialIcon,
+  Search,
+  Text,
+} from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 import { useState } from "react";
+import shortUUID from "short-uuid";
 
 /**
  * A card similar to a Lookup Details Card that displays details of an Elective
@@ -39,7 +48,9 @@ const ElectiveDetailsCard: StylableFC<{
   className,
 }) => {
   const locale = useLocale();
-  const { t } = useTranslation("elective", { keyPrefix: "detail.information" });
+  const { t } = useTranslation("elective", { keyPrefix: "detail" });
+
+  const { fromUUID } = shortUUID();
 
   const [query, setQuery] = useState("");
 
@@ -53,19 +64,19 @@ const ElectiveDetailsCard: StylableFC<{
             <div className={cn(`grid grid-cols-2 gap-2 *:bg-surface-bright`)}>
               {/* Subject name */}
               <InformationCard
-                title={t("name")}
+                title={t("information.name")}
                 className="col-span-2 sm:col-span-1"
               >
                 <MultilangText text={electiveSubject.name} />
               </InformationCard>
 
               {/* Subject code */}
-              <InformationCard title={t("code")}>
+              <InformationCard title={t("information.code")}>
                 <MultilangText text={electiveSubject.code} />
               </InformationCard>
 
               {/* Teachers */}
-              <InformationCard title={t("teachers")}>
+              <InformationCard title={t("information.teachers")}>
                 <PeopleChipSet
                   people={electiveSubject.teachers.map((teacher) => ({
                     ...teacher,
@@ -78,7 +89,7 @@ const ElectiveDetailsCard: StylableFC<{
 
               {/* Room */}
               {electiveSubject.room && (
-                <InformationCard title={t("room")}>
+                <InformationCard title={t("information.room")}>
                   <ChipSet
                     scrollable
                     className="fade-out-to-r -mx-3 pb-1 *:pl-3 *:pr-8"
@@ -94,7 +105,7 @@ const ElectiveDetailsCard: StylableFC<{
             {electiveSubject.description?.th && (
               <section className="space-y-1">
                 <Text type="title-medium" element="h3">
-                  {t("description")}
+                  {t("information.description")}
                 </Text>
                 <Text
                   type="body-medium"
@@ -107,9 +118,18 @@ const ElectiveDetailsCard: StylableFC<{
             )}
 
             <section className="space-y-2 md:hidden">
-              <Text type="title-medium" element="h3">
-                {t("students")}
-              </Text>
+              <div className="flex flex-row items-end">
+                <Text type="title-medium" element="h3" className="grow">
+                  {t("students.title")}
+                </Text>
+                <AssistChip
+                  icon={<MaterialIcon icon="print" />}
+                  href={`/teach/electives/${fromUUID(electiveSubject.id)}/print`}
+                  element={Link}
+                >
+                  {t("students.action.print")}
+                </AssistChip>
+              </div>
               <Search
                 value={query}
                 alt={t("students.searchAlt")}
