@@ -67,7 +67,7 @@ const ManageElectivesPage: CustomPage<{
       {
         query: {
           fetch_level: "detailed",
-          descendant_fetch_level: "compact",
+          descendant_fetch_level: "default",
         },
       },
     );
