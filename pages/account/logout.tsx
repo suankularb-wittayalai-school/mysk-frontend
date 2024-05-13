@@ -2,7 +2,6 @@ import UserContext from "@/contexts/UserContext";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Progress } from "@suankularb-components/react";
 import { GetStaticProps } from "next";
-import { signOut } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
@@ -11,7 +10,7 @@ import { useContext, useEffect } from "react";
 /**
  * An emergency page to log the user out, in case authentication completely
  * fails.
- * 
+ *
  * We currently use 2 concurrent methods of authentication: NextAuth and MySK
  * API, and when those get out of sync somehow, we can direct users to this page
  * to log out and log back in.
@@ -25,7 +24,6 @@ const LogOutPage: CustomPage = () => {
   const router = useRouter();
   useEffect(() => {
     (async () => {
-      await signOut({ redirect: false });
       setUser(null);
       document.cookie =
         "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";

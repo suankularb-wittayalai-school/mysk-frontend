@@ -27,7 +27,6 @@ const GSIButton: StylableFC<{
   }, []);
 
   useOneTapSignin({
-    redirect: false,
     parentButtonID: "button-google-sign-in",
     buttonWidth,
     onStateChange,

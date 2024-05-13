@@ -25,7 +25,6 @@ import {
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
-import { signOut, useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
@@ -56,14 +55,6 @@ const LandingPage: CustomPage = () => {
   const router = useRouter();
   const mysk = useMySKClient();
   const supabase = useSupabaseClient();
-
-  // If there is a mismatch between NextAuth and MySK API authentication,
-  // log the user out.
-  const session = useSession();
-  useEffect(() => {
-    if (session.status === "authenticated" && !mysk.user)
-      signOut({ redirect: false });
-  }, [session.status, mysk.user]);
 
   const [state, setState] = useState<GSIStatus>(GSIStatus.initial);
   const [accountNotFoundOpen, setAccountNotFoundOpen] = useState(false);

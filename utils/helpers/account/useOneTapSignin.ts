@@ -10,11 +10,10 @@ import { OAuthResponseData } from "@/utils/types/fetch";
 import { User } from "@/utils/types/person";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GsiButtonConfiguration } from "google-one-tap";
-import { SignInOptions, signIn, useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
 import { useRouter } from "next/router";
-import { useContext, useState } from "react";
+import { useContext, useEffect } from "react";
 
 /**
  * Tap into Google Sign in.
@@ -24,20 +23,18 @@ import { useContext, useState } from "react";
  * @param options.onStateChange Triggers when the state of the Google Sign in changes.
  * @param options.onNotFound Triggers when the account is not found.
  *
- * @see {@link SignInOptions} for more options.
- *
  * @returns Whether Google Sign in is verifying the credential string.
  */
 
 export default function useOneTapSignin(
-  options?: {
-    parentButtonID?: string;
-    buttonWidth?: number;
-    onStateChange?: (state: GSIStatus) => void;
-    onNotFound?: () => void;
-  } & Pick<SignInOptions, "redirect" | "callbackUrl">,
+  options: Partial<{
+    parentButtonID: string;
+    buttonWidth: number;
+    onStateChange: (state: GSIStatus) => void;
+    onNotFound: () => void;
+  }> = {},
 ) {
-  const { parentButtonID, buttonWidth, onStateChange } = options || {};
+  const { parentButtonID, buttonWidth, onStateChange, onNotFound } = options;
 
   const locale = useLocale();
   const { t } = useTranslation("landing");
@@ -48,8 +45,6 @@ export default function useOneTapSignin(
   const { setUser, setPerson } = useContext(UserContext);
   const router = useRouter();
 
-  const [loading, setLoading] = useState(false);
-
   /**
    * Signs the user in with a Google One Tap UI credential string and redirects
    * the user afterwards. We have to account for both NextAuth and MySK API.
@@ -57,21 +52,7 @@ export default function useOneTapSignin(
    * @param credential Credential string.
    */
   async function logInWithGoogle(credential: string) {
-    setLoading(true);
     onStateChange?.(GSIStatus.processing);
-
-    // Sign in with NextAuth.
-    const { status } = (await signIn("googleonetap", {
-      credential,
-      redirect: true,
-      ...options,
-    }))!;
-    if (status === 401) {
-      plausible("Account Not Found");
-      setTimeout(() => onStateChange?.(GSIStatus.initial), 400);
-      options?.onNotFound?.();
-      return;
-    }
 
     // Sign in with MySK API.
     const { data, error } = await mysk.fetch<OAuthResponseData>(
@@ -84,6 +65,11 @@ export default function useOneTapSignin(
     );
     if (error) {
       logError("logInWithGoogle", error);
+      if (error.code === 401) {
+        plausible("Account Not Found");
+        onNotFound?.();
+      }
+      setTimeout(() => onStateChange?.(GSIStatus.initial), 400);
       return;
     }
 
@@ -105,7 +91,6 @@ export default function useOneTapSignin(
     if (person) setPerson(person);
 
     if (router.asPath !== "/") await router.push("/learn");
-    setLoading(false);
   }
 
   /**
@@ -123,61 +108,56 @@ export default function useOneTapSignin(
   }
 
   // If user is unauthenticated, Google One Tap UI is initialized and rendered
-  useSession({
-    required: true,
-    onUnauthenticated() {
-      if (loading) return;
+  useEffect(() => {
+    const { google } = window;
+    if (!google) return;
 
-      const { google } = window;
-      if (!google) return;
-
-      // Initialize Google One Tap UI.
-      google.accounts.id.initialize({
-        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-        cancel_on_tap_outside: false,
-        log_level: "info",
-        callback: async ({ credential, select_by }) => {
-          plausible("Log in", {
-            props: /btn|user/.test(select_by)
-              ? {
-                  method: select_by.includes("btn")
-                    ? "GSI Button"
-                    : "Google One Tap UI",
-                }
-              : undefined,
-          });
-          if (process.env.NEXT_PUBLIC_ALLOW_PASTE_GOOGLE_CREDENTIAL === "true")
-            console.log(
-              `[Google One Tap UI] Logged in with credential \`${credential}\``,
-            );
-          logInWithGoogle(credential);
-        },
-      });
-
-      // Render the Google One Tap UI.
-      google.accounts.id.prompt();
-
-      // Render the Google Sign In (GSI) Button if provided with an ID.
-      const parentButton = parentButtonID
-        ? document.getElementById(parentButtonID)
-        : null;
-      if (parentButton)
-        google.accounts.id.renderButton(
-          parentButton,
-          {
-            shape: "pill",
-            text: "continue_with",
-            width: buttonWidth,
-            click_listener: () => onStateChange?.(GSIStatus.chooserShown),
-            locale,
-          } as GsiButtonConfiguration,
-          // Replace the normal GSI flow with a manual credential string prompt
-          // when necessary.
-          process.env.NEXT_PUBLIC_ALLOW_PASTE_GOOGLE_CREDENTIAL === "true" &&
-            !["localhost:3000", "mysk.school"].includes(window.location.host)
-            ? promptForManualCredential
+    // Initialize Google One Tap UI.
+    google.accounts.id.initialize({
+      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      cancel_on_tap_outside: false,
+      log_level: "info",
+      callback: async ({ credential, select_by }) => {
+        plausible("Log in", {
+          props: /btn|user/.test(select_by)
+            ? {
+                method: select_by.includes("btn")
+                  ? "GSI Button"
+                  : "Google One Tap UI",
+              }
             : undefined,
-        );
-    },
-  });
+        });
+        if (process.env.NEXT_PUBLIC_ALLOW_PASTE_GOOGLE_CREDENTIAL === "true")
+          console.log(
+            `[Google One Tap UI] Logged in with credential \`${credential}\``,
+          );
+        logInWithGoogle(credential);
+      },
+    });
+
+    // Render the Google One Tap UI.
+    if (!mysk.user) google.accounts.id.prompt();
+
+    // Render the Google Sign In (GSI) Button if provided with an ID.
+    const parentButton = parentButtonID
+      ? document.getElementById(parentButtonID)
+      : null;
+    if (parentButton)
+      google.accounts.id.renderButton(
+        parentButton,
+        {
+          shape: "pill",
+          text: "continue_with",
+          width: buttonWidth,
+          click_listener: () => onStateChange?.(GSIStatus.chooserShown),
+          locale,
+        } as GsiButtonConfiguration,
+        // Replace the normal GSI flow with a manual credential string prompt
+        // when necessary.
+        process.env.NEXT_PUBLIC_ALLOW_PASTE_GOOGLE_CREDENTIAL === "true" &&
+          !["localhost:3000", "mysk.school"].includes(window.location.host)
+          ? promptForManualCredential
+          : undefined,
+      );
+  }, [buttonWidth, locale]);
 }
