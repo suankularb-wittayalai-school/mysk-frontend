@@ -10,10 +10,10 @@ import { pick, sort } from "radash";
 
 /**
  * Get a list of all Classrooms with their Students for bulk printing.
- * 
+ *
  * @param supabase The Supabase Client to use.
  * @param mysk The MySK Client to use.
- * 
+ *
  * @returns A Backend Return with a list of Classrooms.
  */
 export default async function getClassroomsForBulkPrint(
@@ -81,6 +81,7 @@ export default async function getClassroomsForBulkPrint(
       filter: { data: { year: getCurrentAcademicYear() } },
     },
   });
+
   if (electivesError) {
     logError("getClassroomsForBulkPrint (electives)", electivesError);
     return { data: null, error: electivesError };
@@ -89,7 +90,14 @@ export default async function getClassroomsForBulkPrint(
   const electivesMap = electives.reduce(
     (accumulate, elective) => {
       elective.students.forEach((student) => {
-        accumulate[student.id] = elective;
+        accumulate[student.id] = pick(elective, [
+          "id",
+          "session_code",
+          "name",
+          "code",
+          "room",
+          "randomized_students",
+        ]) as ElectiveSubject;
       });
       return accumulate;
     },
