@@ -1,13 +1,16 @@
 {
   "title": "Admin panel",
   "supabase": {
-    "title": "Manage data with Supabase Table Editor",
+    "title": "Supabase",
+    "desc": "The MySK database is stored in Supabase and fetched via MySK API. View and edit tables in its dashboard.",
     "action": {
-      "open": "Open Supabase"
+      "browse": "Browse",
+      "readDocs": "Read docs"
     }
   },
   "schedule": {
     "title": "Schedule editor",
+    "desc": "Correct any schedule import errors of any classroom using tools meant for teachers.",
     "empty": "Load a schedule to get started.",
     "view": {
       "title": "Choose view…",
@@ -16,6 +19,7 @@
     },
     "mergeOverlapping": "Merge overlapping",
     "action": {
+      "continue": "Continue",
       "getClassroom": "Get classroom"
     },
     "dialog": {
@@ -31,5 +35,6 @@
         }
       }
     }
-  }
+  },
+  "warning": "Any changes made in this panel will immediately affect users. Proceed with caution."
 }
