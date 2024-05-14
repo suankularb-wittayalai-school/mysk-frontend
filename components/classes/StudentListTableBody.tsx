@@ -128,7 +128,7 @@ const StudentListTableBody: StylableFC<{
                       student.chosen_elective.name,
                       options.language,
                     ) +
-                    (!student.chosen_elective.randomized_students.some(
+                    (student.chosen_elective.randomized_students.some(
                       (randomizedStudent) =>
                         student.id === randomizedStudent.id,
                     )

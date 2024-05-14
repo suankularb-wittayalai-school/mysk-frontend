@@ -97,7 +97,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
     supabase,
     mysk,
     compactStudentList!.map((student) => student.id),
-    { detailed: true },
+    { detailed: true, includeChosenElective: true },
   );
 
   return {

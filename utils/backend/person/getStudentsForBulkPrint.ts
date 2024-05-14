@@ -3,55 +3,42 @@ import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { StudentCertificateType } from "@/utils/types/certificate";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { MySKClient } from "@/utils/types/fetch";
 import { ShirtSize, Student, UserRole } from "@/utils/types/person";
 import { pick } from "radash";
 
 /**
- * Get multiple Students by their IDs.
+ * Get all Students with Classrooms with just enough information for bulk
+ * printing.
  *
  * @param supabase The Supabase Client to use.
  * @param mysk The MySK Client to use.
- * @param studentIDs The IDs of the Students in the database. Not to be confused with the Person ID or the 5-digit Student ID.
  *
  * @param options Options.
- * @param options.detailed Whether to include detailed information about the Students.
  * @param options.includeChosenElective Whether to include the chosen Elective Subject of the Students.
  *
  * @returns A Backend Return with an array of the Students.
  */
-export async function getStudentsByIDs(
+export async function getStudentsForBulkPrint(
   supabase: DatabaseClient,
   mysk: MySKClient,
-  studentIDs: string[],
-  options?: Partial<{ detailed: boolean; includeChosenElective: boolean }>,
+  options?: Partial<{ includeChosenElective: boolean }>,
 ): Promise<BackendReturn<Student[]>> {
   const { data, error } = await supabase
     .from("students")
     .select(
       `*,
-      student_certificates(
-        id,
-        year,
-        certificate_type,
-        certificate_detail,
-        receiving_order_number,
-        seat_code
-      ),
       people(
         *,
-        person_contacts(contacts(*)),
         person_allergies(allergy_name)),
-        classroom_students(class_no, classrooms!inner(id, number)
+        classroom_students!inner(class_no, classrooms!inner(id, number)
       )`,
     )
-    .in("id", studentIDs)
     .eq("classroom_students.classrooms.year", getCurrentAcademicYear());
 
   if (error) {
-    logError("getStudentsByIDs (students)", error);
+    logError("getStudentsForBulkPrint (students)", error);
     console.log(error);
     return { data: null, error };
   }
@@ -67,7 +54,6 @@ export async function getStudentsByIDs(
         descendant_fetch_level: "id_only",
         filter: {
           data: {
-            student_ids: studentIDs,
             year: getCurrentAcademicYear(),
             semester: getCurrentSemester(),
           },
@@ -75,7 +61,7 @@ export async function getStudentsByIDs(
       },
     });
     if (electivesError) {
-      logError("getStudentsByIDs (electives)", electivesError);
+      logError("getStudentsForBulkPrint (electives)", electivesError);
       return { data: null, error: electivesError };
     }
 
@@ -101,9 +87,9 @@ export async function getStudentsByIDs(
     id: student!.id,
     prefix: mergeDBLocales(student!.people, "prefix"),
     first_name: mergeDBLocales(student!.people, "first_name"),
+    middle_name: mergeDBLocales(student!.people, "middle_name"),
     last_name: mergeDBLocales(student!.people, "last_name"),
     nickname: mergeDBLocales(student!.people, "nickname"),
-    middle_name: mergeDBLocales(student!.people, "middle_name"),
     student_id: student!.student_id,
     ...(student!.classroom_students.length > 0
       ? {
@@ -111,47 +97,21 @@ export async function getStudentsByIDs(
           class_no: student!.classroom_students[0].class_no,
         }
       : { classroom: null, class_no: null }),
-    profile: student!.people?.profile ?? null,
-    profile_url: student!.people?.profile ?? null,
+    profile: student!.people?.profile || null,
+    profile_url: student!.people?.profile || null,
     chosen_elective:
       (options?.includeChosenElective && studentElectiveMap[student!.id]) ||
       null,
-    ...(options?.detailed && student!.people
-      ? {
-          contacts: student!.people!.person_contacts.map(({ contacts }) => ({
-            ...pick(contacts!, [
-              "id",
-              "type",
-              "value",
-              "include_parents",
-              "include_students",
-              "include_teachers",
-            ]),
-            name: mergeDBLocales(contacts!, "name"),
-          })),
-          certificates: student!.student_certificates.map((certicate) => ({
-            ...certicate,
-            certificate_type: <StudentCertificateType>(
-              certicate.certificate_type
-            ),
-          })),
-          allergies: student!.people.person_allergies.map(
-            ({ allergy_name }) => allergy_name,
-          ),
-          citizen_id: student!.people.citizen_id,
-          birthdate: student!.people.birthdate,
-          shirt_size: <ShirtSize>student!.people.shirt_size,
-          pants_size: student!.people.pants_size,
-        }
-      : {
-          contacts: [],
-          certificates: [],
-          allergies: null,
-          citizen_id: null,
-          birthdate: null,
-          shirt_size: null,
-          pants_size: null,
-        }),
+    contacts: [],
+    certificates: [],
+    allergies:
+      student!.people?.person_allergies.map(
+        ({ allergy_name }) => allergy_name,
+      ) || null,
+    citizen_id: student!.people?.citizen_id || null,
+    birthdate: student!.people?.birthdate || null,
+    shirt_size: <ShirtSize>student!.people?.shirt_size || null,
+    pants_size: student!.people?.pants_size || null,
     role: UserRole.student,
     is_admin: null,
   }));
