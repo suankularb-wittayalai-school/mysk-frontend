@@ -1,4 +1,5 @@
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
@@ -64,7 +65,13 @@ export async function getStudentsByIDs(
       query: {
         fetch_level: "detailed",
         descendant_fetch_level: "id_only",
-        filter: { data: { student_ids: studentIDs } },
+        filter: {
+          data: {
+            student_ids: studentIDs,
+            year: getCurrentAcademicYear(),
+            semester: getCurrentSemester(),
+          },
+        },
       },
     });
     if (electivesError) {
