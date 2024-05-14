@@ -32,6 +32,7 @@ const PERIOD_HEIGHT = 60; // 56 + 4
  * @param subjectsInCharge The Subjects assigned to this teacher. Used in editing the Schedule.
  * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
  * @param role The Schedule view, from the perspective of a student or a teacher.
+ * @param onEdit Triggers when the Schedule is edited.
  */
 const Schedule: StylableFC<{
   schedule: ScheduleType;
@@ -39,12 +40,14 @@ const Schedule: StylableFC<{
   teacherID?: string;
   view: UserRole;
   editable?: boolean;
+  onEdit?: () => void;
 }> = ({
   schedule,
   subjectsInCharge,
   teacherID,
   view,
   editable,
+  onEdit,
   style,
   className,
 }) => {
@@ -78,6 +81,7 @@ const Schedule: StylableFC<{
         additionSite,
         setAdditionSite,
         constraintsRef: scheduleRef,
+        onEdit,
       }}
     >
       <div
