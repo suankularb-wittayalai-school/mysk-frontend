@@ -83,7 +83,7 @@ const AdminPanelPage: CustomPage = () => {
         <div
           className={cn(`mx-4 flex flex-row items-center gap-5 rounded-xl
             bg-error-container px-6 py-5 text-error sm:mx-auto
-            md:w-[calc(50%-3rem)]`)}
+            md:w-[calc(50%-.75rem)]`)}
         >
           <MaterialIcon icon="warning" />
           <Text type="title-medium">{t("warning")}</Text>
