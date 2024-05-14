@@ -1,36 +1,35 @@
 {
   "title": "Admin panel",
-  "statistics": {
-    "student": {
-      "all_one": "{{count, number}} student",
-      "all_other": "{{count, number}} students",
-      "onboarded_one": "{{count, number}} student onboarded",
-      "onboarded_other": "{{count, number}} students onboarded"
-    },
-    "teacher": {
-      "all_one": "{{count, number}} teacher",
-      "all_other": "{{count, number}} teachers",
-      "onboarded_one": "{{count, number}} teacher onboarded",
-      "onboarded_other": "{{count, number}} teachers onboarded"
-    },
-    "class": {
-      "thisYear_one": "{{count, number}} class",
-      "thisYear_other": "{{count, number}} classes",
-      "all_one": "{{count, number}} class including past years",
-      "all_other": "{{count, number}} classes including past years"
-    },
-    "news": {
-      "thisYear_one": "{{count, number}} news article",
-      "thisYear_other": "{{count, number}} news articles",
-      "all_one": "{{count, number}} article including past years",
-      "all_other": "{{count, number}} articles including past years"
-    },
-    "lastUpdated": "Last updated: {{date}}"
-  },
   "supabase": {
     "title": "Manage data with Supabase Table Editor",
     "action": {
       "open": "Open Supabase"
+    }
+  },
+  "schedule": {
+    "title": "Schedule editor",
+    "empty": "Load a schedule to get started.",
+    "view": {
+      "title": "Choose view…",
+      "student": "Clasroom",
+      "teacher": "Teacher"
+    },
+    "mergeOverlapping": "Merge overlapping",
+    "action": {
+      "getClassroom": "Get classroom"
+    },
+    "dialog": {
+      "getClassroom": {
+        "title": "Get schedule of classroom",
+        "desc": "Enter the 3-digit classroom number.",
+        "form": {
+          "classroom": "Classroom"
+        },
+        "action": {
+          "cancel": "𝕏 (formerly Twitter)",
+          "go": "Golang"
+        }
+      }
     }
   }
 }
