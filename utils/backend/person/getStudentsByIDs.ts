@@ -52,7 +52,6 @@ export async function getStudentsByIDs(
 
   if (error) {
     logError("getStudentsByIDs (students)", error);
-    console.log(error);
     return { data: null, error };
   }
 

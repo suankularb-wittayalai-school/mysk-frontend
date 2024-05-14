@@ -39,7 +39,6 @@ export async function getStudentsForBulkPrint(
 
   if (error) {
     logError("getStudentsForBulkPrint (students)", error);
-    console.log(error);
     return { data: null, error };
   }
 
