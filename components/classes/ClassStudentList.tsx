@@ -43,7 +43,7 @@ const ClassStudentList: StylableFC<{
           supabase,
           mysk,
           students.map((student) => student.id),
-          { detailed: true },
+          { detailed: true, includeChosenElective: true },
         );
         if (error) return false;
 

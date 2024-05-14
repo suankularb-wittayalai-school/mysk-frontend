@@ -17,6 +17,7 @@ import { pick } from "radash";
  *
  * @param options Options.
  * @param options.detailed Whether to include detailed information about the Students.
+ * @param options.includeChosenElective Whether to include the chosen Elective Subject of the Students.
  *
  * @returns A Backend Return with an array of the Students.
  */
@@ -24,9 +25,9 @@ export async function getStudentsByIDs(
   supabase: DatabaseClient,
   mysk: MySKClient,
   studentIDs: string[],
-  options?: { detailed?: boolean },
+  options?: Partial<{ detailed: boolean; includeChosenElective: boolean }>,
 ): Promise<BackendReturn<Student[]>> {
-  let { data, error: studentError } = await supabase
+  const { data, error } = await supabase
     .from("students")
     .select(
       `*,
@@ -48,14 +49,15 @@ export async function getStudentsByIDs(
     .in("id", studentIDs)
     .eq("classroom_students.classrooms.year", getCurrentAcademicYear());
 
-  if (studentError) {
-    logError("getStudentsByIDs (students)", studentError);
-    return { data: null, error: studentError };
+  if (error) {
+    logError("getStudentsByIDs (students)", error);
+    console.log(error);
+    return { data: null, error };
   }
 
   let studentElectiveMap: Record<string, ElectiveSubject> = {};
 
-  if (options?.detailed) {
+  if (options?.includeChosenElective) {
     const { data: electives, error: electivesError } = await mysk.fetch<
       ElectiveSubject[]
     >("/v1/subjects/electives", {
@@ -104,6 +106,9 @@ export async function getStudentsByIDs(
       : { classroom: null, class_no: null }),
     profile: student!.people?.profile ?? null,
     profile_url: student!.people?.profile ?? null,
+    chosen_elective:
+      (options?.includeChosenElective && studentElectiveMap[student!.id]) ||
+      null,
     ...(options?.detailed && student!.people
       ? {
           contacts: student!.people!.person_contacts.map(({ contacts }) => ({
@@ -123,7 +128,6 @@ export async function getStudentsByIDs(
               certicate.certificate_type
             ),
           })),
-          chosen_elective: studentElectiveMap[student!.id] || null,
           allergies: student!.people.person_allergies.map(
             ({ allergy_name }) => allergy_name,
           ),
@@ -136,7 +140,6 @@ export async function getStudentsByIDs(
           contacts: [],
           certificates: [],
           allergies: null,
-          chosen_elective: null,
           citizen_id: null,
           birthdate: null,
           shirt_size: null,
