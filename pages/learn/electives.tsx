@@ -10,6 +10,8 @@ import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import { BackendReturn } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
@@ -245,7 +247,13 @@ export const getServerSideProps: GetServerSideProps = async ({
     await mysk.fetch<ElectiveSubject[]>("/v1/subjects/electives", {
       query: {
         fetch_level: "compact",
-        filter: { data: { student_ids: [student.id] } },
+        filter: {
+          data: {
+            student_ids: [student.id],
+            year: getCurrentAcademicYear(),
+            semester: getCurrentSemester(),
+          },
+        },
       },
     }),
 
