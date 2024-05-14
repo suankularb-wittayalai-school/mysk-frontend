@@ -1,4 +1,5 @@
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
@@ -78,7 +79,12 @@ export default async function getClassroomsForBulkPrint(
     query: {
       fetch_level: "detailed",
       descendant_fetch_level: "id_only",
-      filter: { data: { year: getCurrentAcademicYear() } },
+      filter: {
+        data: {
+          year: getCurrentAcademicYear(),
+          semester: getCurrentSemester(),
+        },
+      },
     },
   });
 
