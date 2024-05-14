@@ -1,7 +1,7 @@
 import StudentListPrintout from "@/components/classes/StudentListPrintout";
 import EnrollmentPrintoutHeader from "@/components/elective/EnrollmentPrintoutHeader";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
-import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
+import { getStudentsForBulkPrint } from "@/utils/backend/person/getStudentsForBulkPrint";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import sortStudents from "@/utils/helpers/person/sortStudents";
@@ -12,7 +12,7 @@ import { GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { objectify, unique } from "radash";
+import { objectify } from "radash";
 
 /**
  * A preview and options page for printing a list of Students enrolled for all
@@ -84,17 +84,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
   if (!electiveSubjects) return { notFound: true };
 
   // Append full Student details to each Elective Subject.
-  const studentIDs = unique(
-    electiveSubjects.flatMap((subject) =>
-      subject.students.map((student) => student.id),
-    ),
-  );
-  const { data: students } = await getStudentsByIDs(
-    supabase,
-    mysk,
-    studentIDs,
-    { detailed: true },
-  );
+  const { data: students } = await getStudentsForBulkPrint(supabase, mysk);
   if (!students) return { notFound: true };
   const studentsMap = objectify(students, (student) => student.id);
   for (const electiveSubject of electiveSubjects) {
