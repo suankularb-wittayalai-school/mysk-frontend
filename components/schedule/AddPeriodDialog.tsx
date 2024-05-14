@@ -1,7 +1,9 @@
 import ClassroomsField from "@/components/classes/ClassroomsField";
+import TeachersField from "@/components/person/TeachersField";
 import RoomsField from "@/components/room/RoomsField";
 import ScheduleContext from "@/contexts/ScheduleContext";
 import SnackbarContext from "@/contexts/SnackbarContext";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import createScheduleItem from "@/utils/backend/schedule/createScheduleItem";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -14,6 +16,7 @@ import withLoading from "@/utils/helpers/withLoading";
 import { roomRegex } from "@/utils/patterns";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
+import { Teacher, UserRole } from "@/utils/types/person";
 import { Subject } from "@/utils/types/subject";
 import {
   Actions,
@@ -54,6 +57,7 @@ const AddPeriodDialog: StylableFC<{
   const { t: tx } = useTranslation("common");
 
   const plausible = usePlausible();
+  const mysk = useMySKClient();
   const { additionSite, onEdit } = useContext(ScheduleContext);
   const { setSnackbar } = useContext(SnackbarContext);
 
@@ -61,7 +65,7 @@ const AddPeriodDialog: StylableFC<{
 
   // Form control
   const { form, setForm, resetForm, formOK } = useForm<
-    "classrooms" | "rooms" | "duration" | "is_co_teacher"
+    "classrooms" | "rooms" | "duration" | "teachers"
   >([
     {
       key: "classrooms",
@@ -73,11 +77,21 @@ const AddPeriodDialog: StylableFC<{
       key: "rooms",
       defaultValue: [],
       validate: (value: string[]) =>
-        value.every((room) => roomRegex.test(room)),
+        value.every((room) => roomRegex.test(room)) && value.length !== 0,
+    },
+    {
+      key: "teachers",
+      defaultValue: [],
+      validate: (value: Teacher[]) => value.length !== 0,
     },
     { key: "duration", defaultValue: 1 },
-    { key: "is_co_teacher", defaultValue: false },
+    // { key: "is_co_teacher", defaultValue: false },
   ]);
+
+  useEffect(() => {
+    if (mysk.user?.role === UserRole.teacher && mysk.person)
+      setForm({ ...form, teachers: [...form.teachers, mysk.person] });
+  }, [mysk.person]);
 
   // Form submission
   const [loading, toggleLoading] = useToggle();
@@ -96,9 +110,10 @@ const AddPeriodDialog: StylableFC<{
           day: additionSite!.day,
           start_time: additionSite!.startTime,
           subject: { id: subject.id },
-          ...(form.is_co_teacher
-            ? { teachers: [], co_teachers: [{ id: teacherID! }] }
-            : { teachers: [{ id: teacherID! }], co_teachers: [] }),
+          co_teachers: [],
+          // ...(form.is_co_teacher
+          //   ? { teachers: [], co_teachers: [{ id: teacherID! }] }
+          //   : { teachers: [{ id: teacherID! }], co_teachers: [] }),
         });
 
         if (error) {
@@ -110,7 +125,7 @@ const AddPeriodDialog: StylableFC<{
 
         plausible("Add Period");
 
-        await router.replace(router.asPath);
+        await onEdit?.();
         onSubmit();
         resetForm();
 
@@ -192,6 +207,12 @@ const AddPeriodDialog: StylableFC<{
           <RoomsField
             rooms={form.rooms}
             onChange={(rooms) => setForm({ ...form, rooms })}
+          />
+
+          {/* Teachers */}
+          <TeachersField
+            teachers={form.teachers}
+            onChange={(teachers) => setForm({ ...form, teachers })}
           />
 
           {/* Period duration */}

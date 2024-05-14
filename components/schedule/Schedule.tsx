@@ -17,9 +17,7 @@ import {
   Schedule as ScheduleType,
 } from "@/utils/types/schedule";
 import { Subject } from "@/utils/types/subject";
-import { Text } from "@suankularb-components/react";
 import { LayoutGroup } from "framer-motion";
-import { useTranslation } from "next-i18next";
 import { RefObject, useEffect, useRef, useState } from "react";
 
 const PERIOD_WIDTH = 104; // 96 + 8
@@ -31,7 +29,8 @@ const PERIOD_HEIGHT = 60; // 56 + 4
  * @param schedule Data for displaying Schedule.
  * @param subjectsInCharge The Subjects assigned to this teacher. Used in editing the Schedule.
  * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
- * @param role The Schedule view, from the perspective of a student or a teacher.
+ * @param view The Schedule view, from the perspective of a student or a teacher.
+ * @param editable Whether the Schedule is editable.
  * @param onEdit Triggers when the Schedule is edited.
  */
 const Schedule: StylableFC<{
@@ -51,8 +50,6 @@ const Schedule: StylableFC<{
   style,
   className,
 }) => {
-  const { t } = useTranslation("schedule");
-
   // Ref for drag constrains and scrolling.
   const scheduleRef: RefObject<HTMLElement> = useRef(null);
 
@@ -86,20 +83,11 @@ const Schedule: StylableFC<{
     >
       <div
         style={style}
-        className={cn(
-          `relative !mx-0 -my-2 flex flex-col-reverse gap-3 sm:flex-col`,
-          className,
-        )}
+        className={cn(`relative !mx-0 -my-2 space-y-3`, className)}
       >
         {editable && (
-          <>
-            {/* Subjects in Charge Card: for Subjects to be added to
-                Schedule */}
-            <SubjectsInChargeCard subjects={subjectsInCharge!} />
-            <Text type="body-medium" element="p" className="mx-4 sm:mx-0">
-              {t("schedule.additionGuide")}
-            </Text>
-          </>
+          // Subjects in Charge Card: for Subjects to be added to Schedule
+          <SubjectsInChargeCard subjects={subjectsInCharge!} />
         )}
 
         <figure
