@@ -45,9 +45,14 @@ const ClassroomPrintPage: CustomPage<{
       </Head>
       <h1 className="sr-only">{t("title")}</h1>
       <StudentListPrintout
-        header={({ locale }) => (
-          <ClassroomPrintoutHeader classroom={classroom} locale={locale} />
-        )}
+        data={[
+          {
+            header: ({ locale }) => (
+              <ClassroomPrintoutHeader classroom={classroom} locale={locale} />
+            ),
+            students,
+          },
+        ]}
         columns={sift([
           "classNo",
           canSeeSensitive && "studentID",
@@ -61,7 +66,6 @@ const ClassroomPrintPage: CustomPage<{
         ])}
         filters={sift([canSeeSensitive && "noElective", "hasAllergies"])}
         parentURL="/classes"
-        students={students}
       />
     </>
   );
@@ -93,7 +97,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
     supabase,
     mysk,
     compactStudentList!.map((student) => student.id),
-    { detailed: true },
+    { detailed: true, includeChosenElective: true },
   );
 
   return {

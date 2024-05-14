@@ -1,8 +1,9 @@
 {
   "title_student": "เลือกวิชาเลือก",
   "title_teacher": "วิชาเลือกของคุณ",
-  "title_admin": "วิชาเลือก",
+  "title_management": "วิชาเลือก",
   "list": {
+    "searchAlt": "ค้นหาวิชาเลือก",
     "enrolled": "ที่ลงทะเบียนอยู่",
     "enrollment": {
       "alt": "ลงทะเบียนแล้ว {{count}} คน จาก {{max}} คน",
@@ -28,6 +29,8 @@
       "teachers": "ครูผู้สอน",
       "room": "ห้องที่ใช้เรียน",
       "description": "รายละเอียด",
+      "students": "นักเรียน",
+      "students.searchAlt": "ค้นหานักเรียนที่ลงทะเบียนวิชานี้",
       "action": {
         "seeSyllabus_available": "ดูคำอธิบายวิชา",
         "seeSyllabus_unavailable": "ไม่มีคำอธิบายวิชา"

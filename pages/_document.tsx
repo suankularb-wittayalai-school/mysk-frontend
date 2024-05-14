@@ -1,4 +1,3 @@
-// Imports
 import { Head, Html, Main, NextScript } from "next/document";
 
 export default function Document() {
@@ -38,10 +37,6 @@ export default function Document() {
           name="theme-color"
           content="#262a2e" // surface-container-high
           media="(prefers-color-scheme: dark)"
-        />
-        <meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
         />
         <script src="https://accounts.google.com/gsi/client" async />
       </Head>

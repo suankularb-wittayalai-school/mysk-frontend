@@ -1,6 +1,7 @@
 import StudentsListPaper from "@/components/classes/StudentsListPaper";
 import StudentsPrintOptions from "@/components/classes/StudentsPrintOptions";
-import PrintPage from "@/components/common/print/PrintPage";
+import PrintPagesFeed from "@/components/common/print/PrintPagesFeed";
+import PrintPreviewLayout from "@/components/common/print/PrintPreviewLayout";
 import useForm from "@/utils/helpers/useForm";
 import useLocale from "@/utils/helpers/useLocale";
 import { LangCode, StylableFC } from "@/utils/types/common";
@@ -40,19 +41,17 @@ export const MAXIMUM_EMPTY_COLUMNS = 20;
 /**
  * The preview page for the Student List Printout.
  *
- * @param classroom The Classroom to display the Student List for.
+ * @param data An array of objects containing the header and the list of Students. Each item represents a page.
  * @param columns The columns the user can choose to display.
  * @param filters The filters the user can choose to apply.
  * @param parentURL The URL of the parent page.
- * @param students The list of all Students in this Class.
  */
 const StudentListPrintout: StylableFC<{
-  header: StylableFC<{ locale: LangCode }>;
+  data: { header: StylableFC<{ locale: LangCode }>; students: Student[] }[];
   columns: OptionsType["columns"];
   filters: OptionsType["filters"];
   parentURL: string;
-  students: Student[];
-}> = ({ header, columns, filters, students, parentURL, style, className }) => {
+}> = ({ data, columns, filters, parentURL, style, className }) => {
   const locale = useLocale();
 
   // Form control for the options.
@@ -91,8 +90,17 @@ const StudentListPrintout: StylableFC<{
   ]);
 
   return (
-    <PrintPage style={style} className={className}>
-      <StudentsListPaper header={header} students={students} options={form} />
+    <PrintPreviewLayout style={style} className={className}>
+      <PrintPagesFeed>
+        {data.map(({ header, students }, index) => (
+          <StudentsListPaper
+            key={index}
+            header={header}
+            students={students}
+            options={form}
+          />
+        ))}
+      </PrintPagesFeed>
       <StudentsPrintOptions
         form={form}
         allowedColumns={columns}
@@ -101,7 +109,7 @@ const StudentListPrintout: StylableFC<{
         setForm={setForm}
         formProps={formProps}
       />
-    </PrintPage>
+    </PrintPreviewLayout>
   );
 };
 

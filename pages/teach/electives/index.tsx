@@ -8,6 +8,8 @@ import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import cn from "@/utils/helpers/cn";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import { BackendReturn } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
@@ -73,7 +75,7 @@ const TeachElectivesPage: CustomPage<{
             ))}
             {/* There’s probably a better solution. If there is, I don’t know
                 what it is. */}
-            <div aria-hidden className="h-9" />
+            <div aria-hidden className="h-28 sm:h-9" />
           </ul>
         </section>
 
@@ -139,7 +141,13 @@ export const getServerSideProps: GetServerSideProps = async ({
       query: {
         fetch_level: "detailed",
         descendant_fetch_level: "default",
-        filter: { data: { teacher_ids: [teacher.id] } },
+        filter: {
+          data: {
+            teacher_ids: [teacher.id],
+            year: getCurrentAcademicYear(),
+            semester: getCurrentSemester(),
+          },
+        },
         sort: { by: ["session_code"], ascending: true },
       },
     },

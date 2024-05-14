@@ -1,8 +1,9 @@
 {
   "title_student": "Choose elective",
   "title_teacher": "Your electives",
-  "title_admin": "Electives",
+  "title_management": "Electives",
   "list": {
+    "searchAlt": "Search electives",
     "enrolled": "Currently enrolled",
     "enrollment": {
       "alt": "{{count}} enrolled out of {{max}}",
@@ -28,6 +29,8 @@
       "teachers": "Teachers",
       "room": "Room",
       "description": "Description",
+      "students": "Students",
+      "students.searchAlt": "Search students",
       "action": {
         "seeSyllabus_available": "See syllabus",
         "seeSyllabus_unavailable": "Syllabus not available"

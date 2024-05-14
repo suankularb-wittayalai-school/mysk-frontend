@@ -86,6 +86,22 @@
     );
   }
 
+  .fade-out-1 {
+    --fade-width: 0.25rem;
+  }
+
+  .fade-out-2 {
+    --fade-width: 0.5rem;
+  }
+
+  .fade-out-4 {
+    --fade-width: 1rem;
+  }
+
+  .fade-out-8 {
+    --fade-width: 2rem;
+  }
+
   .fade-out-to-t {
     --fade-direction: bottom;
   }
@@ -130,9 +146,4 @@
 
 .skc-nav-bar {
   backdrop-filter: blur(16px) !important;
-}
-
-.skc-input-chip__avatar .skc-avatar {
-  background-color: var(--on-surface-variant);
-  color: var(--surface);
 }

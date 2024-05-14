@@ -27,7 +27,7 @@ const NewsPage: CustomPage<{ newsFeed: NewsArticle[] }> = ({ newsFeed }) => {
         <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
       <PageHeader>{t("title")}</PageHeader>
-      <ContentLayout>
+      <ContentLayout className="overflow-hidden">
         <Columns columns={4} className="h-fit !gap-y-5">
           <LatestArticlesSection
             mainArticle={newsFeed[0]}

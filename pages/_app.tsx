@@ -17,7 +17,6 @@ import {
 } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { MotionConfig } from "framer-motion";
-import { SessionProvider } from "next-auth/react";
 import { appWithTranslation } from "next-i18next";
 import PlausibleProvider, { usePlausible } from "next-plausible";
 import {
@@ -83,14 +82,9 @@ const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
       >
         <SnackbarContext.Provider value={{ snackbar, setSnackbar }}>
           <AppStateContext.Provider
-            value={{
-              colorScheme,
-              setColorScheme,
-              navOpen,
-              setNavOpen,
-            }}
+            value={{ colorScheme, setColorScheme, navOpen, setNavOpen }}
           >
-            <BalancerProvider>{children}</BalancerProvider>
+            {children}
           </AppStateContext.Provider>
         </SnackbarContext.Provider>
       </UserContext.Provider>
@@ -143,20 +137,21 @@ function App({
       `}</style>
 
       {/* Context proviers */}
-      <SessionProvider session={session}>
-        <SessionContextProvider
-          supabaseClient={supabase}
-          initialSession={pageProps.initialSession as Session}
-        >
-          <Contexts>
-            {/* Framer Motion a11y */}
-            <MotionConfig reducedMotion="user">
-              {/* Analytics */}
-              <PlausibleProvider
-                domain="mysk.school"
-                taggedEvents
-                manualPageviews
-              >
+      <SessionContextProvider
+        supabaseClient={supabase}
+        initialSession={pageProps.initialSession as Session}
+      >
+        <Contexts>
+          {/* Framer Motion a11y */}
+          <MotionConfig reducedMotion="user">
+            {/* Analytics */}
+            <PlausibleProvider
+              domain="mysk.school"
+              taggedEvents
+              manualPageviews
+            >
+              {/* Text balancer */}
+              <BalancerProvider>
                 {/* SKCom variables */}
                 <ThemeProvider>
                   {/* Rendered app */}
@@ -166,11 +161,11 @@ function App({
                     </ErrorBoundary>
                   </Layout>
                 </ThemeProvider>
-              </PlausibleProvider>
-            </MotionConfig>
-          </Contexts>
-        </SessionContextProvider>
-      </SessionProvider>
+              </BalancerProvider>
+            </PlausibleProvider>
+          </MotionConfig>
+        </Contexts>
+      </SessionContextProvider>
     </>
   );
 }
