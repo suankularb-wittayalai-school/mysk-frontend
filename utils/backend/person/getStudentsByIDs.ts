@@ -85,9 +85,10 @@ export async function getStudentsByIDs(
             student.id,
             pick(elective, [
               "id",
+              "session_code",
               "name",
               "code",
-              "session_code",
+              "room",
               "randomized_students",
             ]),
           ]),
