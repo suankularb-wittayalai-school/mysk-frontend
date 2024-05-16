@@ -33,7 +33,7 @@ import {
   MaterialIcon,
 } from "@suankularb-components/react";
 import { isFuture, isToday, isWeekend } from "date-fns";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
@@ -218,7 +218,10 @@ const DateAttendancePage: CustomPage<{
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  params,
+}) => {
   const { classNumber, date } = params as { [key: string]: string };
   if (
     !YYYYMMDDRegex.test(date) ||
@@ -255,13 +258,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
       homeroomContent,
       classroom,
     },
-    revalidate: 10,
   };
 };
-
-export const getStaticPaths: GetStaticPaths = async () => ({
-  paths: [],
-  fallback: "blocking",
-});
 
 export default DateAttendancePage;
