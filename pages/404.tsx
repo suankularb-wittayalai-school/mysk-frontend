@@ -1,4 +1,3 @@
-// Imports
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import ErrorHero from "@/components/error/ErrorHero";
 import ErrorLayout from "@/components/error/ErrorLayout";
@@ -9,9 +8,20 @@ import { Text } from "@suankularb-components/react";
 import { GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { usePlausible } from "next-plausible";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
+/**
+ * The 404 page.
+ */
 const NotFoundPage: CustomPage = () => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("common", { keyPrefix: "error.404" });
+
+  const plausible = usePlausible();
+  const router = useRouter();
+
+  useEffect(() => plausible("404", { props: { path: router.asPath } }), []);
 
   return (
     <ErrorLayout>
@@ -25,13 +35,13 @@ const NotFoundPage: CustomPage = () => {
             alt=""
           />
         }
-        title={t("error.404.title")}
+        title={t("title")}
         code={404}
-        verbose={t("error.404.verbose")}
-        tabName={t("error.404.tabName")}
+        verbose={t("verbose")}
+        tabName={t("tabName")}
       >
         <Text type="body-large" element="p">
-          {t("error.404.desc")}
+          {t("desc")}
         </Text>
       </ErrorHero>
     </ErrorLayout>
