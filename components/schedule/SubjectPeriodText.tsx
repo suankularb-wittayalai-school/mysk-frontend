@@ -1,6 +1,5 @@
 import HoverList from "@/components/person/HoverList";
 import ScheduleContext from "@/contexts/ScheduleContext";
-import getLocaleString from "@/utils/helpers/getLocaleString";
 import { formatSubjectPeriodName } from "@/utils/helpers/schedule/formatSubjectPeriodName";
 import useLocale from "@/utils/helpers/useLocale";
 import { UserRole } from "@/utils/types/person";
@@ -17,7 +16,7 @@ import { FC, useContext } from "react";
 
 /**
  * Text in Subject Period.
- * 
+ *
  * @param period The Period Content Item to display.
  */
 const SubjectPeriodText: FC<{ period: PeriodContentItem }> = ({ period }) => {
@@ -28,36 +27,24 @@ const SubjectPeriodText: FC<{ period: PeriodContentItem }> = ({ period }) => {
 
   return (
     <>
-      {view === UserRole.teacher ? (
-        <motion.span
-          layoutId={editable ? `period-${period.id}-class` : undefined}
-          transition={transition(DURATION.short2, EASING.standardDecelerate)}
-          className="skc-text skc-text--title-medium !w-fit"
-        >
-          {t("class", {
-            ns: "common",
-            number: period.classrooms?.map(({ number }) => number).join(),
-          })}
-        </motion.span>
-      ) : (
-        <Text
-          type="title-medium"
-          element={(props) => (
-            <span
-              {...props}
-              title={
-                view === UserRole.student
-                  ? getLocaleString(period.subject.name, locale)
-                  : undefined
-              }
-            />
-          )}
-        >
-          {formatSubjectPeriodName(period.duration, period.subject, locale)}
-        </Text>
-      )}
+      {/* Subject name / Classroom */}
+      <motion.span
+        layoutId={editable ? `period-${period.id}-class` : undefined}
+        transition={transition(DURATION.short2, EASING.standardDecelerate)}
+        className="skc-text skc-text--title-medium truncate"
+      >
+        {view === UserRole.teacher
+          ? t("class", {
+              ns: "common",
+              number: period.classrooms
+                ?.map(({ number }) => number)
+                .sort((a, b) => a - b)
+                .join(),
+            })
+          : formatSubjectPeriodName(period.duration, period.subject, locale)}
+      </motion.span>
 
-      {/* Teacher / subject name */}
+      {/* Teacher / Subject name */}
       <Text type="body-small">
         {view === UserRole.teacher ? (
           formatSubjectPeriodName(period.duration, period.subject, locale)

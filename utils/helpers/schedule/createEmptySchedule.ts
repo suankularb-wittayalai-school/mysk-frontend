@@ -16,6 +16,7 @@ export default function createEmptySchedule(
   endDay?: Day,
 ): Schedule {
   return {
+    classroom: null,
     content: list(endDay ? endDay - startDay : 0).map((day) => ({
       day: (day + startDay) as Day,
       content: list(1, 10).map((startTime) => ({

@@ -1,4 +1,8 @@
+import ScheduleContext from "@/contexts/ScheduleContext";
 import cn from "@/utils/helpers/cn";
+import { formatSubjectPeriodName } from "@/utils/helpers/schedule/formatSubjectPeriodName";
+import useLocale from "@/utils/helpers/useLocale";
+import { UserRole } from "@/utils/types/person";
 import { PeriodContentItem } from "@/utils/types/schedule";
 import {
   DURATION,
@@ -10,7 +14,7 @@ import {
 import { AnimatePresence, DragControls, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
-import { FC, useState } from "react";
+import { FC, useContext, useState } from "react";
 
 const SubjectPeriodMenu: FC<{
   open: boolean;
@@ -27,8 +31,10 @@ const SubjectPeriodMenu: FC<{
   setExtending,
   setDetailsOpen,
 }) => {
+  const locale = useLocale();
   const { t } = useTranslation(["schedule", "common"]);
 
+  const { view } = useContext(ScheduleContext);
   const plausible = usePlausible();
 
   const entranceTransition = transition(
@@ -51,18 +57,28 @@ const SubjectPeriodMenu: FC<{
           <motion.span
             layoutId={`period-${period.id}-class`}
             transition={entranceTransition}
-            className="skc-body-small w-fit !font-display"
+            className="skc-text skc-text--body-small !font-display"
           >
-            {t("class", {
-              ns: "common",
-              number: period.classrooms?.map(({ number }) => number).join(),
-            })}
+            {view === UserRole.teacher
+              ? t("class", {
+                  ns: "common",
+                  number: period.classrooms
+                    ?.map(({ number }) => number)
+                    .sort((a, b) => a - b)
+                    .join(),
+                })
+              : formatSubjectPeriodName(1, period.subject, locale)}
           </motion.span>
 
           <motion.div
-            initial={{ y: "50%", scaleY: 0 }}
-            animate={{ y: "0%", scaleY: 1 }}
-            exit={{ y: "50%", scaleY: 0, transition: exitTransition }}
+            initial={{ y: "50%", scaleY: 0, opacity: 0 }}
+            animate={{ y: "0%", scaleY: 1, opacity: 1 }}
+            exit={{
+              y: "50%",
+              scaleY: 0,
+              opacity: 0,
+              transition: exitTransition,
+            }}
             transition={entranceTransition}
             className={cn(
               `grid w-full grow gap-1`,

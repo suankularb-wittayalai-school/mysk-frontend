@@ -3,7 +3,6 @@ import deleteScheduleItem from "@/utils/backend/schedule/deleteScheduleItem";
 import lengthenScheduleItem from "@/utils/backend/schedule/lengthenScheduleItem";
 import moveScheduleItem from "@/utils/backend/schedule/moveScheduleItem";
 import positionPxToPeriod from "@/utils/helpers/schedule/positionPxToPeriod";
-import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import { PeriodContentItem } from "@/utils/types/schedule";
@@ -58,14 +57,13 @@ export default function useSubjectPeriodEditor(
   day: number,
 ) {
   const plausible = usePlausible();
-  const refreshProps = useRefreshProps();
 
   const animationControls = useAnimationControls();
   const dragControls = useDragControls();
 
   const supabase = useSupabaseClient();
 
-  const { editable, periodWidth, periodHeight, constraintsRef } =
+  const { editable, periodWidth, periodHeight, constraintsRef, onEdit } =
     useContext(ScheduleContext);
 
   const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
@@ -108,7 +106,7 @@ export default function useSubjectPeriodEditor(
         setDetailsOpen(false);
         const { error } = await deleteScheduleItem(supabase, period.id!);
         if (error) return false;
-        await refreshProps();
+        await onEdit?.();
         return true;
       },
       toggleLoading,
@@ -169,7 +167,7 @@ export default function useSubjectPeriodEditor(
         });
 
         // Refetch the Schedule.
-        await refreshProps();
+        await onEdit?.();
 
         return true;
       },
@@ -241,7 +239,7 @@ export default function useSubjectPeriodEditor(
         }
 
         // Refetch the Schedule.
-        await refreshProps();
+        await onEdit?.();
 
         return true;
       },
