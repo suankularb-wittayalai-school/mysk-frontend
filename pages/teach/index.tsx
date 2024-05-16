@@ -9,6 +9,8 @@ import getTeacherSchedule from "@/utils/backend/schedule/getTeacherSchedule";
 import getTeachingSubjects from "@/utils/backend/subject/getTeachingSubjects";
 import getLocalePath from "@/utils/helpers/getLocalePath";
 import useLocale from "@/utils/helpers/useLocale";
+import TextGlance from "@/components/home/glance/TextGlance";
+import Link from "next/link";
 import { BackendReturn } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Teacher, UserRole } from "@/utils/types/person";
@@ -28,6 +30,7 @@ import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
+import { MaterialIcon } from "@suankularb-components/react";
 
 /**
  * The Teacher’s counterpart to Learn, where the user can see their Schedule
@@ -44,6 +47,7 @@ const TeachPage: CustomPage<{
 }> = ({ schedule, teacher, teachingSubjects }) => {
   const locale = useLocale();
   const { t } = useTranslation("teach");
+  const { t: ts } = useTranslation("schedule");
 
   const [query, setQuery] = useState("");
 
@@ -64,6 +68,24 @@ const TeachPage: CustomPage<{
           transition={transition(DURATION.medium4, EASING.standard)}
         >
           <Header>{t("schedule.title")}</Header>
+          <TextGlance
+            icon={<MaterialIcon icon="warning" size={20} />}
+            visible={true}
+            className="
+              !bg-error-container !text-on-error-container 
+              !border-error-container
+            "
+          >
+            {ts("title.inaccurateNotice.start")}
+            <Link 
+              href="http://www.sk.ac.th/" 
+              target="_blank"
+              className="link"
+            >
+              {ts("title.inaccurateNotice.url")}
+            </Link>
+            {ts("title.inaccurateNotice.end")}
+          </TextGlance>
           <Schedule
             schedule={schedule}
             subjectsInCharge={teacher.subjects_in_charge}

@@ -2,7 +2,12 @@
   "title": {
     "student": "Schedule",
     "studentWithClass": "M.{{number}} schedule",
-    "teacher": "Schedule"
+    "teacher": "Schedule",
+    "inaccurateNotice": {
+      "start": "This schedule is subject to change. Please check your official schedule from the ",
+      "url": "school website",
+      "end": "."
+    }
   },
   "atAGlance": {
     "title": {

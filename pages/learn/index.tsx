@@ -11,6 +11,8 @@ import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
 import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSubjectsOfClass";
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
 import useLocale from "@/utils/helpers/useLocale";
+import TextGlance from "@/components/home/glance/TextGlance";
+import Link from "next/link";
 import { BackendReturn } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { IDOnly } from "@/utils/types/fetch";
@@ -31,6 +33,7 @@ import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
+import { MaterialIcon } from "@suankularb-components/react";
 
 /**
  * The Student’s counterpart to Teach, where the user can see their Schedule
@@ -55,9 +58,9 @@ const LearnPage: CustomPage<{
   inEnrollmentPeriod,
   isElectiveEligible,
 }) => {
+  const locale = useLocale();
   const { t } = useTranslation("learn");
   const { t: ts } = useTranslation("schedule");
-  const locale = useLocale();
 
   const [query, setQuery] = useState("");
 
@@ -90,6 +93,24 @@ const LearnPage: CustomPage<{
           transition={transition(DURATION.medium4, EASING.standard)}
         >
           <Header>{t("schedule")}</Header>
+          <TextGlance
+              icon={<MaterialIcon icon="warning" size={20} />}
+              visible={true}
+              className="
+                !bg-error-container !text-on-error-container 
+                !border-error-container
+              "
+            >
+              {ts("title.inaccurateNotice.start")}
+              <Link 
+                href="http://www.sk.ac.th/" 
+                target="_blank"
+                className="link"
+              >
+                {ts("title.inaccurateNotice.url")}
+              </Link>
+              {ts("title.inaccurateNotice.end")}
+            </TextGlance>
           <Schedule schedule={schedule} view={UserRole.student} />
         </motion.section>
 
