@@ -4,7 +4,7 @@ import { Subject } from "@/utils/types/subject";
 import { Day } from "date-fns";
 
 export type Schedule = {
-  class?: Pick<Classroom, "id" | "number">;
+  classroom: Pick<Classroom, "id" | "number"> | null;
   content: ScheduleRow[];
 };
 

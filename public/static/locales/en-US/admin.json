@@ -1,36 +1,40 @@
 {
   "title": "Admin panel",
-  "statistics": {
-    "student": {
-      "all_one": "{{count, number}} student",
-      "all_other": "{{count, number}} students",
-      "onboarded_one": "{{count, number}} student onboarded",
-      "onboarded_other": "{{count, number}} students onboarded"
-    },
-    "teacher": {
-      "all_one": "{{count, number}} teacher",
-      "all_other": "{{count, number}} teachers",
-      "onboarded_one": "{{count, number}} teacher onboarded",
-      "onboarded_other": "{{count, number}} teachers onboarded"
-    },
-    "class": {
-      "thisYear_one": "{{count, number}} class",
-      "thisYear_other": "{{count, number}} classes",
-      "all_one": "{{count, number}} class including past years",
-      "all_other": "{{count, number}} classes including past years"
-    },
-    "news": {
-      "thisYear_one": "{{count, number}} news article",
-      "thisYear_other": "{{count, number}} news articles",
-      "all_one": "{{count, number}} article including past years",
-      "all_other": "{{count, number}} articles including past years"
-    },
-    "lastUpdated": "Last updated: {{date}}"
-  },
   "supabase": {
-    "title": "Manage data with Supabase Table Editor",
+    "title": "Supabase",
+    "desc": "The MySK database is stored in Supabase and fetched via MySK API. View and edit tables in its dashboard.",
     "action": {
-      "open": "Open Supabase"
+      "browse": "Browse",
+      "readDocs": "Read docs"
     }
-  }
+  },
+  "schedule": {
+    "title": "Schedule editor",
+    "desc": "Correct any schedule import errors of any classroom using tools meant for teachers.",
+    "empty": "Load a schedule to get started.",
+    "view": {
+      "title": "Choose view…",
+      "student": "Clasroom",
+      "teacher": "Teacher"
+    },
+    "mergeOverlapping": "Merge overlapping",
+    "action": {
+      "continue": "Continue",
+      "getClassroom": "Get classroom"
+    },
+    "dialog": {
+      "getClassroom": {
+        "title": "Get schedule of classroom",
+        "desc": "Enter the 3-digit classroom number.",
+        "form": {
+          "classroom": "Classroom"
+        },
+        "action": {
+          "cancel": "𝕏 (formerly Twitter)",
+          "go": "Golang"
+        }
+      }
+    }
+  },
+  "warning": "Any changes made in this panel will immediately affect users. Proceed with caution."
 }

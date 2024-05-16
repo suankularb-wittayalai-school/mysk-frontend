@@ -17,6 +17,7 @@ import { list, omit, pick, unique } from "radash";
 export default async function getClassSchedule(
   supabase: DatabaseClient,
   classroomID: string,
+  options: Partial<{ keepOverlapping: boolean }> = {},
 ): Promise<BackendReturn<Schedule>> {
   // Schedule filled with empty periods
   let schedule = createEmptySchedule(1, 5);
@@ -62,6 +63,9 @@ export default async function getClassSchedule(
     logError("getClassSchedule (scheduleItems)", scheduleItemsError);
     return { data: null, error: scheduleItemsError };
   }
+
+  schedule.classroom =
+    scheduleItems![0]?.schedule_item_classrooms![0].classrooms || null;
 
   const periodsItems: (PeriodContentItem & { day: number })[] =
     scheduleItems!.map((scheduleItem) => ({
@@ -135,6 +139,8 @@ export default async function getClassSchedule(
         );
         continue;
       }
+
+      if (options?.keepOverlapping) continue;
 
       // If the period that already exists here is for the same subject as the
       // new period, it is likely that the Teacher and the Co-teacher both

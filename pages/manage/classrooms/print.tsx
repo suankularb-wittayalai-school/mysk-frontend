@@ -50,7 +50,7 @@ const ClassroomsBulkPrintPage: CustomPage<{
           "elective",
         ]}
         filters={["noElective", "hasAllergies"]}
-        parentURL="/classes"
+        parentURL="/manage"
       />
     </>
   );

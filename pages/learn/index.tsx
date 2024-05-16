@@ -23,7 +23,7 @@ import {
   EASING,
   Header,
   Search,
-  transition,
+  transition
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { LayoutGroup, motion } from "framer-motion";
@@ -55,9 +55,9 @@ const LearnPage: CustomPage<{
   inEnrollmentPeriod,
   isElectiveEligible,
 }) => {
+  const locale = useLocale();
   const { t } = useTranslation("learn");
   const { t: ts } = useTranslation("schedule");
-  const locale = useLocale();
 
   const [query, setQuery] = useState("");
 

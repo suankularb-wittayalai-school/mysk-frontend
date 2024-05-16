@@ -32,7 +32,7 @@ const SubjectPeriod: StylableFC<{
   day: Day;
   isInSession?: boolean;
 }> = ({ period, day, isInSession, style, className }) => {
-  const { view, editable, constraintsRef } = useContext(ScheduleContext);
+  const { editable, constraintsRef } = useContext(ScheduleContext);
 
   const {
     animationControls,
@@ -102,9 +102,7 @@ const SubjectPeriod: StylableFC<{
 
         {/* Hover menu */}
         <SubjectPeriodMenu
-          open={
-            view === UserRole.teacher && (extending || (!loading && menuOpen))
-          }
+          open={editable === true && (extending || (!loading && menuOpen))}
           period={period}
           dragControls={dragControls}
           extending={extending}

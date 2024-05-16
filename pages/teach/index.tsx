@@ -9,6 +9,7 @@ import getTeacherSchedule from "@/utils/backend/schedule/getTeacherSchedule";
 import getTeachingSubjects from "@/utils/backend/subject/getTeachingSubjects";
 import getLocalePath from "@/utils/helpers/getLocalePath";
 import useLocale from "@/utils/helpers/useLocale";
+import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import { BackendReturn } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Teacher, UserRole } from "@/utils/types/person";
@@ -20,7 +21,7 @@ import {
   EASING,
   Header,
   Search,
-  transition,
+  transition
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { LayoutGroup, motion } from "framer-motion";
@@ -47,6 +48,8 @@ const TeachPage: CustomPage<{
 
   const [query, setQuery] = useState("");
 
+  const refreshProps = useRefreshProps();
+
   return (
     <HomeLayout>
       <LayoutGroup>
@@ -70,6 +73,7 @@ const TeachPage: CustomPage<{
             teacherID={teacher.id}
             view={UserRole.teacher}
             editable
+            onEdit={refreshProps}
           />
         </motion.section>
 
