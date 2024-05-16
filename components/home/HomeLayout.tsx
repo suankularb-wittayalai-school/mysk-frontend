@@ -1,4 +1,5 @@
 import PageHeader from "@/components/common/PageHeader";
+import ScheduleInaccurateGlance from "@/components/home/glance/ScheduleInaccurateGlance";
 import SakeCelebration from "@/components/home/sake/SakeCelebration";
 import { StylableFC } from "@/utils/types/common";
 import { ContentLayout } from "@suankularb-components/react";
@@ -16,6 +17,7 @@ const HomeLayout: StylableFC<{
   children: ReactNode;
 }> = ({ children, style, className }) => {
   const { t: tx } = useTranslation("common");
+  const { t: ts } = useTranslation("schedule");
 
   // A note on this component: don’t include any elements specific to a role,
   // as this component is for *common elements* of Home pages.
@@ -27,6 +29,7 @@ const HomeLayout: StylableFC<{
       </Head>
       <PageHeader>{tx("appName")}</PageHeader>
       <ContentLayout style={style} className={className}>
+        <ScheduleInaccurateGlance />
         {children}
         <SakeCelebration />
       </ContentLayout>

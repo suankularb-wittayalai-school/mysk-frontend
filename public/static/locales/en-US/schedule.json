@@ -4,6 +4,7 @@
     "studentWithClass": "M.{{number}} schedule",
     "teacher": "Schedule"
   },
+  "inaccurateNotice": "This schedule may not be accurate. Please check your official schedule from the <0>school website</0>.",
   "atAGlance": {
     "title": {
       "assembly": "Go to asssembly now",

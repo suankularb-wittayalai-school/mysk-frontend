@@ -21,7 +21,7 @@ import {
   EASING,
   Header,
   Search,
-  transition,
+  transition
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { LayoutGroup, motion } from "framer-motion";
