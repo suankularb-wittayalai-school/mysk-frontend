@@ -2,7 +2,6 @@ import HomeLayout from "@/components/home/HomeLayout";
 import TeachElectiveEntryCard from "@/components/home/TeachElectiveEntryCard";
 import TeachingSubjectCard from "@/components/home/TeachingSubjectCard";
 import ScheduleGlance from "@/components/home/glance/ScheduleGlance";
-import TextGlance from "@/components/home/glance/TextGlance";
 import Schedule from "@/components/schedule/Schedule";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
@@ -20,14 +19,13 @@ import {
   DURATION,
   EASING,
   Header,
-  MaterialIcon,
   Search,
-  transition,
+  transition
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { LayoutGroup, motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { Trans, useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
 
