@@ -5,6 +5,7 @@ import { ContentLayout } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import Head from "next/head";
 import { ReactNode } from "react";
+import ScheduleInaccurateGlance from "./glance/ScheduleInaccurateGlance";
 
 /**
  * A Content Layout with all the common elements of Home pages (like Learn and
@@ -16,6 +17,7 @@ const HomeLayout: StylableFC<{
   children: ReactNode;
 }> = ({ children, style, className }) => {
   const { t: tx } = useTranslation("common");
+  const { t: ts } = useTranslation("schedule");
 
   // A note on this component: don’t include any elements specific to a role,
   // as this component is for *common elements* of Home pages.
@@ -27,6 +29,7 @@ const HomeLayout: StylableFC<{
       </Head>
       <PageHeader>{tx("appName")}</PageHeader>
       <ContentLayout style={style} className={className}>
+        <ScheduleInaccurateGlance />
         {children}
         <SakeCelebration />
       </ContentLayout>
