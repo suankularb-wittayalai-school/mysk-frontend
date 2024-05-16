@@ -16,7 +16,6 @@ import classroomOfPerson from "@/utils/helpers/classroom/classroomOfPerson";
 import cn from "@/utils/helpers/cn";
 import useToggle from "@/utils/helpers/useToggle";
 import { YYYYMMDDRegex } from "@/utils/patterns";
-import { supabase } from "@/utils/supabase-backend";
 import {
   AttendanceEvent,
   HomeroomContent,
@@ -32,8 +31,9 @@ import {
   List,
   MaterialIcon,
 } from "@suankularb-components/react";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { isFuture, isToday, isWeekend } from "date-fns";
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
@@ -221,6 +221,8 @@ const DateAttendancePage: CustomPage<{
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
+  req,
+  res,
 }) => {
   const { classNumber, date } = params as { [key: string]: string };
   if (
@@ -229,6 +231,11 @@ export const getServerSideProps: GetServerSideProps = async ({
     isWeekend(new Date(date))
   )
     return { notFound: true };
+
+  const supabase = createPagesServerClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
   const { data: classroom, error } = await getClassroomByNumber(
     supabase,
