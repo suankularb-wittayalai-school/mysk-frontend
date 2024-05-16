@@ -8,8 +8,7 @@ const ScheduleInaccurateGlance = (() => {
 
   return (
     <TextGlance
-      icon={<MaterialIcon icon="warning" size={20} />}
-      visible={true}
+      icon={<MaterialIcon icon="warning" size={20} />} visible
       className={cn(`!bg-error-container !text-on-error-container 
         !border-error-container`)}
     >
