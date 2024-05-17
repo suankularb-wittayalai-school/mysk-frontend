@@ -12,20 +12,18 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { sift } from "radash";
+import { pick, sift } from "radash";
 import shortUUID from "short-uuid";
 
 /**
  * A preview and options page for printing a list of Students enrolled in an
  * Elective Subject.
  *
- * @param electiveSubject The Elective Subject to print the Student List for.
- * @param students The list of Students enrolled in the Elective Subject.
+ * @param electiveSubject The Elective Subject to print the Student List for with full Student details.
  */
 const EnrollmentListPrintPage: CustomPage<{
   electiveSubject: ElectiveSubject;
-  students: Student[];
-}> = ({ electiveSubject, students }) => {
+}> = ({ electiveSubject }) => {
   const { t } = useTranslation("elective", { keyPrefix: "print" });
   const { t: tx } = useTranslation("common");
 
@@ -48,7 +46,7 @@ const EnrollmentListPrintPage: CustomPage<{
                 locale={locale}
               />
             ),
-            students,
+            students: electiveSubject.students,
           },
         ]}
         columns={sift([
@@ -92,6 +90,14 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
     electiveSubject.students.map((student) => student.id),
     { detailed: true },
   );
+  electiveSubject.students = sortStudents(
+    students!.map((student) => ({
+      ...student,
+      chosen_elective: pick(electiveSubject, [
+        "randomized_students",
+      ]) as ElectiveSubject,
+    })),
+  );
 
   return {
     props: {
@@ -101,7 +107,6 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
         "elective",
       ])),
       electiveSubject,
-      students: sortStudents(students!),
     },
     revalidate: 10,
   };
