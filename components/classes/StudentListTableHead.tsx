@@ -61,9 +61,6 @@ const StudentListTableHead: StylableFC<{
         </th>
       )}
 
-      {/* Enrollment via randomization */}
-      {options.columns.includes("randomized") && <th className="w-4"> </th>}
-
       {/* Class no. */}
       {options.columns.includes("classroom") && (
         <th colSpan={2} className="w-16">
