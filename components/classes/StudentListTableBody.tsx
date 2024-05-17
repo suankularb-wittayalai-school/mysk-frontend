@@ -66,9 +66,11 @@ const StudentListTableBody: StylableFC<{
               </td>
               <td className="w-36 !border-l-0">
                 {getLocaleString(student.last_name, options.language)}
-                {student.chosen_elective?.randomized_students.some(
-                  (randomizedStudent) => student.id === randomizedStudent.id,
-                ) && "*"}
+                {options?.columns.includes("randomized") &&
+                  student.chosen_elective?.randomized_students.some(
+                    (randomizedStudent) => student.id === randomizedStudent.id,
+                  ) &&
+                  "*"}
               </td>
             </>
           )}
