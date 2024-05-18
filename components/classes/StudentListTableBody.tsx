@@ -66,6 +66,11 @@ const StudentListTableBody: StylableFC<{
               </td>
               <td className="w-36 !border-l-0">
                 {getLocaleString(student.last_name, options.language)}
+                {options?.columns.includes("randomized") &&
+                  student.chosen_elective?.randomized_students.some(
+                    (randomizedStudent) => student.id === randomizedStudent.id,
+                  ) &&
+                  "*"}
               </td>
             </>
           )}
@@ -75,17 +80,6 @@ const StudentListTableBody: StylableFC<{
             <td>
               {student.nickname &&
                 getLocaleString(student.nickname, options.language)}
-            </td>
-          )}
-
-          {/* Enrollment via randomization */}
-          {options.columns.includes("randomized") && (
-            <td className="!border-l-0">
-              {student.chosen_elective?.randomized_students.some(
-                (randomizedStudent) => student.id === randomizedStudent.id,
-              )
-                ? "*"
-                : " "}
             </td>
           )}
 

@@ -12,7 +12,7 @@ import { GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { objectify } from "radash";
+import { objectify, pick } from "radash";
 
 /**
  * A preview and options page for printing a list of Students enrolled for all
@@ -89,7 +89,12 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
   const studentsMap = objectify(students, (student) => student.id);
   for (const electiveSubject of electiveSubjects) {
     electiveSubject.students = sortStudents(
-      electiveSubject.students.map((student) => studentsMap[student.id]),
+      electiveSubject.students.map((student) => ({
+        ...studentsMap[student.id],
+        chosen_elective: pick(electiveSubject, [
+          "randomized_students",
+        ]) as ElectiveSubject,
+      })),
     );
   }
 
