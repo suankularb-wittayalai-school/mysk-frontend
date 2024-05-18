@@ -11,7 +11,7 @@ import {
   CardContent,
   CardHeader,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 
 /**
@@ -23,9 +23,7 @@ const LearnElectiveEntryCard: StylableFC<{
   inEnrollmentPeriod?: boolean;
 }> = ({ inEnrollmentPeriod, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("schedule", {
-    keyPrefix: "subjectList.elective",
-  });
+  const { t } = useTranslation("schedule/subjectList");
 
   const mysk = useMySKClient();
   const enrolledElective = (mysk.person as Student)?.chosen_elective || null;
@@ -42,7 +40,7 @@ const LearnElectiveEntryCard: StylableFC<{
         subtitle={
           enrolledElective
             ? getLocaleString(enrolledElective.name, locale)
-            : t("subtitle", { context: "student" })
+            : t("elective.subtitle.student")
         }
         className="grow items-start"
       />
@@ -51,9 +49,9 @@ const LearnElectiveEntryCard: StylableFC<{
           <Button appearance="filled" href="/learn/electives" element={Link}>
             {inEnrollmentPeriod
               ? enrolledElective
-                ? t("action.change")
-                : t("action.choose")
-              : t("action.view")}
+                ? t("elective.action.change")
+                : t("elective.action.choose")
+              : t("elective.action.view")}
           </Button>
         </Actions>
       </CardContent>

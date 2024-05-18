@@ -1,0 +1,12 @@
+{
+  "title": {
+    "student": "Schedule",
+    "teacher": "Schedule"
+  },
+  "yourSubjects": "Your subjects",
+  "subject": {
+    "teachers": "Teachers",
+    "room": "Room"
+  },
+  "elective": "Elective"
+}

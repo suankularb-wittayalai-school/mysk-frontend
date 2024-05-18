@@ -1,0 +1,12 @@
+{
+  "title": {
+    "student": "ตารางเรียน",
+    "teacher": "ตารางสอน"
+  },
+  "yourSubjects": "เลือกวิชา",
+  "subject": {
+    "teachers": "ครูผู้สอน",
+    "room": "ห้องที่ใช้เรียน"
+  },
+  "elective": "วิชาเลือก"
+}

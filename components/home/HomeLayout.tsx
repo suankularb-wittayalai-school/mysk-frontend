@@ -17,7 +17,6 @@ const HomeLayout: StylableFC<{
   children: ReactNode;
 }> = ({ children, style, className }) => {
   const { t: tx } = useTranslation("common");
-  const { t: ts } = useTranslation("schedule");
 
   // A note on this component: don’t include any elements specific to a role,
   // as this component is for *common elements* of Home pages.

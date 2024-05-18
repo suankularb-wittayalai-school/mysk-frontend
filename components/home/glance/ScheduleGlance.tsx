@@ -22,7 +22,7 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * A Glance dynamically updated by the current and upcoming schedule items,
@@ -39,7 +39,7 @@ const ScheduleGlance: StylableFC<{
   studentID?: string;
   classroom?: Pick<Classroom, "number">;
 }> = ({ schedule, role, studentID, classroom, style, className }) => {
-  const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
+  const { t } = useTranslation("glance/schedule");
 
   const {
     displayType,

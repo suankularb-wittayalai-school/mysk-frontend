@@ -1,0 +1,32 @@
+{
+  "title": {
+    "assembly": "Go to asssembly now",
+    "homeroom": "Go to homeroom now",
+    "learnCurrent_one": "You’re learning {{value}}",
+    "learnCurrent_other": "You’re learning your chosen elective",
+    "learnNext_one": "You’ll learn {{value}} next",
+    "learnNext_other": "You’ll learn your chosen elective next",
+    "lunch": "Enjoy your lunch",
+    "teachCurrent": "You’re teaching {{value}}",
+    "teachWrapUp": "Get ready to wrap up {{value}}",
+    "teachTravel": "Go to room {{value}} now",
+    "teachFuture": "Nothing right now; your next class today is {{value}}"
+  },
+  "interval": "{{start, time}}–{{end, time}}",
+  "countdown": {
+    "pre": "",
+    "post_one": "minute left",
+    "post_other": "minutes left"
+  },
+  "action": {
+    "attendance": {
+      "unknown": {
+        "student": "View attendance",
+        "teacher": "Take attendance"
+      },
+      "absent": "Marked absent",
+      "present": "Marked present"
+    }
+  },
+  "progressAlt": "Class/period progress"
+}

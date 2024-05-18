@@ -1,0 +1,9 @@
+{
+  "title": {
+    "elective": "Elective period"
+  },
+  "action": {
+    "delete": "Delete period",
+    "close": "Close"
+  }
+}

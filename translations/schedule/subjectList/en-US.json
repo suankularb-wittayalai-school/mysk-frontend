@@ -1,0 +1,24 @@
+{
+  "title": "Subject list",
+  "searchAlt": "Search subjects",
+  "elective": {
+    "title": "Elective subject",
+    "subtitle": {
+      "student": "Not chosen",
+      "teacher_one": "{{count, number}} session",
+      "teacher_other": "{{count, number}} sessions"
+    },
+    "action": {
+      "choose": "Choose",
+      "change": "Change",
+      "view": "View"
+    }
+  },
+  "card": {
+    "noTeachers": "No teachers",
+    "action": {
+      "ggcLink": "Google Classroom link",
+      "copyGGCCode": "Copy class code"
+    }
+  }
+}

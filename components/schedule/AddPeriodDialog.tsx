@@ -34,8 +34,9 @@ import {
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import { useTranslation as useLegacyTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { useContext, useEffect } from "react";
 
 /**
@@ -53,8 +54,8 @@ const AddPeriodDialog: StylableFC<{
   onSubmit: () => void;
 }> = ({ subject, open, onClose, onSubmit }) => {
   const locale = useLocale();
-  const { t } = useTranslation("schedule", { keyPrefix: "dialog.editPeriod" });
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("schedule/editor/editDialog");
+  const { t: tx } = useLegacyTranslation("common");
 
   const plausible = usePlausible();
   const mysk = useMySKClient();

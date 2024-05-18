@@ -6,8 +6,8 @@ import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { Button, MaterialIcon } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { title } from "radash";
 import { useEffect, useState } from "react";
@@ -26,9 +26,7 @@ const AttendanceButton: StylableFC<{
   studentID?: string;
   classroom?: Pick<Classroom, "number">;
 }> = ({ role, attendanceEvent, studentID, classroom, style, className }) => {
-  const { t } = useTranslation("schedule", {
-    keyPrefix: "atAGlance.action.attendance",
-  });
+  const { t } = useTranslation("glance/schedule");
 
   const plausible = usePlausible();
   const supabase = useSupabaseClient();
@@ -75,11 +73,15 @@ const AttendanceButton: StylableFC<{
         className,
       )}
     >
-      {isPresent === null
-        ? t("unknown", { context: role })
-        : isPresent
-          ? t("present")
-          : t("absent")}
+      {t(
+        `action.attendance.${
+          isPresent === null
+            ? `unknown.${role}`
+            : isPresent
+              ? "present"
+              : "absent"
+        }`,
+      )}
     </Button>
   );
 };
