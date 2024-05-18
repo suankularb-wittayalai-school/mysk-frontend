@@ -172,7 +172,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         "home",
         "learn",
         "classes",
-        // "schedule",
         "lookup",
       ])),
       birthdayBoys: birthdayBoys || [],
