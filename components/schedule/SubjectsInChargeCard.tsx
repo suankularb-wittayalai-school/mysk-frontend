@@ -3,7 +3,7 @@ import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { Subject } from "@/utils/types/subject";
 import { Card, ChipSet, Text } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * Displays a Card with a set of Chips, each denoting a Subject, that a Teacher
@@ -14,7 +14,7 @@ import { useTranslation } from "next-i18next";
 const SubjectsInChargeCard: StylableFC<{
   subjects: Pick<Subject, "id" | "name" | "code" | "short_name">[];
 }> = ({ subjects, style, className }) => {
-  const { t } = useTranslation("schedule");
+  const { t } = useTranslation("schedule/common");
 
   return (
     <Card
@@ -31,7 +31,7 @@ const SubjectsInChargeCard: StylableFC<{
         element="h3"
         className="whitespace-nowrap px-4 pt-2 md:pt-0"
       >
-        {t("schedule.yourSubjects")}
+        {t("yourSubjects")}
       </Text>
       <div>
         <ChipSet className="px-4 pb-4 sm:pb-3 md:pb-0 md:pl-0">
