@@ -14,21 +14,21 @@ module.exports = {
   defaultLocale: "th",
   locales: ["en-US", "th"],
   pages: {
-    "*": ["common"],
-    "/learn": [
+    // Common
+    "*": ["common", "common/appDrawer", "common/layout"],
+    // Home pages
+    "rgx:/(learn|teach)$": [
       "glance/schedule",
       "glance/scheduleInaccurate",
-      "schedule/common",
-      "schedule/periodDialog",
       "schedule/subjectList",
     ],
-    "/teach": [
-      "glance/schedule",
-      "glance/scheduleInaccurate",
-      "schedule/common",
+    // Schedule
+    "rgx:/(learn|teach|classes|search/(students|teachers)/results|admin/schedule)$":
+      ["schedule/common", "schedule/periodDialog"],
+    // Schedule editor
+    "rgx:/(teach|admin/schedule)$": [
       "schedule/editor/editDialog",
       "schedule/editor/hoverMenu",
-      "schedule/periodDialog",
       "schedule/subjectList",
     ],
   },
