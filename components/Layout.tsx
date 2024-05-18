@@ -25,8 +25,8 @@ import {
   Text,
   useBreakpoint,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import {
@@ -52,7 +52,7 @@ const Layout: FC<
 > = ({ children, fab, navType, childURLs }) => {
   // Translation
   const locale = useLocale();
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("common/layout");
 
   // Analytics
   const plausible = usePlausible();
@@ -130,7 +130,7 @@ const Layout: FC<
       {/* Navigation Drawer */}
       <NavDrawer open={navOpen} onClose={() => setNavOpen(false)}>
         {/* Top-level pages */}
-        <NavDrawerSection header={t("appName")}>
+        <NavDrawerSection header={t("common:appName")}>
           <NavDrawerItem
             icon={<MaterialIcon icon="home" />}
             label={t("navigation.home")}
@@ -324,7 +324,7 @@ const Layout: FC<
         >
           <NavBarItem
             icon={<Favicon />}
-            label={t("appName")}
+            label={t("common:appName")}
             selected={router.pathname.startsWith(homeURL)}
             href={homeURL}
             element={Link}

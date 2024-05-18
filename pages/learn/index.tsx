@@ -140,16 +140,15 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { classroom } = student;
 
   const [
-    birthdayBoys,
-    schedule,
-    subjectList,
+    { data: birthdayBoys },
+    { data: schedule },
+    { data: subjectList },
     { data: inEnrollmentPeriod },
     { data: availableElectives },
   ] = await Promise.all([
-    (await getBirthdayBoysOfClassroom(supabase, classroom.id)).data,
-    (await getClassSchedule(supabase, `cae0ad5f-6343-4027-ac01-860c10bfad40`))
-      .data,
-    (await getClassroomSubjectsOfClass(supabase, classroom.id)).data,
+    await getBirthdayBoysOfClassroom(supabase, classroom.id),
+    await getClassSchedule(supabase, classroom.id),
+    await getClassroomSubjectsOfClass(supabase, classroom.id),
     await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"),
     await mysk.fetch<IDOnly[]>("/v1/subjects/electives", {
       query: {

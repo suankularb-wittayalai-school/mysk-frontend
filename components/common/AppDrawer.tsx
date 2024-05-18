@@ -18,8 +18,8 @@ import {
   AppDrawerSegment,
   AppDrawer as BaseAppDrawer,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
 
 /**
@@ -29,7 +29,7 @@ import Image from "next/image";
  */
 const AppDrawer: StylableFC = ({ style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("common", { keyPrefix: "appDrawer" });
+  const { t } = useTranslation("common/appDrawer");
 
   const plausible = usePlausible();
 

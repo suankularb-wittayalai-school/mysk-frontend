@@ -1,0 +1,15 @@
+{
+  "appName": "MySK",
+  "tabName": "{{tabName}} - MySK",
+  "brand": {
+    "name": "MySK",
+    "description": "Easily access and understand school data with the MySK education management system for Suankularb Wittayalai School.",
+    "school": "Suankularb Wittayalai School"
+  },
+  "class": "M.{{number}}",
+  "classNo": "No. {{classNo}}",
+  "ordinal_one": "{{count, number}}st",
+  "ordinal_two": "{{count, number}}nd",
+  "ordinal_few": "{{count, number}}rd",
+  "ordinal_other": "{{count, number}}th"
+}
