@@ -1,0 +1,29 @@
+{
+  "title": {
+    "add": "Add a class to subject",
+    "edit": "Edit class of subject"
+  },
+  "class": "Class",
+  "class_helper": "The class you’re teaching this subject to.",
+  "people": {
+    "title": "People",
+    "desc": "Add teachers and co-teachers that teach this subject to this class. They will see this class on their list.",
+    "teachers": "Teachers",
+    "coTeachers": "Co-teachers"
+  },
+  "google": {
+    "title": "Google services",
+    "desc": "<a>Create a class</a> on Google Classroom first. Then, enter information related to that class to let students find your class via MySK.",
+    "ggcCode": "Google Classroom code",
+    "ggcCode_helper": "Learn <a>how to get the code</a>.",
+    "ggcLink": "Google Classroom link",
+    "ggcLink_helper": "Learn <a>how to get the link</a>.",
+    "ggcLink_error": "Ensure you copied the entire link.",
+    "ggMeetLink": "Google Meet link",
+    "ggMeetLink_error": "Ensure you copied the entire link."
+  },
+  "action": {
+    "save": "Save",
+    "add": "Add"
+  }
+}
