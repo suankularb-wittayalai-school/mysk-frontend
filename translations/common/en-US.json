@@ -11,5 +11,12 @@
   "ordinal_one": "{{count, number}}st",
   "ordinal_two": "{{count, number}}nd",
   "ordinal_few": "{{count, number}}rd",
-  "ordinal_other": "{{count, number}}th"
+  "ordinal_other": "{{count, number}}th",
+  "snackbar": {
+    "loading": "Loading…",
+    "changesSaved": "Changes saved",
+    "failure": "Task failed, please try again",
+    "formInvalid": "Check the form and try again",
+    "copiedToClipboard": "Copied to clipboard"
+  }
 }
