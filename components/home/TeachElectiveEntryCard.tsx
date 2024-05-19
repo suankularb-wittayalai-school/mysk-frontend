@@ -20,7 +20,7 @@ import Link from "next/link";
 const TeachElectiveEntryCard: StylableFC<{
   electivesInCharge: ElectiveSubject[];
 }> = ({ electivesInCharge, style, className }) => {
-  const { t } = useTranslation("schedule/subjectList");
+  const { t } = useTranslation("home/subjectList");
 
   return (
     <Card
@@ -29,7 +29,7 @@ const TeachElectiveEntryCard: StylableFC<{
       className={cn(`!bg-primary-container`, className)}
     >
       <CardHeader
-        title={t("title")}
+        title={t("elective.title")}
         subtitle={t("elective.subtitle.teacher", {
           count: electivesInCharge.length,
         })}

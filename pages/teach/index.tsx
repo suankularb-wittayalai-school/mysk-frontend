@@ -85,10 +85,10 @@ const TeachPage: CustomPage<{
         >
           <Columns columns={3} className="!items-end">
             <Header className="md:col-span-2">
-              {t("schedule/subjectList:title")}
+              {t("home/subjectList:title")}
             </Header>
             <Search
-              alt={t("schedule/subjectList.searchAlt")}
+              alt={t("home/subjectList.searchAlt")}
               value={query}
               locale={locale}
               onChange={setQuery}
@@ -154,7 +154,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "account",
         "home",
-        "teach",
         "classes",
       ])),
       schedule,

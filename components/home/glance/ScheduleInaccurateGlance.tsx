@@ -19,7 +19,7 @@ const ScheduleInaccurateGlance: StylableFC = ({ style, className }) => (
     )}
   >
     <Trans
-      i18nKey="glance/scheduleInaccurate:text"
+      i18nKey="home/glance/scheduleInaccurate:text"
       components={{
         0: <a href="http://www.sk.ac.th/" target="_blank" className="link" />,
       }}

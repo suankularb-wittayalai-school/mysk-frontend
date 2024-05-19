@@ -17,7 +17,9 @@
     "noTeachers": "ไม่มีครูผู้สอน",
     "action": {
       "ggcLink": "ลิงก์เข้า Google Classroom",
-      "copyGGCCode": "คัดลอกรหัสเข้า Google Classroom"
+      "copyGGCCode": "คัดลอกรหัสเข้า Google Classroom",
+      "setUp": "เพิ่มห้องเรียน",
+      "seeDetails": "ดูรายละเอียด"
     }
   }
 }

@@ -23,7 +23,7 @@ const LearnElectiveEntryCard: StylableFC<{
   inEnrollmentPeriod?: boolean;
 }> = ({ inEnrollmentPeriod, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("schedule/subjectList");
+  const { t } = useTranslation("home/subjectList");
 
   const mysk = useMySKClient();
   const enrolledElective = (mysk.person as Student)?.chosen_elective || null;
@@ -36,7 +36,7 @@ const LearnElectiveEntryCard: StylableFC<{
       className={cn(`!bg-primary-container`, className)}
     >
       <CardHeader
-        title={t("title")}
+        title={t("elective.title")}
         subtitle={
           enrolledElective
             ? getLocaleString(enrolledElective.name, locale)

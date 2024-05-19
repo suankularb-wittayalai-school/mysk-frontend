@@ -18,7 +18,9 @@
     "noTeachers": "No teachers",
     "action": {
       "ggcLink": "Google Classroom link",
-      "copyGGCCode": "Copy class code"
+      "copyGGCCode": "Copy class code",
+      "setUp": "Set up",
+      "seeDetails": "See details"
     }
   }
 }

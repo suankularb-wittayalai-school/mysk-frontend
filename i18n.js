@@ -18,10 +18,11 @@ module.exports = {
     "*": ["common", "common/appDrawer", "common/layout"],
     // Home pages
     "rgx:/(learn|teach)$": [
-      "glance/schedule",
-      "glance/scheduleInaccurate",
-      "schedule/subjectList",
+      "home/glance/schedule",
+      "home/glance/scheduleInaccurate",
+      "home/subjectList",
     ],
+    "/teach": ["home/classroomSubjectDialog", "home/subjectClassesDialog"],
     // Schedule
     "rgx:/(learn|teach|classes|search/(students|teachers)/results|admin/schedule)$":
       ["schedule/common", "schedule/periodDialog"],
@@ -29,7 +30,6 @@ module.exports = {
     "rgx:/(teach|admin/schedule)$": [
       "schedule/editor/editDialog",
       "schedule/editor/hoverMenu",
-      "schedule/subjectList",
     ],
   },
   logBuild: false,
