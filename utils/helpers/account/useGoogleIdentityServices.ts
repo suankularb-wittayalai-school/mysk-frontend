@@ -1,3 +1,4 @@
+import SnackbarContext from "@/contexts/SnackbarContext";
 import UserContext from "@/contexts/UserContext";
 import { GSIStatus } from "@/pages";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
@@ -8,12 +9,13 @@ import logError from "@/utils/helpers/logError";
 import useLocale from "@/utils/helpers/useLocale";
 import { OAuthResponseData } from "@/utils/types/fetch";
 import { User } from "@/utils/types/person";
+import { Snackbar } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GsiButtonConfiguration, IdConfiguration } from "google-one-tap";
 import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
 import { useRouter } from "next/router";
-import { useContext, useEffect } from "react";
+import { createElement, useContext, useEffect } from "react";
 
 /**
  * The default width of the Google Sign in Button in pixels.
@@ -41,11 +43,13 @@ export default function useGoogleIdentityServices(
 
   const locale = useLocale();
   const { t } = useTranslation("landing");
+  const { t: tx } = useTranslation("common");
 
   const plausible = usePlausible();
   const supabase = useSupabaseClient();
   const mysk = useMySKClient();
   const { setUser, setPerson } = useContext(UserContext);
+  const { setSnackbar } = useContext(SnackbarContext);
   const router = useRouter();
 
   /**
@@ -68,10 +72,12 @@ export default function useGoogleIdentityServices(
     );
     if (error) {
       logError("logInWithGoogle", error);
-      if (error.code === 401) {
+      if (error.code === 404) {
         plausible("Account Not Found");
         onNotFound?.();
-      }
+      } else
+        setSnackbar(createElement(Snackbar, undefined, tx("snackbar.failure")));
+      plausible("Log in Failed");
       setTimeout(() => onStateChange?.(GSIStatus.initial), 400);
       return;
     }
