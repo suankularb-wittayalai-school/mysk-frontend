@@ -142,7 +142,9 @@ export default function useGoogleIdentityServices(
    * Prompts the Google One Tap UI.
    */
   async function promptOneTapUI() {
-    window.google.accounts.id.prompt();
+    window.google.accounts.id.prompt((notification) => {
+      if (notification.isSkippedMoment()) plausible("Close One Tap UI");
+    });
   }
 
   /**
