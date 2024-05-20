@@ -25,7 +25,7 @@ import { useContext, useEffect } from "react";
  * @param options.onStateChange Triggers when the state of the Google Sign in changes.
  * @param options.onNotFound Triggers when the account is not found.
  */
-export default function useOneTapSignin(
+export default function useGoogleIdentityServices(
   options: Partial<{
     parentButtonID: string;
     buttonWidth: number;
