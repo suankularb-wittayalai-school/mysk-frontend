@@ -20,7 +20,7 @@ const ScheduleGlanceTitle: StylableFC<{
   displayPeriod?: SchedulePeriod;
 }> = ({ displayType, displayPeriod, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("glance/schedule");
+  const { t } = useTranslation("home/glance/schedule");
 
   /**
    * Value to pass to the translation function for the title.

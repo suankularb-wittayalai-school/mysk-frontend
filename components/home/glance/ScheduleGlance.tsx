@@ -39,7 +39,7 @@ const ScheduleGlance: StylableFC<{
   studentID?: string;
   classroom?: Pick<Classroom, "number">;
 }> = ({ schedule, role, studentID, classroom, style, className }) => {
-  const { t } = useTranslation("glance/schedule");
+  const { t } = useTranslation("home/glance/schedule");
 
   const {
     displayType,

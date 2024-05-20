@@ -26,7 +26,7 @@ const AttendanceButton: StylableFC<{
   studentID?: string;
   classroom?: Pick<Classroom, "number">;
 }> = ({ role, attendanceEvent, studentID, classroom, style, className }) => {
-  const { t } = useTranslation("glance/schedule");
+  const { t } = useTranslation("home/glance/schedule");
 
   const plausible = usePlausible();
   const supabase = useSupabaseClient();

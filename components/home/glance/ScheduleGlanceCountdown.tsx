@@ -14,7 +14,7 @@ const ScheduleGlanceCountdown: StylableFC<{
   minutesLeft: number;
 }> = ({ minutesLeft, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("glance/schedule");
+  const { t } = useTranslation("home/glance/schedule");
 
   return (
     <p style={style} className={cn(`space-x-1`, className)}>

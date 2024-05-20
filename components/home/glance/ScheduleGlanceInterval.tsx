@@ -12,7 +12,7 @@ import useTranslation from "next-translate/useTranslation";
 const ScheduleGlanceInterval: StylableFC<{
   interval: Interval;
 }> = ({ interval, style, className }) => {
-  const { t } = useTranslation("glance/schedule");
+  const { t } = useTranslation("home/glance/schedule");
 
   return (
     <motion.div
