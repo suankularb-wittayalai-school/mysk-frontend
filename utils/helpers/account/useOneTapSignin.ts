@@ -142,6 +142,7 @@ export default function useOneTapSignin(
   }
 
   // Handle the first mount of the component.
+  // See: https://stackoverflow.com/a/55655552
   useEffect(() => {
     // If `window.google` is immediately available on mount, initialize Google
     // Identity Services right away.
@@ -149,6 +150,10 @@ export default function useOneTapSignin(
       handleGoogleLoad();
       return;
     }
+    // If not, wait for the script to load before initializing Google Identity
+    // Services.
+    const script = document.querySelector("script[src*='accounts.google.com']");
+    if (script) script.addEventListener("load", handleGoogleLoad);
   }, []);
 
   // Re-render the Google One Tap UI when the locale or button width changes.
