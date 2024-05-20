@@ -13,6 +13,7 @@ export default function initializeGoogle(
     client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
     cancel_on_tap_outside: false,
     use_fedcm_for_prompt: true,
+    hd: "*", // Limit the account chooser to Workspace accounts only.
     log_level: "info",
     callback,
   } as IdConfiguration);
