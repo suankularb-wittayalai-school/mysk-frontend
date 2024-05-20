@@ -42,7 +42,7 @@ const ScheduleSubjectChip: FC<{
 
   function handleDragEnd() {
     if (additionSite?.startTime === undefined) {
-      animationControls.start({ x: 0, y: 0 });
+      animationControls.start({ x: 0, y: 0, boxShadow: "none" });
       return;
     }
     animationControls.start({ opacity: 0.5 });
@@ -58,7 +58,7 @@ const ScheduleSubjectChip: FC<{
 
     await animationControls.start({ opacity: 0, scale: 1.4 });
     animationControls.set({ x: 0, y: "-50%", scale: 1, scaleY: 0 });
-    animationControls.start({ y: 0, opacity: 1, scaleY: 1 });
+    animationControls.start({ y: 0, opacity: 1, scaleY: 1, boxShadow: "none" });
   }
 
   return (
