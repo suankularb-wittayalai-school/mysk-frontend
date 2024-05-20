@@ -3,7 +3,7 @@
     "add": "Add subject period",
     "edit": "Edit subject period"
   },
-  "addDesc": "You’re adding {{subject}} to {{day}}, period {{startTime}}. Fill in the following to finish.",
+  "addDesc": "You’re adding {{subject}} to {{date, day}}, period {{startTime}}. Fill in the following to finish.",
   "form": {
     "title": "Period information",
     "subject": "Subject",

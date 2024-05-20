@@ -33,8 +33,8 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { setDay } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTranslation as useLegacyTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
 import useTranslation from "next-translate/useTranslation";
 import { useContext, useEffect } from "react";
@@ -52,10 +52,9 @@ const AddPeriodDialog: StylableFC<{
   open?: boolean;
   onClose: () => void;
   onSubmit: () => void;
-}> = ({ subject, open, onClose, onSubmit }) => {
+}> = ({ subject, open, onClose, onSubmit, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("schedule/editor/editDialog");
-  const { t: tx } = useLegacyTranslation("common");
 
   const plausible = usePlausible();
   const mysk = useMySKClient();
@@ -65,7 +64,7 @@ const AddPeriodDialog: StylableFC<{
   const supabase = useSupabaseClient();
 
   // Form control
-  const { form, setForm, resetForm, formOK } = useForm<
+  const { form, setForm, resetForm, openFormSnackbar, formOK } = useForm<
     "classrooms" | "rooms" | "duration" | "teachers"
   >([
     {
@@ -90,19 +89,19 @@ const AddPeriodDialog: StylableFC<{
   ]);
 
   useEffect(() => {
-    if (mysk.user?.role === UserRole.teacher && mysk.person)
+    if (
+      mysk.user?.role === UserRole.teacher &&
+      mysk.person &&
+      !form.teachers.some((teacher: Teacher) => mysk.person!.id === teacher.id)
+    )
       setForm({ ...form, teachers: [...form.teachers, mysk.person] });
   }, [mysk.person]);
 
   // Form submission
   const [loading, toggleLoading] = useToggle();
   async function handleSubmit() {
-    if (!formOK) {
-      setSnackbar(
-        <Snackbar>{t("snackbar.formInvalid", { ns: "common" })}</Snackbar>,
-      );
-      return;
-    }
+    openFormSnackbar();
+    if (!formOK) return;
 
     await withLoading(
       async () => {
@@ -118,9 +117,7 @@ const AddPeriodDialog: StylableFC<{
         });
 
         if (error) {
-          setSnackbar(
-            <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>,
-          );
+          setSnackbar(<Snackbar>{t("common:snackbar.failure")}</Snackbar>);
           return false;
         }
 
@@ -142,13 +139,17 @@ const AddPeriodDialog: StylableFC<{
       open={open}
       width={360}
       onClose={onClose}
-      className="[&_.skc-chip-field\_\_label]:!bg-surface-container-high"
+      style={style}
+      className={cn(
+        String.raw`[&_.skc-chip-field\_\_label]:!bg-surface-container-high`,
+        className,
+      )}
     >
       <DialogHeader
         title={t("title.add")}
         desc={t("addDesc", {
           subject: getLocaleString(subject.name, locale),
-          day: tx(`datetime.day.${additionSite?.day}`),
+          date: setDay(new Date(), additionSite?.day || 0),
           startTime: additionSite?.startTime,
         })}
       />
@@ -175,7 +176,7 @@ const AddPeriodDialog: StylableFC<{
               layout="position"
               className="skc-text skc-text--title-medium truncate"
             >
-              {tx("class", {
+              {t("common:class", {
                 number: form.classrooms.length
                   ? (form.classrooms as Pick<Classroom, "id" | "number">[]).map(
                       ({ number }) => number,
@@ -191,7 +192,7 @@ const AddPeriodDialog: StylableFC<{
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
                 transition={transition(DURATION.short4, EASING.standard)}
-                className="skc-text skc-text--body-small"
+                className="skc-text skc-text--body-small truncate"
               >
                 {formatSubjectPeriodName(form.duration, subject, locale)}
               </motion.span>

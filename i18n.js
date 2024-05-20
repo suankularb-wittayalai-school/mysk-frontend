@@ -1,6 +1,7 @@
 /** @param {string} lang */
 const formatters = (lang) => ({
   number: new Intl.NumberFormat(lang),
+  day: new Intl.DateTimeFormat(lang, { weekday: "long" }),
   date: new Intl.DateTimeFormat(lang, { dateStyle: "medium" }),
   time: new Intl.DateTimeFormat(lang, {
     hour: "2-digit",
