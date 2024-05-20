@@ -88,7 +88,7 @@ const TeachPage: CustomPage<{
               {t("home/subjectList:title")}
             </Header>
             <Search
-              alt={t("home/subjectList.searchAlt")}
+              alt={t("home/subjectList:searchAlt")}
               value={query}
               locale={locale}
               onChange={setQuery}
