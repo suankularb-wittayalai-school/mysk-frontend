@@ -23,12 +23,16 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-type SearchPageView = "students" | "teachers" | "documents";
+enum SearchPageView {
+  students = "students",
+  teachers = "teachers",
+  documents = "documents",
+}
 
 const SEARCH_PAGE_VIEWS: SearchPageView[] = [
-  "students",
-  "teachers",
-  "documents",
+  SearchPageView.students,
+  SearchPageView.teachers,
+  SearchPageView.documents,
 ];
 
 const SearchPage: CustomPage<{
@@ -39,9 +43,7 @@ const SearchPage: CustomPage<{
 
   const router = useRouter();
 
-  const [view, setView] = useState<"students" | "teachers" | "documents">(
-    initialView,
-  );
+  const [view, setView] = useState<SearchPageView>(initialView);
 
   function changeView(view: SearchPageView) {
     setView(view);
@@ -59,19 +61,19 @@ const SearchPage: CustomPage<{
           icon={<MaterialIcon icon="face_6" />}
           label={t("view.students")}
           selected={view === "students"}
-          onClick={() => changeView("students")}
+          onClick={() => changeView(SearchPageView.students)}
         />
         <Tab
           icon={<MaterialIcon icon="support_agent" />}
           label={t("view.teachers")}
           selected={view === "teachers"}
-          onClick={() => changeView("teachers")}
+          onClick={() => changeView(SearchPageView.teachers)}
         />
         <Tab
           icon={<MaterialIcon icon="document_scanner" />}
           label={t("view.documents")}
           selected={view === "documents"}
-          onClick={() => changeView("documents")}
+          onClick={() => changeView(SearchPageView.documents)}
         />
       </TabsContainer>
       <ContentLayout>
