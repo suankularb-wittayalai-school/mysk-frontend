@@ -214,7 +214,6 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         "attendance",
         "elective",
         "lookup",
-        "schedule",
       ])),
       electiveSubjects,
     },

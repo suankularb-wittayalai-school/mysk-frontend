@@ -1,0 +1,32 @@
+{
+  "navigation": {
+    "home": "Home",
+    "manage": "Manage",
+    "classes": "Classes",
+    "search": "Search",
+    "news": "News",
+    "account": "Account",
+    "colorScheme": {
+      "dark": "Turn off lights",
+      "light": "Turn on lights"
+    },
+    "language": "ภาษาไทย",
+    "logOut": "Log out",
+    "drawer": {
+      "search": {
+        "title": "Search",
+        "students": "Students",
+        "teachers": "Teachers",
+        "documents": "Documents"
+      },
+      "about": {
+        "title": "About",
+        "help": "Help/report issue",
+        "admin": "Admin panel",
+        "language": "ภาษาไทย",
+        "logOut": "Log out"
+      }
+    }
+  },
+  "pageLoading": "Loading page…"
+}

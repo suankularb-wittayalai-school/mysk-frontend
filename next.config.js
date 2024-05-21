@@ -1,5 +1,6 @@
 const { i18n } = require("./next-i18next.config");
 const { withPlausibleProxy } = require("next-plausible");
+const nextTranslate = require("next-translate-plugin");
 const withPWA = require("next-pwa")({
   dest: "public",
   register: true,
@@ -57,4 +58,4 @@ const config = {
   },
 };
 
-module.exports = withPWA(withPlausibleProxy()(config));
+module.exports = withPWA(withPlausibleProxy()(nextTranslate(config)));

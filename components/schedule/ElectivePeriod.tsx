@@ -10,8 +10,8 @@ import { StylableFC } from "@/utils/types/common";
 import { Student, UserRole } from "@/utils/types/person";
 import { SchedulePeriod } from "@/utils/types/schedule";
 import { Interactive, MaterialIcon, Text } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
 
 /**
@@ -30,7 +30,7 @@ const ElectivePeriod: StylableFC<{
   isInSession?: boolean;
 }> = ({ period, isInSession, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("schedule");
+  const { t } = useTranslation("schedule/common");
 
   const plausible = usePlausible();
   const mysk = useMySKClient();
@@ -97,7 +97,7 @@ const ElectivePeriod: StylableFC<{
             >
               <MaterialIcon icon="collections_bookmark" size={20} />
               <Text type={period.duration < 2 ? "title-small" : "title-medium"}>
-                {t("schedule.elective")}
+                {t("elective")}
               </Text>
             </div>
           )}

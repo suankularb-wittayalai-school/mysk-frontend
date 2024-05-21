@@ -14,7 +14,7 @@ import {
   MaterialIcon,
   Text,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useContext } from "react";
 
 /**
@@ -32,9 +32,7 @@ const SubjectPeriodDialog: StylableFC<{
   onDelete?: () => void;
 }> = ({ open, period, onClose, onDelete, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("schedule", {
-    keyPrefix: "dialog.periodDetails",
-  });
+  const { t } = useTranslation("schedule/periodDialog");
 
   const { editable } = useContext(ScheduleContext);
 

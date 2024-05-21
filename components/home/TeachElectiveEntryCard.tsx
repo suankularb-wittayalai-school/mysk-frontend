@@ -8,7 +8,7 @@ import {
   CardContent,
   CardHeader,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 
 /**
@@ -20,9 +20,7 @@ import Link from "next/link";
 const TeachElectiveEntryCard: StylableFC<{
   electivesInCharge: ElectiveSubject[];
 }> = ({ electivesInCharge, style, className }) => {
-  const { t } = useTranslation("schedule", {
-    keyPrefix: "subjectList.elective",
-  });
+  const { t } = useTranslation("home/subjectList");
 
   return (
     <Card
@@ -31,9 +29,8 @@ const TeachElectiveEntryCard: StylableFC<{
       className={cn(`!bg-primary-container`, className)}
     >
       <CardHeader
-        title={t("title")}
-        subtitle={t("subtitle", {
-          context: "teacher",
+        title={t("elective.title")}
+        subtitle={t("elective.subtitle.teacher", {
           count: electivesInCharge.length,
         })}
         className="grow items-start"
@@ -41,7 +38,7 @@ const TeachElectiveEntryCard: StylableFC<{
       <CardContent className="!p-3 !pt-0">
         <Actions className="!-mt-2.5">
           <Button appearance="filled" href="/teach/electives" element={Link}>
-            {t("action.view")}
+            {t("elective.action.view")}
           </Button>
         </Actions>
       </CardContent>

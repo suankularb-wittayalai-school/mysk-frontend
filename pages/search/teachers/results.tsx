@@ -211,7 +211,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "classes",
         "lookup",
-        "schedule",
       ])),
       filters,
       subjectGroups,

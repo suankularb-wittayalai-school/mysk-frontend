@@ -23,13 +23,13 @@ import {
   EASING,
   Header,
   Search,
-  transition
+  transition,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { LayoutGroup, motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
 
 /**
@@ -56,8 +56,7 @@ const LearnPage: CustomPage<{
   isElectiveEligible,
 }) => {
   const locale = useLocale();
-  const { t } = useTranslation("learn");
-  const { t: ts } = useTranslation("schedule");
+  const { t } = useTranslation();
 
   const [query, setQuery] = useState("");
 
@@ -89,7 +88,7 @@ const LearnPage: CustomPage<{
           layout="position"
           transition={transition(DURATION.medium4, EASING.standard)}
         >
-          <Header>{t("schedule")}</Header>
+          <Header>{t("schedule/common:title.student")}</Header>
           <Schedule schedule={schedule} view={UserRole.student} />
         </motion.section>
 
@@ -100,9 +99,11 @@ const LearnPage: CustomPage<{
           transition={transition(DURATION.medium4, EASING.standard)}
         >
           <Columns columns={3} className="!items-end">
-            <Header className="md:col-span-2">{ts("subjectList.title")}</Header>
+            <Header className="md:col-span-2">
+              {t("home/subjectList:title")}
+            </Header>
             <Search
-              alt={ts("subjectList.search")}
+              alt={t("home/subjectList:searchAlt")}
               value={query}
               locale={locale}
               onChange={setQuery}
@@ -139,15 +140,15 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { classroom } = student;
 
   const [
-    birthdayBoys,
-    schedule,
-    subjectList,
+    { data: birthdayBoys },
+    { data: schedule },
+    { data: subjectList },
     { data: inEnrollmentPeriod },
     { data: availableElectives },
   ] = await Promise.all([
-    (await getBirthdayBoysOfClassroom(supabase, classroom.id)).data,
-    (await getClassSchedule(supabase, classroom.id)).data,
-    (await getClassroomSubjectsOfClass(supabase, classroom.id)).data,
+    await getBirthdayBoysOfClassroom(supabase, classroom.id),
+    await getClassSchedule(supabase, classroom.id),
+    await getClassroomSubjectsOfClass(supabase, classroom.id),
     await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"),
     await mysk.fetch<IDOnly[]>("/v1/subjects/electives", {
       query: {
@@ -168,9 +169,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "account",
         "home",
-        "learn",
         "classes",
-        "schedule",
         "lookup",
       ])),
       birthdayBoys: birthdayBoys || [],

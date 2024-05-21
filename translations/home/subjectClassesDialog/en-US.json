@@ -1,0 +1,25 @@
+{
+  "loading": "Loading classes…",
+  "summary": {
+    "subject": "Subject",
+    "subjectCode": "Subject code"
+  },
+  "thead": {
+    "class": "Class",
+    "classCode": "Classroom code",
+    "teachers": "Teachers",
+    "coTeachers": "Co-teachers",
+    "classLink": "Classroom link",
+    "meetLink": "Meet link"
+  },
+  "rowAction": {
+    "alt": "Row actions",
+    "classLink": "Open Google Classroom",
+    "meetLink": "Open Google Meet",
+    "edit": "Edit this entry",
+    "delete": "Delete this entry"
+  },
+  "action": {
+    "addClass": "Add class"
+  }
+}

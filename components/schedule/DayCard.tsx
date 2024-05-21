@@ -4,19 +4,19 @@ import { StylableFC } from "@/utils/types/common";
 import { Text } from "@suankularb-components/react";
 import { Day, setDay } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
-import { useTranslation } from "next-i18next";
 
 /**
  * A Card in the header column of Schedule.
- * 
+ *
  * @param day The day of the week.
  */
 const DayCard: StylableFC<{ day: Day }> = ({ day, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("common");
 
-  // Get today.
-  const today = toZonedTime(new Date(), process.env.NEXT_PUBLIC_SCHOOL_TZ);
+  const date = setDay(
+    toZonedTime(new Date(), process.env.NEXT_PUBLIC_SCHOOL_TZ),
+    day,
+  );
 
   return (
     <div
@@ -30,13 +30,11 @@ const DayCard: StylableFC<{ day: Day }> = ({ day, style, className }) => {
         className={cn(`flex w-32 flex-col rounded-sm bg-primary-container px-4
           py-2 text-on-primary-container`)}
       >
-        <Text type="title-medium">{t(`datetime.day.${day}`)}</Text>
+        <Text type="title-medium">
+          {date.toLocaleDateString(locale, { weekday: "long" })}
+        </Text>
         <Text type="body-small" element="time">
-          {setDay(today, day).toLocaleDateString(locale, {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          })}
+          {date.toLocaleDateString(locale, { day: "numeric", month: "long" })}
         </Text>
       </div>
     </div>

@@ -185,7 +185,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         "attendance",
         "classes",
         "lookup",
-        "schedule",
       ])),
       filters,
       students,

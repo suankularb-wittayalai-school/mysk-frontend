@@ -1,66 +1,6 @@
 {
   "appName": "MySK",
   "tabName": "{{tabName}} - MySK",
-  "brand": {
-    "name": "MySK",
-    "description": "Easily access and understand school data with the MySK education management system for Suankularb Wittayalai School.",
-    "school": "Suankularb Wittayalai School"
-  },
-  "navigation": {
-    "home": "Home",
-    "manage": "Manage",
-    "classes": "Classes",
-    "search": "Search",
-    "news": "News",
-    "account": "Account",
-    "colorScheme": {
-      "dark": "Turn off lights",
-      "light": "Turn on lights"
-    },
-    "language": "ภาษาไทย",
-    "logOut": "Log out",
-    "drawer": {
-      "search": {
-        "title": "Search",
-        "students": "Students",
-        "teachers": "Teachers",
-        "documents": "Documents"
-      },
-      "about": {
-        "title": "About",
-        "help": "Help/report issue",
-        "admin": "Admin panel",
-        "language": "ภาษาไทย",
-        "logOut": "Log out"
-      }
-    }
-  },
-  "appDrawer": {
-    "mysk": {
-      "title": "MySK apps",
-      "mysk": "MySK",
-      "clubRegistry": "Club Registry"
-    },
-    "school": {
-      "title": "School apps",
-      "mainSite": "Main Site",
-      "samak": "Samak",
-      "shopping": "SK Shopping",
-      "schoolICT": "School ICT",
-      "sar": "SAR",
-      "ita": "ITA",
-      "basedLine": "Based Line",
-      "kularbLuang": "Kularb Luang"
-    },
-    "learning": {
-      "title": "Learning apps",
-      "kularbFah": "Kularb Fah",
-      "library": "Library",
-      "libraryEBook": "Library eBook",
-      "libraryOPAC": "Library OPAC"
-    }
-  },
-  "pageLoading": "Loading page…",
   "class": "M.{{number}}",
   "classNo": "No. {{classNo}}",
   "contact": {
@@ -78,17 +18,6 @@
     "org": "Suankularb Wittayalai School",
     "title": "Teacher",
     "note": "Class advisor at M.{{number}}"
-  },
-  "datetime": {
-    "day": {
-      "0": "Sunday",
-      "1": "Monday",
-      "2": "Tuesday",
-      "3": "Wednesday",
-      "4": "Thursday",
-      "5": "Friday",
-      "6": "Saturday"
-    }
   },
   "ordinal_ordinal_one": "{{count, number}}st",
   "ordinal_ordinal_two": "{{count, number}}nd",

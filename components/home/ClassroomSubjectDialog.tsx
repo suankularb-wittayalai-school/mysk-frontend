@@ -30,8 +30,9 @@ import {
   TextField,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { Trans, useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import Trans from "next-translate/Trans";
+import useTranslation from "next-translate/useTranslation";
 import { FC, useContext, useEffect } from "react";
 
 /**
@@ -46,9 +47,7 @@ const PeopleSection: FC<{
   form: FormControlValues<"teachers" | "coTeachers">;
   setForm: (form: FormControlValues<"teachers" | "coTeachers">) => void;
 }> = ({ form, setForm }) => {
-  const { t } = useTranslation("teach", {
-    keyPrefix: "dialog.roomSubject.people",
-  });
+  const { t } = useTranslation("home/classroomSubjectDialog");
 
   return (
     <Section
@@ -60,19 +59,19 @@ const PeopleSection: FC<{
         type="title-large"
         element={(props) => <h2 id="header-people" {...props} />}
       >
-        {t("title")}
+        {t("people.title")}
       </Text>
       <Text type="body-medium" element="p" className="pb-3">
-        {t("desc")}
+        {t("people.desc")}
       </Text>
       <div className="flex flex-col gap-6">
         <TeachersField
-          label={t("teachers")}
+          label={t("people.teachers")}
           teachers={form.teachers}
           onChange={(teachers) => setForm({ ...form, teachers })}
         />
         <TeachersField
-          label={t("coTeachers")}
+          label={t("people.coTeachers")}
           teachers={form.coTeachers}
           onChange={(coTeachers) => setForm({ ...form, coTeachers })}
         />
@@ -91,9 +90,7 @@ const PeopleSection: FC<{
 const GoogleSection: FC<{
   formProps: FormControlProps<"ggcCode" | "ggcLink" | "ggMeetLink">;
 }> = ({ formProps }) => {
-  const { t } = useTranslation("teach", {
-    keyPrefix: "dialog.roomSubject.google",
-  });
+  const { t } = useTranslation("home/classroomSubjectDialog");
 
   return (
     <Section
@@ -105,12 +102,11 @@ const GoogleSection: FC<{
         type="title-large"
         element={(props) => <h2 id="header-google" {...props} />}
       >
-        <BrandIcon icon="google" className="inline-block" /> {t("title")}
+        <BrandIcon icon="google" className="inline-block" /> {t("google.title")}
       </Text>
       <Text type="body-medium" element="p" className="pb-3">
         <Trans
-          i18nKey="dialog.roomSubject.google.desc"
-          ns="teach"
+          i18nKey="home/classroomSubjectDialog:google.desc"
           components={{
             a: (
               <a
@@ -129,11 +125,10 @@ const GoogleSection: FC<{
         {/* GGC code */}
         <TextField
           appearance="outlined"
-          label={t("ggcCode")}
+          label={t("google.ggcCode")}
           helperMsg={
             <Trans
-              i18nKey="dialog.roomSubject.google.ggcCode_helper"
-              ns="teach"
+              i18nKey="home/classroomSubjectDialog:google.ggcCode_helper"
               components={{
                 a: (
                   <a
@@ -152,11 +147,10 @@ const GoogleSection: FC<{
         {/* GGC link */}
         <TextField
           appearance="outlined"
-          label={t("ggcLink")}
+          label={t("google.ggcLink")}
           helperMsg={
             <Trans
-              i18nKey="dialog.roomSubject.google.ggcLink_helper"
-              ns="teach"
+              i18nKey="home/classroomSubjectDialog:google.ggcLink_helper"
               components={{
                 a: (
                   <a
@@ -176,7 +170,7 @@ const GoogleSection: FC<{
         {/* Google Meet link */}
         <TextField
           appearance="outlined"
-          label={t("ggMeetLink")}
+          label={t("google.ggMeetLink")}
           className="sm:col-span-2"
           {...formProps.ggMeetLink}
         />
@@ -202,8 +196,7 @@ const ClassroomSubjectDialog: StylableFC<{
   onClose: () => void;
   onSubmit: () => void;
 }> = ({ open, data, subjectID, onClose, onSubmit }) => {
-  const { t } = useTranslation("teach", { keyPrefix: "dialog.roomSubject" });
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("home/classroomSubjectDialog");
 
   const plausible = usePlausible();
   const { setSnackbar } = useContext(SnackbarContext);
@@ -265,7 +258,7 @@ const ClassroomSubjectDialog: StylableFC<{
     withLoading(
       async () => {
         if (!formOK) {
-          setSnackbar(<Snackbar>{tx("snackbar.formInvalid")}</Snackbar>);
+          setSnackbar(<Snackbar>{t("common:snackbar.formInvalid")}</Snackbar>);
           return false;
         }
 
@@ -300,7 +293,7 @@ const ClassroomSubjectDialog: StylableFC<{
         }
 
         if (hasError) {
-          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+          setSnackbar(<Snackbar>{t("common:snackbar.failure")}</Snackbar>);
           return false;
         }
 

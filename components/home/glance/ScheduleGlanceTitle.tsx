@@ -4,11 +4,8 @@ import { ScheduleGlanceType } from "@/utils/helpers/schedule/useScheduleGlance";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { SchedulePeriod } from "@/utils/types/schedule";
-import {
-  MaterialIcon,
-  Text,
-} from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import { MaterialIcon, Text } from "@suankularb-components/react";
+import useTranslation from "next-translate/useTranslation";
 import { camel } from "radash";
 import Balancer from "react-wrap-balancer";
 
@@ -23,7 +20,7 @@ const ScheduleGlanceTitle: StylableFC<{
   displayPeriod?: SchedulePeriod;
 }> = ({ displayType, displayPeriod, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
+  const { t } = useTranslation("home/glance/schedule");
 
   /**
    * Value to pass to the translation function for the title.
@@ -61,10 +58,7 @@ const ScheduleGlanceTitle: StylableFC<{
           <Balancer>
             {t(`title.${camel(displayType)}`, {
               value,
-              context:
-                displayPeriod && displayPeriod.content.length > 1
-                  ? "elective"
-                  : "single",
+              count: displayPeriod?.content.length,
             })}
           </Balancer>
         </Text>

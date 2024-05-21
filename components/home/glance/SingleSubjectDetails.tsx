@@ -1,13 +1,12 @@
 import InformationCard from "@/components/lookup/people/InformationCard";
 import PersonChipSet from "@/components/person/PeopleChipSet";
-import PersonChip from "@/components/person/PersonChip";
 import RoomChip from "@/components/room/RoomChip";
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { PeriodContentItem } from "@/utils/types/schedule";
 import { ChipSet } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { sift } from "radash";
 
 /**
@@ -18,7 +17,7 @@ import { sift } from "radash";
 const SingleSubjectDetails: StylableFC<{
   period: PeriodContentItem;
 }> = ({ period, style, className }) => {
-  const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
+  const { t } = useTranslation("schedule/common");
 
   return (
     <div
@@ -29,7 +28,7 @@ const SingleSubjectDetails: StylableFC<{
       )}
     >
       {/* Teachers */}
-      <InformationCard title={t("details.teachers.title")}>
+      <InformationCard title={t("subject.teachers")}>
         <PersonChipSet
           scrollable
           people={period.teachers.map((teacher) => ({
@@ -41,7 +40,7 @@ const SingleSubjectDetails: StylableFC<{
       </InformationCard>
 
       {/* Room */}
-      <InformationCard title={t("details.room.title")}>
+      <InformationCard title={t("subject.room")}>
         <ChipSet scrollable className="fade-out-to-r -mx-3 *:pl-3 *:pr-8">
           {period.rooms &&
             sift(period.rooms).map((room) => (

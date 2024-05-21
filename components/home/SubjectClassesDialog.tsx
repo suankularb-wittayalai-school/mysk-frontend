@@ -1,4 +1,3 @@
-// Imports
 import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
 import MultilangText from "@/components/common/MultilingualText";
 import ClassroomSubjectDialog from "@/components/home/ClassroomSubjectDialog";
@@ -12,7 +11,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
-import { DialogFC } from "@/utils/types/component";
+import { StylableFC } from "@/utils/types/common";
 import { ClassroomSubject, Subject } from "@/utils/types/subject";
 import {
   Actions,
@@ -46,40 +45,33 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
-import {
-  FC,
-  forwardRef,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import useTranslation from "next-translate/useTranslation";
+import { forwardRef, useContext, useEffect, useMemo, useState } from "react";
 
 /**
  * Row actions for a Class this subject is taught to.
  *
  * @param row The Subject List Item.
- *
- * @returns
  */
-const ClassRowActions: FC<{
+const ClassRowActions: StylableFC<{
   row: ClassroomSubject;
   onEditOpen: () => void;
   onDeleteOpen: () => void;
-}> = ({ row, onEditOpen, onDeleteOpen }) => {
-  const { t } = useTranslation("teach", {
-    keyPrefix: "dialog.subjectClasses.rowAction",
-  });
+}> = ({ row, onEditOpen, onDeleteOpen, style, className }) => {
+  const { t } = useTranslation("home/subjectClassesDialog");
 
   return (
-    <SegmentedButton alt="Row actions">
-      {/* Edit */}
+    <SegmentedButton
+      alt={t("rowAction.alt")}
+      style={style}
+      className={className}
+    >
+      {/* Links */}
       {row.ggc_link && (
         <Button
           appearance="outlined"
           icon={<BrandIcon icon="gg-classroom" />}
-          tooltip={t("classLink")}
+          tooltip={t("rowAction.classLink")}
           href={row.ggc_link}
           // eslint-disable-next-line react/display-name
           element={forwardRef((props, ref) => (
@@ -92,7 +84,7 @@ const ClassRowActions: FC<{
         <Button
           appearance="outlined"
           icon={<BrandIcon icon="gg-meet" />}
-          tooltip={t("meetLink")}
+          tooltip={t("rowAction.meetLink")}
           href={row.gg_meet_link}
           // eslint-disable-next-line react/display-name
           element={forwardRef((props, ref) => (
@@ -106,7 +98,7 @@ const ClassRowActions: FC<{
       <Button
         appearance="outlined"
         icon={<MaterialIcon icon="edit" />}
-        tooltip={t("edit")}
+        tooltip={t("rowAction.edit")}
         onClick={onEditOpen}
       />
 
@@ -114,7 +106,7 @@ const ClassRowActions: FC<{
       <Button
         appearance="outlined"
         icon={<MaterialIcon icon="delete" />}
-        tooltip={t("delete")}
+        tooltip={t("rowAction.delete")}
         dangerous
         onClick={onDeleteOpen}
       />
@@ -130,15 +122,14 @@ const ClassRowActions: FC<{
  * @param open If the Full-screen Dialog is open and shown.
  * @param onClose The function triggered when the Full-screen Dialog is closed.
  * @param subjectID The ID of the Subject (not to be confused with Subject code).
- *
- * @returns A Full-screen Dialog.
  */
-const SubjectClassesDialog: DialogFC<{
+const SubjectClassesDialog: StylableFC<{
+  open?: boolean;
   subject: Pick<Subject, "id" | "code" | "name" | "short_name">;
-}> = ({ open, onClose, subject }) => {
+  onClose: () => void;
+}> = ({ open, subject, onClose }) => {
   const locale = useLocale();
-  const { t } = useTranslation("teach", { keyPrefix: "dialog.subjectClasses" });
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("home/subjectClassesDialog");
 
   const { setSnackbar } = useContext(SnackbarContext);
   const refreshProps = useRefreshProps();
@@ -166,7 +157,7 @@ const SubjectClassesDialog: DialogFC<{
           subject.id,
         );
         if (error) {
-          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+          setSnackbar(<Snackbar>{t("common:snackbar.failure")}</Snackbar>);
           return false;
         }
         setData(data);
@@ -181,7 +172,8 @@ const SubjectClassesDialog: DialogFC<{
     () => [
       {
         id: "class",
-        accessorFn: (row) => tx("class", { number: row.classroom.number }),
+        accessorFn: (row) =>
+          t("common:class", { number: row.classroom.number }),
         header: t("thead.class"),
         thAttr: { className: "w-1/12" },
       },

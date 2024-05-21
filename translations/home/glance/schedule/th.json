@@ -1,0 +1,31 @@
+{
+  "title": {
+    "assembly": "ถึงเวลาเข้าแถวแล้ว",
+    "homeroom": "ถึงเวลาโฮมรูมแล้ว",
+    "learnCurrent_one": "คุณกำลังเรียน {{value}}",
+    "learnCurrent_other": "คุณกำลังเรียนวิชาเลือก",
+    "learnNext_one": "เตรียมตัวเรียน {{value}} ในคาบต่อไป",
+    "learnNext_other": "เตรียมตัวเรียนวิชาเลือกในคาบต่อไป",
+    "lunch": "เวลารับประทานอาหารเที่ยง",
+    "teachCurrent": "คุณกำลังสอน {{value}}",
+    "teachWrapUp": "ใกล้หมดเวลาคาบนี้แล้ว",
+    "teachTravel": "ไปที่ห้อง {{value}} ตอนนี้",
+    "teachFuture": "คาบนี้ว่าง (คาบต่อไปวันนี้คือ {{value}})"
+  },
+  "interval": "{{start, time}}–{{end, time}}",
+  "countdown": {
+    "pre": "เหลืออีก",
+    "post": "นาที"
+  },
+  "action": {
+    "attendance": {
+      "unknown": {
+        "student": "ดูข้อมูลเช็กชื่อ",
+        "teacher": "เช็กชื่อ"
+      },
+      "absent": "เช็กว่าขาดเรียน",
+      "present": "เช็กว่ามาเรียน"
+    }
+  },
+  "progressAlt": "ความคืบหน้าของคาบนี้"
+}
