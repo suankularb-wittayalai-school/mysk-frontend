@@ -10,10 +10,11 @@ import {
   Snackbar,
   Text,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { usePlausible } from "next-plausible";
 import { unique } from "radash";
 import { forwardRef, useContext, useEffect, useState } from "react";
+import Balancer from "react-wrap-balancer";
 
 /**
  * A sneaky easter egg for one of our advisors! This card is expected to only
@@ -21,9 +22,7 @@ import { forwardRef, useContext, useEffect, useState } from "react";
  */
 const StarbucksCard: StylableFC = ({ style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "teachers.detail.starbucks",
-  });
+  const { t } = useTranslation("search/teachers/detail");
 
   const plausible = usePlausible();
   const { setSnackbar } = useContext(SnackbarContext);
@@ -70,12 +69,14 @@ const StarbucksCard: StylableFC = ({ style, className }) => {
 
     // If no Thai voices found, the user is notified of the failure.
     if (!synthVoices?.length) {
-      setSnackbar(<Snackbar>{t("snackbar.thaiSpeechNotSupported")}</Snackbar>);
+      setSnackbar(
+        <Snackbar>{t("starbucks.snackbar.thaiSpeechNotSupported")}</Snackbar>,
+      );
       return;
     }
 
     // Create the `SpeechSynthesisUtterance` object.
-    const textToUtter = [t("order.line1"), t("order.line2")].join("; ");
+    const textToUtter = t("starbucks.order");
     const utterance = new SpeechSynthesisUtterance(textToUtter);
 
     // Configure the utterance.
@@ -104,19 +105,18 @@ const StarbucksCard: StylableFC = ({ style, className }) => {
     >
       <div className="flex grow flex-col gap-2">
         <Text
-          type="title-medium"
-          className="!font-body"
+          type="body-large"
+          className="max-w-96"
           element={(props) => <div {...props} lang="th" />}
         >
-          <p>{t("order.line1")}</p>
-          <p>{t("order.line2")}</p>
+          <Balancer>{t("starbucks.order")}</Balancer>
         </Text>
         <ChipSet>
           <AssistChip
             icon={<MaterialIcon icon="volume_up" />}
             onClick={handleReadAloud}
           >
-            {t("action.readAloud")}
+            {t("starbucks.action.readAloud")}
           </AssistChip>
           <AssistChip
             icon={<MaterialIcon icon="open_in_new" />}
@@ -131,7 +131,7 @@ const StarbucksCard: StylableFC = ({ style, className }) => {
               <a {...props} ref={ref} target="_blank" rel="noreferrer" />
             ))}
           >
-            {t("action.openStarbucks")}
+            {t("starbucks.action.openStarbucks")}
           </AssistChip>
         </ChipSet>
       </div>

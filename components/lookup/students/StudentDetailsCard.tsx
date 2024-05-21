@@ -142,7 +142,10 @@ const StudentDetailsCard: StylableFC<{
 
                 {student.contacts.length > 0 && (
                   <motion.div layout="position" transition={positionTransition}>
-                    <PersonContactGrid contacts={student.contacts} />
+                    <PersonContactGrid
+                      role={UserRole.student}
+                      contacts={student.contacts}
+                    />
                   </motion.div>
                 )}
 

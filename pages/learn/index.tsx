@@ -170,7 +170,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         "account",
         "home",
         "classes",
-        "lookup",
       ])),
       birthdayBoys: birthdayBoys || [],
       schedule: schedule || createEmptySchedule(1, 5),

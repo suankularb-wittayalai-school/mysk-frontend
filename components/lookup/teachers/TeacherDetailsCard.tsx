@@ -13,7 +13,7 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import useToggle from "@/utils/helpers/useToggle";
 import { StylableFC } from "@/utils/types/common";
-import { Teacher } from "@/utils/types/person";
+import { Teacher, UserRole } from "@/utils/types/person";
 import {
   DURATION,
   EASING,
@@ -21,7 +21,7 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { sift } from "radash";
 
 /**
@@ -34,8 +34,7 @@ const TeacherDetailsCard: StylableFC<{
   options?: Partial<{ hideSeeClass: boolean }>;
 }> = ({ teacher, options, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("lookup", { keyPrefix: "teachers.detail" });
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("search/teachers/detail");
 
   const positionTransition = transition(DURATION.medium2, EASING.standard);
 
@@ -117,7 +116,9 @@ const TeacherDetailsCard: StylableFC<{
                   </InformationCard>
                   {teacher.class_advisor_at && (
                     <InformationCard title={t("information.classAdvisorAt")}>
-                      {tx("class", { number: teacher.class_advisor_at.number })}
+                      {t("common:class", {
+                        number: teacher.class_advisor_at.number,
+                      })}
                     </InformationCard>
                   )}
                   {teacher.birthdate &&
@@ -127,11 +128,7 @@ const TeacherDetailsCard: StylableFC<{
                         <time>
                           {new Date(teacher.birthdate).toLocaleDateString(
                             locale,
-                            {
-                              day: "numeric",
-                              month: "long",
-                              year: undefined,
-                            },
+                            { day: "numeric", month: "long" },
                           )}
                         </time>
                       </InformationCard>
@@ -144,7 +141,10 @@ const TeacherDetailsCard: StylableFC<{
                     layout="position"
                     transition={positionTransition}
                   >
-                    <PersonContactGrid contacts={teacher.contacts} />
+                    <PersonContactGrid
+                      role={UserRole.teacher}
+                      contacts={teacher.contacts}
+                    />
                   </motion.section>
                 )}
 

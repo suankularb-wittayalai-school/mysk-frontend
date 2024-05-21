@@ -1,62 +1,4 @@
 {
-  "teachers": {
-    "title": "ค้นหาอาจารย์",
-    "searchFilters": {
-      "form": {
-        "fullName": "ค้นหาด้วยชื่อจริง",
-        "fullName_helper": "ป้อนชื่อจริงบางส่วนหรือทั้งหมด",
-        "nickname": "ค้นหาด้วยชื่อเล่น",
-        "nickname_helper": "ป้อนชื่อเล่นบางส่วนหรือทั้งหมด",
-        "subjectGroup": "เลือกกลุ่มสาระการเรียนรู้",
-        "subjectGroup_default": "กลุ่มสาระการเรียนรู้ใดก็ได้",
-        "subjectGroup_helper": "เลือกจากรายการกลุ่มสาระการเรียนรู้",
-        "classroom": "ค้นหาด้วยห้องเรียน",
-        "classroom_helper": "ป้อนเลขห้อง 3 หลักของห้องที่ครูเป็นที่ปรึกษา",
-        "contact": "ค้นหาด้วยช่องทางการติดต่อ",
-        "contact_helper": "ป้อนชื่อผู้ใช้ อีเมล เบอร์โทร หรือ URL ของครูอย่างครบถ้วน"
-      },
-      "chip": {
-        "fullName": "ชื่อจริง: “{{content}}”",
-        "nickname": "ชื่อเล่น: “{{content}}”",
-        "subjectGroup": "กลุ่มสาระการเรียนรู้: “{{content}}”",
-        "classroom": "ห้องเรียน: “{{content}}”",
-        "contact": "ช่องทางการติดต่อ: “{{content}}”"
-      }
-    },
-    "detail": {
-      "glance": {
-        "free": "ไม่มีคาบสอนตอนนี้",
-        "future": "ไม่มีคาบสอนตอนนี้ (คาบต่อไปในอีก {{time}})",
-        "ongoing": "กำลังสอน{{subject}}"
-      },
-      "starbucks": {
-        "order": {
-          "line1": "ชาเขียว Starbucks เย็น แก้วใหญ่ ไม่ใส่ syrup",
-          "line2": "extra green tea 7 ช้อน แยกน้ำแข็ง ฝาโดม"
-        },
-        "action": {
-          "readAloud": "อ่านออกเสียง",
-          "openStarbucks": "เปิด Starbucks"
-        },
-        "snackbar": {
-          "thaiSpeechNotSupported": "ขออภัย เบราว์เซอร์ไม่รองรับการออกเสียงภาษาไทย"
-        }
-      },
-      "information": {
-        "fullName": "ชื่อ-สกุล",
-        "nickname": "ชื่อเล่น",
-        "subjectGroup": "กลุ่มสาระฯ",
-        "classAdvisorAt": "ห้องที่ปรึกษา",
-        "birthday": "วันเกิด"
-      },
-      "contacts": {
-        "title": "ช่องทางการติดต่อ"
-      },
-      "subjects": {
-        "title": "วิชาที่สอน"
-      }
-    }
-  },
   "documents": {
     "title": "ค้นหาเอกสาร",
     "searchFilters": {
@@ -123,27 +65,6 @@
     },
     "detail": {
       "loading": "กำลังโหลดเอกสารจาก Google Drive…"
-    }
-  },
-  "common": {
-    "searchFilters": {
-      "title": "ตัวกรองการค้นหา",
-      "desc": "เพิ่มตัวกรองการค้นหาเพื่อจำกัดผลการค้นหาของคุณ<br>ใส่ข้อมูลแค่ช่องที่คุณต้องการเท่านั้น ไม่จำเป็นต้องใส่ทุกช่อง",
-      "action": {
-        "search": "ค้นหา"
-      }
-    },
-    "list": {
-      "tooWide": {
-        "title": "ตัวกรองกว้างเกินไป",
-        "subtitle": "ผลลัพธ์ไม่สมบูรณ์"
-      },
-      "empty": {
-        "desc": "ไม่มีผลลัพธ์สำหรับตัวกรองที่กำหนด",
-        "action": {
-          "clear": "ลบตัวกรอง"
-        }
-      }
     }
   }
 }

@@ -1,4 +1,3 @@
-// Imports
 import PageHeader from "@/components/common/PageHeader";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
@@ -20,7 +19,6 @@ import { SubjectGroup } from "@/utils/types/subject";
 import {
   DURATION,
   SplitLayout,
-  useAnimationConfig,
   useBreakpoint,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
@@ -31,8 +29,8 @@ import {
   NextApiResponse,
   NextPage,
 } from "next";
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { alphabetical, camel } from "radash";
 import { useEffect, useState } from "react";
@@ -51,8 +49,7 @@ const LookupTeachersResultsPage: NextPage<{
   teachers: TeacherLookupItem[];
 }> = ({ filters, subjectGroups, teachers }) => {
   // Translation
-  const { t } = useTranslation("lookup", { keyPrefix: "teachers" });
-  const { t: tx } = useTranslation(["lookup", "common"]);
+  const { t } = useTranslation("search/teachers/list");
 
   const [selectedID, setSelectedID] = useState<string>();
   // Select the first result automatically after a short delay
@@ -101,7 +98,7 @@ const LookupTeachersResultsPage: NextPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: t("title"), ns: "common" })}</title>
+        <title>{t("common:tabName", { tabName: t("title") })}</title>
       </Head>
       <PageHeader parentURL="/search/teachers">{t("title")}</PageHeader>
       <SplitLayout
@@ -210,7 +207,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "classes",
-        "lookup",
       ])),
       filters,
       subjectGroups,

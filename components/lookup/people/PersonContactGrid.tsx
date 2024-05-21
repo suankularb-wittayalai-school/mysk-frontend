@@ -2,6 +2,7 @@ import ContactCard from "@/components/account/ContactCard";
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
+import { UserRole } from "@/utils/types/person";
 import { Columns, Text } from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
 
@@ -11,9 +12,15 @@ import useTranslation from "next-translate/useTranslation";
  * @param contacts The Contacts to display.
  */
 const PersonContactGrid: StylableFC<{
+  role: UserRole.student | UserRole.teacher;
   contacts: Contact[];
-}> = ({ contacts, style, className }) => {
-  const { t } = useTranslation("search/students/detail");
+}> = ({ role, contacts, style, className }) => {
+  const { t } = useTranslation(
+    {
+      student: "search/students/detail",
+      teacher: "search/teachers/detail",
+    }[role],
+  );
 
   return (
     <section style={style} className={cn(`space-y-2`, className)}>
