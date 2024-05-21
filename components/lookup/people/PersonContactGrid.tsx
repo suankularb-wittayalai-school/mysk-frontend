@@ -1,10 +1,9 @@
-// Imports
 import ContactCard from "@/components/account/ContactCard";
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
 import { Columns, Text } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * A grid of Contacts for Search Students and Search Teachers.
@@ -14,9 +13,7 @@ import { useTranslation } from "next-i18next";
 const PersonContactGrid: StylableFC<{
   contacts: Contact[];
 }> = ({ contacts, style, className }) => {
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "people.detail.contacts",
-  });
+  const { t } = useTranslation("search/students/detail");
 
   return (
     <section style={style} className={cn(`space-y-2`, className)}>
@@ -25,7 +22,7 @@ const PersonContactGrid: StylableFC<{
         element="h3"
         className="rounded-md bg-surface px-3 py-2"
       >
-        {t("title")}
+        {t("contacts.title")}
       </Text>
       <Columns columns={2} className="!gap-2">
         {contacts.map((contact) => (

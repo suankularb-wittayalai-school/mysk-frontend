@@ -8,7 +8,7 @@ import {
   Snackbar,
   TextField,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import router from "next/router";
 import { snake } from "radash";
 import { useContext } from "react";
@@ -17,11 +17,7 @@ import { useContext } from "react";
  * The Search Filters Card for Students.
  */
 const StudentsFiltersCard: StylableFC = ({ style, className }) => {
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "students.searchFilters.form",
-  });
-  const { t: tc } = useTranslation("lookup");
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("search/students/form");
 
   const trackSearch = useTrackSearch();
   const { setSnackbar } = useContext(SnackbarContext);
@@ -36,7 +32,7 @@ const StudentsFiltersCard: StylableFC = ({ style, className }) => {
   function handleSubmit() {
     const entries = Object.entries(form).filter(([_, value]) => value);
     if (entries.length === 0) {
-      setSnackbar(<Snackbar>{tx("snackbar.formInvalid")}</Snackbar>);
+      setSnackbar(<Snackbar>{t("common:snackbar.formInvalid")}</Snackbar>);
       return;
     }
     trackSearch("Search Students", form, entries.length);
@@ -54,27 +50,27 @@ const StudentsFiltersCard: StylableFC = ({ style, className }) => {
   return (
     <SearchFiltersCard
       icon={<MaterialIcon icon="face_6" />}
-      title={tc("students.title")}
+      title={t("title")}
       onSubmit={handleSubmit}
       style={style}
       className={className}
     >
       <TextField
         appearance="outlined"
-        label={t("fullName")}
-        helperMsg={t("fullName_helper")}
+        label={t("form.fullName")}
+        helperMsg={t("form.fullName_helper")}
         {...formProps.fullName}
       />
       <TextField
         appearance="outlined"
-        label={t("nickname")}
-        helperMsg={t("nickname_helper")}
+        label={t("form.nickname")}
+        helperMsg={t("form.nickname_helper")}
         {...formProps.nickname}
       />
       <TextField
         appearance="outlined"
-        label={t("contact")}
-        helperMsg={t("contact_helper")}
+        label={t("form.contact")}
+        helperMsg={t("form.contact_helper")}
         {...formProps.contact}
       />
     </SearchFiltersCard>

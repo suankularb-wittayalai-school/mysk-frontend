@@ -1,10 +1,8 @@
-// Imports
 import ActiveSearchFiltersCard from "@/components/lookup/ActiveSearchFiltersCard";
 import { StudentSearchFilters } from "@/pages/search/students/results";
-import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { InputChip } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * Active Search Filters Card for Students.
@@ -14,25 +12,24 @@ import { useTranslation } from "next-i18next";
 const StudentActiveFiltersCard: StylableFC<{
   filters: StudentSearchFilters;
 }> = ({ filters, style, className }) => {
-  const locale = useLocale();
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "students.searchFilters",
-  });
+  const { t } = useTranslation("search/students/list");
 
   return (
     <ActiveSearchFiltersCard style={style} className={className}>
       {filters.fullName && (
         <InputChip>
-          {t("chip.fullName", { content: filters.fullName })}
+          {t("filter.fullName", { content: filters.fullName })}
         </InputChip>
       )}
       {filters.nickname && (
         <InputChip>
-          {t("chip.nickname", { content: filters.nickname })}
+          {t("filter.nickname", { content: filters.nickname })}
         </InputChip>
       )}
       {filters.contact && (
-        <InputChip>{t("chip.contact", { content: filters.contact })}</InputChip>
+        <InputChip>
+          {t("filter.contact", { content: filters.contact })}
+        </InputChip>
       )}
     </ActiveSearchFiltersCard>
   );

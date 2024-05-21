@@ -32,6 +32,33 @@ module.exports = {
       "schedule/editor/editDialog",
       "schedule/editor/hoverMenu",
     ],
+    // Search
+    "/search/[view]": [
+      "search/landing",
+      "search/students/form",
+      "search/teachers/form",
+      "search/documents/form",
+    ],
+    "rgx:/search/\\w+/results$": ["search/common"],
+    // Search Students
+    "/search/students/results": ["search/students/list"],
+    "rgx:/(search/students/results|(teach|manage)/electives|classes)$": [
+      "search/students/header",
+      "search/students/detail",
+      "search/students/absenceHistoryDialog",
+    ],
+    // Search Teachers
+    "/search/teachers/results": ["search/teachers/list"],
+    "rgx:/(search/teachers/results|learn|teach)$": [
+      "search/teachers/header",
+      "search/teachers/detail",
+    ],
+    // Search Documents
+    "/search/documents/results": [
+      "search/documents/list",
+      "search/documents/header",
+      "search/documents/detail",
+    ],
   },
   logBuild: false,
   interpolation: {

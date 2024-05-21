@@ -1,0 +1,45 @@
+{
+  "glance": {
+    "free": "No classes right now",
+    "future": "Free now (next period in {{time}})",
+    "ongoing": "Learning {{subject}}"
+  },
+  "information": {
+    "title": "Information",
+    "fullName": "Full name",
+    "nickname": "Nickname",
+    "classroom": "Classroom",
+    "birthday": {
+      "title": "Birthday",
+      "age_one": "1 year old",
+      "age_other": "{{count, number}} years old"
+    }
+  },
+  "attendance": {
+    "title": "Attendance",
+    "today": {
+      "title": {
+        "present": "Present today",
+        "late": "Late today",
+        "absent": "Absent today",
+        "noData": "No data today",
+        "noSchool": "No school today"
+      },
+      "subtitle": {
+        "sick": "Sick leave",
+        "business": "Business leave",
+        "absent": "Absent",
+        "dropped": "Dropped"
+      }
+    },
+    "action": {
+      "seeHistory": "See history"
+    }
+  },
+  "contacts": {
+    "title": "Contacts"
+  },
+  "certificates": {
+    "title": "Certificates"
+  }
+}

@@ -17,8 +17,8 @@ import {
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
 import { GetStaticPaths, GetStaticProps } from "next";
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -35,8 +35,7 @@ const SearchPage: CustomPage<{
   view: SearchPageView;
   subjectGroups: SubjectGroup[];
 }> = ({ view: initialView, subjectGroups }) => {
-  const { t } = useTranslation("lookup");
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("search/landing");
 
   const router = useRouter();
 
@@ -52,10 +51,10 @@ const SearchPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: "Search" })}</title>
+        <title>{t("common:tabName", { tabName: t("title") })}</title>
       </Head>
       <PageHeader>{t("title")}</PageHeader>
-      <TabsContainer appearance="primary" alt="Searching for…">
+      <TabsContainer appearance="primary" alt={t("view.alt")}>
         <Tab
           icon={<MaterialIcon icon="face_6" />}
           label={t("view.students")}

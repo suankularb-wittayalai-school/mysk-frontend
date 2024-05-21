@@ -11,13 +11,14 @@ import StudentCertificateGrid from "@/components/lookup/students/StudentCertific
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getLocaleName from "@/utils/helpers/getLocaleName";
+import useLocale from "@/utils/helpers/useLocale";
 import useToggle from "@/utils/helpers/useToggle";
 import { StylableFC } from "@/utils/types/component";
 import { Student, UserRole } from "@/utils/types/person";
 import { DURATION, EASING, transition } from "@suankularb-components/react";
 import { differenceInYears } from "date-fns";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { sift } from "radash";
 
 /**
@@ -36,8 +37,8 @@ const StudentDetailsCard: StylableFC<{
     hideScheduleCard: boolean;
   }>;
 }> = ({ student, options, style, className }) => {
-  const { t } = useTranslation("lookup", { keyPrefix: "students.detail" });
-  const { t: tx } = useTranslation("common");
+  const locale = useLocale();
+  const { t } = useTranslation("search/students/detail");
 
   const mysk = useMySKClient();
   const canSeeSensitive =
@@ -112,12 +113,10 @@ const StudentDetailsCard: StylableFC<{
                       </InformationCard>
                     )}
                   {student.classroom && (
-                    <InformationCard title={t("information.classroom.title")}>
-                      {tx("class", { number: student.classroom.number })}
+                    <InformationCard title={t("information.classroom")}>
+                      {t("common:class", { number: student.classroom.number })}
                       <br />
-                      {t("information.classroom.classNo", {
-                        number: student.class_no,
-                      })}
+                      {t("common:classNo", { classNo: student.class_no })}
                     </InformationCard>
                   )}
                   {student.birthdate &&
@@ -125,8 +124,9 @@ const StudentDetailsCard: StylableFC<{
                     student.birthdate !== "1970-01-01" && (
                       <InformationCard title={t("information.birthday.title")}>
                         <time>
-                          {t("information.birthday.date", {
-                            date: new Date(student.birthdate),
+                          {new Date(student.birthdate).toLocaleString(locale, {
+                            day: "numeric",
+                            month: "long",
                           })}
                         </time>
                         <br />

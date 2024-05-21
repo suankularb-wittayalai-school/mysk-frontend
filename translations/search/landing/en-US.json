@@ -1,0 +1,15 @@
+{
+  "title": "Search",
+  "view": {
+    "alt": "Searching for…",
+    "students": "Students",
+    "teachers": "Teachers",
+    "documents": "Documents"
+  },
+  "filters": {
+    "desc": "Add optional filters to narrow down your search results.<br></br>Just enter the fields you want to filter by—no need to enter every field.",
+    "action": {
+      "search": "Search"
+    }
+  }
+}
