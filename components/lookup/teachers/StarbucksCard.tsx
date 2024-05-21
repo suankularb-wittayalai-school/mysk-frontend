@@ -31,12 +31,12 @@ const StarbucksCard: StylableFC = ({ style, className }) => {
   const [synthVoices, setSynthVoices] = useState<SpeechSynthesisVoice[]>();
 
   useEffect(() => {
-    // Get the SpeechSynthesis object
+    // Get the SpeechSynthesis object.
     const { speechSynthesis } = window;
 
-    // See https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API/Using_the_Web_Speech_API#javascript_2
+    // See: https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API/Using_the_Web_Speech_API#javascript_2
 
-    // Read the voices list
+    // Read the voices list.
     let voices = speechSynthesis.getVoices();
     if (speechSynthesis.onvoiceschanged !== undefined) {
       speechSynthesis.onvoiceschanged = () => {
@@ -44,38 +44,41 @@ const StarbucksCard: StylableFC = ({ style, className }) => {
       };
     }
 
-    // Filter for voices with key `lang` of `th-TH` or `th_TH`
+    // Filter for voices with key `lang` of `th-TH` or `th_TH`.
     voices = unique(
       voices.filter((voice) => /th(-|_)TH/.test(voice.lang)),
       ({ voiceURI }) => voiceURI,
     );
 
-    // Set the voice list state
+    // Set the voice list state.
     setSynthVoices(voices);
 
-    // Cleanup
+    // Cleanup.
     return () => {
       speechSynthesis.onvoiceschanged = null;
     };
   }, []);
 
+  /**
+   * Handles the read aloud action using the browser's Speech Synthesis API.
+   */
   function handleReadAloud() {
-    // Track easter egg discovery
+    // Track easter egg discovery.
     plausible("Find Starbucks Easter Egg", {
       props: { action: "Read aloud", successful: Boolean(synthVoices?.length) },
     });
 
-    // If no Thai voices found, the user is notified of the failure
+    // If no Thai voices found, the user is notified of the failure.
     if (!synthVoices?.length) {
       setSnackbar(<Snackbar>{t("snackbar.thaiSpeechNotSupported")}</Snackbar>);
       return;
     }
 
-    // Create the SpeechSynthesisUtterance object
+    // Create the `SpeechSynthesisUtterance` object.
     const textToUtter = [t("order.line1"), t("order.line2")].join("; ");
     const utterance = new SpeechSynthesisUtterance(textToUtter);
 
-    // Configure the utterance
+    // Configure the utterance.
     utterance.lang = "th-TH";
     utterance.voice =
       synthVoices.find(
@@ -84,7 +87,7 @@ const StarbucksCard: StylableFC = ({ style, className }) => {
           "Microsoft Premwadee Online (Natural) - Thai (Thailand)",
       ) || null;
 
-    // Speak the utterance
+    // Speak the utterance.
     speechSynthesis.speak(utterance);
   }
 

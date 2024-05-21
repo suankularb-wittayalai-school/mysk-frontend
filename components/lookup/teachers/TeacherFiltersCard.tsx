@@ -16,7 +16,7 @@ import {
   Snackbar,
   TextField,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { snake } from "radash";
 import { useContext, useEffect, useState } from "react";
@@ -30,9 +30,7 @@ const TeacherFiltersCard: StylableFC<{
   subjectGroups: SubjectGroup[];
 }> = ({ subjectGroups, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "teachers.searchFilters.form",
-  });
+  const { t } = useTranslation("lookup");
   const { t: tc } = useTranslation("lookup");
   const { t: tx } = useTranslation("common");
 
