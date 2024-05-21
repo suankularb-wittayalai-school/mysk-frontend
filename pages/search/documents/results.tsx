@@ -13,8 +13,8 @@ import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { SchoolDocument, SchoolDocumentType } from "@/utils/types/news";
 import {
+  DURATION,
   SplitLayout,
-  useAnimationConfig,
   useBreakpoint,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
@@ -33,15 +33,19 @@ export type DocumentSearchFilters = Partial<{
   code: string;
 }>;
 
-const LookupDocumentsPage: CustomPage<{
+/**
+ * The results page for Search Documents.
+ *
+ * @param filters The filters used to search for Documents.
+ * @param documents The Documents that match the filters.
+ */
+const SearchDocumentsResultsPage: CustomPage<{
   filters: DocumentSearchFilters;
   documents: SchoolDocument[];
 }> = ({ filters, documents }) => {
   // Translation
   const { t } = useTranslation("lookup");
   const { t: tx } = useTranslation("common");
-
-  const { duration } = useAnimationConfig();
 
   // Selected Document
   const [selectedDocument, setSelectedDocument] = useState<SchoolDocument>();
@@ -50,7 +54,7 @@ const LookupDocumentsPage: CustomPage<{
   useEffect(() => {
     const timeout = setTimeout(
       () => setSelectedDocument(documents[0]),
-      duration.medium2 * 1000,
+      DURATION.medium2 * 1000,
     );
     return () => clearTimeout(timeout);
   }, []);
@@ -166,4 +170,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-export default LookupDocumentsPage;
+export default SearchDocumentsResultsPage;

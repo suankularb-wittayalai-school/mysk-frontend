@@ -40,7 +40,7 @@ export type StudentSearchFilters = Partial<{
  * @param filters The filters used to search for Students.
  * @param students The Students that match the filters.
  */
-const LookupStudentsResultsPage: CustomPage<{
+const SearchStudentsResultsPage: CustomPage<{
   filters: StudentSearchFilters;
   students: StudentLookupItem[];
 }> = ({ filters, students }) => {
@@ -190,4 +190,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-export default LookupStudentsResultsPage;
+export default SearchStudentsResultsPage;

@@ -13,7 +13,7 @@ import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import getTeachersByLookupFilters from "@/utils/backend/person/getTeachersByLookupFilters";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
 import getLocaleString from "@/utils/helpers/getLocaleString";
-import { LangCode } from "@/utils/types/common";
+import { CustomPage, LangCode } from "@/utils/types/common";
 import { Teacher, TeacherLookupItem } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
 import {
@@ -23,12 +23,7 @@ import {
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import {
-  GetServerSideProps,
-  NextApiRequest,
-  NextApiResponse,
-  NextPage,
-} from "next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
@@ -43,7 +38,14 @@ export type TeacherSearchFilters = Partial<{
   contact: string;
 }>;
 
-const LookupTeachersResultsPage: NextPage<{
+/**
+ * The results page for Search Teachers.
+ *
+ * @param filters The filters used to search for Teachers.
+ * @param subjectGroups The list of all Subject Groups.
+ * @param teachers The Teachers that match the filters.
+ */
+const SearchTeachersResultsPage: CustomPage<{
   filters: TeacherSearchFilters;
   subjectGroups: SubjectGroup[];
   teachers: TeacherLookupItem[];
@@ -215,4 +217,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-export default LookupTeachersResultsPage;
+export default SearchTeachersResultsPage;
