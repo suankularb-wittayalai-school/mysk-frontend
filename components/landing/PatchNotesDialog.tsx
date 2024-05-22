@@ -1,29 +1,27 @@
+import FeatureCard from "@/components/landing/FeatureCard";
 import { StylableFC } from "@/utils/types/common";
 import {
   Actions,
   Button,
   Dialog,
+  DialogContent,
   DialogHeader,
   MaterialIcon,
 } from "@suankularb-components/react";
-import { Trans, useTranslation } from "next-i18next";
-import FeatureCard from "./featureCard";
+import { useTranslation } from "next-i18next";
 
 /**
- * A Dialog that shows when GSI succeeds but the account is not found within
- * MySK.
+ * A Dialog that shows a few headlining features of the latest version.
  *
  * @param open Whether the Dialog is open and shown.
  * @param onClose Triggers when the Dialog is closed.
  */
 const PatchNotesDialog: StylableFC<{
-    open?: boolean;
-    onClose: () => void
+  open?: boolean;
+  onClose: () => void;
 }> = ({ open, onClose, style, className }) => {
-
-
   const { t } = useTranslation("landing", {
-    keyPrefix: "dialog.patchNotesDialog" ,
+    keyPrefix: "dialog.patchNotesDialog",
   });
 
   return (
@@ -36,28 +34,27 @@ const PatchNotesDialog: StylableFC<{
     >
       <DialogHeader
         icon={<MaterialIcon icon="star" />}
-        title={t("title", {"version": process.env.NEXT_PUBLIC_VERSION})}
+        title={t("title", { version: process.env.NEXT_PUBLIC_VERSION })}
         desc=""
+        className="[&_p:empty]:hidden"
       />
-    <div className="space-y-2 px-4">
-      <FeatureCard
-        icon={<MaterialIcon icon="book" />}
-        title={"Choose your elective"}
-        desc="View, enroll in, and trade electives with your friends"
-      />
-
-      <FeatureCard
-        icon={<MaterialIcon icon="dashboard" />}
-        title={"Redesigned schedule"}
-        desc="Your schedule has been updated with your chosen elective, so you only see what you need"
-      />
-      <FeatureCard
-        icon={<MaterialIcon icon="badge" />}
-        title={"Your virtual ID card"}
-        desc="View your MySK ID card in the Account page"
-      />
-      </div>
-
+      <DialogContent className="space-y-2 px-4">
+        <FeatureCard
+          icon={<MaterialIcon icon="book" />}
+          title="Choose your elective"
+          desc="View, enroll in, and trade electives with your friends"
+        />
+        <FeatureCard
+          icon={<MaterialIcon icon="dashboard" />}
+          title="Redesigned schedule"
+          desc="Your schedule has been updated with your chosen elective, so you only see what you need"
+        />
+        <FeatureCard
+          icon={<MaterialIcon icon="badge" />}
+          title="Your virtual ID card"
+          desc="View your MySK ID card in the Account page"
+        />
+      </DialogContent>
       <Actions>
         <Button appearance="text" onClick={onClose}>
           {t("action.Close")}
