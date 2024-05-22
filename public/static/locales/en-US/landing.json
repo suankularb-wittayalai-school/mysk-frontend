@@ -29,6 +29,12 @@
         "gotIt": "Got it"
       }
     },
+    "patchNotesDialog": {
+      "title": "New in v{{version}}",
+      "action": {
+        "Close": "Close"
+      }
+    },
     "gsiUnavailable": "You are in a dev environment. To log in, copy over your Google credential string from your host machine and paste it here."
   }
 }

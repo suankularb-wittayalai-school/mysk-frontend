@@ -6,6 +6,7 @@ import { Actions, Button, MaterialIcon } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
 import { forwardRef } from "react";
+import PatchNotesDialog from "./PatchNotesDialog";
 
 /**
  * Supplementary actions for the Landing page.
@@ -65,14 +66,12 @@ const LandingActions: StylableFC = ({ style, className }) => {
         onClick={() =>
           plausible("Open Patch Notes", { props: { location: "Landing" } })
         }
-        href="https://github.com/suankularb-wittayalai-school/mysk-frontend/pulls?q=is%3Apr+is%3Aclosed+base%3Amain+release+in%3Atitle"
-        // eslint-disable-next-line react/display-name
-        element={forwardRef((props, ref) => (
-          <a ref={ref} {...props} target="_blank" />
-        ))}
+        
       >
         {t("new")}
       </Button>
+      <PatchNotesDialog open />
+      
     </Actions>
   );
 };
