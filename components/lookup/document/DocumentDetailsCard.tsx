@@ -27,8 +27,6 @@ const DocumentDetailsCard: StylableFC<{
   // Translation
   const { t } = useTranslation("lookup", { keyPrefix: "documents.header" });
 
-  // Animation
-
   // Loading
   const [loading, setLoading] = useState(true);
 
@@ -125,9 +123,14 @@ const DocumentDetailsCard: StylableFC<{
             {/* Embed iframe */}
             <iframe
               key={document.id}
-              src={`${
-                document.document_link.split(/\/view\?usp=[a-z]+/)[0]
-              }/preview`}
+              src={
+                document.document_link.includes("drive.google.com")
+                  ? document.document_link.replace(
+                      /\/view\?usp=[a-z]+/,
+                      "/preview",
+                    )
+                  : document.document_link
+              }
               width={iframeSize.width}
               height={iframeSize.height}
               allow="autoplay"
