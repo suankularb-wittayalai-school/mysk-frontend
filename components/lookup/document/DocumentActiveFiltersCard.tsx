@@ -1,9 +1,9 @@
-// Imports
 import ActiveSearchFiltersCard from "@/components/lookup/ActiveSearchFiltersCard";
 import { DocumentSearchFilters } from "@/pages/search/documents/results";
+import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { InputChip } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { camel } from "radash";
 
 /**
@@ -14,37 +14,42 @@ import { camel } from "radash";
 const DocumentActiveFiltersCard: StylableFC<{
   filters: DocumentSearchFilters;
 }> = ({ filters, style, className }) => {
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "documents.searchFilters",
-  });
+  const locale = useLocale();
+  const { t } = useTranslation("search/documents/list");
 
   return (
     <ActiveSearchFiltersCard style={style} className={className}>
       {filters.types && (
         <InputChip>
-          {t("chip.types", {
-            context: filters.types.length === 5 ? "all" : undefined,
+          {t("filter.type" + (filters.types.length === 5 ? "_all" : ""), {
             content: filters.types.map((type) =>
-              t(`form.type.${camel(type)}`).toLocaleLowerCase(),
+              t(`common:document.${camel(type)}`).toLocaleLowerCase(),
             ),
           })}
         </InputChip>
       )}
       {filters.subject && (
-        <InputChip>{t("chip.subject", { content: filters.subject })}</InputChip>
+        <InputChip>
+          {t("filter.subject", { content: filters.subject })}
+        </InputChip>
       )}
       {filters.attendTo && (
         <InputChip>
-          {t("chip.attendTo", { content: filters.attendTo })}
+          {t("filter.attendTo", { content: filters.attendTo })}
         </InputChip>
       )}
       {filters.month && (
         <InputChip>
-          {t("chip.month", { content: new Date(`${filters.month}-01`) })}
+          {t("filter.month", {
+            content: new Date(`${filters.month}-01`).toLocaleDateString(
+              locale,
+              { month: "long", year: "numeric" },
+            ),
+          })}
         </InputChip>
       )}
       {filters.code && (
-        <InputChip>{t("chip.code", { content: filters.code })}</InputChip>
+        <InputChip>{t("filter.code", { content: filters.code })}</InputChip>
       )}
     </ActiveSearchFiltersCard>
   );

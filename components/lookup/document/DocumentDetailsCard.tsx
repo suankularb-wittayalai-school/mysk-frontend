@@ -12,7 +12,7 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { sift } from "radash";
 import { RefObject, useEffect, useRef, useState } from "react";
 
@@ -24,8 +24,7 @@ import { RefObject, useEffect, useRef, useState } from "react";
 const DocumentDetailsCard: StylableFC<{
   document: SchoolDocument;
 }> = ({ document, style, className }) => {
-  // Translation
-  const { t } = useTranslation("lookup", { keyPrefix: "documents.header" });
+  const { t } = useTranslation("search/documents/detail");
 
   // Loading
   const [loading, setLoading] = useState(true);
@@ -115,7 +114,7 @@ const DocumentDetailsCard: StylableFC<{
             {/* Circular Progress */}
             <Progress
               appearance="circular"
-              alt="Loading document from Google Drive…"
+              alt={t("loading")}
               visible={loading}
               className="absolute inset-0 !m-auto"
             />

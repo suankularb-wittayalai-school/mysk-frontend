@@ -1,4 +1,3 @@
-// Imports
 import cn from "@/utils/helpers/cn";
 import getLocaleYear from "@/utils/helpers/getLocaleYear";
 import useLocale from "@/utils/helpers/useLocale";
@@ -6,7 +5,7 @@ import { StylableFC } from "@/utils/types/common";
 import { SchoolDocument } from "@/utils/types/news";
 import { Card, CardHeader } from "@suankularb-components/react";
 import { isThisYear } from "date-fns";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { camel } from "radash";
 
 /**
@@ -23,7 +22,7 @@ const LookupDocumentCard: StylableFC<{
 }> = ({ document, selected, onClick, style, className }) => {
   // Translation
   const locale = useLocale();
-  const { t } = useTranslation("lookup", { keyPrefix: "documents.list" });
+  const { t } = useTranslation("search/documents/list");
 
   // Cast the signed date
   const documentDate = new Date(document.date);
@@ -44,11 +43,10 @@ const LookupDocumentCard: StylableFC<{
         className,
       )}
     >
-      {/* Subject line, code, and signed date */}
       <CardHeader
         // Subject line
         title={document.subject}
-        // {code}/{year in BE} • {date}
+        // Metadata
         subtitle={t(`metadata.${camel(document.type)}`, {
           code: document.code,
           year: getLocaleYear("th", documentDate.getFullYear(), "AD"),

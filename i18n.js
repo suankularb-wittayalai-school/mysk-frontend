@@ -1,6 +1,8 @@
 /** @param {string} lang */
 const formatters = (lang) => ({
   number: new Intl.NumberFormat(lang),
+  and: new Intl.ListFormat(lang, { type: "conjunction" }),
+  or: new Intl.ListFormat(lang, { type: "disjunction" }),
   day: new Intl.DateTimeFormat(lang, { weekday: "long" }),
   date: new Intl.DateTimeFormat(lang, { dateStyle: "medium" }),
   time: new Intl.DateTimeFormat(lang, {

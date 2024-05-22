@@ -8,8 +8,8 @@ import {
   Snackbar,
   Text,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { useContext } from "react";
 import Balancer from "react-wrap-balancer";
 
@@ -21,7 +21,7 @@ import Balancer from "react-wrap-balancer";
 const DocumentHeader: StylableFC<{
   document: SchoolDocument;
 }> = ({ document, style, className }) => {
-  const { t } = useTranslation("lookup", { keyPrefix: "documents.header" });
+  const { t } = useTranslation("search/documents/header");
 
   const plausible = usePlausible();
   const { setSnackbar } = useContext(SnackbarContext);

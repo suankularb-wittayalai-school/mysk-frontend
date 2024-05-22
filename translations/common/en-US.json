@@ -26,6 +26,13 @@
     "sports": "นักเรียนดีเด่นด้านกีฬา",
     "activity": "นักเรียนดีเด่นด้านกิจกรรม"
   },
+  "document": {
+    "order": "Orders",
+    "record": "Records",
+    "announcement": "Announcements",
+    "bigGaruda": "External",
+    "other": "Other"
+  },
   "ordinal_one": "{{count, number}}st",
   "ordinal_two": "{{count, number}}nd",
   "ordinal_few": "{{count, number}}rd",

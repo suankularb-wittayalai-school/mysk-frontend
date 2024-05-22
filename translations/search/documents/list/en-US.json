@@ -1,0 +1,18 @@
+{
+  "title": "Search documents",
+  "filter": {
+    "type": "Type: {{content, or}}",
+    "type_all": "Type: all",
+    "subject": "Subject: “{{content}}”",
+    "attendTo": "Attend to: “{{content}}”",
+    "month": "Month: {{content}}",
+    "code": "Code: “{{content}}”"
+  },
+  "metadata": {
+    "order": "№ {{code}}/{{year}} • {{date}}",
+    "record": "{{code}} • {{date}}",
+    "announcement": "{{date}}",
+    "bigGaruda": "MoE 04290.20/{{code}} • {{date}}",
+    "other": "{{date}}"
+  }
+}

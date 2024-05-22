@@ -1,0 +1,12 @@
+{
+  "restrictions": {
+    "title": "Restricted",
+    "desc": "Only {{roles, and}} should access.",
+    "descSegment": {
+      "student": "students",
+      "teacher": "teachers",
+      "parent": "parents"
+    }
+  },
+  "loading": "Loading document from Google Drive…"
+}
