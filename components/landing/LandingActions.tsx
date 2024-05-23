@@ -1,12 +1,12 @@
 import LanguageSwitcher from "@/components/landing/LanguageSwitcher";
+import PatchNotesDialog from "@/components/landing/PatchNotesDialog";
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { Actions, Button, MaterialIcon } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
-import { forwardRef } from "react";
-import PatchNotesDialog from "./PatchNotesDialog";
+import { forwardRef, useState } from "react";
 
 /**
  * Supplementary actions for the Landing page.
@@ -16,6 +16,8 @@ const LandingActions: StylableFC = ({ style, className }) => {
   const { t } = useTranslation("landing", { keyPrefix: "action" });
 
   const plausible = usePlausible();
+
+  const [patchNotesOpen, setPatchNotesOpen] = useState(false);
 
   return (
     <Actions
@@ -63,15 +65,17 @@ const LandingActions: StylableFC = ({ style, className }) => {
       <Button
         appearance="outlined"
         icon={<MaterialIcon icon="star" />}
-        onClick={() =>
-          plausible("Open Patch Notes", { props: { location: "Landing" } })
-        }
-        
+        onClick={() => {
+          plausible("Open Patch Notes", { props: { location: "Landing" } });
+          setPatchNotesOpen(true);
+        }}
       >
         {t("new")}
       </Button>
-      <PatchNotesDialog open />
-      
+      <PatchNotesDialog
+        open={patchNotesOpen}
+        onClose={() => setPatchNotesOpen(false)}
+      />
     </Actions>
   );
 };
