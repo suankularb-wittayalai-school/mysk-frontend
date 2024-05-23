@@ -4,7 +4,7 @@ import { Card, Text } from "@suankularb-components/react";
 
 /**
  * A Card that shows a feature inside Patch Notes Dialog.
- * 
+ *
  * @param icon The icon to show on the left side of the card.
  * @param title A catchy title of the feature.
  * @param desc A short description of the feature.
@@ -18,14 +18,20 @@ const FeatureCard: StylableFC<{
     appearance="filled"
     direction="row"
     style={style}
-    className={cn(`gap-3 !border-0 !bg-surface-bright p-3 pr-4`, className)}
+    className={cn(
+      `gap-3 !border-0 !bg-surface-bright p-3 pr-4
+      [&_i]:text-on-surface-variant`,
+      className,
+    )}
   >
     {icon}
     <div className="space-y-1">
       <Text type="title-medium" element="h3">
         {title}
       </Text>
-      <Text type="body-medium">{desc}</Text>
+      <Text type="body-medium" element="p">
+        {desc}
+      </Text>
     </div>
   </Card>
 );
