@@ -9,6 +9,8 @@ import {
   MaterialIcon,
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
+import { forwardRef } from "react";
 
 /**
  * A Dialog that shows a few headlining features of the latest version.
@@ -21,8 +23,16 @@ const PatchNotesDialog: StylableFC<{
   onClose: () => void;
 }> = ({ open, onClose, style, className }) => {
   const { t } = useTranslation("landing", {
-    keyPrefix: "dialog.patchNotesDialog",
+    keyPrefix: "dialog.patchNotes",
   });
+
+  const plausible = usePlausible();
+
+  const icons = [
+    <MaterialIcon key={0} icon="wifi_off" />,
+    <MaterialIcon key={1} icon="search" />,
+    <MaterialIcon key={2} icon="badge" />,
+  ];
 
   return (
     <Dialog
@@ -39,25 +49,33 @@ const PatchNotesDialog: StylableFC<{
         className="[&_p:empty]:hidden"
       />
       <DialogContent className="space-y-2 px-4">
-        <FeatureCard
-          icon={<MaterialIcon icon="book" />}
-          title="Choose your elective"
-          desc="View, enroll in, and trade electives with your friends"
-        />
-        <FeatureCard
-          icon={<MaterialIcon icon="dashboard" />}
-          title="Redesigned schedule"
-          desc="Your schedule has been updated with your chosen elective, so you only see what you need"
-        />
-        <FeatureCard
-          icon={<MaterialIcon icon="badge" />}
-          title="Your virtual ID card"
-          desc="View your MySK ID card in the Account page"
-        />
+        {icons.map((icon, index) => (
+          <FeatureCard
+            key={index}
+            icon={icon}
+            title={t(`feature.${index}.title`)}
+            desc={t(`feature.${index}.desc`)}
+          />
+        ))}
+        <Button
+          appearance="filled"
+          icon={<MaterialIcon icon="open_in_new" />}
+          onClick={() => {
+            onClose();
+            plausible("Open Full Patch Notes");
+          }}
+          href="https://github.com/suankularb-wittayalai-school/mysk-frontend/pulls?q=is%3Apr+is%3Aclosed+base%3Amain+release+in%3Atitle"
+          // eslint-disable-next-line react/display-name
+          element={forwardRef((props, ref) => (
+            <a ref={ref} {...props} target="_blank" />
+          ))}
+        >
+          {t("action.seeFull")}
+        </Button>
       </DialogContent>
       <Actions>
         <Button appearance="text" onClick={onClose}>
-          {t("action.Close")}
+          {t("action.close")}
         </Button>
       </Actions>
     </Dialog>

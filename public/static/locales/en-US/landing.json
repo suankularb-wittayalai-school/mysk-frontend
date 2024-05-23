@@ -29,10 +29,25 @@
         "gotIt": "Got it"
       }
     },
-    "patchNotesDialog": {
+    "patchNotes": {
       "title": "New in v{{version}}",
+      "feature": [
+        {
+          "title": "Offline support",
+          "desc": "The pages you visit frequently are now saved to your device for added speed"
+        },
+        {
+          "title": "Search subjects",
+          "desc": "Get subject details and syllabuses with Search"
+        },
+        {
+          "title": "Your virtual ID card",
+          "desc": "View your MySK ID card in the Account page"
+        }
+      ],
       "action": {
-        "Close": "Close"
+        "seeFull": "See full patch notes",
+        "close": "Close"
       }
     },
     "gsiUnavailable": "You are in a dev environment. To log in, copy over your Google credential string from your host machine and paste it here."
