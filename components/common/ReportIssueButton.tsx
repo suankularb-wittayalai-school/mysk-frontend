@@ -16,10 +16,10 @@ import { ComponentProps, FC, useState } from "react";
  */
 const ReportIssueButton: FC<
   Partial<
-    Omit<ComponentProps<typeof Button>, "children"> &
+    ComponentProps<typeof Button> &
       Pick<ComponentProps<typeof ReportIssueDialog>, "location" | "onSubmit">
   >
-> = ({ location, onClick, onSubmit, ...props }) => {
+> = ({ children, location, onClick, onSubmit, ...props }) => {
   const { t } = useTranslation("common");
 
   const plausible = usePlausible();
@@ -38,7 +38,7 @@ const ReportIssueButton: FC<
         }}
         {...props}
       >
-        {t("action.report")}
+        {children || t("action.report")}
       </Button>
       <ReportIssueDialog
         open={dialogOpen}
