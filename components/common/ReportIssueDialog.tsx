@@ -13,6 +13,8 @@ import {
   Text,
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
+import { title } from "radash";
 import { forwardRef, useState } from "react";
 
 enum ReportingCategory {
@@ -35,16 +37,19 @@ const FORM_URLS = {
  * and opens the appropriate Google Form.
  *
  * @param open Whether the Dialog is open and shown.
+ * @param location The location where the issue is reported. Used in analytics.
  * @param onClose Triggers when the Dialog is closed.
  * @param onSubmit Triggers when the form link is opened.
  */
 const ReportIssueDialog: StylableFC<{
   open?: boolean;
+  location?: string;
   onClose: () => void;
   onSubmit: (category: ReportingCategory) => void;
-}> = ({ onSubmit, ...props }) => {
+}> = ({ location, onSubmit, ...props }) => {
   const { onClose } = props;
 
+  const plausible = usePlausible();
   const locale = useLocale();
   const { t } = useTranslation("common", { keyPrefix: "dialog.reportIssue" });
 
@@ -89,6 +94,9 @@ const ReportIssueDialog: StylableFC<{
           disabled={!selectedCategory}
           href={selectedCategory ? FORM_URLS[selectedCategory] : undefined}
           onClick={() => {
+            plausible("Open Report Form", {
+              props: { location, category: title(selectedCategory) },
+            });
             onSubmit(selectedCategory!);
             setSelectedCategory(null);
           }}

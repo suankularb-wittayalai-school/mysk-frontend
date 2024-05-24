@@ -1,24 +1,28 @@
 import ReportIssueDialog from "@/components/common/ReportIssueDialog";
 import { Button, MaterialIcon } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { ComponentProps, FC, useState } from "react";
 
 /**
  * A Button that opens a Dialog for reporting an issue.
  *
+ * @param location The location where the issue is reported. Used in analytics.
  * @param onClick Triggers when the Button is clicked.
  * @param onSubmit Triggers when the form link is opened.
  *
  * @see {@link Button} for additional props.
- * @see {@link ReportIssueDialog} for `onSubmit` prop.
+ * @see {@link ReportIssueDialog} for `location` and `onSubmit` props.
  */
 const ReportIssueButton: FC<
   Partial<
     Omit<ComponentProps<typeof Button>, "children"> &
-      Pick<ComponentProps<typeof ReportIssueDialog>, "onSubmit">
+      Pick<ComponentProps<typeof ReportIssueDialog>, "location" | "onSubmit">
   >
-> = ({ onClick, onSubmit, ...props }) => {
+> = ({ location, onClick, onSubmit, ...props }) => {
   const { t } = useTranslation("common");
+
+  const plausible = usePlausible();
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -28,6 +32,7 @@ const ReportIssueButton: FC<
         appearance="outlined"
         icon={<MaterialIcon icon="report" />}
         onClick={() => {
+          plausible("Open Report Dialog", { props: { location } });
           setDialogOpen(true);
           onClick?.();
         }}
@@ -37,6 +42,7 @@ const ReportIssueButton: FC<
       </Button>
       <ReportIssueDialog
         open={dialogOpen}
+        location={location}
         onClose={() => setDialogOpen(false)}
         onSubmit={(category) => {
           setDialogOpen(false);

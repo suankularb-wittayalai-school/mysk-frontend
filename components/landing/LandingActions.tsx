@@ -47,16 +47,7 @@ const LandingActions: StylableFC = ({ style, className }) => {
       >
         {t("help")}
       </Button>
-      <ReportIssueButton
-        onClick={() =>
-          plausible("Open Report Dialog", { props: { location: "Landing" } })
-        }
-        onSubmit={(category) =>
-          plausible("Open Report Form", {
-            props: { location: "Landing", category: title(category) },
-          })
-        }
-      />
+      <ReportIssueButton location="Landing" />
       <Button
         appearance="outlined"
         icon={<MaterialIcon icon="star" />}
