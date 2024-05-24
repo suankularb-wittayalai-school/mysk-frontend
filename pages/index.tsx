@@ -94,7 +94,7 @@ const LandingPage: CustomPage = () => {
 
       {/* Content */}
       <div
-        className={cn(`mx-auto flex min-h-dvh max-w-[42.75rem] flex-col
+        className={cn(`mx-auto flex min-h-svh max-w-[42.75rem] flex-col
           items-center p-6`)}
       >
         {/* App Drawer */}
@@ -221,9 +221,9 @@ const LandingPage: CustomPage = () => {
           }
 
           .skc-root-layout {
+            height: 100svh;
+            min-height: calc(100svh + var(--_one-tap-height));
             padding-bottom: calc(var(--_one-tap-height) + 2rem);
-            height: 100dvh;
-            min-height: calc(100dvh + var(--_one-tap-height));
           }
         `}</style>
       </div>
