@@ -209,12 +209,16 @@ const LandingPage: CustomPage = () => {
           /* Add bottom padding when Google One Tap UI displays (if on mobile)
             so as to not cover the footer */
           body {
-            --_one-tap-height: 0;
+            --_one-tap-height: 12.5rem; /* FedCM */
           }
           body:has(> #credential_picker_iframe) {
-            --_one-tap-height: 16rem;
+            --_one-tap-height: 16rem; /* iframe */
           }
+
           @media only screen and (min-width: 600px) {
+            body {
+              --_one-tap-height: 0;
+            }
             body:has(> #credential_picker_iframe) {
               --_one-tap-height: 13rem;
             }
