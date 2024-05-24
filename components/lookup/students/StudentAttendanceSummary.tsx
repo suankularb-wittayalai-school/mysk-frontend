@@ -47,7 +47,7 @@ const StudentAttendanceSummary: StylableFC<{
 
   const now = new Date();
   const interval = {
-    start: addDays(now, -FIGURE_DATES_COUNT),
+    start: addDays(now, -FIGURE_DATES_COUNT + 1),
     end: now,
   };
   const academicYear = getCurrentAcademicYear();
