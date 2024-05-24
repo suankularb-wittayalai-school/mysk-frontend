@@ -1,3 +1,4 @@
+import ReportIssueButton from "@/components/common/ReportIssueButton";
 import LanguageSwitcher from "@/components/landing/LanguageSwitcher";
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
@@ -5,6 +6,7 @@ import { StylableFC } from "@/utils/types/common";
 import { Actions, Button, MaterialIcon } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import { title } from "radash";
 import { forwardRef } from "react";
 
 /**
@@ -45,20 +47,16 @@ const LandingActions: StylableFC = ({ style, className }) => {
       >
         {t("help")}
       </Button>
-      <Button
-        appearance="outlined"
-        icon={<MaterialIcon icon="report" />}
+      <ReportIssueButton
         onClick={() =>
-          plausible("Open Report Form", { props: { location: "Landing" } })
+          plausible("Open Report Dialog", { props: { location: "Landing" } })
         }
-        href={process.env.NEXT_PUBLIC_HELP_FORM_URL}
-        // eslint-disable-next-line react/display-name
-        element={forwardRef((props, ref) => (
-          <a ref={ref} {...props} target="_blank" rel="noreferrer" />
-        ))}
-      >
-        {t("report")}
-      </Button>
+        onSubmit={(category) =>
+          plausible("Open Report Form", {
+            props: { location: "Landing", category: title(category) },
+          })
+        }
+      />
       <Button
         appearance="outlined"
         icon={<MaterialIcon icon="star" />}
