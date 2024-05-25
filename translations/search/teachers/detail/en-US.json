@@ -1,0 +1,31 @@
+{
+  "glance": {
+    "free": "Not teaching right now",
+    "future": "Not teaching (next period in {{time}})",
+    "ongoing": "Teaching {{subject}}"
+  },
+  "starbucks": {
+    "order": "ชาเขียว Starbucks เย็น แก้วใหญ่ ไม่ใส่ syrup extra green tea 6 ช้อน แยกน้ำแข็ง ฝาโดม",
+    "action": {
+      "readAloud": "Read aloud",
+      "openStarbucks": "Open Starbucks"
+    },
+    "snackbar": {
+      "thaiSpeechNotSupported": "Your browser doesn’t support Thai text-to-speech"
+    }
+  },
+  "information": {
+    "title": "Information",
+    "fullName": "Full name",
+    "nickname": "Nickname",
+    "subjectGroup": "Subject group",
+    "classAdvisorAt": "Class advisor at",
+    "birthday": "Birthday"
+  },
+  "contacts": {
+    "title": "Contacts"
+  },
+  "subjects": {
+    "title": "Subjects in charge"
+  }
+}

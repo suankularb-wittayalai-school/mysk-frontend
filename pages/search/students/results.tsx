@@ -22,8 +22,8 @@ import {
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { alphabetical, camel, sort } from "radash";
 import { useEffect, useState } from "react";
@@ -40,12 +40,11 @@ export type StudentSearchFilters = Partial<{
  * @param filters The filters used to search for Students.
  * @param students The Students that match the filters.
  */
-const LookupStudentsResultsPage: CustomPage<{
+const SearchStudentsResultsPage: CustomPage<{
   filters: StudentSearchFilters;
   students: StudentLookupItem[];
 }> = ({ filters, students }) => {
-  const { t } = useTranslation("lookup", { keyPrefix: "students" });
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("search/students/list");
 
   const [selectedID, setSelectedID] = useState<string>();
   // Select the first result automatically after a short delay
@@ -95,7 +94,7 @@ const LookupStudentsResultsPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: t("title"), ns: "common" })}</title>
+        <title>{t("common:tabName", { tabName: t("title") })}</title>
       </Head>
       <PageHeader parentURL="/search/students">{t("title")}</PageHeader>
       <SplitLayout
@@ -184,7 +183,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "attendance",
         "classes",
-        "lookup",
       ])),
       filters,
       students,
@@ -192,4 +190,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-export default LookupStudentsResultsPage;
+export default SearchStudentsResultsPage;

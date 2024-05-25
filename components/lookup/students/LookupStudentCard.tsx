@@ -1,4 +1,3 @@
-// Imports
 import PersonAvatar from "@/components/common/PersonAvatar";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
@@ -6,7 +5,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { StudentLookupItem } from "@/utils/types/person";
 import { Card, CardHeader } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * A card that displays a Student in the list side of Search Students.
@@ -21,7 +20,7 @@ const LookupStudentCard: StylableFC<{
   onClick: (value: string) => void;
 }> = ({ student, selected, onClick, style, className }) => {
   const locale = useLocale();
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("common");
 
   return (
     <Card
@@ -53,7 +52,7 @@ const LookupStudentCard: StylableFC<{
         title={getLocaleName(locale, student)}
         subtitle={
           student.classroom
-            ? tx("class", { number: student.classroom.number })
+            ? t("class", { number: student.classroom.number })
             : undefined
         }
       />

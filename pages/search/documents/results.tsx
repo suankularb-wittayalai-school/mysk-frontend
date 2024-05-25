@@ -13,13 +13,13 @@ import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { SchoolDocument, SchoolDocumentType } from "@/utils/types/news";
 import {
+  DURATION,
   SplitLayout,
-  useAnimationConfig,
   useBreakpoint,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { camel } from "radash";
@@ -33,15 +33,17 @@ export type DocumentSearchFilters = Partial<{
   code: string;
 }>;
 
-const LookupDocumentsPage: CustomPage<{
+/**
+ * The results page for Search Documents.
+ *
+ * @param filters The filters used to search for Documents.
+ * @param documents The Documents that match the filters.
+ */
+const SearchDocumentsResultsPage: CustomPage<{
   filters: DocumentSearchFilters;
   documents: SchoolDocument[];
 }> = ({ filters, documents }) => {
-  // Translation
-  const { t } = useTranslation("lookup");
-  const { t: tx } = useTranslation("common");
-
-  const { duration } = useAnimationConfig();
+  const { t } = useTranslation("search/documents/list");
 
   // Selected Document
   const [selectedDocument, setSelectedDocument] = useState<SchoolDocument>();
@@ -50,7 +52,7 @@ const LookupDocumentsPage: CustomPage<{
   useEffect(() => {
     const timeout = setTimeout(
       () => setSelectedDocument(documents[0]),
-      duration.medium2 * 1000,
+      DURATION.medium2 * 1000,
     );
     return () => clearTimeout(timeout);
   }, []);
@@ -67,11 +69,9 @@ const LookupDocumentsPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: t("documents.title") }, t)}</title>
+        <title>{t("common:tabName", { tabName: t("title") })}</title>
       </Head>
-      <PageHeader parentURL="/search/documents">
-        {t("documents.title")}
-      </PageHeader>
+      <PageHeader parentURL="/search/documents">{t("title")}</PageHeader>
       <SplitLayout
         ratio="list-detail"
         className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
@@ -156,14 +156,11 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "lookup",
-      ])),
+      ...(await serverSideTranslations(locale as LangCode, ["common"])),
       filters,
       documents,
     },
   };
 };
 
-export default LookupDocumentsPage;
+export default SearchDocumentsResultsPage;

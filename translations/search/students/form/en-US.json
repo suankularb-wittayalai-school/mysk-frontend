@@ -1,0 +1,11 @@
+{
+  "title": "Search students",
+  "form": {
+    "fullName": "Search full name",
+    "fullName_helper": "Enter partially or fully the full name of a student",
+    "nickname": "Search nickname",
+    "nickname_helper": "Enter partially or fully the nickname of a student",
+    "contact": "Search contact",
+    "contact_helper": "Enter fully a username, email, tel., or URL of a student’s contact"
+  }
+}

@@ -10,7 +10,7 @@ import {
   Snackbar,
   TextField,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { camel, snake, toggle } from "radash";
 import { useContext, useEffect } from "react";
@@ -19,11 +19,7 @@ import { useContext, useEffect } from "react";
  * The Search Filters Card for Documents.
  */
 const DocumentFiltersCard: StylableFC = ({ style, className }) => {
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "documents.searchFilters.form",
-  });
-  const { t: tc } = useTranslation("lookup");
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("search/documents/form");
 
   const trackSearch = useTrackSearch();
   const { setSnackbar } = useContext(SnackbarContext);
@@ -89,7 +85,7 @@ const DocumentFiltersCard: StylableFC = ({ style, className }) => {
         key === "types" ? value.length === 0 : !value,
       )
     ) {
-      setSnackbar(<Snackbar>{tx("snackbar.formInvalid")}</Snackbar>);
+      setSnackbar(<Snackbar>{t("common:snackbar.formInvalid")}</Snackbar>);
       return;
     }
 
@@ -108,7 +104,7 @@ const DocumentFiltersCard: StylableFC = ({ style, className }) => {
   return (
     <SearchFiltersCard
       icon={<MaterialIcon icon="document_scanner" />}
-      title={tc("documents.title")}
+      title={t("title")}
       onSubmit={handleSubmit}
       style={style}
       className={className}
@@ -126,34 +122,34 @@ const DocumentFiltersCard: StylableFC = ({ style, className }) => {
                 setForm({ ...form, types: toggle(form.types, type) })
               }
             >
-              {t(`type.${camel(type)}`)}
+              {t(`common:document.${camel(type)}`)}
             </FilterChip>
           ),
         )}
       </ChipSet>
       <TextField
         appearance="outlined"
-        label={t("subject")}
-        helperMsg={t("subject_helper")}
+        label={t("form.subject")}
+        helperMsg={t("form.subject_helper")}
         {...formProps.subject}
       />
       <TextField
         appearance="outlined"
-        label={t("attendTo")}
-        helperMsg={t("attendTo_helper")}
+        label={t("form.attendTo")}
+        helperMsg={t("form.attendTo_helper")}
         {...formProps.attendTo}
       />
       <TextField
         appearance="outlined"
-        label={t("month")}
-        helperMsg={t("month_helper")}
+        label={t("form.month")}
+        helperMsg={t("form.month_helper")}
         inputAttr={{ type: "month", placeholder: "YYYY-MM" }}
         {...formProps.month}
       />
       <TextField
         appearance="outlined"
-        label={t("code")}
-        helperMsg={t("code_helper")}
+        label={t("form.code")}
+        helperMsg={t("form.code_helper")}
         {...formProps.code}
       />
     </SearchFiltersCard>

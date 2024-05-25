@@ -8,6 +8,31 @@
   },
   "class": "ม.{{number}}",
   "classNo": "เลขที่ {{classNo}}",
+  "contact": {
+    "phone": "โทรศัพท์",
+    "email": "อีเมล",
+    "website": "เว็บไซต์",
+    "facebook": "Facebook",
+    "line": "LINE",
+    "instagram": "Instagram",
+    "discord": "Discord",
+    "other": "อื่น ๆ"
+  },
+  "certificate": {
+    "studentOfTheYear": "นักเรียนยอดเยี่ยมแห่งปี",
+    "excellentStudent": "นักเรียนยอดเยี่ยม",
+    "academic": "นักเรียนดีเด่นด้านวิชาการ",
+    "morale": "นักเรียนดีเด่นด้านคุณธรรม",
+    "sports": "นักเรียนดีเด่นด้านกีฬา",
+    "activity": "นักเรียนดีเด่นด้านกิจกรรม"
+  },
+  "document": {
+    "order": "คำสั่ง",
+    "record": "บันทึกข้อความ",
+    "announcement": "ประกาศ",
+    "bigGaruda": "หนังสือออก",
+    "other": "อื่น ๆ"
+  },
   "ordinal": "{{count, number}}",
   "snackbar": {
     "changesSaved": "บันทึกการแก้ไขสำเร็จ",

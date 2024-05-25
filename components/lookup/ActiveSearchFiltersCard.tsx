@@ -7,7 +7,7 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { ReactNode } from "react";
 
 /**
@@ -19,7 +19,7 @@ import { ReactNode } from "react";
 const ActiveSearchFiltersCard: StylableFC<{
   children: ReactNode;
 }> = ({ children, style, className }) => {
-  const { t } = useTranslation("lookup");
+  const { t } = useTranslation("search/common");
 
   return (
     <motion.div
@@ -38,7 +38,7 @@ const ActiveSearchFiltersCard: StylableFC<{
         transition={transition(DURATION.long2, EASING.emphasized)}
         className="skc-text skc-text--title-medium px-4 pb-2 pt-3"
       >
-        {t("common.searchFilters.title")}
+        {t("activeFilters.title")}
       </motion.h2>
       <motion.div
         layout="position"

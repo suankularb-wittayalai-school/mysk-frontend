@@ -15,13 +15,14 @@ import {
 } from "@suankularb-components/react";
 import { differenceInSeconds } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useEffect, useState } from "react";
 
 /**
  * A Card that contains the current period of a Student or Teacher and its
  * progress in Search.
  *
+ * @param role The role of the Person.
  * @param getCurrentPeriod A function that returns the current period of the Student or Teacher.
  * @param onClick Triggers when the Card is clicked. Should open the Schedule.
  *
@@ -31,14 +32,17 @@ import { useEffect, useState } from "react";
  * if you have any feedback.
  */
 const CurrentPeriodCard: StylableFC<{
-  role: UserRole;
+  role: UserRole.student | UserRole.teacher;
   getCurrentPeriod: () => Promise<SchedulePeriod | null>;
   onClick: () => void;
 }> = ({ role, getCurrentPeriod, onClick, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("lookup", {
-    keyPrefix: `${role}s.detail.glance`,
-  });
+  const { t } = useTranslation(
+    {
+      student: "search/students/detail",
+      teacher: "search/teachers/detail",
+    }[role],
+  );
 
   const { now, schoolSessionState } = useNow();
 
@@ -108,13 +112,13 @@ const CurrentPeriodCard: StylableFC<{
             className="skc-text skc-text--title-medium"
           >
             {currentPeriod?.content.length
-              ? t("ongoing", {
+              ? t("glance.ongoing", {
                   subject: getLocaleString(
                     currentPeriod?.content[0].subject.name,
                     locale,
                   ),
                 })
-              : t("free")}
+              : t("glance.free")}
           </motion.p>
         )}
       </AnimatePresence>

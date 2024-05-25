@@ -20,8 +20,8 @@ import {
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { useEffect, useState } from "react";
 
 /**
@@ -46,7 +46,12 @@ const PersonHeader: StylableFC<{
   }>;
 }> = ({ person, onScheduleOpenClick, options, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("lookup", { keyPrefix: "people.header" });
+  const { t } = useTranslation(
+    {
+      student: "search/students/header",
+      teacher: "search/teachers/header",
+    }[person.role],
+  );
 
   const plausible = usePlausible();
   const getVCard = useGetVCard();
@@ -150,7 +155,7 @@ const PersonHeader: StylableFC<{
                 onScheduleOpenClick?.();
               }}
             >
-              {t(`action.seeSchedule.${person.role}`)}
+              {t("action.seeSchedule")}
             </AssistChip>
           )}
         </ChipSet>

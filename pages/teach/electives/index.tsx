@@ -160,7 +160,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         "attendance",
         "classes",
         "elective",
-        "lookup",
       ])),
       electiveSubjects,
     },

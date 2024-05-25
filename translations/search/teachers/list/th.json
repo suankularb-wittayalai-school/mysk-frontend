@@ -1,0 +1,10 @@
+{
+  "title": "ค้นหาครู",
+  "filter": {
+    "fullName": "ชื่อจริง: “{{content}}”",
+    "nickname": "ชื่อเล่น: “{{content}}”",
+    "subjectGroup": "กลุ่มสาระการเรียนรู้: “{{content}}”",
+    "classroom": "ห้องเรียน: “{{content}}”",
+    "contact": "ช่องทางการติดต่อ: “{{content}}”"
+  }
+}

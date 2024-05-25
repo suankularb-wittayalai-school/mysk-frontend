@@ -8,7 +8,7 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { ReactNode } from "react";
 import Balancer from "react-wrap-balancer";
@@ -25,7 +25,7 @@ const LookupResultsList: StylableFC<{
   filtersURL?: string;
   length: number;
 }> = ({ children, filtersURL, length, style, className }) => {
-  const { t } = useTranslation("lookup");
+  const { t } = useTranslation("search/common");
 
   return length > 0 ? (
     // List
@@ -55,11 +55,11 @@ const LookupResultsList: StylableFC<{
         element="p"
         className="text-center text-on-surface-variant"
       >
-        <Balancer>{t("common.list.empty.desc")}</Balancer>
+        <Balancer>{t("empty.desc")}</Balancer>
       </Text>
       {filtersURL && (
         <Button appearance="text" href={filtersURL} element={Link}>
-          {t("common.list.empty.action.clear")}
+          {t("empty.action.clear")}
         </Button>
       )}
     </motion.div>

@@ -1,4 +1,3 @@
-// Imports
 import ActiveSearchFiltersCard from "@/components/lookup/ActiveSearchFiltersCard";
 import { TeacherSearchFilters } from "@/pages/search/teachers/results";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -6,7 +5,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { SubjectGroup } from "@/utils/types/subject";
 import { InputChip } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * Active Search Filters Card for Teachers.
@@ -19,9 +18,7 @@ const TeacherActiveFiltersCard: StylableFC<{
   subjectGroups: SubjectGroup[];
 }> = ({ filters, subjectGroups, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "teachers.searchFilters",
-  });
+  const { t } = useTranslation("search/teachers/list");
 
   const subjectGroup = filters.subjectGroup
     ? subjectGroups.find((item) => filters.subjectGroup === item.id)
@@ -31,32 +28,33 @@ const TeacherActiveFiltersCard: StylableFC<{
     <ActiveSearchFiltersCard style={style} className={className}>
       {filters.fullName && (
         <InputChip>
-          {t("chip.fullName", { content: filters.fullName })}
+          {t("filter.fullName", { content: filters.fullName })}
         </InputChip>
       )}
       {filters.nickname && (
         <InputChip>
-          {t("chip.nickname", { content: filters.nickname })}
+          {t("filter.nickname", { content: filters.nickname })}
         </InputChip>
       )}
       {subjectGroup && (
         <InputChip>
-          {t("chip.subjectGroup", {
+          {t("filter.subjectGroup", {
             content: getLocaleString(subjectGroup.name, locale),
           })}
         </InputChip>
       )}
       {filters.classroom && (
         <InputChip>
-          {t("chip.classroom", { content: filters.classroom })}
+          {t("filter.classroom", { content: filters.classroom })}
         </InputChip>
       )}
       {filters.contact && (
-        <InputChip>{t("chip.contact", { content: filters.contact })}</InputChip>
+        <InputChip>
+          {t("filter.contact", { content: filters.contact })}
+        </InputChip>
       )}
     </ActiveSearchFiltersCard>
   );
 };
 
 export default TeacherActiveFiltersCard;
-

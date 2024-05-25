@@ -311,7 +311,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "elective",
-        "lookup",
       ])),
       electiveSubjects,
       enrolledElective,

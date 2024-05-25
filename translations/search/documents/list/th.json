@@ -1,0 +1,18 @@
+{
+  "title": "ค้นหาเอกสาร",
+  "filter": {
+    "type": "ประเภท: {{content, or}}",
+    "type_all": "ประเภท: ทั้งหมด",
+    "subject": "เรื่อง: “{{content}}”",
+    "attendTo": "เรียน: “{{content}}”",
+    "month": "เดือน: {{content}}",
+    "code": "รหัสเอกสาร: “{{content}}”"
+  },
+  "metadata": {
+    "order": "ที่ {{code}}/{{year}} • {{date}}",
+    "record": "{{code}} • {{date}}",
+    "announcement": "{{date}}",
+    "bigGaruda": "ศธ 04290.20/{{code}} • {{date}}",
+    "other": "{{date}}"
+  }
+}

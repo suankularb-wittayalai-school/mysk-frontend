@@ -1,0 +1,7 @@
+{
+  "action": {
+    "saveContact": "บันทึก",
+    "seeClass": "ดูห้องที่ปรึกษา",
+    "seeSchedule": "ดูตารางสอน"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "restrictions": {
+    "title": "เอกสารที่ถูกจำกัด",
+    "desc": "อนุญาตให้{{roles, and}}เข้าถึงเท่านั้น",
+    "descSegment": {
+      "student": "นักเรียน",
+      "teacher": "ครู",
+      "parent": "ผู้ปกครอง"
+    }
+  },
+  "loading": "กำลังโหลดเอกสารจาก Google Drive…"
+}

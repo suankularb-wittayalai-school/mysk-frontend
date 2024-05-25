@@ -1,4 +1,3 @@
-// Imports
 import PageHeader from "@/components/common/PageHeader";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
@@ -14,25 +13,19 @@ import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import getTeachersByLookupFilters from "@/utils/backend/person/getTeachersByLookupFilters";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
 import getLocaleString from "@/utils/helpers/getLocaleString";
-import { LangCode } from "@/utils/types/common";
+import { CustomPage, LangCode } from "@/utils/types/common";
 import { Teacher, TeacherLookupItem } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
 import {
   DURATION,
   SplitLayout,
-  useAnimationConfig,
   useBreakpoint,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import {
-  GetServerSideProps,
-  NextApiRequest,
-  NextApiResponse,
-  NextPage,
-} from "next";
-import { useTranslation } from "next-i18next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { alphabetical, camel } from "radash";
 import { useEffect, useState } from "react";
@@ -45,14 +38,20 @@ export type TeacherSearchFilters = Partial<{
   contact: string;
 }>;
 
-const LookupTeachersResultsPage: NextPage<{
+/**
+ * The results page for Search Teachers.
+ *
+ * @param filters The filters used to search for Teachers.
+ * @param subjectGroups The list of all Subject Groups.
+ * @param teachers The Teachers that match the filters.
+ */
+const SearchTeachersResultsPage: CustomPage<{
   filters: TeacherSearchFilters;
   subjectGroups: SubjectGroup[];
   teachers: TeacherLookupItem[];
 }> = ({ filters, subjectGroups, teachers }) => {
   // Translation
-  const { t } = useTranslation("lookup", { keyPrefix: "teachers" });
-  const { t: tx } = useTranslation(["lookup", "common"]);
+  const { t } = useTranslation("search/teachers/list");
 
   const [selectedID, setSelectedID] = useState<string>();
   // Select the first result automatically after a short delay
@@ -101,7 +100,7 @@ const LookupTeachersResultsPage: NextPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: t("title"), ns: "common" })}</title>
+        <title>{t("common:tabName", { tabName: t("title") })}</title>
       </Head>
       <PageHeader parentURL="/search/teachers">{t("title")}</PageHeader>
       <SplitLayout
@@ -210,7 +209,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "classes",
-        "lookup",
       ])),
       filters,
       subjectGroups,
@@ -219,4 +217,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-export default LookupTeachersResultsPage;
+export default SearchTeachersResultsPage;

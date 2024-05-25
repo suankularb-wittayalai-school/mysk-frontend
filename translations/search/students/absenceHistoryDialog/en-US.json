@@ -1,0 +1,19 @@
+{
+  "history": {
+    "title": "Absence history",
+    "item": {
+      "late": "Late",
+      "sick": "Sick leave",
+      "business": "Business leave",
+      "absent": "Absent",
+      "dropped": "Dropped"
+    }
+  },
+  "perfect": {
+    "title": "No absences",
+    "desc": "This student has never been absent or arrived late throughout this academic year.",
+    "action": {
+      "close": "Close"
+    }
+  }
+}

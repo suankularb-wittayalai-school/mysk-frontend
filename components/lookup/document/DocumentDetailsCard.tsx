@@ -12,7 +12,7 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { sift } from "radash";
 import { RefObject, useEffect, useRef, useState } from "react";
 
@@ -24,10 +24,7 @@ import { RefObject, useEffect, useRef, useState } from "react";
 const DocumentDetailsCard: StylableFC<{
   document: SchoolDocument;
 }> = ({ document, style, className }) => {
-  // Translation
-  const { t } = useTranslation("lookup", { keyPrefix: "documents.header" });
-
-  // Animation
+  const { t } = useTranslation("search/documents/detail");
 
   // Loading
   const [loading, setLoading] = useState(true);
@@ -117,7 +114,7 @@ const DocumentDetailsCard: StylableFC<{
             {/* Circular Progress */}
             <Progress
               appearance="circular"
-              alt="Loading document from Google Drive…"
+              alt={t("loading")}
               visible={loading}
               className="absolute inset-0 !m-auto"
             />
@@ -125,9 +122,14 @@ const DocumentDetailsCard: StylableFC<{
             {/* Embed iframe */}
             <iframe
               key={document.id}
-              src={`${
-                document.document_link.split(/\/view\?usp=[a-z]+/)[0]
-              }/preview`}
+              src={
+                document.document_link.includes("drive.google.com")
+                  ? document.document_link.replace(
+                      /\/view\?usp=[a-z]+/,
+                      "/preview",
+                    )
+                  : document.document_link
+              }
               width={iframeSize.width}
               height={iframeSize.height}
               allow="autoplay"

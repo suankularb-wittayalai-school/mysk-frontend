@@ -4,7 +4,7 @@ import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { Card, CardHeader } from "@suankularb-components/react";
 import { isWeekend } from "date-fns";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 
 enum TodayAttendanceState {
@@ -25,9 +25,7 @@ const TodayAttendanceCard: StylableFC<{
   attendance?: StudentAttendance["assembly"];
   classroom?: Pick<Classroom, "number">;
 }> = ({ attendance, classroom, style, className }) => {
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "students.detail.attendance.today",
-  });
+  const { t } = useTranslation("search/students/detail");
 
   const state = (() => {
     if (isWeekend(new Date())) return TodayAttendanceState.noSchool;
@@ -65,13 +63,13 @@ const TodayAttendanceCard: StylableFC<{
       )}
     >
       <CardHeader
-        title={t(`title.${state}`)}
+        title={t(`attendance.today.title.${state}`)}
         subtitle={
           // Show the custom absence reason if available.
           attendance?.absence_reason ||
           // Show the absence type if the Student is absent.
           (state === TodayAttendanceState.absent && attendance?.absence_type
-            ? t(`subtitle.${attendance.absence_type}`)
+            ? t(`attendance.today.subtitle.${attendance.absence_type}`)
             : undefined)
         }
         className="!px-3 !py-2"

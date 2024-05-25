@@ -1,0 +1,8 @@
+{
+  "title": "Search students",
+  "filter": {
+    "fullName": "Full name: “{{content}}”",
+    "nickname": "Nickname: “{{content}}”",
+    "contact": "Contact: “{{content}}”"
+  }
+}
