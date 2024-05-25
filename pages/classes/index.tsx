@@ -76,20 +76,6 @@ const ClassesPage: NextPage<{
     else if (classrooms.length) onSelectedChange(first(classrooms)!.id);
   }, [userClassroom]);
 
-  /**
-   * Fetch data for the selected Classroom.
-   */
-  async function fetchSelectedClass() {
-    if (!selectedID) return;
-    const { data, error } = await getClassroomByID(supabase, selectedID, {
-      includeStudents:
-        (mysk.user &&
-          (mysk.user.is_admin || mysk.user.role !== UserRole.student)) ||
-        selectedID === userClassroom?.id,
-    });
-    if (!error) onSelectedChange(data.id);
-  }
-
   return (
     <>
       <Head>
@@ -146,7 +132,7 @@ const ClassesPage: NextPage<{
         >
           <ClassDetailsCard
             classroom={selectedDetail}
-            refreshData={fetchSelectedClass}
+            refreshData={() => selectedID && onSelectedChange(selectedID)}
           />
         </LookupDetailsSide>
       </SplitLayout>
@@ -155,7 +141,7 @@ const ClassesPage: NextPage<{
       <LookupDetailsDialog open={detailsOpen} onClose={onDetailsClose}>
         <ClassDetailsCard
           classroom={selectedDetail}
-          refreshData={fetchSelectedClass}
+          refreshData={() => selectedID && onSelectedChange(selectedID)}
         />
       </LookupDetailsDialog>
     </>
