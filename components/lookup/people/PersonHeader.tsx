@@ -73,8 +73,10 @@ const PersonHeader: StylableFC<{
 
   const supabase = useSupabaseClient();
   const [classOpen, setClassOpen] = useState(false);
-  const [classroom, setClassroom] =
-    useState<Omit<Classroom, "year" | "subjects">>();
+  const [classroom, setClassroom] = useState<Omit<
+    Classroom,
+    "year" | "subjects"
+  > | null>(null);
 
   /**
    * Fetch the Person’s Classroom.
