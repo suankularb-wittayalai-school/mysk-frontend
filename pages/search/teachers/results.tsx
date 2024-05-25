@@ -13,14 +13,12 @@ import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import getTeachersByLookupFilters from "@/utils/backend/person/getTeachersByLookupFilters";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
 import getLocaleString from "@/utils/helpers/getLocaleString";
+import useListDetail from "@/utils/helpers/search/useListDetail";
+import { Breakpoint } from "@/utils/helpers/useBreakpoint";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Teacher, TeacherLookupItem } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
-import {
-  DURATION,
-  SplitLayout,
-  useBreakpoint,
-} from "@suankularb-components/react";
+import { DURATION, SplitLayout } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
@@ -28,7 +26,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { alphabetical, camel } from "radash";
-import { useEffect, useState } from "react";
 
 export type TeacherSearchFilters = Partial<{
   fullName: string;
@@ -50,52 +47,30 @@ const SearchTeachersResultsPage: CustomPage<{
   subjectGroups: SubjectGroup[];
   teachers: TeacherLookupItem[];
 }> = ({ filters, subjectGroups, teachers }) => {
-  // Translation
   const { t } = useTranslation("search/teachers/list");
-
-  const [selectedID, setSelectedID] = useState<string>();
-  // Select the first result automatically after a short delay
-  useEffect(() => {
-    const timeout = setTimeout(
-      () => setSelectedID(teachers[0]?.id),
-      DURATION.medium2 * 1000,
-    );
-    return () => clearTimeout(timeout);
-  }, []);
 
   const supabase = useSupabaseClient();
   const mysk = useMySKClient();
-  const [selectedTeacher, setSelectedTeacher] = useState<Teacher>();
-  // Fetch the selected Teacher when the selected Teacher ID changes
-  useEffect(() => {
-    (async () => {
-      // Clear the selected Teacher data first
-      // (This, combined with some more logic in child components, prevents the
-      // old Teacher data from flashing at selected Teacher ID change)
-      setSelectedTeacher(undefined);
-      if (!selectedID) return false;
 
-      // Fetch the selected Teacher with the selected ID
-      const { data, error } = await getTeacherByID(supabase, mysk, selectedID, {
+  const {
+    selectedID,
+    selectedDetail,
+    onSelectedChange,
+    detailsOpen,
+    onDetailsClose,
+  } = useListDetail<TeacherLookupItem, Teacher>(
+    teachers,
+    (id) =>
+      getTeacherByID(supabase, mysk, id, {
         detailed: true,
         includeContacts: true,
-      });
-      if (error) return false;
-
-      // Set the state
-      setSelectedTeacher(data);
-      return true;
-    })();
-  }, [selectedID]);
-
-  const [detailsOpen, setDetailsOpen] = useState(false);
-
-  // Open the Teacher Details Dialog on mobile, otherwise close it
-  const { atBreakpoint } = useBreakpoint();
-  useEffect(() => {
-    if (atBreakpoint !== "base") setDetailsOpen(false);
-    else if (selectedID) setDetailsOpen(true);
-  }, [atBreakpoint === "base"]);
+      }),
+    {
+      firstByDefault: true,
+      initialSelectDelay: DURATION.medium2,
+      dialogBreakpoints: [Breakpoint.base],
+    },
+  );
 
   return (
     <>
@@ -130,11 +105,8 @@ const SearchTeachersResultsPage: CustomPage<{
               >
                 <LookupTeacherCard
                   teacher={teacher}
-                  selected={selectedID}
-                  onClick={(id) => {
-                    setSelectedID(id);
-                    if (atBreakpoint === "base") setDetailsOpen(true);
-                  }}
+                  selected={teacher.id === selectedID}
+                  onClick={onSelectedChange}
                 />
               </LookupResultsItem>
             ))}
@@ -143,23 +115,16 @@ const SearchTeachersResultsPage: CustomPage<{
 
         {/* Details */}
         <LookupDetailsSide
-          selectedID={selectedTeacher?.id || selectedID}
+          selectedID={selectedDetail?.id || selectedID}
           length={teachers.length}
         >
-          <TeacherDetailsCard teacher={selectedTeacher} />
+          <TeacherDetailsCard teacher={selectedDetail} />
         </LookupDetailsSide>
       </SplitLayout>
 
       {/* Details Dialog */}
-      <LookupDetailsDialog
-        open={detailsOpen}
-        onClose={() => setDetailsOpen(false)}
-      >
-        <TeacherDetailsCard
-          teacher={
-            selectedID === selectedTeacher?.id ? selectedTeacher : undefined
-          }
-        />
+      <LookupDetailsDialog open={detailsOpen} onClose={onDetailsClose}>
+        <TeacherDetailsCard teacher={selectedDetail} />
       </LookupDetailsDialog>
     </>
   );

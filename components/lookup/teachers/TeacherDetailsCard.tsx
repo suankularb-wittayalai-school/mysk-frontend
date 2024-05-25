@@ -30,7 +30,7 @@ import { sift } from "radash";
  * @param teacher The Teacher to show the details of.
  */
 const TeacherDetailsCard: StylableFC<{
-  teacher?: Teacher;
+  teacher: Teacher | null;
   options?: Partial<{ hideSeeClass: boolean }>;
 }> = ({ teacher, options, style, className }) => {
   const locale = useLocale();

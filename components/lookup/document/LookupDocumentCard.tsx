@@ -12,13 +12,13 @@ import { camel } from "radash";
  * A card that displays a Document in the list of Documents.
  *
  * @param document The Document to display.
- * @param selected The currently selected Document.
+ * @param selected If this Document is currently selected.
  * @param onClick The function to set the selected Document.
  */
 const LookupDocumentCard: StylableFC<{
   document: SchoolDocument;
-  selected?: SchoolDocument;
-  onClick: (value: SchoolDocument) => void;
+  selected?: boolean;
+  onClick: (id: string) => void;
 }> = ({ document, selected, onClick, style, className }) => {
   // Translation
   const locale = useLocale();
@@ -32,12 +32,12 @@ const LookupDocumentCard: StylableFC<{
       appearance="outlined"
       direction="row"
       stateLayerEffect
-      onClick={() => onClick(document)}
+      onClick={() => onClick(document.id)}
       style={style}
       className={cn(
         `w-full items-center !rounded-none !border-transparent pr-3 text-left
         sm:!rounded-md`,
-        selected?.id === document.id &&
+        selected &&
           `sm:!border-outline-variant sm:!bg-primary-container
           sm:focus:!border-primary`,
         className,
