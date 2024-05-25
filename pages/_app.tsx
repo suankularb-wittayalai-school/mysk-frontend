@@ -170,10 +170,4 @@ function App({
   );
 }
 
-// Prevent next-translate from using `getInitialProps` so as to keep Automatic
-// Static Optimization.
-// Declaring `getStaticProps` here forces next-translate to use it.
-// See: https://github.com/aralroca/next-translate/issues/801#issuecomment-1059800473
-export const getStaticProps = undefined;
-
 export default appWithTranslation(App);
