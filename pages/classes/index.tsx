@@ -33,7 +33,7 @@ import { useEffect } from "react";
  * revealed. Other Classrooms have minimal information to prevent privacy
  * issues.
  *
- * @param grades The Classrooms grouped by grade.
+ * @param classrooms The list of Classrooms to display.
  */
 const ClassesPage: NextPage<{
   classrooms: Pick<Classroom, "id" | "number" | "main_room">[];
