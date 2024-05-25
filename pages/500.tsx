@@ -1,11 +1,11 @@
-// Imports
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
+import ReportIssueButton from "@/components/common/ReportIssueButton";
 import ErrorHero from "@/components/error/ErrorHero";
 import ErrorLayout from "@/components/error/ErrorLayout";
 import ServerErrorDark from "@/public/images/graphics/error/500-dark.png";
 import ServerErrorLight from "@/public/images/graphics/error/500-light.png";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Text } from "@suankularb-components/react";
+import { Actions, Text } from "@suankularb-components/react";
 import { GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -30,10 +30,13 @@ const ServerErrorPage: CustomPage = () => {
         verbose={t("error.500.verbose")}
         tabName={t("error.500.tabName")}
       >
-        <Text type="body-large" element="div" className="flex flex-col gap-2">
+        <Text type="body-large" element="div" className="space-y-2">
           <p>{t("error.500.desc")}</p>
           <p>{t("error.common.persistNotice")}</p>
         </Text>
+        <Actions align="left">
+          <ReportIssueButton location="500" />
+        </Actions>
       </ErrorHero>
     </ErrorLayout>
   );

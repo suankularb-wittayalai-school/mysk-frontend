@@ -1,6 +1,5 @@
 import InformationCard from "@/components/lookup/people/InformationCard";
 import PersonChipSet from "@/components/person/PeopleChipSet";
-import PersonChip from "@/components/person/PersonChip";
 import RoomChip from "@/components/room/RoomChip";
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
@@ -19,6 +18,7 @@ const SingleSubjectDetails: StylableFC<{
   period: PeriodContentItem;
 }> = ({ period, style, className }) => {
   const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
+  const rooms = period.rooms ? sift(period.rooms) : [];
 
   return (
     <div
@@ -41,14 +41,15 @@ const SingleSubjectDetails: StylableFC<{
       </InformationCard>
 
       {/* Room */}
-      <InformationCard title={t("details.room.title")}>
-        <ChipSet scrollable className="fade-out-to-r -mx-3 *:pl-3 *:pr-8">
-          {period.rooms &&
-            sift(period.rooms).map((room) => (
+      {rooms.length > 0 && (
+        <InformationCard title={t("details.room.title")}>
+          <ChipSet scrollable className="fade-out-to-r -mx-3 *:pl-3 *:pr-8">
+            {rooms.map((room) => (
               <RoomChip key={room} room={room} />
             ))}
-        </ChipSet>
-      </InformationCard>
+          </ChipSet>
+        </InformationCard>
+      )}
     </div>
   );
 };
