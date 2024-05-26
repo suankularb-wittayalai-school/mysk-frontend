@@ -176,7 +176,6 @@ const DateAttendancePage: CustomPage<{
                   attendance={attendance}
                   shownEvent={event}
                   date={date}
-                  teacherID={mysk.person?.id}
                   editable={editable && !loading}
                   onAttendanceChange={(attendance) =>
                     setAttendances(
@@ -198,7 +197,6 @@ const DateAttendancePage: CustomPage<{
                   toggleLoading={toggleLoading}
                   date={date}
                   classroom={classroom}
-                  teacherID={mysk.person?.id}
                   className="mt-2 px-4 md:px-0"
                 />
               )}

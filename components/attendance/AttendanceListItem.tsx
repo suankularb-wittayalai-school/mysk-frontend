@@ -44,7 +44,6 @@ import { useContext, useState } from "react";
  * @param attendance The Attendance of a Student at assembly and homeroom.
  * @param shownEvent The Attendance Event to show.
  * @param date The date of the Attendance. Used in saving.
- * @param teacherID The ID of the Teacher who is viewing the Attendance. Used in saving.
  * @param editable Whether the Attendance is editable.
  * @param onAttendanceChange Callback when the Attendance is changed.
  */
@@ -52,22 +51,15 @@ const AttendanceListItem: StylableFC<{
   attendance: StudentAttendance;
   shownEvent: AttendanceEvent;
   date: string;
-  teacherID?: string;
   editable?: boolean;
   onAttendanceChange: (attendance: StudentAttendance) => void;
-}> = ({
-  attendance,
-  shownEvent,
-  date,
-  teacherID,
-  editable,
-  onAttendanceChange,
-}) => {
+}> = ({ attendance, shownEvent, date, editable, onAttendanceChange }) => {
   const locale = useLocale();
   const { t } = useTranslation("attendance", { keyPrefix: "item" });
   const { t: tx } = useTranslation("common");
 
   const supabase = useSupabaseClient();
+  const mysk = useMySKClient();
   const { setSnackbar } = useContext(SnackbarContext);
 
   const [loading, toggleLoading] = useToggle();
@@ -96,7 +88,7 @@ const AttendanceListItem: StylableFC<{
     // Lock the fridge (disallow saving while another save process is ongoing)
     // to prevent race conditions.
     // Will anyone get this? Everyone took CS50, right?
-    if (loading || !(editable && teacherID)) return;
+    if (loading || !editable) return;
 
     // Saving to Assembly also saves to Homeroom, as per Sake’s request.
     const newAttendance =
@@ -131,14 +123,14 @@ const AttendanceListItem: StylableFC<{
    * @param attendance The Attendance to save.
    */
   async function handleSave(attendance: StudentAttendance) {
-    if (!(editable && teacherID)) return;
+    if (!(editable && mysk.person?.role === UserRole.teacher)) return;
     withLoading(
       async () => {
-        const { data, error } = await upsertAttendance(
+        const { error } = await upsertAttendance(
           supabase,
           attendance,
           date,
-          teacherID,
+          mysk.person!.id,
         );
         if (error) setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
         return error === null;

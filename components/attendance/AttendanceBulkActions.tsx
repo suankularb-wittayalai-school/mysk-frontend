@@ -1,6 +1,7 @@
 import SnackbarContext from "@/contexts/SnackbarContext";
 import bulkCreateAttendanceOfClass from "@/utils/backend/attendance/bulkCreateAttendanceOfClass";
 import clearAttendanceOfClass from "@/utils/backend/attendance/clearAttendanceOfClass";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import withLoading from "@/utils/helpers/withLoading";
@@ -32,7 +33,6 @@ import { useContext } from "react";
  * @param toggleLoading Callback to toggle loading state during saving.
  * @param date The date of the Attendance. Used in saving.
  * @param classroom The Classroom that this page is for. Used in saving.
- * @param teacherID The ID of the Teacher who is viewing this page. Used in saving.
  */
 const AttendanceBulkActions: StylableFC<{
   attendances: StudentAttendance[];
@@ -40,22 +40,21 @@ const AttendanceBulkActions: StylableFC<{
   toggleLoading: () => void;
   date: string;
   classroom: Pick<Classroom, "id" | "number">;
-  teacherID: string;
 }> = ({
   attendances,
   onAttendancesChange,
   toggleLoading,
   date,
   classroom,
-  teacherID,
   style,
   className,
 }) => {
   const { t } = useTranslation("attendance", { keyPrefix: "day" });
   const { t: tx } = useTranslation("common");
 
-  const supabase = useSupabaseClient();
   const plausible = usePlausible();
+  const supabase = useSupabaseClient();
+  const mysk = useMySKClient();
   const { setSnackbar } = useContext(SnackbarContext);
   const refreshProps = useRefreshProps();
 
@@ -75,7 +74,7 @@ const AttendanceBulkActions: StylableFC<{
           supabase,
           date,
           classroom.id,
-          teacherID,
+          mysk.person!.id,
         );
         if (error) setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
         else await refreshProps();
