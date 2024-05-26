@@ -15,10 +15,13 @@ import {
   StudentAttendance,
 } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
+import { UserRole } from "@/utils/types/person";
+import WithPersonDetails from "@/components/person/WithPersonDetails";
 import {
   Button,
   DURATION,
   EASING,
+  Interactive,
   ListItem,
   ListItemContent,
   MaterialIcon,
@@ -30,8 +33,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
-import { ComponentProps, useContext } from "react";
-import { UserRole } from "@/utils/types/person";
+import { ComponentProps, useContext, useState } from "react";
 
 /**
  * A List Item for the Attendance page.
@@ -63,9 +65,10 @@ const AttendanceListItem: StylableFC<{
   const { t: tx } = useTranslation("common");
 
   const supabase = useSupabaseClient();
+  const { setSnackbar } = useContext(SnackbarContext);
 
   const [loading, toggleLoading] = useToggle();
-  const { setSnackbar } = useContext(SnackbarContext);
+  const [studentOpen, setStudentOpen] = useState(false);
 
   /**
    * Whether to show the Checkbox as ticked [✓], crossed [✕], or empty [ ].
@@ -179,11 +182,19 @@ const AttendanceListItem: StylableFC<{
           element="div"
           className="!items-center !overflow-visible"
         >
-          <PersonAvatar
-            {...attendance.student}
-            expandable
-            className="!min-w-[2.5rem]"
-          />
+          <WithPersonDetails
+            open={studentOpen}
+            person={{ ...attendance.student, role: UserRole.student }}
+            onClose={() => setStudentOpen(false)}
+            options={{ hideSeeClass: true }}
+          >
+            <Interactive
+              onClick={() => setStudentOpen(true)}
+              className="-m-1 rounded-full p-1"
+            >
+              <PersonAvatar {...attendance.student} size={40} />
+            </Interactive>
+          </WithPersonDetails>
           <ListItemContent
             title={getLocaleName(locale, attendance.student)}
             desc={sift([

@@ -259,6 +259,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "attendance",
+        "lookup",
       ])),
       date,
       attendances,
