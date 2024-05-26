@@ -19,7 +19,8 @@ import {
   TextField,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { isPast, isWeekend } from "date-fns";
+import { isFuture, isPast, isWeekend } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
@@ -61,7 +62,8 @@ const AttendanceDatePickerDialog: StylableFC<{
           date:
             YYYYMMDDRegex.test(value) &&
             !isWeekend(new Date(value)) &&
-            isPast(new Date(value)),
+            // Converting to UTC here means using the client’s midnight time.
+            !isFuture(toZonedTime(new Date(value), "Etc/UTC")),
           month: YYYYMMRegex.test(value) && isPast(new Date(value)),
         })[view],
       required: true,

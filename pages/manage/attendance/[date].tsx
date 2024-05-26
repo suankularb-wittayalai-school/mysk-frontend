@@ -8,6 +8,7 @@ import SchoolWideAttendanceTable from "@/components/attendance/SchoolWideAttenda
 import PageHeader from "@/components/common/PageHeader";
 import MySKLogo from "@/public/images/brand/mysk-light.svg";
 import getClassroomAttendances from "@/utils/backend/attendance/getClassroomAttendances";
+import isValidAttendanceDate from "@/utils/helpers/attendance/isValidAttendanceDate";
 import cn from "@/utils/helpers/cn";
 import { YYYYMMDDRegex } from "@/utils/patterns";
 import { supabase } from "@/utils/supabase-backend";
@@ -28,7 +29,8 @@ import {
   Section,
   Text,
 } from "@suankularb-components/react";
-import { isFuture, isWeekend } from "date-fns";
+import { isAfter, isFuture, isWeekend } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -186,12 +188,7 @@ const AttendanceOverviewPage: CustomPage<{
 
 export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const { date } = params as { date: string };
-  if (
-    !YYYYMMDDRegex.test(date) ||
-    isFuture(new Date(date)) ||
-    isWeekend(new Date(date))
-  )
-    return { notFound: true };
+  if (!isValidAttendanceDate(date)) return { notFound: true };
 
   const { data: attendances } = await getClassroomAttendances(supabase, date);
 
