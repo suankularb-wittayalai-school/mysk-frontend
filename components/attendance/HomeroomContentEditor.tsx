@@ -42,6 +42,7 @@ const HomeroomContentEditor: FC<{
         value={field}
         onChange={setField}
         inputAttr={{ readOnly: loading }}
+        className="[&_textarea]:min-h-32"
       />
       <Actions>
         <Button appearance="text" onClick={handleCancel}>

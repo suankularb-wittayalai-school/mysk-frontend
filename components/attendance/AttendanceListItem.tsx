@@ -1,7 +1,10 @@
 import AbsenceTypeSelector from "@/components/attendance/AbsenceTypeSelector";
+import LateChip from "@/components/attendance/LateChip";
 import PersonAvatar from "@/components/common/PersonAvatar";
+import WithPersonDetails from "@/components/person/WithPersonDetails";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import upsertAttendance from "@/utils/backend/attendance/upsertAttendance";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -14,11 +17,12 @@ import {
   StudentAttendance,
 } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
+import { UserRole } from "@/utils/types/person";
 import {
   Button,
   DURATION,
   EASING,
-  FilterChip,
+  Interactive,
   ListItem,
   ListItemContent,
   MaterialIcon,
@@ -30,7 +34,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
-import { ComponentProps, useContext } from "react";
+import { useContext, useState } from "react";
 
 /**
  * A List Item for the Attendance page.
@@ -38,7 +42,6 @@ import { ComponentProps, useContext } from "react";
  * @param attendance The Attendance of a Student at assembly and homeroom.
  * @param shownEvent The Attendance Event to show.
  * @param date The date of the Attendance. Used in saving.
- * @param teacherID The ID of the Teacher who is viewing the Attendance. Used in saving.
  * @param editable Whether the Attendance is editable.
  * @param onAttendanceChange Callback when the Attendance is changed.
  */
@@ -46,25 +49,19 @@ const AttendanceListItem: StylableFC<{
   attendance: StudentAttendance;
   shownEvent: AttendanceEvent;
   date: string;
-  teacherID?: string;
   editable?: boolean;
   onAttendanceChange: (attendance: StudentAttendance) => void;
-}> = ({
-  attendance,
-  shownEvent,
-  date,
-  teacherID,
-  editable,
-  onAttendanceChange,
-}) => {
+}> = ({ attendance, shownEvent, date, editable, onAttendanceChange }) => {
   const locale = useLocale();
   const { t } = useTranslation("attendance", { keyPrefix: "item" });
   const { t: tx } = useTranslation("common");
 
   const supabase = useSupabaseClient();
+  const mysk = useMySKClient();
+  const { setSnackbar } = useContext(SnackbarContext);
 
   const [loading, toggleLoading] = useToggle();
-  const { setSnackbar } = useContext(SnackbarContext);
+  const [studentOpen, setStudentOpen] = useState(false);
 
   /**
    * Whether to show the Checkbox as ticked [✓], crossed [✕], or empty [ ].
@@ -89,7 +86,7 @@ const AttendanceListItem: StylableFC<{
     // Lock the fridge (disallow saving while another save process is ongoing)
     // to prevent race conditions.
     // Will anyone get this? Everyone took CS50, right?
-    if (loading || !(editable && teacherID)) return;
+    if (loading || !editable) return;
 
     // Saving to Assembly also saves to Homeroom, as per Sake’s request.
     const newAttendance =
@@ -124,14 +121,14 @@ const AttendanceListItem: StylableFC<{
    * @param attendance The Attendance to save.
    */
   async function handleSave(attendance: StudentAttendance) {
-    if (!(editable && teacherID)) return;
+    if (!(editable && mysk.person?.role === UserRole.teacher)) return;
     withLoading(
       async () => {
-        const { data, error } = await upsertAttendance(
+        const { error } = await upsertAttendance(
           supabase,
           attendance,
           date,
-          teacherID,
+          mysk.person!.id,
         );
         if (error) setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
         return error === null;
@@ -172,12 +169,25 @@ const AttendanceListItem: StylableFC<{
         className={cn(`grid w-full py-1`, loading && `animate-pulse`)}
       >
         {/* Student information */}
-        <ListItem key={attendance.student.id} align="center" lines={2}>
-          <PersonAvatar
-            {...attendance.student}
-            expandable
-            className="!min-w-[2.5rem]"
-          />
+        <ListItem
+          align="center"
+          lines={2}
+          element="div"
+          className="!items-center !overflow-visible"
+        >
+          <WithPersonDetails
+            open={studentOpen}
+            person={{ ...attendance.student, role: UserRole.student }}
+            onClose={() => setStudentOpen(false)}
+            options={{ hideSeeClass: true }}
+          >
+            <Interactive
+              onClick={() => setStudentOpen(true)}
+              className="-m-1 rounded-full p-1"
+            >
+              <PersonAvatar {...attendance.student} size={40} />
+            </Interactive>
+          </WithPersonDetails>
           <ListItemContent
             title={getLocaleName(locale, attendance.student)}
             desc={sift([
@@ -190,23 +200,12 @@ const AttendanceListItem: StylableFC<{
           />
 
           {/* Late */}
-          {shownEvent === "assembly" &&
-            (attendance.assembly.is_present ||
-              attendance.assembly.absence_type === "late") && (
-              <FilterChip
-                selected={attendance.assembly.absence_type === "late"}
-                onClick={(state) =>
-                  setAttendanceOfShownEvent({
-                    ...attendance.assembly,
-                    ...(state
-                      ? { is_present: false, absence_type: AbsenceType.late }
-                      : { is_present: true, absence_type: null }),
-                  })
-                }
-              >
-                {t("late")}
-              </FilterChip>
-            )}
+          {shownEvent === "assembly" && (
+            <LateChip
+              attendance={attendance[shownEvent]}
+              onChange={setAttendanceOfShownEvent}
+            />
+          )}
 
           {/* Presence */}
           <Button
@@ -243,20 +242,10 @@ const AttendanceListItem: StylableFC<{
 
         {/* Absence type */}
         {attendance[shownEvent].absence_type &&
-          attendance[shownEvent].absence_type !== "late" && (
+          attendance[shownEvent].absence_type !== AbsenceType.late && (
             <AbsenceTypeSelector
-              value={
-                attendance[shownEvent].absence_type as ComponentProps<
-                  typeof AbsenceTypeSelector
-                >["value"]
-              }
-              onChange={(absence_type) => {
-                setAttendanceOfShownEvent({
-                  ...attendance[shownEvent],
-                  is_present: false,
-                  absence_type,
-                });
-              }}
+              attendance={attendance[shownEvent]}
+              onChange={setAttendanceOfShownEvent}
               className="mb-2 *:px-4"
             />
           )}
