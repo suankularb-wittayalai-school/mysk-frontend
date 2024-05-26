@@ -131,14 +131,14 @@ const AttendanceBulkActions: StylableFC<{
       transition={transition(DURATION.medium2, EASING.standard)}
       style={style}
       className={cn(
-        `overflow-auto !rounded-none !bg-surface px-0 sm:px-4 md:-mx-4
+        `overflow-auto !rounded-none !bg-surface px-0 md:-mx-2
         md:!bg-transparent`,
         className,
       )}
     >
       <Actions
         align="left"
-        className={cn(`!w-fit !flex-nowrap md:!gap-1 md:px-4 *:md:!border-0
+        className={cn(`!w-fit !flex-nowrap md:!gap-1 md:px-2 *:md:!border-0
           *:md:!bg-surface [&>*>span]:whitespace-nowrap`)}
       >
         <Button
