@@ -56,6 +56,7 @@
     },
     "absenceType": {
       "sick": "ลาป่วย",
+      "covid": "โควิด-19",
       "business": "ลากิจ",
       "absent": "ขาดไม่มีเหตุ",
       "dropped": "พักการเรียน",

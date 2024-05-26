@@ -57,6 +57,7 @@
     },
     "absenceType": {
       "sick": "Sick",
+      "covid": "COVID-19",
       "business": "Personal",
       "absent": "Absent",
       "dropped": "Dropped",

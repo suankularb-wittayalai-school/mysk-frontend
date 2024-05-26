@@ -1,8 +1,12 @@
-import AbsenceTypeSelector from "@/components/attendance/AbsenceTypeSelector";
+import AbsenceTypeSelector, {
+  COVID_REASON,
+} from "@/components/attendance/AbsenceTypeSelector";
 import LateChip from "@/components/attendance/LateChip";
 import PersonAvatar from "@/components/common/PersonAvatar";
+import WithPersonDetails from "@/components/person/WithPersonDetails";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import upsertAttendance from "@/utils/backend/attendance/upsertAttendance";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -16,7 +20,6 @@ import {
 } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
-import WithPersonDetails from "@/components/person/WithPersonDetails";
 import {
   Button,
   DURATION,
@@ -33,7 +36,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
-import { ComponentProps, useContext, useState } from "react";
+import { useContext, useState } from "react";
 
 /**
  * A List Item for the Attendance page.
@@ -249,46 +252,37 @@ const AttendanceListItem: StylableFC<{
 
         {/* Absence type */}
         {attendance[shownEvent].absence_type &&
-          attendance[shownEvent].absence_type !== "late" && (
+          attendance[shownEvent].absence_type !== AbsenceType.late && (
             <AbsenceTypeSelector
-              value={
-                attendance[shownEvent].absence_type as ComponentProps<
-                  typeof AbsenceTypeSelector
-                >["value"]
-              }
-              onChange={(absence_type) => {
-                setAttendanceOfShownEvent({
-                  ...attendance[shownEvent],
-                  is_present: false,
-                  absence_type,
-                });
-              }}
+              attendance={attendance[shownEvent]}
+              onChange={setAttendanceOfShownEvent}
               className="mb-2 *:px-4"
             />
           )}
 
         {/* Custom reason */}
-        {attendance[shownEvent].absence_type === "other" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={transition(DURATION.medium2, EASING.standard)}
-            className="mt-1 px-4 sm:pb-2"
-          >
-            <TextField<string>
-              appearance="outlined"
-              label={t("enterReason")}
-              value={attendance[shownEvent].absence_reason || ""}
-              onChange={(absence_reason) => {
-                setAttendanceOfShownEvent({
-                  ...attendance[shownEvent],
-                  absence_reason,
-                });
-              }}
-              inputAttr={{ onBlur: () => handleSave(attendance) }}
-            />
-          </motion.div>
-        )}
+        {attendance[shownEvent].absence_type === "other" &&
+          attendance[shownEvent].absence_reason !== COVID_REASON && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={transition(DURATION.medium2, EASING.standard)}
+              className="mt-1 px-4 sm:pb-2"
+            >
+              <TextField<string>
+                appearance="outlined"
+                label={t("enterReason")}
+                value={attendance[shownEvent].absence_reason || ""}
+                onChange={(absence_reason) => {
+                  setAttendanceOfShownEvent({
+                    ...attendance[shownEvent],
+                    absence_reason,
+                  });
+                }}
+                inputAttr={{ onBlur: () => handleSave(attendance) }}
+              />
+            </motion.div>
+          )}
       </motion.ul>
     </motion.li>
   );
