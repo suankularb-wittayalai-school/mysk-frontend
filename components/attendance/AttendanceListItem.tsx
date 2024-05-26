@@ -1,4 +1,5 @@
 import AbsenceTypeSelector from "@/components/attendance/AbsenceTypeSelector";
+import LateChip from "@/components/attendance/LateChip";
 import PersonAvatar from "@/components/common/PersonAvatar";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import upsertAttendance from "@/utils/backend/attendance/upsertAttendance";
@@ -18,7 +19,6 @@ import {
   Button,
   DURATION,
   EASING,
-  FilterChip,
   ListItem,
   ListItemContent,
   MaterialIcon,
@@ -31,6 +31,7 @@ import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
 import { ComponentProps, useContext } from "react";
+import { UserRole } from "@/utils/types/person";
 
 /**
  * A List Item for the Attendance page.
@@ -172,7 +173,12 @@ const AttendanceListItem: StylableFC<{
         className={cn(`grid w-full py-1`, loading && `animate-pulse`)}
       >
         {/* Student information */}
-        <ListItem key={attendance.student.id} align="center" lines={2}>
+        <ListItem
+          align="center"
+          lines={2}
+          element="div"
+          className="!items-center !overflow-visible"
+        >
           <PersonAvatar
             {...attendance.student}
             expandable
@@ -190,23 +196,12 @@ const AttendanceListItem: StylableFC<{
           />
 
           {/* Late */}
-          {shownEvent === "assembly" &&
-            (attendance.assembly.is_present ||
-              attendance.assembly.absence_type === "late") && (
-              <FilterChip
-                selected={attendance.assembly.absence_type === "late"}
-                onClick={(state) =>
-                  setAttendanceOfShownEvent({
-                    ...attendance.assembly,
-                    ...(state
-                      ? { is_present: false, absence_type: AbsenceType.late }
-                      : { is_present: true, absence_type: null }),
-                  })
-                }
-              >
-                {t("late")}
-              </FilterChip>
-            )}
+          {shownEvent === "assembly" && (
+            <LateChip
+              attendance={attendance[shownEvent]}
+              onChange={setAttendanceOfShownEvent}
+            />
+          )}
 
           {/* Presence */}
           <Button
