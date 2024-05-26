@@ -11,7 +11,7 @@ import { useTranslation } from "next-i18next";
  * The text to put in the `absence_reason` field when the absence is due to
  * COVID-19.
  */
-export const COVID_REASON = "COVID-19";
+const COVID_REASON = "COVID-19";
 
 /**
  * A Chip Set for selecting an Absence Type.
@@ -46,7 +46,10 @@ const AbsenceTypeSelector: StylableFC<{
   return (
     <ChipSet scrollable style={style} className={className}>
       <FilterChip
-        selected={value === AbsenceType.sick}
+        selected={
+          value === AbsenceType.sick &&
+          attendance.absence_reason !== COVID_REASON
+        }
         onClick={() => handleTypeChange(AbsenceType.sick)}
       >
         {t("sick")}
@@ -57,7 +60,7 @@ const AbsenceTypeSelector: StylableFC<{
           onChange({
             ...attendance,
             is_present: false,
-            absence_type: AbsenceType.other,
+            absence_type: AbsenceType.sick,
             absence_reason: COVID_REASON,
           })
         }
@@ -83,10 +86,7 @@ const AbsenceTypeSelector: StylableFC<{
         {t("dropped")}
       </FilterChip>
       <FilterChip
-        selected={
-          value === AbsenceType.other &&
-          attendance.absence_reason !== COVID_REASON
-        }
+        selected={value === AbsenceType.other}
         onClick={() => handleTypeChange(AbsenceType.other)}
       >
         {t("other")}

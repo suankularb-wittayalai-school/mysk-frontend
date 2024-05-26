@@ -1,6 +1,4 @@
-import AbsenceTypeSelector, {
-  COVID_REASON,
-} from "@/components/attendance/AbsenceTypeSelector";
+import AbsenceTypeSelector from "@/components/attendance/AbsenceTypeSelector";
 import LateChip from "@/components/attendance/LateChip";
 import PersonAvatar from "@/components/common/PersonAvatar";
 import WithPersonDetails from "@/components/person/WithPersonDetails";
@@ -253,28 +251,27 @@ const AttendanceListItem: StylableFC<{
           )}
 
         {/* Custom reason */}
-        {attendance[shownEvent].absence_type === "other" &&
-          attendance[shownEvent].absence_reason !== COVID_REASON && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={transition(DURATION.medium2, EASING.standard)}
-              className="mt-1 px-4 sm:pb-2"
-            >
-              <TextField<string>
-                appearance="outlined"
-                label={t("enterReason")}
-                value={attendance[shownEvent].absence_reason || ""}
-                onChange={(absence_reason) => {
-                  setAttendanceOfShownEvent({
-                    ...attendance[shownEvent],
-                    absence_reason,
-                  });
-                }}
-                inputAttr={{ onBlur: () => handleSave(attendance) }}
-              />
-            </motion.div>
-          )}
+        {attendance[shownEvent].absence_type === "other" && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={transition(DURATION.medium2, EASING.standard)}
+            className="mt-1 px-4 sm:pb-2"
+          >
+            <TextField<string>
+              appearance="outlined"
+              label={t("enterReason")}
+              value={attendance[shownEvent].absence_reason || ""}
+              onChange={(absence_reason) => {
+                setAttendanceOfShownEvent({
+                  ...attendance[shownEvent],
+                  absence_reason,
+                });
+              }}
+              inputAttr={{ onBlur: () => handleSave(attendance) }}
+            />
+          </motion.div>
+        )}
       </motion.ul>
     </motion.li>
   );
