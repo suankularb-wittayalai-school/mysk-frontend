@@ -94,7 +94,7 @@ const LandingPage: CustomPage = () => {
 
       {/* Content */}
       <div
-        className={cn(`mx-auto flex min-h-dvh max-w-[42.75rem] flex-col
+        className={cn(`mx-auto flex min-h-svh max-w-[42.75rem] flex-col
           items-center p-6`)}
       >
         {/* App Drawer */}
@@ -209,21 +209,25 @@ const LandingPage: CustomPage = () => {
           /* Add bottom padding when Google One Tap UI displays (if on mobile)
             so as to not cover the footer */
           body {
-            --_one-tap-height: 0;
+            --_one-tap-height: 12.5rem; /* FedCM */
           }
           body:has(> #credential_picker_iframe) {
-            --_one-tap-height: 16rem;
+            --_one-tap-height: 16rem; /* iframe */
           }
+
           @media only screen and (min-width: 600px) {
+            body {
+              --_one-tap-height: 0;
+            }
             body:has(> #credential_picker_iframe) {
               --_one-tap-height: 13rem;
             }
           }
 
           .skc-root-layout {
+            height: 100svh;
+            min-height: calc(100svh + var(--_one-tap-height));
             padding-bottom: calc(var(--_one-tap-height) + 2rem);
-            height: 100dvh;
-            min-height: calc(100dvh + var(--_one-tap-height));
           }
         `}</style>
       </div>

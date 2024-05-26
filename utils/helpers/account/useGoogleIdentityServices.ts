@@ -1,3 +1,4 @@
+import SnackbarContext from "@/contexts/SnackbarContext";
 import UserContext from "@/contexts/UserContext";
 import { GSIStatus } from "@/pages";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
@@ -8,25 +9,29 @@ import logError from "@/utils/helpers/logError";
 import useLocale from "@/utils/helpers/useLocale";
 import { OAuthResponseData } from "@/utils/types/fetch";
 import { User } from "@/utils/types/person";
+import { Snackbar } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { GsiButtonConfiguration } from "google-one-tap";
+import { GsiButtonConfiguration, IdConfiguration } from "google-one-tap";
 import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
 import { useRouter } from "next/router";
-import { useContext, useEffect } from "react";
+import { createElement, useContext, useEffect } from "react";
 
 /**
- * Tap into Google Sign in.
+ * The default width of the Google Sign in Button in pixels.
+ */
+const DEFAULT_BUTTON_WIDTH = 281;
+
+/**
+ * A hook to use Google Identity Services for logging in. Handles initializing,
+ * rendering, and logging in with GIS.
  *
  * @param options.parentButtonId The HTML ID of the Sign in Button.
  * @param options.buttonWidth The width of the Sign in Button in pixels.
  * @param options.onStateChange Triggers when the state of the Google Sign in changes.
  * @param options.onNotFound Triggers when the account is not found.
- *
- * @returns Whether Google Sign in is verifying the credential string.
  */
-
-export default function useOneTapSignin(
+export default function useGoogleIdentityServices(
   options: Partial<{
     parentButtonID: string;
     buttonWidth: number;
@@ -38,16 +43,18 @@ export default function useOneTapSignin(
 
   const locale = useLocale();
   const { t } = useTranslation("landing");
+  const { t: tx } = useTranslation("common");
 
   const plausible = usePlausible();
   const supabase = useSupabaseClient();
   const mysk = useMySKClient();
   const { setUser, setPerson } = useContext(UserContext);
+  const { setSnackbar } = useContext(SnackbarContext);
   const router = useRouter();
 
   /**
-   * Signs the user in with a Google One Tap UI credential string and redirects
-   * the user afterwards. We have to account for both NextAuth and MySK API.
+   * Signs the user in with a Google Identity Services credential string and
+   * redirects the user afterwards.
    *
    * @param credential Credential string.
    */
@@ -65,10 +72,12 @@ export default function useOneTapSignin(
     );
     if (error) {
       logError("logInWithGoogle", error);
-      if (error.code === 401) {
+      if (error.code === 404) {
         plausible("Account Not Found");
         onNotFound?.();
-      }
+      } else
+        setSnackbar(createElement(Snackbar, undefined, tx("snackbar.failure")));
+      plausible("Log in Failed");
       setTimeout(() => onStateChange?.(GSIStatus.initial), 400);
       return;
     }
@@ -95,7 +104,7 @@ export default function useOneTapSignin(
 
   /**
    * Prompts the user to enter the credential string manually on environments
-   * where the normal Google One Tap UI flow is not possible.
+   * where the normal Google Identity Services flow is not possible.
    */
   async function promptForManualCredential() {
     onStateChange?.(GSIStatus.chooserShown);
@@ -107,24 +116,23 @@ export default function useOneTapSignin(
     }, 400);
   }
 
-  // If user is unauthenticated, Google One Tap UI is initialized and rendered
-  useEffect(() => {
-    const { google } = window;
-    if (!google) return;
-
-    // Initialize Google One Tap UI.
-    google.accounts.id.initialize({
+  /**
+   * Initializes Google Identity Services. Should only be called once and only
+   * after `window.google` is available.
+   */
+  async function initializeGoogle() {
+    window.google.accounts.id.initialize({
       client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
       cancel_on_tap_outside: false,
+      use_fedcm_for_prompt: true,
+      hd: "*", // Limit the account chooser to Workspace accounts only.
       log_level: "info",
       callback: async ({ credential, select_by }) => {
         plausible("Log in", {
           props: /btn|user/.test(select_by)
-            ? {
-                method: select_by.includes("btn")
-                  ? "GSI Button"
-                  : "Google One Tap UI",
-              }
+            ? select_by.includes("btn")
+              ? { method: "GSI Button" }
+              : { method: "Google One Tap UI" }
             : undefined,
         });
         if (process.env.NEXT_PUBLIC_ALLOW_PASTE_GOOGLE_CREDENTIAL === "true")
@@ -133,31 +141,72 @@ export default function useOneTapSignin(
           );
         logInWithGoogle(credential);
       },
+    } as IdConfiguration);
+  }
+
+  /**
+   * Prompts the Google One Tap UI.
+   */
+  async function promptOneTapUI() {
+    window.google.accounts.id.prompt((notification) => {
+      if (notification.isSkippedMoment()) plausible("Close One Tap UI");
     });
+  }
 
-    // Render the Google One Tap UI.
-    if (!mysk.user) google.accounts.id.prompt();
-
-    // Render the Google Sign In (GSI) Button if provided with an ID.
+  /**
+   * Renders the Google Sign In (GSI) Button.
+   */
+  async function renderGSIButton() {
     const parentButton = parentButtonID
       ? document.getElementById(parentButtonID)
       : null;
-    if (parentButton)
-      google.accounts.id.renderButton(
-        parentButton,
-        {
-          shape: "pill",
-          text: "continue_with",
-          width: buttonWidth,
-          click_listener: () => onStateChange?.(GSIStatus.chooserShown),
-          locale,
-        } as GsiButtonConfiguration,
-        // Replace the normal GSI flow with a manual credential string prompt
-        // when necessary.
-        process.env.NEXT_PUBLIC_ALLOW_PASTE_GOOGLE_CREDENTIAL === "true" &&
-          !["localhost:3000", "mysk.school"].includes(window.location.host)
-          ? promptForManualCredential
-          : undefined,
-      );
-  }, [buttonWidth, locale]);
+    if (!parentButton) return;
+    window.google.accounts.id.renderButton(
+      parentButton,
+      {
+        theme: "outline",
+        text: "signin_with",
+        shape: "pill",
+        width: buttonWidth || DEFAULT_BUTTON_WIDTH,
+        locale,
+        click_listener: () => onStateChange?.(GSIStatus.chooserShown),
+      } as GsiButtonConfiguration,
+      // Replace the normal GSI flow with a manual credential string prompt
+      // when necessary.
+      process.env.NEXT_PUBLIC_ALLOW_PASTE_GOOGLE_CREDENTIAL === "true" &&
+        !["localhost:3000", "mysk.school"].includes(window.location.host)
+        ? promptForManualCredential
+        : undefined,
+    );
+  }
+
+  /**
+   * When the Google Identity Services script is loaded, initialize Google
+   * Identity Services and render the UI components.
+   */
+  async function handleLoad() {
+    initializeGoogle();
+    promptOneTapUI();
+    renderGSIButton();
+  }
+
+  // Handle the first mount of the component.
+  // See: https://stackoverflow.com/a/55655552
+  useEffect(() => {
+    // If `window.google` is immediately available on mount, initialize Google
+    // Identity Services right away.
+    if (window.google) {
+      handleLoad();
+      return;
+    }
+    // If not, wait for the script to load first.
+    const script = document.querySelector("script[src*='accounts.google.com']");
+    if (script) script.addEventListener("load", handleLoad);
+  }, []);
+
+  // Re-render the Google One Tap UI when the locale or button width changes.
+  useEffect(() => {
+    if (!window.google) return;
+    renderGSIButton();
+  }, [typeof window !== "undefined" && window.google, buttonWidth, locale]);
 }

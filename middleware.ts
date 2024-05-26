@@ -144,8 +144,8 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/learn",
-    "/teach",
+    "/learn/:path*",
+    "/teach/:path*",
     "/manage/:path*",
     "/classes/:path*",
     "/search/:path*",

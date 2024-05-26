@@ -26,7 +26,8 @@ export default function useMySKClient(): MySKClient {
 
   useEffect(() => {
     // Fetch the user data if not yet fetched.
-    if (loading || user || person) return;
+    if (!document.cookie.includes("access_token") || loading || user || person)
+      return;
     (async () => {
       setLoading(true);
       const { data: user } = await fetchMySKProxy<User>("/auth/user");
