@@ -11,6 +11,7 @@ import cn from "@/utils/helpers/cn";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import getLocaleString from "@/utils/helpers/getLocaleString";
+import useListDetail from "@/utils/helpers/search/useListDetail";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { UserRole } from "@/utils/types/person";
@@ -19,7 +20,6 @@ import {
   EASING,
   Search,
   transition,
-  useBreakpoint,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
 import { GetStaticProps } from "next";
@@ -27,8 +27,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
 import { useRouter } from "next/router";
-import { first } from "radash";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 /**
  * A place where the Management can view a list of all Elective Subjects and the
@@ -48,39 +47,39 @@ const ManageElectivesPage: CustomPage<{
   const plausible = usePlausible();
   const mysk = useMySKClient();
 
-  const [selectedID, setSelectedID] = useState<string | null>(null);
-  const [selectedElective, setSelectedElective] =
-    useState<ElectiveSubject | null>(null);
+  // const [selectedID, setSelectedID] = useState<string | null>(null);
+  // const [selectedElective, setSelectedElective] =
+  //   useState<ElectiveSubject | null>(null);
 
-  // Open Dialog on mobile, otherwise close it.
-  const { atBreakpoint } = useBreakpoint();
-  const [detailsOpen, setDetailsOpen] = useState(false);
-  useEffect(() => {
-    if (!DIALOG_BREAKPOINTS.includes(atBreakpoint)) setDetailsOpen(false);
-    else if (selectedID) setDetailsOpen(true);
-  }, [atBreakpoint]);
+  // // Open Dialog on mobile, otherwise close it.
+  // const { atBreakpoint } = useBreakpoint();
+  // const [detailsOpen, setDetailsOpen] = useState(false);
+  // useEffect(() => {
+  //   if (!DIALOG_BREAKPOINTS.includes(atBreakpoint)) setDetailsOpen(false);
+  //   else if (selectedID) setDetailsOpen(true);
+  // }, [atBreakpoint]);
 
-  async function fetchByID(id: string) {
-    setSelectedElective(null);
-    const { data } = await mysk.fetch<ElectiveSubject>(
-      `/v1/subjects/electives/${id}`,
-      {
-        query: {
-          fetch_level: "detailed",
-          descendant_fetch_level: "default",
-        },
-      },
-    );
-    if (data) setSelectedElective(data);
-  }
-  useEffect(() => {
-    if (selectedID || DIALOG_BREAKPOINTS.includes(atBreakpoint)) return;
-    const defaultID = first(electiveSubjects)?.id;
-    if (defaultID) {
-      setSelectedID(defaultID);
-      fetchByID(defaultID);
-    }
-  }, [atBreakpoint]);
+  // async function fetchByID(id: string) {
+  //   setSelectedElective(null);
+  //   const { data } = await mysk.fetch<ElectiveSubject>(
+  //     `/v1/subjects/electives/${id}`,
+  //     {
+  //       query: {
+  //         fetch_level: "detailed",
+  //         descendant_fetch_level: "default",
+  //       },
+  //     },
+  //   );
+  //   if (data) setSelectedElective(data);
+  // }
+  // useEffect(() => {
+  //   if (selectedID || DIALOG_BREAKPOINTS.includes(atBreakpoint)) return;
+  //   const defaultID = first(electiveSubjects)?.id;
+  //   if (defaultID) {
+  //     setSelectedID(defaultID);
+  //     fetchByID(defaultID);
+  //   }
+  // }, [atBreakpoint]);
 
   // Filter the Elective Subjects by the search query.
   const [query, setQuery] = useState("");
@@ -92,6 +91,20 @@ const ManageElectivesPage: CustomPage<{
           getLocaleString(electiveSubject.name, locale).includes(query) ||
           getLocaleString(electiveSubject.code, locale).includes(query),
       ),
+  );
+  const {
+    selectedID,
+    selectedDetail,
+    onSelectedChange,
+    detailsOpen,
+    onDetailsClose,
+  } = useListDetail<ElectiveSubject>(
+    filteredElectiveSubjects,
+    (id) =>
+      mysk.fetch<ElectiveSubject>(`/v1/subjects/electives/${id}`, {
+        query: { fetch_level: "detailed", descendant_fetch_level: "default" },
+      }),
+    { firstByDefault: true, dialogBreakpoints: DIALOG_BREAKPOINTS },
   );
 
   return (
@@ -121,11 +134,7 @@ const ManageElectivesPage: CustomPage<{
                         subject: getLocaleString(electiveSubject.name, "en-US"),
                       },
                     });
-                    setSelectedID(electiveSubject.id);
-                    if (DIALOG_BREAKPOINTS.includes(atBreakpoint))
-                      setDetailsOpen(true);
-                    if (selectedID !== electiveSubject.id)
-                      fetchByID(electiveSubject.id);
+                    onSelectedChange(electiveSubject.id);
                   }}
                 />
               ))}
@@ -143,14 +152,12 @@ const ManageElectivesPage: CustomPage<{
           className="hidden flex-col gap-6 md:flex"
         >
           <main className="relative grow *:absolute *:inset-0">
-            {selectedElective && (
-              <ElectiveDetailsCard electiveSubject={selectedElective} />
-            )}
+            <ElectiveDetailsCard electiveSubject={selectedDetail} />
           </main>
 
           {/* Enrolled Students */}
           <div className="h-[18rem]">
-            {selectedElective && (
+            {selectedDetail && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -161,7 +168,7 @@ const ManageElectivesPage: CustomPage<{
                 className="h-full"
               >
                 <ElectiveStudentListCard
-                  electiveSubject={selectedElective}
+                  electiveSubject={selectedDetail}
                   className="h-full"
                 />
               </motion.div>
@@ -170,12 +177,9 @@ const ManageElectivesPage: CustomPage<{
         </motion.section>
       </ElectiveLayout>
 
-      <LookupDetailsDialog
-        open={detailsOpen}
-        onClose={() => setDetailsOpen(false)}
-      >
+      <LookupDetailsDialog open={detailsOpen} onClose={onDetailsClose}>
         <ElectiveDetailsCard
-          electiveSubject={selectedElective}
+          electiveSubject={selectedDetail}
           className={cn(`!mx-0 h-full !bg-surface-container-highest
             *:!rounded-b-none`)}
         />

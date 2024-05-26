@@ -14,7 +14,7 @@ import { ElectiveSubject } from "@/utils/types/elective";
 import { UserRole } from "@/utils/types/person";
 import {
   Actions,
-  AssistChip,
+  Button,
   ChipSet,
   MaterialIcon,
   Search,
@@ -118,17 +118,18 @@ const ElectiveDetailsCard: StylableFC<{
             )}
 
             <section className="space-y-2 md:hidden">
-              <div className="flex flex-row items-end">
+              <div className="flex h-4 flex-row items-center">
                 <Text type="title-medium" element="h3" className="grow">
                   {t("students.title")}
                 </Text>
-                <AssistChip
+                <Button
+                  appearance="text"
                   icon={<MaterialIcon icon="print" />}
                   href={`/teach/electives/${fromUUID(electiveSubject.id)}/print`}
                   element={Link}
                 >
                   {t("students.action.print")}
-                </AssistChip>
+                </Button>
               </div>
               <Search
                 value={query}

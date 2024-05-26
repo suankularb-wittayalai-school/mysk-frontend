@@ -13,6 +13,7 @@ import cn from "@/utils/helpers/cn";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import getLocaleString from "@/utils/helpers/getLocaleString";
+import useListDetail from "@/utils/helpers/search/useListDetail";
 import { BackendReturn } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject, ElectiveTradeOffer } from "@/utils/types/elective";
@@ -24,7 +25,6 @@ import {
   List,
   Text,
   transition,
-  useBreakpoint,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { motion } from "framer-motion";
@@ -32,7 +32,6 @@ import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
-import { useEffect, useState } from "react";
 
 /**
  * A place where Students can choose and trade their Elective Subjects.
@@ -61,36 +60,20 @@ const LearnElectivesPage: CustomPage<{
   const plausible = usePlausible();
   const mysk = useMySKClient();
 
-  const [selectedID, setSelectedID] = useState<string | null>(null);
-  const [selectedElective, setSelectedElective] =
-    useState<ElectiveSubject | null>(null);
-
-  // Open Dialog on mobile, otherwise close it.
-  const { atBreakpoint } = useBreakpoint();
-  const [detailsOpen, setDetailsOpen] = useState(false);
-  useEffect(() => {
-    if (!DIALOG_BREAKPOINTS.includes(atBreakpoint)) setDetailsOpen(false);
-    else if (selectedID) setDetailsOpen(true);
-  }, [DIALOG_BREAKPOINTS.includes(atBreakpoint)]);
-
-  async function fetchByID(id: string) {
-    setSelectedElective(null);
-    const { data } = await mysk.fetch<ElectiveSubject>(
-      `/v1/subjects/electives/${id}`,
-      {
-        query: {
-          fetch_level: "detailed",
-          descendant_fetch_level: "compact",
-        },
-      },
-    );
-    if (data) setSelectedElective(data);
-  }
-  useEffect(() => {
-    if (!enrolledElective) return;
-    setSelectedID(enrolledElective.id);
-    fetchByID(enrolledElective.id);
-  }, [enrolledElective]);
+  const {
+    selectedID,
+    selectedDetail,
+    onSelectedChange,
+    detailsOpen,
+    onDetailsClose,
+  } = useListDetail<ElectiveSubject>(
+    electiveSubjects,
+    (id) =>
+      mysk.fetch<ElectiveSubject>(`/v1/subjects/electives/${id}`, {
+        query: { fetch_level: "detailed", descendant_fetch_level: "compact" },
+      }),
+    { dialogBreakpoints: DIALOG_BREAKPOINTS },
+  );
 
   return (
     <>
@@ -115,14 +98,7 @@ const LearnElectivesPage: CustomPage<{
                         subject: getLocaleString(electiveSubject.name, "en-US"),
                       },
                     });
-                    setSelectedID(electiveSubject.id);
-                    if (DIALOG_BREAKPOINTS.includes(atBreakpoint))
-                      setTimeout(
-                        () => setDetailsOpen(true),
-                        DURATION.short4 * 1000,
-                      );
-                    if (selectedID !== electiveSubject.id)
-                      fetchByID(electiveSubject.id);
+                    onSelectedChange(electiveSubject.id);
                   }}
                 />
               ))}
@@ -166,7 +142,7 @@ const LearnElectivesPage: CustomPage<{
           >
             {selectedID ? (
               // Content state
-              <ElectiveDetailsCard electiveSubject={selectedElective} />
+              <ElectiveDetailsCard electiveSubject={selectedDetail} />
             ) : (
               // Empty state
               <div className="grid place-content-center">
@@ -192,15 +168,12 @@ const LearnElectivesPage: CustomPage<{
         </div>
       </ElectiveLayout>
 
-      <LookupDetailsDialog
-        open={detailsOpen}
-        onClose={() => setDetailsOpen(false)}
-      >
+      <LookupDetailsDialog open={detailsOpen} onClose={onDetailsClose}>
         <ElectiveDetailsCard
-          electiveSubject={selectedElective}
-          enrolledElective={enrolledElective || null}
+          electiveSubject={selectedDetail}
+          enrolledElective={enrolledElective}
           inEnrollmentPeriod={inEnrollmentPeriod}
-          onChooseSuccess={() => setDetailsOpen(false)}
+          onChooseSuccess={onDetailsClose}
           className={cn(`!mx-0 h-full !bg-surface-container-highest
             *:!rounded-b-none`)}
         />
