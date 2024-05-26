@@ -55,6 +55,7 @@ const ClassesPage: NextPage<{
     selectedID,
     selectedDetail,
     onSelectedChange,
+    refreshDetail,
     detailsOpen,
     onDetailsClose,
   } = useListDetail<Pick<Classroom, "id" | "number" | "main_room">, Classroom>(
@@ -132,7 +133,7 @@ const ClassesPage: NextPage<{
         >
           <ClassDetailsCard
             classroom={selectedDetail}
-            refreshData={() => selectedID && onSelectedChange(selectedID)}
+            refreshData={refreshDetail}
           />
         </LookupDetailsSide>
       </SplitLayout>
@@ -141,7 +142,7 @@ const ClassesPage: NextPage<{
       <LookupDetailsDialog open={detailsOpen} onClose={onDetailsClose}>
         <ClassDetailsCard
           classroom={selectedDetail}
-          refreshData={() => selectedID && onSelectedChange(selectedID)}
+          refreshData={refreshDetail}
         />
       </LookupDetailsDialog>
     </>

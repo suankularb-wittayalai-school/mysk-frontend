@@ -17,13 +17,14 @@ import { useEffect, useState } from "react";
  * @param options.dialogBreakpoints The Breakpoints to open the details dialog.
  *
  * @returns
- * | Property           | Description                                               |
- * | ------------------ | --------------------------------------------------------- |
- * | `selectedID`       | The ID of the selected item, used in the list side.       |
- * | `selectedDetail`   | The detail of the selected item, used in the detail side. |
- * | `onSelectedChange` | Selects an ID from the list and fetch its detail.         |
- * | `detailsOpen`      | Whether the details dialog is open.                       |
- * | `onDetailsClose`   | Closes the details dialog.                                |
+ * | Property           | Description                                                  |
+ * | ------------------ | ------------------------------------------------------------ |
+ * | `selectedID`       | The ID of the selected item, used in the list side.          |
+ * | `selectedDetail`   | The detail of the selected item, used in the detail side.    |
+ * | `onSelectedChange` | Selects an ID from the list and fetch its detail.            |
+ * | `refreshDetail`    | Refreshes the detail of the selected item. Requires `fetch`. |
+ * | `detailsOpen`      | Whether the details dialog is open.                          |
+ * | `onDetailsClose`   | Closes the details dialog.                                   |
  */
 export default function useListDetail<
   /** An item in the list side. */
@@ -100,6 +101,15 @@ export default function useListDetail<
     setSelectedDetail(data);
   }
 
+  /** Refreshes the detail of the selected item. Requires `fetch`. */
+  async function refreshDetail() {
+    if (!(fetch && selectedID)) return;
+    const { data, error } = await fetch(selectedID);
+    if (error) return;
+    setSelectedDetail(data);
+  }
+
+  /** Opens the details dialog. */
   function onDetailsOpen() {
     if (breakpoint !== null && dialogBreakpoints?.includes(breakpoint))
       setDetailsOpen(true);
@@ -120,6 +130,13 @@ export default function useListDetail<
      * @param id The ID to select.
      */
     onSelectedChange,
+    /**
+     * Refreshes the detail of the selected item. Requires `fetch`.
+     * 
+     * This is useful when you want to refresh the detail after an action
+     * without `selectedDetail` flashing to `null`.
+     */
+    refreshDetail,
     /** Whether the details dialog is open. */
     detailsOpen,
     /** Closes the details dialog. */
