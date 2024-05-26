@@ -43,6 +43,7 @@ const HomeroomContentDialog: StylableFC<{
           value={field}
           onChange={setField}
           inputAttr={{ readOnly: loading }}
+          className="[&_textarea]:min-h-32"
         />
       </DialogContent>
       <Actions>
