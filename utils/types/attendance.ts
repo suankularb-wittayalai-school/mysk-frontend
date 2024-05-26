@@ -1,4 +1,3 @@
-// Imports
 import { Classroom } from "@/utils/types/classroom";
 import { Student } from "@/utils/types/person";
 
@@ -30,7 +29,7 @@ export type StudentAttendance = {
 export type ClassroomAttendance = {
   classroom: Pick<Classroom, "id" | "number">;
   expected_total: number;
-  summary: ManagementAttendanceSummary;
+  summary: ManagementAttendanceSummary & { covid: number };
   absent_students: Pick<Student, "id" | "profile" | "class_no">[];
   homeroom_content: string | null;
 };

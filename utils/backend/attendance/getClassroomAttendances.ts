@@ -44,7 +44,8 @@ export default async function getClassroomAttendances(
             attendance_event,
             date,
             is_present,
-            absence_type
+            absence_type,
+            absence_reason
           )
         )
       ),
@@ -73,15 +74,13 @@ export default async function getClassroomAttendances(
       );
       // Get all Attendance records of those Classrooms
       const attendances = group(
-        classrooms
-          .map((classroom) =>
-            sift(
-              classroom.classroom_students
-                .map(({ students }) => students?.student_attendances)
-                .flat(),
+        classrooms.flatMap((classroom) =>
+          sift(
+            classroom.classroom_students.flatMap(
+              ({ students }) => students?.student_attendances,
             ),
-          )
-          .flat(),
+          ),
+        ),
         (attendance) => attendance!.attendance_event,
       );
 
@@ -160,23 +159,32 @@ export default async function getClassroomAttendances(
           );
         },
       );
-      const absence = absentStudents.length;
+
+      // Use absent students to calculate COVID-19 absence.
+      const covidStudents = absentStudents.filter(
+        ({ students }) =>
+          students!.student_attendances[0].absence_reason === "COVID-19",
+      );
+
+      const covid = covidStudents.length;
+      const absence = absentStudents.length - covid;
 
       // Presence is calculated by subtracting late and absence from total
       // attendance.
-      // This is to prevent the total attendance count from being higher than the
-      // number of students.
+      // This is to prevent the total attendance count from being higher than
+      // the number of students.
       const presence =
         attendances.filter(
           ({ attendance_event }) => attendance_event === preferredEvent,
         ).length -
         late -
+        covid -
         absence;
 
       return {
         classroom: pick(classroom, ["id", "number"]),
         expected_total: classroom.classroom_students.length,
-        summary: { presence, late, absence },
+        summary: { presence, late, covid, absence },
         absent_students: absentStudents
           .map((student) => ({
             id: student.students!.id,
