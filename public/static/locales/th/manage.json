@@ -28,7 +28,12 @@
     "table": {
       "thead": {
         "classroom": "ห้องเรียน",
-        "summary": "มาทัน • สาย • ขาด",
+        "summary": {
+          "onTIme": "มาทันเวลา",
+          "late": "มาสาย",
+          "covid": "ติดเชื้อโควิด-19",
+          "absence": "ขาดเรียน"
+        },
         "absentStudents": "นักเรียนที่ขาดเรียน",
         "homeroom": "โฮมรูม"
       }
