@@ -28,7 +28,12 @@
     "table": {
       "thead": {
         "classroom": "Classroom",
-        "summary": "On time • late • absent",
+        "summary": {
+          "onTime": "On time",
+          "late": "Late",
+          "covid": "Absent due to COVID-19",
+          "absence": "Absent for other reasons"
+        },
         "absentStudents": "Absent students",
         "homeroom": "Homeroom"
       }
