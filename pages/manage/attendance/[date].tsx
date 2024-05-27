@@ -10,7 +10,6 @@ import MySKLogo from "@/public/images/brand/mysk-light.svg";
 import getClassroomAttendances from "@/utils/backend/attendance/getClassroomAttendances";
 import isValidAttendanceDate from "@/utils/helpers/attendance/isValidAttendanceDate";
 import cn from "@/utils/helpers/cn";
-import { YYYYMMDDRegex } from "@/utils/patterns";
 import { supabase } from "@/utils/supabase-backend";
 import {
   AttendanceEvent,
@@ -29,8 +28,6 @@ import {
   Section,
   Text,
 } from "@suankularb-components/react";
-import { isAfter, isFuture, isWeekend } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -152,16 +149,23 @@ const AttendanceOverviewPage: CustomPage<{
                     count: totals.presence + totals.late,
                   })}
                 </Text>
-                <div
-                  className={cn(`grid gap-2 *:rounded-sm *:bg-surface *:px-4
-                    *:py-1.5 sm:grid-cols-2`)}
-                >
-                  <Text type="button" element="div">
+
+                <div className="flex flex-row gap-1">
+                  <Text type="title-small" className="grow">
                     {t("chart.summary.onTime", { count: totals.presence })}
                   </Text>
-                  <Text type="button" element="div">
+                  <Text type="title-small">
                     {t("chart.summary.late", { count: totals.late })}
                   </Text>
+                </div>
+                <div className="flex h-1 flex-row gap-1 overflow-hidden rounded-full *:rounded-full">
+                  <div className="grow bg-primary" />
+                  <div
+                    style={{
+                      width: `${(totals.late / (totals.presence + totals.late)) * 100}%`,
+                    }}
+                    className="bg-tertiary"
+                  />
                 </div>
               </Card>
               <Card
