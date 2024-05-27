@@ -120,8 +120,9 @@ export default async function getClassroomAttendances(
     // Only display Classrooms with Attendance or Homeroom Content.
     .filter(
       (classroom) =>
-        classroom.classroom_students.length ||
-        classroom.classroom_homeroom_contents.length,
+        (process.env.NODE_ENV !== "production" || classroom.number < 700) &&
+        (classroom.classroom_students.length ||
+          classroom.classroom_homeroom_contents.length),
     )
     .map((classroom) => {
       // Get attendance data.
