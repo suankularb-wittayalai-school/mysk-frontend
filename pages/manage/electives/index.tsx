@@ -47,40 +47,6 @@ const ManageElectivesPage: CustomPage<{
   const plausible = usePlausible();
   const mysk = useMySKClient();
 
-  // const [selectedID, setSelectedID] = useState<string | null>(null);
-  // const [selectedElective, setSelectedElective] =
-  //   useState<ElectiveSubject | null>(null);
-
-  // // Open Dialog on mobile, otherwise close it.
-  // const { atBreakpoint } = useBreakpoint();
-  // const [detailsOpen, setDetailsOpen] = useState(false);
-  // useEffect(() => {
-  //   if (!DIALOG_BREAKPOINTS.includes(atBreakpoint)) setDetailsOpen(false);
-  //   else if (selectedID) setDetailsOpen(true);
-  // }, [atBreakpoint]);
-
-  // async function fetchByID(id: string) {
-  //   setSelectedElective(null);
-  //   const { data } = await mysk.fetch<ElectiveSubject>(
-  //     `/v1/subjects/electives/${id}`,
-  //     {
-  //       query: {
-  //         fetch_level: "detailed",
-  //         descendant_fetch_level: "default",
-  //       },
-  //     },
-  //   );
-  //   if (data) setSelectedElective(data);
-  // }
-  // useEffect(() => {
-  //   if (selectedID || DIALOG_BREAKPOINTS.includes(atBreakpoint)) return;
-  //   const defaultID = first(electiveSubjects)?.id;
-  //   if (defaultID) {
-  //     setSelectedID(defaultID);
-  //     fetchByID(defaultID);
-  //   }
-  // }, [atBreakpoint]);
-
   // Filter the Elective Subjects by the search query.
   const [query, setQuery] = useState("");
   const filteredElectiveSubjects = electiveSubjects.filter(
