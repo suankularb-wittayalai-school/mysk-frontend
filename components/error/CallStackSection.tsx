@@ -30,26 +30,13 @@ const CallStackSection: StylableFC<{
       className={cn(`space-y-1`, className)}
     >
       {/* Header */}
-      <div className="flex flex-row items-end gap-2">
-        <Text
-          type="title-medium"
-          element={(props) => <h2 id="header-call-stack" {...props} />}
-          className="grow"
-        >
-          {t("callStack")}
-        </Text>
-        <Button
-          appearance="outlined"
-          icon={<MaterialIcon icon="content_copy" />}
-          tooltip={t("action.copyToClipboard")}
-          onClick={() => {
-            navigator.clipboard.writeText(error.stack || error.message);
-            setSnackbar(
-              <Snackbar>{tx("snackbar.copiedToClipboard")}</Snackbar>,
-            );
-          }}
-        />
-      </div>
+      <Text
+        type="title-medium"
+        element={(props) => <h2 id="header-call-stack" {...props} />}
+        className="grow"
+      >
+        {t("callStack")}
+      </Text>
 
       {/* Call stack */}
       {[

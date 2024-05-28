@@ -42,17 +42,6 @@ declare global {
       NEXT_PUBLIC_HELP_FORM_URL: string;
 
       /**
-       * The URL that NextAuth.js will use in redirects.
-       */
-      NEXTAUTH_URL: string;
-
-      /**
-       * Used to encrypt the NextAuth.js JWT, and to hash email verification
-       * tokens.
-       */
-      NEXTAUTH_SECRET: string;
-
-      /**
        * Whether the user is allowed to see and log in with Google credentials.
        */
       NEXT_PUBLIC_ALLOW_PASTE_GOOGLE_CREDENTIAL: "true" | "false";
@@ -77,13 +66,6 @@ declare global {
        * access to all pages but the maintenance page.
        */
       CLOSED_FOR_MAINTENANCE: "true" | "false";
-
-      /**
-       * Whether to generate bundle size analysis files.
-       *
-       * @see {@link https://github.com/vercel/next.js/tree/canary/packages/next-bundle-analyzer @next/bundle-analyzer}
-       */
-      ANALYZE: "true" | "false";
     }
   }
 }

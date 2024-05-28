@@ -18,6 +18,7 @@ const SingleSubjectDetails: StylableFC<{
   period: PeriodContentItem;
 }> = ({ period, style, className }) => {
   const { t } = useTranslation("schedule/common");
+  const rooms = period.rooms ? sift(period.rooms) : [];
 
   return (
     <div
@@ -40,14 +41,15 @@ const SingleSubjectDetails: StylableFC<{
       </InformationCard>
 
       {/* Room */}
-      <InformationCard title={t("subject.room")}>
-        <ChipSet scrollable className="fade-out-to-r -mx-3 *:pl-3 *:pr-8">
-          {period.rooms &&
-            sift(period.rooms).map((room) => (
+      {rooms.length > 0 && (
+        <InformationCard title={t("subject.room")}>
+          <ChipSet scrollable className="fade-out-to-r -mx-3 *:pl-3 *:pr-8">
+            {rooms.map((room) => (
               <RoomChip key={room} room={room} />
             ))}
-        </ChipSet>
-      </InformationCard>
+          </ChipSet>
+        </InformationCard>
+      )}
     </div>
   );
 };

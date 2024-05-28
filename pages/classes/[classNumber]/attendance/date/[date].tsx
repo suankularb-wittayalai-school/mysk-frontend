@@ -12,10 +12,10 @@ import getAttendanceOfClass from "@/utils/backend/attendance/getAttendanceOfClas
 import getHomeroomOfClass from "@/utils/backend/attendance/getHomeroomOfClass";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import isValidAttendanceDate from "@/utils/helpers/attendance/isValidAttendanceDate";
 import classroomOfPerson from "@/utils/helpers/classroom/classroomOfPerson";
 import cn from "@/utils/helpers/cn";
 import useToggle from "@/utils/helpers/useToggle";
-import { YYYYMMDDRegex } from "@/utils/patterns";
 import {
   AttendanceEvent,
   HomeroomContent,
@@ -32,7 +32,7 @@ import {
   MaterialIcon,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { isFuture, isToday, isWeekend } from "date-fns";
+import { isToday } from "date-fns";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -176,7 +176,6 @@ const DateAttendancePage: CustomPage<{
                   attendance={attendance}
                   shownEvent={event}
                   date={date}
-                  teacherID={mysk.person?.id}
                   editable={editable && !loading}
                   onAttendanceChange={(attendance) =>
                     setAttendances(
@@ -198,7 +197,6 @@ const DateAttendancePage: CustomPage<{
                   toggleLoading={toggleLoading}
                   date={date}
                   classroom={classroom}
-                  teacherID={mysk.person?.id}
                   className="mt-2 px-4 md:px-0"
                 />
               )}
@@ -225,12 +223,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   res,
 }) => {
   const { classNumber, date } = params as { [key: string]: string };
-  if (
-    !YYYYMMDDRegex.test(date) ||
-    isFuture(new Date(date)) ||
-    isWeekend(new Date(date))
-  )
-    return { notFound: true };
+  if (!isValidAttendanceDate(date)) return { notFound: true };
 
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
@@ -259,6 +252,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "attendance",
+        "lookup",
       ])),
       date,
       attendances,

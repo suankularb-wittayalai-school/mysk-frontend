@@ -1,10 +1,8 @@
+import MonthBarSparkline from "@/components/attendance/MonthBarSparkline";
 import PersonAvatar from "@/components/common/PersonAvatar";
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
-import {
-  ClassroomAttendance,
-  ManagementAttendanceSummary,
-} from "@/utils/types/attendance";
+import { ClassroomAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import {
   ChipSet,
@@ -15,6 +13,7 @@ import {
   DataTableHead,
   FilterChip,
   InputChip,
+  MaterialIcon,
 } from "@suankularb-components/react";
 import {
   ColumnFiltersState,
@@ -63,64 +62,59 @@ const SchoolWideAttendanceTable: StylableFC<{
         if (Object.values(info.getValue()).every((value) => value === 0))
           return null;
 
-        /**
-         * The percentage of each Attendance status.
-         */
-        const percentages = Object.fromEntries(
-          Object.entries(info.getValue()).map(([key, value]) => [
-            key,
-            (value / info.row.original.expected_total) * 100,
-          ]),
-        ) as ManagementAttendanceSummary;
-
-        /**
-         * The percentage of missing data.
-         */
-        const missingPercentage = 100 - sum(Object.values(percentages));
+        const summary = info.getValue();
 
         // Display the numbers and the mini bar chart.
         return (
-          <>
+          <div
+            className={cn(`absolute inset-0 grid grow
+              grid-cols-[2.25rem,repeat(4,minmax(0,1fr))] divide-x-1
+              divide-outline-variant print:grid-cols-4 print:divide-black`)}
+          >
+            <div className="flex flex-col justify-center p-1 print:hidden">
+              <MonthBarSparkline
+                summary={{
+                  present: summary.presence,
+                  late: summary.late,
+                  onLeave: 0,
+                  absent: summary.covid + summary.absence,
+                  empty:
+                    info.row.original.expected_total -
+                    sum(Object.values(summary)),
+                }}
+                className="h-11 w-full"
+              />
+            </div>
             {/* Numbers */}
-            <div
-              className={cn(`absolute inset-0 grid w-full grid-cols-3 px-6 py-4
-                print:static print:p-0`)}
-            >
-              {Object.entries(info.getValue()).map(([key, value]) => (
-                <span key={key}>{value}</span>
-              ))}
-            </div>
-
-            {/* Mini bar chart */}
-            <div
-              className={cn(`absolute inset-0 top-[calc(3rem+2px)] flex flex-row
-                overflow-hidden bg-surface-variant *:h-1 *:ring-4
-                *:ring-surface-variant print:hidden`)}
-            >
-              {/* Presence */}
-              <div
-                className="bg-primary"
-                style={{ width: `${percentages.presence}%` }}
-              />
-              {/* Late */}
-              <div
-                className="bg-secondary"
-                style={{ width: `${percentages.late}%` }}
-              />
-              {/* Absence */}
-              <div className="grow" />
-              {/* Missing data */}
-              {missingPercentage > 0.01 && (
-                <div
-                  className="border-1 border-error bg-surface"
-                  style={{ width: `${missingPercentage}%` }}
-                />
-              )}
-            </div>
-          </>
+            {Object.entries(info.getValue()).map(([key, value]) => (
+              <div key={key} className="grid place-content-center text-center">
+                <span>{value}</span>
+              </div>
+            ))}
+          </div>
         );
       },
-      header: t("thead.summary"),
+      header: () => (
+        <div
+          className={cn(`absolute inset-0 grid grow
+            grid-cols-[2.25rem,repeat(4,minmax(0,1fr))] *:grid
+            *:place-content-center print:grid-cols-4`)}
+        >
+          <div className="print:hidden" />
+          <div title={t("thead.summary.onTime")}>
+            <MaterialIcon icon="done" className="text-primary" />
+          </div>
+          <div title={t("thead.summary.late")}>
+            <MaterialIcon icon="alarm" className="text-tertiary" />
+          </div>
+          <div title={t("thead.summary.covid")}>
+            <MaterialIcon icon="masks" className="text-on-surface-variant" />
+          </div>
+          <div title={t("thead.summary.absence")}>
+            <MaterialIcon icon="close" className="text-error" />
+          </div>
+        </div>
+      ),
       sortingFn: "summarySorter" as any,
     }),
 
@@ -213,6 +207,10 @@ const SchoolWideAttendanceTable: StylableFC<{
         <DataTableBody rowModel={getRowModel()} />
       </DataTableContent>
       <style jsx global>{`
+        .skc-table-cell--header:nth-child(2) .skc-table-cell__sort-indicator {
+          display: none !important;
+        }
+
         @media print {
           .skc-data-table {
             border-radius: 0 !important;
@@ -220,6 +218,9 @@ const SchoolWideAttendanceTable: StylableFC<{
           .skc-data-table,
           .skc-data-table > * {
             background-color: transparent !important;
+          }
+          .skc-table-cell__sort-indicator {
+            display: none !important;
           }
           .skc-data-table-content__content {
             min-width: 0 !important;

@@ -37,8 +37,7 @@ export default function useGetVCard() {
             `NICKNAME:${getLocaleString(person.nickname, locale)}`,
 
           // Birthday
-          person.birthdate &&
-            `BDAY:${new Date(person.birthdate).toISOString()}`,
+          person.birthdate && `BDAY:${person.birthdate.replaceAll("-", "/")}`,
 
           // Contacts
           convertContactsForVCard(person.contacts),
@@ -64,7 +63,7 @@ export default function useGetVCard() {
 
           // VCard metadata
           `KIND:individual`,
-          `REV:${new Date().toISOString()}`,
+          `REV:${new Date().toISOString().replaceAll(/[-:.]/g, "")}`,
 
           // File footer
           `END:VCARD`,

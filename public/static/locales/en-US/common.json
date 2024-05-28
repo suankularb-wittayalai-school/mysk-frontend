@@ -134,6 +134,25 @@
         "back": "Back"
       }
     },
+    "reportIssue": {
+      "title": "Report issue",
+      "desc": "What are you having trouble with? We’ll bring you to the appropriate form.",
+      "form": {
+        "category": {
+          "label": "Category",
+          "workspace": "I need help with or can’t access my Google account (sk.ac.th)",
+          "mysk": "I need help with using MySK or my information is wrong"
+        }
+      },
+      "note": {
+        "contact": "We may call you after you submit the form for more information.",
+        "english": "Both Thai and English are accepted."
+      },
+      "action": {
+        "cancel": "Cancel",
+        "continue": "Continue"
+      }
+    },
     "image": {
       "title": "Image",
       "action": {
@@ -148,6 +167,7 @@
     }
   },
   "action": {
-    "copy": "Copy to clipboard"
+    "copy": "Copy to clipboard",
+    "report": "Report issue"
   }
 }

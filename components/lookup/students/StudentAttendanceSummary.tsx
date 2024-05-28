@@ -26,7 +26,8 @@ import { last } from "radash";
 import { useEffect, useState } from "react";
 
 /**
- * How far back to show the Attendance Figure for (in days).
+ * How far back to show the Attendance Figure for, including today and weekends
+ * (in days).
  */
 const FIGURE_DATES_COUNT = 15;
 
@@ -42,10 +43,9 @@ const StudentAttendanceSummary: StylableFC<{
 }> = ({ studentID, classroom, style, className }) => {
   const { t } = useTranslation("search/students/detail");
 
-  // const now = new Date();
-  const now = new Date(2024, 1, 9, 8);
+  const now = new Date();
   const interval = {
-    start: addDays(now, -FIGURE_DATES_COUNT),
+    start: addDays(now, -FIGURE_DATES_COUNT + 1),
     end: now,
   };
   const academicYear = getCurrentAcademicYear();

@@ -1,5 +1,5 @@
 import { GSIStatus } from "@/pages";
-import useOneTapSignin from "@/utils/helpers/account/useOneTapSignin";
+import useGoogleIdentityServices from "@/utils/helpers/account/useGoogleIdentityServices";
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { useEffect, useRef, useState } from "react";
@@ -26,7 +26,7 @@ const GSIButton: StylableFC<{
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useOneTapSignin({
+  useGoogleIdentityServices({
     parentButtonID: "button-google-sign-in",
     buttonWidth,
     onStateChange,

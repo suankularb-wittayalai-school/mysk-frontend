@@ -1,5 +1,6 @@
 import BrandIcon from "@/components/icons/BrandIcon";
 import PeopleChipSet from "@/components/person/PeopleChipSet";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
@@ -32,6 +33,18 @@ const ClassroomSubjectCard: StylableFC<{
   const locale = useLocale();
   const { t } = useTranslation("schedule/subjectList");
 
+  const mysk = useMySKClient();
+
+  /** If applicable, ensure the URL is to the right account. */
+  const url = subject.ggc_link
+    ? mysk.user?.email
+      ? `https://accounts.google.com/AccountChooser?${new URLSearchParams({
+          continue: subject.ggc_link,
+          Email: mysk.user.email,
+        })}`
+      : subject.ggc_link
+    : null;
+
   return (
     <Card
       appearance="filled"
@@ -60,12 +73,12 @@ const ClassroomSubjectCard: StylableFC<{
             )}
             // Use the Google Classroom link if it exists, otherwise copy the
             // Google Classroom code to the clipboard.
-            {...(subject.ggc_link
+            {...(url
               ? {
-                  href: subject.ggc_link,
+                  href: url,
                   // eslint-disable-next-line react/display-name
                   element: forwardRef((props, ref) => (
-                    <a ref={ref} {...props} />
+                    <a ref={ref} {...props} target="_blank" />
                   )),
                 }
               : {
