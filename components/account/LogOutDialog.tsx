@@ -1,6 +1,4 @@
 import UserContext from "@/contexts/UserContext";
-import useToggle from "@/utils/helpers/useToggle";
-import withLoading from "@/utils/helpers/withLoading";
 import { StylableFC } from "@/utils/types/common";
 import {
   Actions,
@@ -29,29 +27,20 @@ const LogOutDialog: StylableFC<{
   const plausible = usePlausible();
   const { setUser } = useContext(UserContext);
 
-  const [loading, toggleLoading] = useToggle();
-
   function handleSubmit() {
-    withLoading(
-      async () => {
-        // Track event
-        plausible("Log out");
+    // Track event
+    plausible("Log out");
 
-        // Log the user out
-        setUser(null);
-        document.cookie =
-          "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    // Log the user out
+    setUser(null);
+    document.cookie =
+      "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 
-        // Close the Dialog
-        onClose();
+    // Close the Dialog
+    onClose();
 
-        // Redirect to Landing
-        router.push("/");
-        return true;
-      },
-      toggleLoading,
-      { hasEndToggle: true },
-    );
+    // Redirect to Landing
+    router.push("/");
   }
 
   return (
@@ -67,12 +56,7 @@ const LogOutDialog: StylableFC<{
         <Button appearance="text" onClick={onClose}>
           {t("action.back")}
         </Button>
-        <Button
-          appearance="text"
-          loading={loading || undefined}
-          dangerous
-          onClick={handleSubmit}
-        >
+        <Button appearance="text" dangerous onClick={handleSubmit}>
           {t("action.logOut")}
         </Button>
       </Actions>
