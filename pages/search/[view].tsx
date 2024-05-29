@@ -4,7 +4,7 @@ import StudentsFiltersCard from "@/components/lookup/students/StudentFiltersCard
 import TeacherFiltersCard from "@/components/lookup/teachers/TeacherFiltersCard";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
 import { supabase } from "@/utils/supabase-backend";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage } from "@/utils/types/common";
 import { SubjectGroup } from "@/utils/types/subject";
 import {
   ContentLayout,
@@ -17,7 +17,6 @@ import {
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
 import { GetStaticPaths, GetStaticProps } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -97,13 +96,12 @@ const SearchPage: CustomPage<{
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const view = params?.view;
   const { data: subjectGroups } = await getSubjectGroups(supabase);
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, ["common"])),
       view,
       subjectGroups,
     },

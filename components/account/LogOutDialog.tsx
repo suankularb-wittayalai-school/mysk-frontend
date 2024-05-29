@@ -1,25 +1,29 @@
 import UserContext from "@/contexts/UserContext";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
-import { DialogFC } from "@/utils/types/component";
+import { StylableFC } from "@/utils/types/common";
 import {
   Actions,
   Button,
   Dialog,
   DialogHeader,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 
 /**
- * Ask the user to confirm their log out.
+ * Asks the user to confirm their log out.
  *
- * @returns A Dialog.
+ * @param open Whether the Dialog is open and shown.
+ * @param onClose Triggers when the Dialog is closed.
  */
-const LogOutDialog: DialogFC = ({ open, onClose }) => {
-  const { t } = useTranslation("common", { keyPrefix: "dialog.logOut" });
+const LogOutDialog: StylableFC<{
+  open?: boolean;
+  onClose: () => void;
+}> = ({ open, onClose, style, className }) => {
+  const { t } = useTranslation("account/logOutDialog");
 
   const router = useRouter();
   const plausible = usePlausible();
@@ -51,7 +55,13 @@ const LogOutDialog: DialogFC = ({ open, onClose }) => {
   }
 
   return (
-    <Dialog open={open} width={312} onClose={onClose}>
+    <Dialog
+      open={open}
+      width={312}
+      onClose={onClose}
+      style={style}
+      className={className}
+    >
       <DialogHeader title={t("title")} desc={t("desc")} />
       <Actions>
         <Button appearance="text" onClick={onClose}>

@@ -18,7 +18,12 @@ module.exports = {
   locales: ["en-US", "th"],
   pages: {
     // Common
-    "*": ["common", "common/appDrawer", "common/layout"],
+    "*": [
+      "account/logOutDialog",
+      "common",
+      "common/appDrawer",
+      "common/layout",
+    ],
     // Home pages
     "rgx:/(learn|teach)$": [
       "home/glance/schedule",

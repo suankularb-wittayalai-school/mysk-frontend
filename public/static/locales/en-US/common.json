@@ -126,14 +126,6 @@
         "discard": "Discard"
       }
     },
-    "logOut": {
-      "title": "Log out",
-      "desc": "Are you sure you want to log out?",
-      "action": {
-        "logOut": "Log out",
-        "back": "Back"
-      }
-    },
     "reportIssue": {
       "title": "Report issue",
       "desc": "What are you having trouble with? We’ll bring you to the appropriate form.",
