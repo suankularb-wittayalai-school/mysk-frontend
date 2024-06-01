@@ -5,7 +5,7 @@ import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { Student, Teacher, UserRole } from "@/utils/types/person";
 import { Actions, Button, MaterialIcon } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
 
 /**
@@ -20,7 +20,7 @@ const AboutHeader: StylableFC<{
   onSave: () => void;
   loading?: boolean;
 }> = ({ person, onSave, loading, style, className }) => {
-  const { t } = useTranslation("account", { keyPrefix: "profile" });
+  const { t } = useTranslation("account/about");
 
   const [logOutOpen, setLogOutOpen] = useState(false);
   const [idCardOpen, setIDCardOpen] = useState(false);

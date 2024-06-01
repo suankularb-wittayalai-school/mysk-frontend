@@ -260,7 +260,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   return {
     props: await serverSideTranslations(locale as LangCode, [
       "common",
-      "account",
       "landing",
     ]),
   };

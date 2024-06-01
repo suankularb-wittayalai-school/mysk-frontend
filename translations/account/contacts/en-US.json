@@ -1,0 +1,12 @@
+{
+  "title": "Your contacts",
+  "desc": "A contact is a way people can reach you. Your contacts can be found via the Search page and are visible to anyone by default.",
+  "menu": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "link": "Go to"
+  },
+  "action": {
+    "add": "Add contact"
+  }
+}

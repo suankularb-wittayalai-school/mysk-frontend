@@ -9,7 +9,7 @@ import {
   Menu,
   MenuItem,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
 
 /**
@@ -24,7 +24,7 @@ const ContactOverflow: StylableFC<{
   onChange?: (value: Contact) => void;
   onRemove?: () => void;
 }> = ({ contact, onChange, onRemove, style, className }) => {
-  const { t } = useTranslation("account", { keyPrefix: "contacts" });
+  const { t } = useTranslation("account/contacts");
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -42,17 +42,17 @@ const ContactOverflow: StylableFC<{
           icon={<MaterialIcon icon="edit" />}
           onClick={() => setEditOpen(true)}
         >
-          {t("action.edit")}
+          {t("menu.edit")}
         </MenuItem>
         <MenuItem icon={<MaterialIcon icon="delete" />} onClick={onRemove}>
-          {t("action.delete")}
+          {t("menu.delete")}
         </MenuItem>
         <MenuItem
           icon={<MaterialIcon icon="open_in_new" />}
           href={getContactURL(contact)}
           element={(props) => <a {...props} target="_blank" rel="noreferrer" />}
         >
-          {t("action.link")}
+          {t("menu.link")}
         </MenuItem>
       </Menu>
       <ContactDialog

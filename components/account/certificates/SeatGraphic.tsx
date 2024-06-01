@@ -1,7 +1,7 @@
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { MaterialIcon, Text } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * Graphic representation of a seat in the Suankularb Ramluek hall.
@@ -13,9 +13,7 @@ const SeatGraphic: StylableFC<{
   row: string;
   column: number;
 }> = ({ row, column, style, className }) => {
-  const { t } = useTranslation("account", {
-    keyPrefix: "certificates.dialog.seat.graphic",
-  });
+  const { t } = useTranslation("account/certificates/seatDialog");
 
   const scaledX = (x: number) => (x / 360) * 100 + "%";
   const scaledY = (y: number) => (y / 160) * 100 + "%";
@@ -55,7 +53,7 @@ const SeatGraphic: StylableFC<{
           type="title-large"
           className="absolute whitespace-nowrap text-on-surface-variant"
         >
-          {t("row", { row })}
+          {t("graphic.row", { row })}
         </Text>
       </div>
 
@@ -65,7 +63,7 @@ const SeatGraphic: StylableFC<{
         className="absolute text-center text-on-surface-variant"
         style={{ top: scaledY(104), left: scaledX(32), width: scaledX(122) }}
       >
-        {t("column", { count: column })}
+        {t("graphic.column", { count: column })}
       </Text>
     </div>
   );

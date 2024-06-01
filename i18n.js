@@ -66,6 +66,20 @@ module.exports = {
       "search/documents/header",
       "search/documents/detail",
     ],
+    // Account pages
+    "rgx:/account(/(about|contacts|certificates))?$": ["account/common"],
+    "/account/about": [
+      "account/about",
+      "account/about/idCardDialog",
+      "account/about/nameChangeDialog",
+    ],
+    "/account/contacts": ["account/contacts", "account/contacts/contactDialog"],
+    "/account/certificates": [
+      "account/certificates",
+      "account/certificates/receivingOrderDialog",
+      "account/certificates/seatDialog",
+    ],
+    "/account/logout": ["account/logOut"],
   },
   logBuild: false,
   interpolation: {

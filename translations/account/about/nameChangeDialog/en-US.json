@@ -1,0 +1,15 @@
+{
+  "title": "Change name",
+  "desc": "If you think the information below is wrong, contact us.",
+  "grid": {
+    "prefix": "Prefix",
+    "firstName": "First name",
+    "middleName": "Middle name",
+    "lastName": "Last name"
+  },
+  "noMiddleName": "(No middle name)",
+  "action": {
+    "cancel": "Cancel",
+    "submit": "Submit correction"
+  }
+}

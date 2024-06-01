@@ -1,0 +1,64 @@
+{
+  "title": "เกี่ยวกับคุณ",
+  "name": {
+    "title": "ชื่อจริง",
+    "prefix": "คำนำหน้า",
+    "prefix_helper": "เด็กชาย นาย นาง นางสาว ฯลฯ",
+    "firstName": "ชื่อ",
+    "middleName": "ชื่อกลาง",
+    "middleName_helper": "เว้นช่องนี้หากไม่ต้องการแสดงชื่อกลางในชื่อ",
+    "lastName": "นามสกุล",
+    "nickname": "ชื่อเล่น"
+  },
+  "nameEN": {
+    "title": "ชื่อจริงภาษาอังกฤษ",
+    "prefix": "คำนำหน้าภาษาอังกฤษ",
+    "prefix_helper": "Master Mr. Mrs. Ms. ฯลฯ",
+    "firstName": "ชื่อภาษาอังกฤษ",
+    "middleName": "ชื่อกลางภาษาอังกฤษ",
+    "middleName_helper": "เว้นช่องนี้หากไม่ต้องการแสดงชื่อกลางในชื่อ",
+    "lastName": "นามสกุลภาษาอังกฤษ",
+    "nickname": "ชื่อเล่นภาษาอังกฤษ"
+  },
+  "role": {
+    "title": "ภายในโรงเรียน",
+    "role": {
+      "label": "ประเภทผู้ใช้",
+      "student": "นักเรียน",
+      "teacher": "อาจารย์"
+    },
+    "subjectGroup": "กลุ่มสาระการเรียนรู้",
+    "subjectGroup_helper": "เลือก “อาจารย์พิเศษ” หากไม่อยู่ในกลุ่มสาระฯ ใด ๆ",
+    "classAdvisorAt": "ห้องที่เป็นครูที่ปรึกษา",
+    "classAdvisorAt_helper": "ต้องมี 3 หลัก เช่น 408",
+    "classAdvisorAt_error": "ไม่ถูกต้อง ต้องมี 3 หลัก เช่น 408"
+  },
+  "general": {
+    "title": "ข้อมูลทั่วไป",
+    "gender": {
+      "label": "เพศ",
+      "male": "ชาย",
+      "female": "หญิง",
+      "nonBinary": "อื่น ๆ",
+      "noReponse": "ไม่ต้องการตอบ"
+    },
+    "birthday": "วันเกิด",
+    "citizenID": "เลขประจำตัวประชาชน",
+    "citizenID_error": "เลขประจำตัวประชาชนไม่ถูกต้อง",
+    "passportNumber": "เลขหนังสือเดินทาง",
+    "passportNumber_error": "เลขหนังสือเดินทางไม่ถูกต้อง หรือเป็นหนังสือเดินทางที่ไม่รู้จัก",
+    "allergies": "ภูมิแฟ้/อาหารที่แพ้",
+    "allergies_helper": "กด Enter หลังแต่ละภูมิแพ้/อาหารที่แพ้ • เว้นช่องนี้หากไม่มี",
+    "shirtSize": {
+      "label": "ไซส์เสื้อ",
+      "metadata": "{{count, number}} นิ้ว"
+    },
+    "pantsSize": "ขนาดกางเกงนักเรียน"
+  },
+  "action": {
+    "changeName": "เปลี่ยนชื่อ",
+    "logOut": "ออกจากระบบ",
+    "idCard": "แสดงบัตรนักเรียน",
+    "save": "บันทึก"
+  }
+}
