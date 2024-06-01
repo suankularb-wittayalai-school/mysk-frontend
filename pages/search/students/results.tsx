@@ -12,13 +12,11 @@ import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import getStudentsByLookupFilters from "@/utils/backend/person/getStudentsByLookupFilters";
 import getLocaleString from "@/utils/helpers/getLocaleString";
+import useListDetail from "@/utils/helpers/search/useListDetail";
+import { Breakpoint } from "@/utils/helpers/useBreakpoint";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student, StudentLookupItem } from "@/utils/types/person";
-import {
-  DURATION,
-  SplitLayout,
-  useBreakpoint,
-} from "@suankularb-components/react";
+import { DURATION, SplitLayout } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
@@ -26,7 +24,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { alphabetical, camel, sort } from "radash";
-import { useEffect, useState } from "react";
 
 export type StudentSearchFilters = Partial<{
   fullName: string;
@@ -46,50 +43,24 @@ const SearchStudentsResultsPage: CustomPage<{
 }> = ({ filters, students }) => {
   const { t } = useTranslation("search/students/list");
 
-  const [selectedID, setSelectedID] = useState<string>();
-  // Select the first result automatically after a short delay
-  useEffect(() => {
-    const timeout = setTimeout(
-      () => setSelectedID(students[0]?.id),
-      DURATION.medium2 * 1000,
-    );
-    return () => clearTimeout(timeout);
-  }, []);
-
   const mysk = useMySKClient();
   const supabase = useSupabaseClient();
 
-  const [selectedStudent, setSelectedStudent] = useState<Student>();
-  // Fetch the selected Student when the selected Student ID changes
-  useEffect(() => {
-    (async () => {
-      // Clear the selected Student data first
-      // (This, combined with some more logic in child components, prevents the
-      // old Student data from flashing at selected Student ID change)
-      setSelectedStudent(undefined);
-      if (!selectedID) return false;
-
-      // Fetch the selected Student with the selected ID
-      const { data, error } = await getStudentByID(supabase, mysk, selectedID, {
-        detailed: true,
-        includeContacts: true,
-      });
-      if (error) return false;
-
-      // Set the state
-      setSelectedStudent(data);
-      return true;
-    })();
-  }, [selectedID]);
-
-  const [detailsOpen, setDetailsOpen] = useState(false);
-
-  // Open the Student Details Dialog on mobile, otherwise close it
-  const { atBreakpoint } = useBreakpoint();
-  useEffect(() => {
-    if (atBreakpoint !== "base") setDetailsOpen(false);
-    else if (selectedID) setDetailsOpen(true);
-  }, [atBreakpoint === "base"]);
+  const {
+    selectedID,
+    selectedDetail,
+    onSelectedChange,
+    detailsOpen,
+    onDetailsClose,
+  } = useListDetail<StudentLookupItem, Student>(
+    students,
+    (id) => getStudentByID(supabase, mysk, id, { detailed: true }),
+    {
+      firstByDefault: true,
+      initialSelectDelay: DURATION.medium2,
+      dialogBreakpoints: [Breakpoint.base],
+    },
+  );
 
   return (
     <>
@@ -121,11 +92,8 @@ const SearchStudentsResultsPage: CustomPage<{
               >
                 <LookupStudentCard
                   student={student}
-                  selected={selectedID}
-                  onClick={(id) => {
-                    setSelectedID(id);
-                    if (atBreakpoint === "base") setDetailsOpen(true);
-                  }}
+                  selected={student.id === selectedID}
+                  onClick={onSelectedChange}
                 />
               </LookupResultsItem>
             ))}
@@ -134,19 +102,16 @@ const SearchStudentsResultsPage: CustomPage<{
 
         {/* Details */}
         <LookupDetailsSide
-          selectedID={selectedStudent?.id || selectedID}
+          selectedID={selectedDetail?.id || selectedID}
           length={students.length}
         >
-          <StudentDetailsCard student={selectedStudent} />
+          <StudentDetailsCard student={selectedDetail} />
         </LookupDetailsSide>
       </SplitLayout>
 
       {/* Details Dialog */}
-      <LookupDetailsDialog
-        open={detailsOpen}
-        onClose={() => setDetailsOpen(false)}
-      >
-        <StudentDetailsCard student={selectedStudent} />
+      <LookupDetailsDialog open={detailsOpen} onClose={onDetailsClose}>
+        <StudentDetailsCard student={selectedDetail} />
       </LookupDetailsDialog>
     </>
   );

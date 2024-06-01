@@ -30,12 +30,12 @@ import { useEffect, useState } from "react";
  * list.
  *
  * @param classroom The Classroom to display.
- * @param selected The ID of the currently selected Classroom.
+ * @param selected If this Classroom is currently selected.
  * @param onClick The function to call when the card is clicked. Should select this Classroom.
  */
 const LookupClassCard: StylableFC<{
   classroom: Pick<Classroom, "id" | "number" | "main_room">;
-  selected?: string;
+  selected?: boolean;
   onClick: (value: string) => void;
 }> = ({ classroom, selected, onClick, style, className }) => {
   const locale = useLocale();
@@ -85,7 +85,7 @@ const LookupClassCard: StylableFC<{
         `group !grid w-full !grid-cols-[minmax(0,1fr),calc(4.5rem+2px)]
         items-center !rounded-none !border-transparent !bg-transparent text-left
         !transition-[padding,border,background-color] sm:!rounded-full`,
-        classroom.id === selected &&
+        selected &&
           `sm:!border-outline-variant sm:!bg-primary-container sm:pl-2
           sm:!text-on-primary-container sm:focus:!border-primary`,
         className,
@@ -132,8 +132,7 @@ const LookupClassCard: StylableFC<{
             visible={!loading && period?.is_current}
             className={cn(
               `[&_*]:transition-colors`,
-              classroom.id === selected &&
-                `![--_remainder-color:var(--surface)]`,
+              selected && `![--_remainder-color:var(--surface)]`,
             )}
           />
         </div>
@@ -142,7 +141,7 @@ const LookupClassCard: StylableFC<{
           className={cn(
             `m-3 rounded-full border-1 border-outline-variant
             bg-surface-container p-3 transition-[border-color]`,
-            classroom.id === selected && `sm:group-focus:border-primary`,
+            selected && `sm:group-focus:border-primary`,
           )}
         >
           {schoolSessionState === SchoolSessionState.schedule &&

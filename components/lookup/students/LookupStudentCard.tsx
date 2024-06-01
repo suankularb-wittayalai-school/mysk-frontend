@@ -11,12 +11,12 @@ import useTranslation from "next-translate/useTranslation";
  * A card that displays a Student in the list side of Search Students.
  *
  * @param student The Student to display.
- * @param selected The currently selected Student.
+ * @param selected If this Student is currently selected.
  * @param onClick The function to set the selected Student.
  */
 const LookupStudentCard: StylableFC<{
   student: StudentLookupItem;
-  selected?: string;
+  selected?: boolean;
   onClick: (value: string) => void;
 }> = ({ student, selected, onClick, style, className }) => {
   const locale = useLocale();
@@ -32,7 +32,7 @@ const LookupStudentCard: StylableFC<{
       className={cn(
         `w-full !rounded-none !border-transparent !bg-transparent text-left
         sm:!rounded-full`,
-        student.id === selected &&
+        selected &&
           `sm:!border-outline-variant sm:!bg-primary-container
           sm:!text-on-primary-container sm:focus:!border-primary`,
         className,
@@ -43,9 +43,7 @@ const LookupStudentCard: StylableFC<{
           <PersonAvatar
             {...student}
             className={
-              student.id === selected
-                ? `sm:!bg-primary sm:!text-on-primary`
-                : undefined
+              selected ? `sm:!bg-primary sm:!text-on-primary` : undefined
             }
           />
         }

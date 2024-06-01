@@ -6,7 +6,7 @@ import { ReactNode } from "react";
 
 const LookupDetailsSide: StylableFC<{
   children: ReactNode;
-  selectedID?: string;
+  selectedID: string | null;
   length: number;
 }> = ({ children, selectedID, length, style, className }) => {
   return (

@@ -67,7 +67,7 @@ const DocumentDetailsCard: StylableFC<{
     <LookupDetailsCard style={style} className={className}>
       <div ref={mainRef} className="h-full">
         {/* Header */}
-        <div ref={headerRef} className="bg-surface-variant">
+        <div ref={headerRef}>
           <DocumentHeader document={document} />
           <div
             className={cn(`flex flex-row gap-2 rounded-t-lg bg-surface-container

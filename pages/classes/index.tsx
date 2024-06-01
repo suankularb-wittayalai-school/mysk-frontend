@@ -9,11 +9,13 @@ import getClassroomByID from "@/utils/backend/classroom/getClassroomByID";
 import getLookupClassrooms from "@/utils/backend/classroom/getLookupClassrooms";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import classroomOfPerson from "@/utils/helpers/classroom/classroomOfPerson";
+import useListDetail from "@/utils/helpers/search/useListDetail";
+import { Breakpoint } from "@/utils/helpers/useBreakpoint";
 import { supabase } from "@/utils/supabase-backend";
 import { Classroom } from "@/utils/types/classroom";
 import { LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
-import { SplitLayout, useBreakpoint } from "@suankularb-components/react";
+import { SplitLayout } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { LayoutGroup } from "framer-motion";
 import { GetStaticProps, NextPage } from "next";
@@ -21,7 +23,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { first, group } from "radash";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 /**
  * The Classes page shows a list of all Classrooms in the current academic year.
@@ -31,7 +33,7 @@ import { useEffect, useState } from "react";
  * revealed. Other Classrooms have minimal information to prevent privacy
  * issues.
  *
- * @param grades The Classrooms grouped by grade.
+ * @param classrooms The list of Classrooms to display.
  */
 const ClassesPage: NextPage<{
   classrooms: Pick<Classroom, "id" | "number" | "main_room">[];
@@ -41,7 +43,6 @@ const ClassesPage: NextPage<{
 
   const supabase = useSupabaseClient();
   const mysk = useMySKClient();
-  const { atBreakpoint } = useBreakpoint();
 
   const userClassroom =
     (mysk.person &&
@@ -50,45 +51,31 @@ const ClassesPage: NextPage<{
       )) ||
     null;
 
+  const {
+    selectedID,
+    selectedDetail,
+    onSelectedChange,
+    refreshDetail,
+    detailsOpen,
+    onDetailsClose,
+  } = useListDetail<Pick<Classroom, "id" | "number" | "main_room">, Classroom>(
+    classrooms,
+    (id) =>
+      getClassroomByID(supabase, id, {
+        includeStudents:
+          (mysk.user &&
+            (mysk.user.is_admin || mysk.user.role !== UserRole.student)) ||
+          id === userClassroom?.id,
+      }),
+    { dialogBreakpoints: [Breakpoint.base] },
+  );
+
   // Default the selected Classroom to the user’s Classroom or the first
   // Classroom on the list. Ignore if on mobile.
-  const [selectedID, setSelectedID] = useState<string | undefined>();
   useEffect(() => {
-    if (atBreakpoint === "base") return;
-    if (userClassroom) setSelectedID(userClassroom.id);
-    else setSelectedID(first(classrooms)?.id);
-  }, [userClassroom, atBreakpoint]);
-
-  /**
-   * Fetch data for the selected Classroom.
-   */
-  async function fetchSelectedClass() {
-    if (!selectedID) return;
-    const { data, error } = await getClassroomByID(supabase, selectedID, {
-      includeStudents:
-        (mysk.user &&
-          (mysk.user.is_admin || mysk.user.role !== UserRole.student)) ||
-        selectedID === userClassroom?.id,
-    });
-    if (!error) setSelectedClassroom(data);
-  }
-
-  const [selectedClassroom, setSelectedClassroom] =
-    useState<Omit<Classroom, "year" | "subjects">>();
-  // Fetch the selected Classroom when the selected Classroom ID changes.
-  useEffect(() => {
-    setSelectedClassroom(undefined);
-    fetchSelectedClass();
-  }, [selectedID]);
-
-  const [detailsOpen, setDetailsOpen] = useState(false);
-
-  // Open the Teacher Details Dialog on mobile, otherwise close it.
-  useEffect(() => {
-    if (atBreakpoint !== "base") setDetailsOpen(false);
-    else if (selectedID && selectedID !== userClassroom?.id)
-      setDetailsOpen(true);
-  }, [atBreakpoint === "base"]);
+    if (userClassroom) onSelectedChange(userClassroom.id);
+    else if (classrooms.length) onSelectedChange(first(classrooms)!.id);
+  }, [userClassroom]);
 
   return (
     <>
@@ -111,11 +98,8 @@ const ClassesPage: NextPage<{
               {userClassroom && (
                 <GradeSection
                   classrooms={[userClassroom]}
-                  selected={selectedID}
-                  onSelectedChange={(id) => {
-                    setSelectedID(id);
-                    if (atBreakpoint === "base") setDetailsOpen(true);
-                  }}
+                  selectedID={selectedID}
+                  onSelectedChange={onSelectedChange}
                   expandedByDefault
                   titleOverride={t("list.yourClass")}
                 />
@@ -130,11 +114,8 @@ const ClassesPage: NextPage<{
                   key={grade}
                   grade={grade}
                   classrooms={classrooms}
-                  selected={selectedID}
-                  onSelectedChange={(id) => {
-                    setSelectedID(id);
-                    if (atBreakpoint === "base") setDetailsOpen(true);
-                  }}
+                  selectedID={selectedID}
+                  onSelectedChange={onSelectedChange}
                   expandedByDefault={
                     grade ===
                     (userClassroom ? String(userClassroom.number)[0] : "1")
@@ -144,27 +125,24 @@ const ClassesPage: NextPage<{
             </LayoutGroup>
           </LookupResultsList>
         </LookupListSide>
+
+        {/* Details */}
         <LookupDetailsSide
-          selectedID={selectedClassroom?.id || selectedID}
+          selectedID={selectedDetail?.id || selectedID}
           length={classrooms.length}
         >
           <ClassDetailsCard
-            classroom={selectedClassroom}
-            refreshData={fetchSelectedClass}
+            classroom={selectedDetail}
+            refreshData={refreshDetail}
           />
         </LookupDetailsSide>
       </SplitLayout>
 
       {/* Details Dialog */}
-      <LookupDetailsDialog
-        open={detailsOpen}
-        onClose={() => setDetailsOpen(false)}
-      >
+      <LookupDetailsDialog open={detailsOpen} onClose={onDetailsClose}>
         <ClassDetailsCard
-          classroom={
-            selectedID === selectedClassroom?.id ? selectedClassroom : undefined
-          }
-          refreshData={fetchSelectedClass}
+          classroom={selectedDetail}
+          refreshData={refreshDetail}
         />
       </LookupDetailsDialog>
     </>

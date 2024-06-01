@@ -51,7 +51,7 @@ module.exports = {
     ],
     // Search Teachers
     "/search/teachers/results": ["search/teachers/list"],
-    "rgx:/(search/teachers/results|learn|teach)$": [
+    "rgx:/(search/teachers/results|learn|teach|classes)$": [
       "search/teachers/header",
       "search/teachers/detail",
     ],

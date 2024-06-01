@@ -31,7 +31,7 @@ import { sift } from "radash";
  * @param options.hideScheduleCard Whether to hide the Student Schedule Card.
  */
 const StudentDetailsCard: StylableFC<{
-  student?: Student;
+  student: Student | null;
   options?: Partial<{
     hideSeeClass: boolean;
     hideScheduleCard: boolean;
