@@ -10,7 +10,7 @@ import getLookupClassrooms from "@/utils/backend/classroom/getLookupClassrooms";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import classroomOfPerson from "@/utils/helpers/classroom/classroomOfPerson";
 import useListDetail from "@/utils/helpers/search/useListDetail";
-import { Breakpoint } from "@/utils/helpers/useBreakpoint";
+import useBreakpoint, { Breakpoint } from "@/utils/helpers/useBreakpoint";
 import { supabase } from "@/utils/supabase-backend";
 import { Classroom } from "@/utils/types/classroom";
 import { LangCode } from "@/utils/types/common";
@@ -72,8 +72,10 @@ const ClassesPage: NextPage<{
 
   // Default the selected Classroom to the user’s Classroom or the first
   // Classroom on the list. Ignore if on mobile.
+  const { belowBreakpoint } = useBreakpoint();
   useEffect(() => {
-    if (userClassroom) onSelectedChange(userClassroom.id);
+    if (belowBreakpoint(Breakpoint.sm) !== false) return;
+    else if (userClassroom) onSelectedChange(userClassroom.id);
     else if (classrooms.length) onSelectedChange(first(classrooms)!.id);
   }, [userClassroom]);
 
