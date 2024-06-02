@@ -22,6 +22,7 @@
     "framer-motion": "^10.18.0",
     "google-auth-library": "^9.10.0",
     "i18next": "^23.11.5",
+    "ios-pwa-splash": "^1.0.0",
     "next": "^14.2.3",
     "next-i18next": "^15.3.0",
     "next-plausible": "^3.12.0",
