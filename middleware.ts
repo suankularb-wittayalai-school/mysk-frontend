@@ -151,7 +151,6 @@ export const config = {
     "/search/:path*",
     "/account/:path*",
     "/news",
-    "/news/:id",
     "/admin/:path*",
     "/maintenance",
   ],
