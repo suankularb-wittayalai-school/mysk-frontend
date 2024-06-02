@@ -21,6 +21,15 @@ const serwist = new Serwist({
   clientsClaim: true,
   navigationPreload: true,
   runtimeCaching: defaultCache,
+  // See: https://github.com/serwist/serwist/issues/64#issuecomment-1925393349
+  fallbacks: {
+    entries: [
+      {
+        url: "/_offline",
+        matcher: ({ request }) => request.destination === "document",
+      },
+    ],
+  },
 });
 
 serwist.addEventListeners();
