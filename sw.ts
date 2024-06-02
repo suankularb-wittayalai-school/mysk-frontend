@@ -16,9 +16,7 @@ declare global {
 declare const self: ServiceWorkerGlobalScope;
 
 const serwist = new Serwist({
-  precacheEntries: self.__SW_MANIFEST
-    ? [...self.__SW_MANIFEST, { url: "/_offline" }]
-    : [],
+  precacheEntries: self.__SW_MANIFEST,
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
@@ -33,5 +31,6 @@ const serwist = new Serwist({
     ],
   },
 });
+serwist.addToPrecacheList([{ url: "/_offline" }]);
 
 serwist.addEventListeners();
