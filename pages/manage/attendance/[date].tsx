@@ -6,7 +6,7 @@ import {
 import GradesBreakdownChart from "@/components/attendance/GradesBreakdownChart";
 import SchoolWideAttendanceTable from "@/components/attendance/SchoolWideAttendanceTable";
 import PageHeader from "@/components/common/PageHeader";
-import MySKLogo from "@/public/images/brand/mysk-light.svg";
+import MySKLogo from "@/public/icons/petals-light.svg";
 import getClassroomAttendances from "@/utils/backend/attendance/getClassroomAttendances";
 import isValidAttendanceDate from "@/utils/helpers/attendance/isValidAttendanceDate";
 import cn from "@/utils/helpers/cn";
