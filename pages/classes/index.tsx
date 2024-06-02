@@ -72,12 +72,12 @@ const ClassesPage: NextPage<{
 
   // Default the selected Classroom to the user’s Classroom or the first
   // Classroom on the list. Ignore if on mobile.
-  const { belowBreakpoint } = useBreakpoint();
+  const { breakpoint, belowBreakpoint } = useBreakpoint();
   useEffect(() => {
     if (belowBreakpoint(Breakpoint.sm) !== false) return;
     else if (userClassroom) onSelectedChange(userClassroom.id);
     else if (classrooms.length) onSelectedChange(first(classrooms)!.id);
-  }, [userClassroom]);
+  }, [breakpoint, userClassroom]);
 
   return (
     <>
