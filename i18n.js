@@ -23,6 +23,7 @@ module.exports = {
       "common",
       "common/appDrawer",
       "common/layout",
+      "common/reportIssueDialog",
     ],
     // Home pages
     "rgx:/(learn|teach)$": [

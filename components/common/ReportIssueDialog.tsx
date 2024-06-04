@@ -12,8 +12,8 @@ import {
   Radio,
   Text,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { title } from "radash";
 import { forwardRef, useState } from "react";
 
@@ -51,7 +51,7 @@ const ReportIssueDialog: StylableFC<{
 
   const plausible = usePlausible();
   const locale = useLocale();
-  const { t } = useTranslation("common", { keyPrefix: "dialog.reportIssue" });
+  const { t } = useTranslation("common/reportIssueDialog");
 
   const [selectedCategory, setSelectedCategory] =
     useState<ReportingCategory | null>(null);
