@@ -193,7 +193,7 @@ const PersonFields: StylableFC<{
       {/* Miscellaneous */}
       <Section>
         <Header level={3} className="sr-only">
-          {t("misc.title")}
+          {t("general.title")}
         </Header>
         <Columns columns={3} className="my-3 !gap-y-12">
           <TextField
