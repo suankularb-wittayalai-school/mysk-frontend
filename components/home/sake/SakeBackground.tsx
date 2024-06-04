@@ -1,6 +1,7 @@
 import BlobsBlurringGroup from "@/components/common/BlobsBlurringGroup";
 import DecorativeBlob from "@/components/common/DecorativeBlob";
-import MySKLogo from "@/public/icons/petals-light.svg";
+// import MySKLogo from "@/public/icons/petals-light.svg";
+import MySKLogo from "@/public/icons/petals-light-variant.svg";
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import Image from "next/image";
