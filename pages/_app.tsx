@@ -17,6 +17,7 @@ import {
 } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { MotionConfig } from "framer-motion";
+import iosPWASplash from "ios-pwa-splash";
 import { appWithTranslation } from "next-i18next";
 import PlausibleProvider, { usePlausible } from "next-plausible";
 import {
@@ -100,6 +101,9 @@ function App({
   const plausible = usePlausible();
   const router = useRouter();
 
+  // Generate iOS splash screens.
+  useEffect(() => iosPWASplash("/icons/petals-light.svg"), []);
+
   // Create Supabase client.
   const [supabase] = useState(() => createPagesBrowserClient<Database>());
 
@@ -108,7 +112,7 @@ function App({
     const trackInstall = () => plausible("Install PWA");
     window.addEventListener("appinstalled", trackInstall);
     return () => window.removeEventListener("appinstalled", trackInstall);
-  });
+  }, []);
 
   // Track page views.
   // See https://plausible.io/docs/custom-locations

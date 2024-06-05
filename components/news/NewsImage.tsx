@@ -1,6 +1,6 @@
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
-import NewsPlaceholderDark from "@/public/images/graphics/news-placeholder-dark.svg";
-import NewsPlaceholderLight from "@/public/images/graphics/news-placeholder-light.svg";
+import NewsPlaceholderDark from "@/public/images/graphics/news/placeholder-dark.svg";
+import NewsPlaceholderLight from "@/public/images/graphics/news/placeholder-light.svg";
 import cn from "@/utils/helpers/cn";
 import { NewsArticle } from "@/utils/types/news";
 import Image from "next/image";

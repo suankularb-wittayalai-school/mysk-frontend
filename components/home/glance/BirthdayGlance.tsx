@@ -6,6 +6,7 @@ import { StylableFC } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
 import { MaterialIcon } from "@suankularb-components/react";
 import { differenceInYears } from "date-fns";
+import { TOptions } from "i18next";
 import { Trans, useTranslation } from "next-i18next";
 
 /**
@@ -43,7 +44,7 @@ const BirthdayGlance: StylableFC<{
                 middleName: false,
                 lastName: false,
               }),
-          year: tx("ordinal", { count: age, ordinal: true }),
+          year: tx("ordinal", { count: age, ordinal: true } as TOptions),
         }}
         components={{ b: <strong /> }}
       />

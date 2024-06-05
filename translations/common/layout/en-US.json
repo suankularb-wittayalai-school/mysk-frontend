@@ -21,7 +21,7 @@
       },
       "about": {
         "title": "About",
-        "help": "Help/report issue",
+        "report": "Report issue",
         "admin": "Admin panel",
         "language": "ภาษาไทย",
         "logOut": "Log out"

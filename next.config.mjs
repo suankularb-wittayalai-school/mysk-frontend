@@ -1,11 +1,12 @@
-const { i18n } = require("./next-i18next.config");
-const { withPlausibleProxy } = require("next-plausible");
-const nextTranslate = require("next-translate-plugin");
-const withPWA = require("next-pwa")({
-  dest: "public",
-  register: true,
-  runtimeCaching: require("./cache"),
-  disable: process.env.NODE_ENV === "development",
+import withSerwistInit from "@serwist/next";
+import { withPlausibleProxy } from "next-plausible";
+import nextTranslate from "next-translate-plugin";
+import { omit } from "radash";
+import nextI18next from "./next-i18next.config.js";
+
+const withSerwist = withSerwistInit({
+  swSrc: "sw.ts",
+  swDest: "public/sw.js",
 });
 
 /** @type {import('next').NextConfig} */
@@ -20,7 +21,7 @@ const config = {
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
     ],
   },
-  i18n,
+  i18n: omit(nextI18next.i18n, ["localePath"]),
   async redirects() {
     return [
       { source: "/index.php", destination: "/", permanent: true },
@@ -58,4 +59,4 @@ const config = {
   },
 };
 
-module.exports = withPWA(withPlausibleProxy()(nextTranslate(config)));
+export default withSerwist(withPlausibleProxy()(nextTranslate(config)));

@@ -16,12 +16,12 @@
       "search": {
         "title": "ค้นหา",
         "students": "นักเรียน",
-        "teachers": "อาจารย์",
+        "teachers": "ครู",
         "documents": "เอกสารโรงเรียน"
       },
       "about": {
         "title": "เกี่ยวกับ",
-        "help": "รายงาน/แนะนำ",
+        "report": "รายงานปัญหา",
         "admin": "แผงควบคุม",
         "language": "English",
         "logOut": "ออกจากระบบ"
