@@ -9,9 +9,10 @@ const Favicon: StylableFC = (props) => {
   const pride =
     toZonedTime(new Date(), process.env.NEXT_PUBLIC_SCHOOL_TZ).getMonth() === 5;
 
+  // Generated from Figma.
   // prettier-ignore
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <mask id="mask_favicon" style={{ maskType: "alpha" }} maskUnits="userSpaceOnUse" x="0" y="1" width="24" height="22">
         <path d="M22.7057 16.9689C22.1002 16.231 20.7574 16.3756 20.0509 15.7365C19.1921 14.9594 18.6006 14.4457 19.8484 13.8572C20.7347 13.438 21.7312 13.1215 22.4157 12.4216C22.8067 12.0211 22.8563 11.5191 22.5354 11.0393C22.0007 10.2396 20.7908 10.0428 19.925 10.3234C19.1646 10.5692 18.1038 11.6398 17.32 10.8849C16.9382 10.5169 17.0707 9.87797 17.152 9.41738C17.2554 8.83336 17.3694 8.32389 17.1447 7.75158C16.8622 7.03215 16.1492 6.39126 15.3852 6.92192C15.2223 7.03514 15.1109 7.19324 15.0353 7.37528C14.8463 7.83013 14.8804 8.43411 14.8892 8.86303C14.9116 9.95653 15.0076 11.0498 15.065 12.142C15.159 13.9288 15.2021 15.7524 14.5455 17.4504C14.1213 18.5466 12.7899 21.1159 14.8929 21.3236C15.8939 21.4224 16.2812 20.5655 16.3971 19.7005C16.4455 19.3379 16.2258 17.9387 16.7303 17.8028C17.0889 17.7062 17.5173 18.4379 17.6465 18.6972C18.0579 19.5244 18.1826 20.4613 18.4908 21.3269C18.8502 22.3368 20.1374 22.6628 20.9329 22.0463C21.6823 21.465 22.0673 20.3683 22.4242 19.5232C22.6925 18.8873 23.1853 17.9768 22.8885 17.2736C22.8396 17.1576 22.778 17.0571 22.7057 16.9689Z" fill="#41484D"/>
         <path d="M11.9861 11.8423C10.9916 11.4059 5.54933 11.0942 6.68073 9.53566C7.81213 7.97709 10.9233 9.72269 11.9861 9.78503C13.0489 9.84738 13.3611 9.33367 13.6417 8.15689C13.9217 6.9796 13.436 5.97962 12.5502 5.79509C12.5502 5.79509 10.3467 5.29635 8.70538 5.17166C7.06401 5.04697 5.56779 4.98463 3.38579 5.48338C1.20378 5.98212 0.393327 6.5432 0.89207 8.41349C1.39081 10.2838 2.68131 13.4009 6.68073 13.775C10.6799 14.149 10.9293 15.0887 10.1812 15.5852C9.43304 16.0817 6.68996 15.957 5.63013 15.6453C4.5703 15.3335 1.83968 13.8418 1.67759 15.5864C1.60652 16.3497 1.36164 17.3954 1.77559 18.1076C1.77559 18.1076 2.01748 18.8457 4.34487 19.4691C6.57475 20.0664 8.45127 20.8225 11.3038 19.2811C11.434 19.2148 11.5602 19.1429 11.6829 19.0671C12.9213 18.3001 13.7529 17.034 13.6332 15.2712C13.4853 13.0892 12.9806 12.2787 11.9861 11.8423Z" fill="#41484D"/>
@@ -20,12 +21,12 @@ const Favicon: StylableFC = (props) => {
       </mask>
       <g mask="url(#mask_favicon)">
       <rect
-        width="24"
-        height="24"
+        width={24}
+        height={24}
         className={pride ? "fill-on-surface-variant" : "fill-current"}
       />
       {pride && (
-        <g opacity="0.6" filter="url(#filter_favicon)">
+        <g opacity={0.6} filter="url(#filter_favicon)">
           <path d="M-6 5.30999L28.7453 -4L29.8033 -0.0516648L-4.94205 9.25832L-6 5.30999Z" fill="#FF1F1F"/>
           <path d="M-4.94205 9.25832L29.8033 -0.0516648L30.8613 3.89658L-3.88406 13.2066L-4.94205 9.25832Z" fill="#FFA133"/>
           <path d="M-3.88406 13.2066L30.8613 3.89658L31.9192 7.84494L-2.82614 17.1549L-3.88406 13.2066Z" fill="#FFC700"/>
@@ -36,10 +37,10 @@ const Favicon: StylableFC = (props) => {
       )}
       </g>
       <defs>
-        <filter id="filter_favicon" x="-10" y="-8" width="49.0931" height="40.9999" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+        <filter id="filter_favicon" x={-10} y={-8} width={49.0931} height={40.9999} filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity={0} result="BackgroundImageFix"/>
         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-        <feGaussianBlur stdDeviation="2" result="effect_favicon"/>
+        <feGaussianBlur stdDeviation={2} result="effect_favicon"/>
         </filter>
       </defs>
     </svg>
