@@ -26,7 +26,7 @@ const Favicon: StylableFC = (props) => {
         className={pride ? "fill-on-surface-variant" : "fill-current"}
       />
       {pride && (
-        <g opacity={0.6} filter="url(#filter_favicon)">
+        <g opacity={0.8} filter="url(#filter_favicon)">
           <path d="M-6 5.30999L28.7453 -4L29.8033 -0.0516648L-4.94205 9.25832L-6 5.30999Z" fill="#FF1F1F"/>
           <path d="M-4.94205 9.25832L29.8033 -0.0516648L30.8613 3.89658L-3.88406 13.2066L-4.94205 9.25832Z" fill="#FFA133"/>
           <path d="M-3.88406 13.2066L30.8613 3.89658L31.9192 7.84494L-2.82614 17.1549L-3.88406 13.2066Z" fill="#FFC700"/>
