@@ -23,7 +23,7 @@ import { LayoutGroup, motion } from "framer-motion";
  * @param refreshData Should refresh Classroom data.
  */
 const ClassDetailsCard: StylableFC<{
-  classroom?: Omit<Classroom, "year" | "subjects">;
+  classroom: Omit<Classroom, "year" | "subjects"> | null;
   refreshData: () => void;
 }> = ({ classroom, refreshData, style, className }) => {
   const mysk = useMySKClient();

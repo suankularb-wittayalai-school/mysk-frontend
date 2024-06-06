@@ -1,0 +1,10 @@
+{
+  "title": "Search teachers",
+  "filter": {
+    "fullName": "Full name: “{{content}}”",
+    "nickname": "Nickname: “{{content}}”",
+    "subjectGroup": "Subject group: “{{content}}”",
+    "classroom": "Classroom: “{{content}}”",
+    "contact": "Contact: “{{content}}”"
+  }
+}

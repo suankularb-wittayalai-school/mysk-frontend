@@ -2,6 +2,7 @@ import ScheduleContext from "@/contexts/ScheduleContext";
 import cn from "@/utils/helpers/cn";
 import { formatSubjectPeriodName } from "@/utils/helpers/schedule/formatSubjectPeriodName";
 import useLocale from "@/utils/helpers/useLocale";
+import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { PeriodContentItem } from "@/utils/types/schedule";
 import {
@@ -12,11 +13,22 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { AnimatePresence, DragControls, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
-import { FC, useContext, useState } from "react";
+import useTranslation from "next-translate/useTranslation";
+import { useContext, useState } from "react";
 
-const SubjectPeriodMenu: FC<{
+/**
+ * A menu that appears when a Subject Period is hovered, allowing the user to
+ * extend, move, or view the details of the Subject Period.
+ * 
+ * @param open Whether the menu is open.
+ * @param period The Subject Period that the menu is for.
+ * @param dragControls The Framer Motion drag controls.
+ * @param extending Whether the user is extending the Subject Period.
+ * @param setExtending Sets the extending state.
+ * @param setDetailsOpen Opens the details dialog.
+ */
+const SubjectPeriodMenu: StylableFC<{
   open: boolean;
   period: PeriodContentItem;
   dragControls: DragControls;
@@ -30,9 +42,11 @@ const SubjectPeriodMenu: FC<{
   extending,
   setExtending,
   setDetailsOpen,
+  style,
+  className,
 }) => {
   const locale = useLocale();
-  const { t } = useTranslation(["schedule", "common"]);
+  const { t } = useTranslation("schedule/editor/hoverMenu");
 
   const { view } = useContext(ScheduleContext);
   const plausible = usePlausible();
@@ -43,15 +57,17 @@ const SubjectPeriodMenu: FC<{
   );
   const exitTransition = transition(DURATION.short2, EASING.standardAccelerate);
 
-  const [moving, setMoving] = useState<boolean>(false);
+  const [moving, setMoving] = useState(false);
 
   return (
     <AnimatePresence>
       {open && !extending && (
         <div
+          style={style}
           className={cn(
             `absolute inset-0 flex h-14 flex-col rounded-sm p-1 pt-0.5`,
             moving && `bg-secondary-container`,
+            className,
           )}
         >
           <motion.span
@@ -60,8 +76,7 @@ const SubjectPeriodMenu: FC<{
             className="skc-text skc-text--body-small !font-display"
           >
             {view === UserRole.teacher
-              ? t("class", {
-                  ns: "common",
+              ? t("common:class", {
                   number: period.classrooms
                     ?.map(({ number }) => number)
                     .sort((a, b) => a - b)
@@ -92,7 +107,7 @@ const SubjectPeriodMenu: FC<{
                 rippleEffect={false}
                 shadowEffect
                 attr={{
-                  title: t("schedule.hoverMenu.move"),
+                  title: t("move"),
                   onPointerDown: (event) => {
                     setMoving(true);
                     dragControls.start(event);
@@ -120,9 +135,10 @@ const SubjectPeriodMenu: FC<{
                   });
                   setDetailsOpen(true);
                 }}
-                attr={{ title: t("schedule.hoverMenu.more") }}
-                className="tap-highlight-none grid place-content-center
-                  rounded-xs bg-primary text-on-primary state-layer:!bg-on-primary"
+                attr={{ title: t("more") }}
+                className={cn(`tap-highlight-none grid place-content-center
+                  rounded-xs bg-primary text-on-primary
+                  state-layer:!bg-on-primary`)}
               >
                 <MaterialIcon icon="open_in_full" />
               </Interactive>
@@ -135,7 +151,7 @@ const SubjectPeriodMenu: FC<{
                 rippleEffect={false}
                 shadowEffect
                 attr={{
-                  title: t("schedule.hoverMenu.extend"),
+                  title: t("extend"),
                   onPointerDown: () => setExtending(true),
                 }}
                 className={cn(

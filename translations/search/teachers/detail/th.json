@@ -1,0 +1,30 @@
+{
+  "glance": {
+    "free": "ไม่มีคาบสอนตอนนี้",
+    "future": "ไม่มีคาบสอนตอนนี้ (คาบต่อไปในอีก {{time}})",
+    "ongoing": "กำลังสอน{{subject}}"
+  },
+  "starbucks": {
+    "order": "ชาเขียว Starbucks เย็น แก้วใหญ่ ไม่ใส่ syrup extra green tea 6 ช้อน แยกน้ำแข็ง ฝาโดม",
+    "action": {
+      "readAloud": "อ่านออกเสียง",
+      "openStarbucks": "เปิด Starbucks"
+    },
+    "snackbar": {
+      "thaiSpeechNotSupported": "ขออภัย เบราว์เซอร์ไม่รองรับการออกเสียงภาษาไทย"
+    }
+  },
+  "information": {
+    "fullName": "ชื่อ-สกุล",
+    "nickname": "ชื่อเล่น",
+    "subjectGroup": "กลุ่มสาระฯ",
+    "classAdvisorAt": "ห้องที่ปรึกษา",
+    "birthday": "วันเกิด"
+  },
+  "contacts": {
+    "title": "ช่องทางการติดต่อ"
+  },
+  "subjects": {
+    "title": "วิชาที่สอน"
+  }
+}

@@ -168,11 +168,7 @@ const ScheduleEditorPage: CustomPage = () => {
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale as LangCode, [
-      "common",
-      "admin",
-      "schedule",
-    ])),
+    ...(await serverSideTranslations(locale as LangCode, ["common", "admin"])),
   },
 });
 

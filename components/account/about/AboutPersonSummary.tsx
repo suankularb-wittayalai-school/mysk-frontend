@@ -5,8 +5,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { Student, Teacher } from "@/utils/types/person";
 import { Text } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
-import { title } from "radash";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * A Person’s profile picture, name, and role.
@@ -20,7 +19,7 @@ const AboutPersonSummary: StylableFC<{
   >;
 }> = ({ person, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("account", { keyPrefix: "profile.role" });
+  const { t } = useTranslation("common");
 
   return (
     <div

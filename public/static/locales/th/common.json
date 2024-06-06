@@ -6,61 +6,6 @@
     "description": "เข้าถึงและเข้าใจข้อมูลต่าง ๆ ของโรงเรียนอย่างง่ายดายด้วยระบบจัดการการศึกษา MySK โรงเรียนสวนกุหลาบวิทยาลัย",
     "school": "โรงเรียนสวนกุหลาบวิทยาลัย"
   },
-  "navigation": {
-    "home": "หน้าหลัก",
-    "manage": "ภาพรวม",
-    "classes": "ห้องเรียน",
-    "search": "ค้นหา",
-    "news": "ข่าวสาร",
-    "account": "บัญชีผู้ใช้",
-    "colorScheme": {
-      "dark": "โหมดมืด",
-      "light": "โหมดสว่าง"
-    },
-    "language": "English",
-    "logOut": "ออกจากระบบ",
-    "drawer": {
-      "search": {
-        "title": "ค้นหา",
-        "students": "นักเรียน",
-        "teachers": "อาจารย์",
-        "documents": "เอกสารโรงเรียน"
-      },
-      "about": {
-        "title": "เกี่ยวกับ",
-        "help": "รายงาน/แนะนำ",
-        "admin": "แผงควบคุม",
-        "language": "English",
-        "logOut": "ออกจากระบบ"
-      }
-    }
-  },
-  "appDrawer": {
-    "mysk": {
-      "title": "แอพ MySK",
-      "mysk": "MySK",
-      "clubRegistry": "ทะเบียนชุมนุม"
-    },
-    "school": {
-      "title": "แอพโรงเรียน",
-      "mainSite": "เว็บหลัก",
-      "samak": "สมัคร",
-      "shopping": "SK Shopping",
-      "schoolICT": "School ICT",
-      "sar": "ระบบ SAR",
-      "ita": "ระบบ ITA",
-      "basedLine": "Based Line",
-      "kularbLuang": "กุหลาบหลวง"
-    },
-    "learning": {
-      "title": "แอพสำหรับการเรียนรู้",
-      "kularbFah": "กุหลาบฟ้า",
-      "library": "ห้องสมุด",
-      "libraryEBook": "Library eBook",
-      "libraryOPAC": "Library OPAC"
-    }
-  },
-  "pageLoading": "หน้ากำลังโหลด…",
   "class": "ม.{{number}}",
   "classNo": "เลขที่ {{classNo}}",
   "contact": {
@@ -86,17 +31,6 @@
     "morale": "นักเรียนดีเด่นด้านคุณธรรม",
     "sports": "นักเรียนดีเด่นด้านกีฬา",
     "activity": "นักเรียนดีเด่นด้านกิจกรรม"
-  },
-  "datetime": {
-    "day": {
-      "0": "วันอาทิตย์",
-      "1": "วันจันทร์",
-      "2": "วันอังคาร",
-      "3": "วันพุธ",
-      "4": "วันพฤหัสบดี",
-      "5": "วันศุกร์",
-      "6": "วันเสาร์"
-    }
   },
   "ordinal": "{{count, number}}",
   "input": {
@@ -204,32 +138,6 @@
       "action": {
         "discard": "ลบการแก้ไข",
         "continue": "แก้ไขต่อ"
-      }
-    },
-    "logOut": {
-      "title": "ออกจากระบบ",
-      "desc": "ต้องการที่จะออกจากระบบหรือไม่",
-      "action": {
-        "logOut": "ออกจากระบบ",
-        "back": "กลับ"
-      }
-    },
-    "reportIssue": {
-      "title": "รายงานปัญหา",
-      "desc": "ระบุประเภทของปัญหาที่พบ และเราจะนำคุณไปที่ฟอร์มที่เหมาะสม",
-      "form": {
-        "category": {
-          "label": "ประเภทของปัญหา",
-          "workspace": "ไม่สามารถใช้อีเมลโรงเรียนได้ (ลงท้ายด้วย sk.ac.th)",
-          "mysk": "ต้องการความช่วยเหลือกับ MySK หรือข้อมูลใน MySK ไม่ถูกต้อง"
-        }
-      },
-      "note": {
-        "contact": "เราอาจติดต่อคุณผ่านเบอร์โทรศัพท์ที่คุณระบุเพื่อขอข้อมูลเพิ่มเติม"
-      },
-      "action": {
-        "cancel": "ยกเลิก",
-        "continue": "ดำเนินการต่อ"
       }
     },
     "image": {

@@ -1,4 +1,3 @@
-// Imports
 import PageHeader from "@/components/common/PageHeader";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
@@ -14,28 +13,19 @@ import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import getTeachersByLookupFilters from "@/utils/backend/person/getTeachersByLookupFilters";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
 import getLocaleString from "@/utils/helpers/getLocaleString";
-import { LangCode } from "@/utils/types/common";
+import useListDetail from "@/utils/helpers/search/useListDetail";
+import { Breakpoint } from "@/utils/helpers/useBreakpoint";
+import { CustomPage, LangCode } from "@/utils/types/common";
 import { Teacher, TeacherLookupItem } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
-import {
-  DURATION,
-  SplitLayout,
-  useAnimationConfig,
-  useBreakpoint,
-} from "@suankularb-components/react";
+import { DURATION, SplitLayout } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import {
-  GetServerSideProps,
-  NextApiRequest,
-  NextApiResponse,
-  NextPage,
-} from "next";
-import { useTranslation } from "next-i18next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { alphabetical, camel } from "radash";
-import { useEffect, useState } from "react";
 
 export type TeacherSearchFilters = Partial<{
   fullName: string;
@@ -45,63 +35,47 @@ export type TeacherSearchFilters = Partial<{
   contact: string;
 }>;
 
-const LookupTeachersResultsPage: NextPage<{
+/**
+ * The results page for Search Teachers.
+ *
+ * @param filters The filters used to search for Teachers.
+ * @param subjectGroups The list of all Subject Groups.
+ * @param teachers The Teachers that match the filters.
+ */
+const SearchTeachersResultsPage: CustomPage<{
   filters: TeacherSearchFilters;
   subjectGroups: SubjectGroup[];
   teachers: TeacherLookupItem[];
 }> = ({ filters, subjectGroups, teachers }) => {
-  // Translation
-  const { t } = useTranslation("lookup", { keyPrefix: "teachers" });
-  const { t: tx } = useTranslation(["lookup", "common"]);
-
-  const [selectedID, setSelectedID] = useState<string>();
-  // Select the first result automatically after a short delay
-  useEffect(() => {
-    const timeout = setTimeout(
-      () => setSelectedID(teachers[0]?.id),
-      DURATION.medium2 * 1000,
-    );
-    return () => clearTimeout(timeout);
-  }, []);
+  const { t } = useTranslation("search/teachers/list");
 
   const supabase = useSupabaseClient();
   const mysk = useMySKClient();
-  const [selectedTeacher, setSelectedTeacher] = useState<Teacher>();
-  // Fetch the selected Teacher when the selected Teacher ID changes
-  useEffect(() => {
-    (async () => {
-      // Clear the selected Teacher data first
-      // (This, combined with some more logic in child components, prevents the
-      // old Teacher data from flashing at selected Teacher ID change)
-      setSelectedTeacher(undefined);
-      if (!selectedID) return false;
 
-      // Fetch the selected Teacher with the selected ID
-      const { data, error } = await getTeacherByID(supabase, mysk, selectedID, {
+  const {
+    selectedID,
+    selectedDetail,
+    onSelectedChange,
+    detailsOpen,
+    onDetailsClose,
+  } = useListDetail<TeacherLookupItem, Teacher>(
+    teachers,
+    (id) =>
+      getTeacherByID(supabase, mysk, id, {
         detailed: true,
         includeContacts: true,
-      });
-      if (error) return false;
-
-      // Set the state
-      setSelectedTeacher(data);
-      return true;
-    })();
-  }, [selectedID]);
-
-  const [detailsOpen, setDetailsOpen] = useState(false);
-
-  // Open the Teacher Details Dialog on mobile, otherwise close it
-  const { atBreakpoint } = useBreakpoint();
-  useEffect(() => {
-    if (atBreakpoint !== "base") setDetailsOpen(false);
-    else if (selectedID) setDetailsOpen(true);
-  }, [atBreakpoint === "base"]);
+      }),
+    {
+      firstByDefault: true,
+      initialSelectDelay: DURATION.medium2,
+      dialogBreakpoints: [Breakpoint.base],
+    },
+  );
 
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: t("title"), ns: "common" })}</title>
+        <title>{t("common:tabName", { tabName: t("title") })}</title>
       </Head>
       <PageHeader parentURL="/search/teachers">{t("title")}</PageHeader>
       <SplitLayout
@@ -131,11 +105,8 @@ const LookupTeachersResultsPage: NextPage<{
               >
                 <LookupTeacherCard
                   teacher={teacher}
-                  selected={selectedID}
-                  onClick={(id) => {
-                    setSelectedID(id);
-                    if (atBreakpoint === "base") setDetailsOpen(true);
-                  }}
+                  selected={teacher.id === selectedID}
+                  onClick={onSelectedChange}
                 />
               </LookupResultsItem>
             ))}
@@ -144,23 +115,16 @@ const LookupTeachersResultsPage: NextPage<{
 
         {/* Details */}
         <LookupDetailsSide
-          selectedID={selectedTeacher?.id || selectedID}
+          selectedID={selectedDetail?.id || selectedID}
           length={teachers.length}
         >
-          <TeacherDetailsCard teacher={selectedTeacher} />
+          <TeacherDetailsCard teacher={selectedDetail} />
         </LookupDetailsSide>
       </SplitLayout>
 
       {/* Details Dialog */}
-      <LookupDetailsDialog
-        open={detailsOpen}
-        onClose={() => setDetailsOpen(false)}
-      >
-        <TeacherDetailsCard
-          teacher={
-            selectedID === selectedTeacher?.id ? selectedTeacher : undefined
-          }
-        />
+      <LookupDetailsDialog open={detailsOpen} onClose={onDetailsClose}>
+        <TeacherDetailsCard teacher={selectedDetail} />
       </LookupDetailsDialog>
     </>
   );
@@ -210,8 +174,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "classes",
-        "lookup",
-        "schedule",
       ])),
       filters,
       subjectGroups,
@@ -220,4 +182,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-export default LookupTeachersResultsPage;
+export default SearchTeachersResultsPage;

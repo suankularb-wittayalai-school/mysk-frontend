@@ -2,7 +2,7 @@ import { StylableFC } from "@/utils/types/common";
 import { DURATION, EASING, transition } from "@suankularb-components/react";
 import { Interval } from "date-fns";
 import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * A display of the start and end times passed in by Schedule Glance.
@@ -12,7 +12,7 @@ import { useTranslation } from "next-i18next";
 const ScheduleGlanceInterval: StylableFC<{
   interval: Interval;
 }> = ({ interval, style, className }) => {
-  const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
+  const { t } = useTranslation("home/glance/schedule");
 
   return (
     <motion.div

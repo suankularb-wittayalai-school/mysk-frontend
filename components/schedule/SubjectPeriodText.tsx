@@ -11,7 +11,7 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { FC, useContext } from "react";
 
 /**
@@ -21,7 +21,7 @@ import { FC, useContext } from "react";
  */
 const SubjectPeriodText: FC<{ period: PeriodContentItem }> = ({ period }) => {
   const locale = useLocale();
-  const { t } = useTranslation("schedule");
+  const { t } = useTranslation("common");
 
   const { view, editable } = useContext(ScheduleContext);
 
@@ -35,7 +35,6 @@ const SubjectPeriodText: FC<{ period: PeriodContentItem }> = ({ period }) => {
       >
         {view === UserRole.teacher
           ? t("class", {
-              ns: "common",
               number: period.classrooms
                 ?.map(({ number }) => number)
                 .sort((a, b) => a - b)

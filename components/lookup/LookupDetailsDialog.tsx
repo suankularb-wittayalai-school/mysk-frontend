@@ -1,6 +1,7 @@
 import cn from "@/utils/helpers/cn";
+import useBreakpoint, { Breakpoint } from "@/utils/helpers/useBreakpoint";
 import { StylableFC } from "@/utils/types/common";
-import { FullscreenDialog, useBreakpoint } from "@suankularb-components/react";
+import { FullscreenDialog } from "@suankularb-components/react";
 import Head from "next/head";
 import { ReactNode } from "react";
 
@@ -21,7 +22,7 @@ const LookupDetailsDialog: StylableFC<{
 
   return (
     <>
-      {open && atBreakpoint === "base" && (
+      {open && atBreakpoint(Breakpoint.base) && (
         <Head>
           <meta
             key="theme-color-light"

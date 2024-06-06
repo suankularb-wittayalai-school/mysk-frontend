@@ -1,7 +1,7 @@
 import ReportIssueDialog from "@/components/common/ReportIssueDialog";
 import { Button, MaterialIcon } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { ComponentProps, FC, useState } from "react";
 
 /**

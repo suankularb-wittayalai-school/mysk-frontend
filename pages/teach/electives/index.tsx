@@ -10,22 +10,16 @@ import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import cn from "@/utils/helpers/cn";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
+import useListDetail from "@/utils/helpers/search/useListDetail";
 import { BackendReturn } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { Teacher, UserRole } from "@/utils/types/person";
-import {
-  DURATION,
-  EASING,
-  transition,
-  useBreakpoint,
-} from "@suankularb-components/react";
+import { DURATION, EASING, transition } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { first } from "radash";
-import { useEffect, useState } from "react";
 
 /**
  * A place where the Teacher can view their Elective Subjects and the respective
@@ -36,17 +30,16 @@ import { useEffect, useState } from "react";
 const TeachElectivesPage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
 }> = ({ electiveSubjects }) => {
-  const [selectedElective, setSelectedElective] =
-    useState<ElectiveSubject | null>(null);
-
-  const { atBreakpoint } = useBreakpoint();
-  useEffect(() => {
-    if (!DIALOG_BREAKPOINTS.includes(atBreakpoint)) setDetailsOpen(false);
-    else if (selectedElective) setDetailsOpen(true);
-    else setSelectedElective(first(electiveSubjects) || null);
-  }, [DIALOG_BREAKPOINTS.includes(atBreakpoint)]);
-
-  const [detailsOpen, setDetailsOpen] = useState(false);
+  const {
+    selectedID,
+    selectedDetail,
+    onSelectedChange,
+    detailsOpen,
+    onDetailsClose,
+  } = useListDetail<ElectiveSubject>(electiveSubjects, undefined, {
+    firstByDefault: true,
+    dialogBreakpoints: DIALOG_BREAKPOINTS,
+  });
 
   return (
     <>
@@ -62,15 +55,8 @@ const TeachElectivesPage: CustomPage<{
                 key={electiveSubject.session_code}
                 role={UserRole.teacher}
                 electiveSubject={electiveSubject}
-                selected={
-                  selectedElective?.session_code ===
-                  electiveSubject.session_code
-                }
-                onClick={() => {
-                  setSelectedElective(electiveSubject);
-                  if (DIALOG_BREAKPOINTS.includes(atBreakpoint))
-                    setDetailsOpen(true);
-                }}
+                selected={selectedID === electiveSubject.id}
+                onClick={() => onSelectedChange(electiveSubject.id)}
               />
             ))}
             {/* There’s probably a better solution. If there is, I don’t know
@@ -81,34 +67,31 @@ const TeachElectivesPage: CustomPage<{
 
         {/* Details */}
         <motion.section
-          key={selectedElective?.session_code || "empty"}
+          key={selectedID || "empty"}
           initial={{ opacity: 0, scale: 0.95, x: -10 }}
           animate={{ opacity: 1, scale: 1, x: 0 }}
           transition={transition(DURATION.medium2, EASING.standardDecelerate)}
           className="hidden flex-col gap-6 md:flex"
         >
           <main className="relative grow *:absolute *:inset-0">
-            {selectedElective && (
-              <ElectiveDetailsCard electiveSubject={selectedElective} />
+            {selectedDetail && (
+              <ElectiveDetailsCard electiveSubject={selectedDetail} />
             )}
           </main>
 
           {/* Enrolled Students */}
-          {selectedElective && (
+          {selectedDetail && (
             <ElectiveStudentListCard
-              electiveSubject={selectedElective}
+              electiveSubject={selectedDetail}
               className="h-[18rem]"
             />
           )}
         </motion.section>
       </ElectiveLayout>
 
-      <LookupDetailsDialog
-        open={detailsOpen}
-        onClose={() => setDetailsOpen(false)}
-      >
+      <LookupDetailsDialog open={detailsOpen} onClose={onDetailsClose}>
         <ElectiveDetailsCard
-          electiveSubject={selectedElective}
+          electiveSubject={selectedDetail}
           className={cn(`!mx-0 h-full !bg-surface-container-highest
             *:!rounded-b-none`)}
         />
@@ -160,8 +143,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         "attendance",
         "classes",
         "elective",
-        "lookup",
-        "schedule",
       ])),
       electiveSubjects,
     },

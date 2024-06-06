@@ -16,7 +16,7 @@ import {
   Snackbar,
   TextField,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { snake } from "radash";
 import { useContext, useEffect, useState } from "react";
@@ -30,11 +30,7 @@ const TeacherFiltersCard: StylableFC<{
   subjectGroups: SubjectGroup[];
 }> = ({ subjectGroups, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "teachers.searchFilters.form",
-  });
-  const { t: tc } = useTranslation("lookup");
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("search/teachers/form");
 
   const trackSearch = useTrackSearch();
   const { setSnackbar } = useContext(SnackbarContext);
@@ -61,7 +57,7 @@ const TeacherFiltersCard: StylableFC<{
       ([key, value]) => value && !(key === "subjectGroup" && value === "any"),
     );
     if (entries.length === 0) {
-      setSnackbar(<Snackbar>{tx("snackbar.formInvalid")}</Snackbar>);
+      setSnackbar(<Snackbar>{t("common:snackbar.formInvalid")}</Snackbar>);
       return;
     }
 
@@ -81,7 +77,7 @@ const TeacherFiltersCard: StylableFC<{
   return (
     <SearchFiltersCard
       icon={<MaterialIcon icon="support_agent" />}
-      title={tc("teachers.title")}
+      title={t("title")}
       onSubmit={handleSubmit}
       style={style}
       className={cn(
@@ -92,23 +88,23 @@ const TeacherFiltersCard: StylableFC<{
     >
       <TextField
         appearance="outlined"
-        label={t("fullName")}
-        helperMsg={t("fullName_helper")}
+        label={t("form.fullName")}
+        helperMsg={t("form.fullName_helper")}
         {...formProps.fullName}
       />
       <TextField
         appearance="outlined"
-        label={t("nickname")}
-        helperMsg={t("nickname_helper")}
+        label={t("form.nickname")}
+        helperMsg={t("form.nickname_helper")}
         {...formProps.nickname}
       />
       <Select
         appearance="outlined"
-        label={t("subjectGroup")}
-        helperMsg={t("subjectGroup_helper")}
+        label={t("form.subjectGroup")}
+        helperMsg={t("form.subjectGroup_helper")}
         {...formProps.subjectGroup}
       >
-        <MenuItem value="any">{t("subjectGroup_default")}</MenuItem>
+        <MenuItem value="any">{t("form.subjectGroup_default")}</MenuItem>
         <Divider className="my-1" />
         {subjectGroups.map((subjectGroup) => (
           <MenuItem key={subjectGroup.id} value={subjectGroup.id}>
@@ -118,14 +114,14 @@ const TeacherFiltersCard: StylableFC<{
       </Select>
       <TextField
         appearance="outlined"
-        label={t("classroom")}
-        helperMsg={t("classroom_helper")}
+        label={t("form.classroom")}
+        helperMsg={t("form.classroom_helper")}
         {...formProps.classroom}
       />
       <TextField
         appearance="outlined"
-        label={t("contact")}
-        helperMsg={t("contact_helper")}
+        label={t("form.contact")}
+        helperMsg={t("form.contact_helper")}
         {...formProps.contact}
       />
     </SearchFiltersCard>

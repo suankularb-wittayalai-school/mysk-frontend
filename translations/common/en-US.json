@@ -1,0 +1,57 @@
+{
+  "appName": "MySK",
+  "tabName": "{{tabName}} - MySK",
+  "brand": {
+    "name": "MySK",
+    "description": "Easily access and understand school data with the MySK education management system for Suankularb Wittayalai School.",
+    "school": "Suankularb Wittayalai School"
+  },
+  "class": "M.{{number}}",
+  "classNo": "No. {{classNo}}",
+  "role": {
+    "student": "Student",
+    "teacher": "Teacher",
+    "management": "Management",
+    "organization": "Organization",
+    "staff": "Staff"
+  },
+  "contact": {
+    "phone": "Phone",
+    "email": "Email",
+    "website": "Website",
+    "facebook": "Facebook",
+    "line": "LINE",
+    "instagram": "Instagram",
+    "discord": "Discord",
+    "other": "Other"
+  },
+  "certificate": {
+    "studentOfTheYear": "นักเรียนยอดเยี่ยมแห่งปี",
+    "excellentStudent": "นักเรียนยอดเยี่ยม",
+    "academic": "นักเรียนดีเด่นด้านวิชาการ",
+    "morale": "นักเรียนดีเด่นด้านคุณธรรม",
+    "sports": "นักเรียนดีเด่นด้านกีฬา",
+    "activity": "นักเรียนดีเด่นด้านกิจกรรม"
+  },
+  "document": {
+    "order": "Orders",
+    "record": "Records",
+    "announcement": "Announcements",
+    "bigGaruda": "External",
+    "other": "Other"
+  },
+  "ordinal_one": "{{count, number}}st",
+  "ordinal_two": "{{count, number}}nd",
+  "ordinal_few": "{{count, number}}rd",
+  "ordinal_other": "{{count, number}}th",
+  "snackbar": {
+    "loading": "Loading…",
+    "changesSaved": "Changes saved",
+    "failure": "Task failed, please try again",
+    "formInvalid": "Check the form and try again",
+    "copiedToClipboard": "Copied to clipboard"
+  },
+  "action": {
+    "report": "Report issue"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "title": "About you",
+  "name": {
+    "title": "Thai name",
+    "prefix": "Prefix",
+    "prefix_helper": "เด็กชาย, นาย, นาง, นางสาว, etc.",
+    "firstName": "First name",
+    "middleName": "Middle name",
+    "middleName_helper": "Leave blank if you don’t want your middle name to be displayed.",
+    "lastName": "Last name",
+    "nickname": "Nickname"
+  },
+  "nameEN": {
+    "title": "English name",
+    "prefix": "English prefix",
+    "prefix_helper": "Master, Mr., Mrs., Ms., etc.",
+    "firstName": "English first name",
+    "middleName": "English middle name",
+    "middleName_helper": "Leave blank if you don’t want your middle name to be displayed.",
+    "lastName": "English last name",
+    "nickname": "English nickname"
+  },
+  "class": {
+    "title": "Class",
+    "studentID": "Student ID",
+    "class": "Class",
+    "classNo": "Class №"
+  },
+  "role": {
+    "title": "Role within school",
+    "role": {
+      "label": "Role",
+      "student": "Student",
+      "teacher": "Teacher"
+    },
+    "subjectGroup": "Subject group",
+    "subjectGroup_helper": "Choose “Guest Lecturer” if none applies.",
+    "classAdvisorAt": "Class advisor at",
+    "classAdvisorAt_helper": "Must be 3-digit, i.e. 408.",
+    "classAdvisorAt_error": "Invalid. Should be 3-digit, i.e. 408."
+  },
+  "general": {
+    "title": "General information",
+    "birthday": "Birthday",
+    "citizenID": "Citizen ID",
+    "citizenID_error": "Invalid citizen ID.",
+    "passportNumber": "Passport number",
+    "passportNumber_error": "Invalid passport number or unsupported passport.",
+    "allergies": "Allergies (in Thai)",
+    "allergies_helper": "Field is comma-seperated • Leave blank if you don’t have any.",
+    "shirtSize": {
+      "label": "Shirt size",
+      "metadata_one": "{{count, number}} inch",
+      "metadata_other": "{{count, number}} inches"
+    },
+    "pantsSize": "School pants size"
+  },
+  "action": {
+    "logOut": "Log out",
+    "idCard": "Show ID card",
+    "save": "Save",
+    "changeName": "Change name"
+  }
+}

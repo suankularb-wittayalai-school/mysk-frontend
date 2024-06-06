@@ -1,4 +1,3 @@
-// Imports
 import PersonAvatar from "@/components/common/PersonAvatar";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
@@ -8,9 +7,16 @@ import { StylableFC } from "@/utils/types/common";
 import { TeacherLookupItem } from "@/utils/types/person";
 import { Card, CardHeader } from "@suankularb-components/react";
 
+/**
+ * A card that displays a Teacher in the list side of Search Teacher.
+ *
+ * @param teacher The Teacher to display.
+ * @param selected If this Teacher is currently selected.
+ * @param onClick The function to set the selected Teacher.
+ */
 const LookupTeacherCard: StylableFC<{
   teacher: TeacherLookupItem;
-  selected?: string;
+  selected?: boolean;
   onClick: (value: string) => void;
 }> = ({ teacher, selected, onClick, style, className }) => {
   const locale = useLocale();
@@ -25,7 +31,7 @@ const LookupTeacherCard: StylableFC<{
       className={cn(
         `w-full !rounded-none !border-transparent !bg-transparent text-left
         sm:!rounded-full`,
-        teacher.id === selected &&
+        selected &&
           `sm:!border-outline-variant sm:!bg-primary-container
           sm:!text-on-primary-container sm:focus:!border-primary`,
         className,
@@ -37,9 +43,7 @@ const LookupTeacherCard: StylableFC<{
             first_name={teacher.first_name}
             last_name={teacher.last_name}
             className={
-              teacher.id === selected
-                ? `sm:!bg-primary sm:!text-on-primary`
-                : undefined
+              selected ? `sm:!bg-primary sm:!text-on-primary` : undefined
             }
           />
         }

@@ -1,0 +1,25 @@
+{
+  "loading": "กำลังโหลดห้องเรียน…",
+  "summary": {
+    "subject": "วิชา",
+    "subjectCode": "รหัสวิชา"
+  },
+  "thead": {
+    "class": "ห้อง",
+    "classCode": "รหัสห้องเรียน",
+    "teachers": "ครูผู้สอน",
+    "coTeachers": "ครูผู้ช่วย",
+    "classLink": "ลิงก์ชั้นเรียน",
+    "meetLink": "ลิงก์ Meet"
+  },
+  "rowAction": {
+    "alt": "การดำเนินการบนแถวนี้",
+    "classLink": "เปิด Google Classroom",
+    "meetLink": "เปิด Google Meet",
+    "edit": "แก้ไขรายการนี้",
+    "delete": "ลบรายการนี้"
+  },
+  "action": {
+    "addClass": "เพิ่มห้องเรียน"
+  }
+}

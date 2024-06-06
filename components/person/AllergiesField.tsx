@@ -1,9 +1,7 @@
-// External libraries
-import { FC, useState } from "react";
-import { useTranslation } from "react-i18next";
-
-// SK Components
+import { useState } from "react";
+import useTranslation from "next-translate/useTranslation";
 import { ChipField, ChipSet, InputChip } from "@suankularb-components/react";
+import { StylableFC } from "@/utils/types/common";
 
 /**
  * A Chip Field for allergies.
@@ -14,24 +12,26 @@ import { ChipField, ChipSet, InputChip } from "@suankularb-components/react";
  *
  * @returns A Chip Field.
  */
-const AllergiesField: FC<{
+const AllergiesField: StylableFC<{
   label?: string;
   allergies: string[];
   onChange: (value: string[]) => void;
-}> = ({ label, allergies, onChange }) => {
-  const { t } = useTranslation("account");
+}> = ({ label, allergies, onChange, style, className }) => {
+  const { t } = useTranslation("account/about");
 
   const [allergyField, setAllergyField] = useState("");
 
   return (
     <ChipField
-      label={label || t("profile.general.allergies")}
-      helperMsg={ t("profile.general.allergies_helper")}
+      label={label || t("general.allergies")}
+      helperMsg={t("general.allergies_helper")}
       value={allergyField}
       onChange={setAllergyField}
       onNewEntry={(value) => onChange([...allergies, value])}
       onDeleteLast={() => onChange(allergies.slice(0, -1))}
       entrySeparators={[",", ";"]}
+      style={style}
+      className={className}
     >
       <ChipSet>
         {allergies.map((allergy: string) => (
@@ -39,7 +39,9 @@ const AllergiesField: FC<{
             key={allergy}
             onDelete={() =>
               onChange(
-                allergies.filter((mapAllergy: string) => allergy !== mapAllergy)
+                allergies.filter(
+                  (mapAllergy: string) => allergy !== mapAllergy,
+                ),
               )
             }
           >

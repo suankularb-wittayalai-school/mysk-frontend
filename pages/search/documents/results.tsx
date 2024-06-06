@@ -10,20 +10,17 @@ import DocumentDetailsCard from "@/components/lookup/document/DocumentDetailsCar
 import LookupDocumentCard from "@/components/lookup/document/LookupDocumentCard";
 import getDocumentsByLookupFilters from "@/utils/backend/document/getDocumentsByLookupFilters";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import useListDetail from "@/utils/helpers/search/useListDetail";
+import { Breakpoint } from "@/utils/helpers/useBreakpoint";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { SchoolDocument, SchoolDocumentType } from "@/utils/types/news";
-import {
-  SplitLayout,
-  useAnimationConfig,
-  useBreakpoint,
-} from "@suankularb-components/react";
+import { DURATION, SplitLayout } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { camel } from "radash";
-import { useEffect, useState } from "react";
 
 export type DocumentSearchFilters = Partial<{
   types: SchoolDocumentType[];
@@ -33,45 +30,35 @@ export type DocumentSearchFilters = Partial<{
   code: string;
 }>;
 
-const LookupDocumentsPage: CustomPage<{
+/**
+ * The results page for Search Documents.
+ *
+ * @param filters The filters used to search for Documents.
+ * @param documents The Documents that match the filters.
+ */
+const SearchDocumentsResultsPage: CustomPage<{
   filters: DocumentSearchFilters;
   documents: SchoolDocument[];
 }> = ({ filters, documents }) => {
-  // Translation
-  const { t } = useTranslation("lookup");
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("search/documents/list");
 
-  const { duration } = useAnimationConfig();
-
-  // Selected Document
-  const [selectedDocument, setSelectedDocument] = useState<SchoolDocument>();
-
-  // Select the first result automatically after a short delay
-  useEffect(() => {
-    const timeout = setTimeout(
-      () => setSelectedDocument(documents[0]),
-      duration.medium2 * 1000,
-    );
-    return () => clearTimeout(timeout);
-  }, []);
-
-  const [detailsOpen, setDetailsOpen] = useState(false);
-
-  // Open the Document Details Dialog on mobile, otherwise close it
-  const { atBreakpoint } = useBreakpoint();
-  useEffect(() => {
-    if (atBreakpoint !== "base") setDetailsOpen(false);
-    else if (selectedDocument) setDetailsOpen(true);
-  }, [atBreakpoint === "base"]);
-
+  const {
+    selectedID,
+    selectedDetail,
+    onSelectedChange,
+    detailsOpen,
+    onDetailsClose,
+  } = useListDetail<SchoolDocument>(documents, undefined, {
+    firstByDefault: true,
+    initialSelectDelay: DURATION.medium2,
+    dialogBreakpoints: [Breakpoint.base],
+  });
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: t("documents.title") }, t)}</title>
+        <title>{t("common:tabName", { tabName: t("title") })}</title>
       </Head>
-      <PageHeader parentURL="/search/documents">
-        {t("documents.title")}
-      </PageHeader>
+      <PageHeader parentURL="/search/documents">{t("title")}</PageHeader>
       <SplitLayout
         ratio="list-detail"
         className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
@@ -93,34 +80,26 @@ const LookupDocumentsPage: CustomPage<{
                 <LookupDocumentCard
                   key={document.id}
                   document={document}
-                  selected={selectedDocument}
-                  onClick={(document) => {
-                    setSelectedDocument(document);
-                    if (atBreakpoint === "base") setDetailsOpen(true);
-                  }}
+                  selected={selectedDetail?.id === document.id}
+                  onClick={onSelectedChange}
                 />
               </LookupResultsItem>
             ))}
           </LookupResultsList>
         </LookupListSide>
+
+        {/* Details */}
         <LookupDetailsSide
-          selectedID={selectedDocument?.id}
+          selectedID={selectedDetail?.id || selectedID}
           length={documents.length}
         >
-          {selectedDocument && (
-            <DocumentDetailsCard document={selectedDocument} />
-          )}
+          <DocumentDetailsCard document={selectedDetail!} />
         </LookupDetailsSide>
       </SplitLayout>
 
       {/* Details Dialog */}
-      <LookupDetailsDialog
-        open={detailsOpen}
-        onClose={() => setDetailsOpen(false)}
-      >
-        {selectedDocument && (
-          <DocumentDetailsCard document={selectedDocument} />
-        )}
+      <LookupDetailsDialog open={detailsOpen} onClose={onDetailsClose}>
+        <DocumentDetailsCard document={selectedDetail!} />
       </LookupDetailsDialog>
     </>
   );
@@ -156,14 +135,11 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "lookup",
-      ])),
+      ...(await serverSideTranslations(locale as LangCode, ["common"])),
       filters,
       documents,
     },
   };
 };
 
-export default LookupDocumentsPage;
+export default SearchDocumentsResultsPage;

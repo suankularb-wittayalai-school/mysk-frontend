@@ -19,7 +19,7 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { forwardRef } from "react";
 
 /**
@@ -31,7 +31,7 @@ const ClassroomSubjectCard: StylableFC<{
   subject: ClassroomSubject;
 }> = ({ subject }) => {
   const locale = useLocale();
-  const { t } = useTranslation("schedule", { keyPrefix: "subjectList.card" });
+  const { t } = useTranslation("schedule/subjectList");
 
   const mysk = useMySKClient();
 
@@ -68,7 +68,9 @@ const ClassroomSubjectCard: StylableFC<{
           <Button
             appearance="text"
             icon={<BrandIcon icon="gg-classroom" />}
-            alt={t(`action.${subject.ggc_link ? "ggcLink" : "copyGGCCode"}`)}
+            alt={t(
+              `card.action.${subject.ggc_link ? "ggcLink" : "copyGGCCode"}`,
+            )}
             // Use the Google Classroom link if it exists, otherwise copy the
             // Google Classroom code to the clipboard.
             {...(url
@@ -104,7 +106,7 @@ const ClassroomSubjectCard: StylableFC<{
         ) : (
           <ChipSet>
             <AssistChip disabled className="[&>:last-child]:hidden">
-              {t("noTeachers")}
+              {t("card.noTeachers")}
             </AssistChip>
           </ChipSet>
         )}

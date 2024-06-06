@@ -3,13 +3,12 @@ import AboutPersonSummary from "@/components/account/about/AboutPersonSummary";
 import PageHeader from "@/components/common/PageHeader";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage } from "@/utils/types/common";
 import { Student, Teacher, UserRole } from "@/utils/types/person";
 import { ContentLayout } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 
 /**
@@ -19,29 +18,23 @@ import Head from "next/head";
  * @param user The Person to display the information of. Should be of the currently logged in user.
  */
 const ProfilePage: CustomPage<{ user: Student | Teacher }> = ({ user }) => {
-  const { t } = useTranslation("account");
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("account/common");
 
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: t("title") })}</title>
+        <title>{t("common:tabName", { tabName: t("title") })}</title>
       </Head>
       <PageHeader>{t("title")}</PageHeader>
       <ContentLayout className="*:*:mx-4 *:*:sm:mx-0">
         <AboutPersonSummary person={user} />
-        {/* {user.role === UserRole.student && <CertficateAnnouncementBanner />} */}
-        <ProfileNavigation role={user.role} className="!mx-1 sm:!-mx-3" />
+        <ProfileNavigation className="!mx-1 sm:!-mx-3" />
       </ContentLayout>
     </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const mysk = await createMySKClient(req);
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
@@ -58,15 +51,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     detailed: true,
   });
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "account",
-      ])),
-      user,
-    },
-  };
+  return { props: { user } };
 };
 
 export default ProfilePage;

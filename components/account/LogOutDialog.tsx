@@ -1,68 +1,62 @@
 import UserContext from "@/contexts/UserContext";
-import useToggle from "@/utils/helpers/useToggle";
-import withLoading from "@/utils/helpers/withLoading";
-import { DialogFC } from "@/utils/types/component";
+import { StylableFC } from "@/utils/types/common";
 import {
   Actions,
   Button,
   Dialog,
   DialogHeader,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 
 /**
- * Ask the user to confirm their log out.
+ * Asks the user to confirm their log out.
  *
- * @returns A Dialog.
+ * @param open Whether the Dialog is open and shown.
+ * @param onClose Triggers when the Dialog is closed.
  */
-const LogOutDialog: DialogFC = ({ open, onClose }) => {
-  const { t } = useTranslation("common", { keyPrefix: "dialog.logOut" });
+const LogOutDialog: StylableFC<{
+  open?: boolean;
+  onClose: () => void;
+}> = ({ open, onClose, style, className }) => {
+  const { t } = useTranslation("account/logOutDialog");
 
   const router = useRouter();
   const plausible = usePlausible();
   const { setUser } = useContext(UserContext);
 
-  const [loading, toggleLoading] = useToggle();
-
   function handleSubmit() {
-    withLoading(
-      async () => {
-        // Track event
-        plausible("Log out");
+    // Track event
+    plausible("Log out");
 
-        // Log the user out
-        setUser(null);
-        document.cookie =
-          "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    // Log the user out
+    setUser(null);
+    document.cookie =
+      "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 
-        // Close the Dialog
-        onClose();
+    // Close the Dialog
+    onClose();
 
-        // Redirect to Landing
-        router.push("/");
-        return true;
-      },
-      toggleLoading,
-      { hasEndToggle: true },
-    );
+    // Redirect to Landing
+    router.push("/");
   }
 
   return (
-    <Dialog open={open} width={312} onClose={onClose}>
+    <Dialog
+      open={open}
+      width={312}
+      onClose={onClose}
+      style={style}
+      className={className}
+    >
       <DialogHeader title={t("title")} desc={t("desc")} />
       <Actions>
         <Button appearance="text" onClick={onClose}>
           {t("action.back")}
         </Button>
-        <Button
-          appearance="text"
-          loading={loading || undefined}
-          dangerous
-          onClick={handleSubmit}
-        >
+        <Button appearance="text" dangerous onClick={handleSubmit}>
           {t("action.logOut")}
         </Button>
       </Actions>

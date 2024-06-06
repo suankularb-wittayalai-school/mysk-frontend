@@ -20,7 +20,7 @@ import { useEffect, useState } from "react";
  *
  * @param grade The grade of the Classrooms in this section.
  * @param classrooms The Classrooms in this section.
- * @param selected The ID of the selected Classroom.
+ * @param selectedID The ID of the selected Classroom.
  * @param onSelectedChange The function to call when a Classroom is selected.
  * @param expandedByDefault Whether this section should be expanded by default.
  * @param titleOverride The title to show instead of the grade.
@@ -28,14 +28,14 @@ import { useEffect, useState } from "react";
 const GradeSection: StylableFC<{
   grade?: string;
   classrooms: Pick<Classroom, "id" | "number" | "main_room">[];
-  selected?: string;
+  selectedID: string | null;
   onSelectedChange: (value: string) => void;
   expandedByDefault?: boolean;
   titleOverride?: string;
 }> = ({
   grade,
   classrooms,
-  selected,
+  selectedID,
   onSelectedChange,
   expandedByDefault,
   titleOverride,
@@ -101,7 +101,7 @@ const GradeSection: StylableFC<{
               >
                 <LookupClassCard
                   classroom={classroom}
-                  selected={selected}
+                  selected={classroom.id === selectedID}
                   onClick={onSelectedChange}
                 />
               </motion.li>

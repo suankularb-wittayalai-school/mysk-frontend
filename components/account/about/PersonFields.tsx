@@ -18,7 +18,7 @@ import {
   Select,
   TextField,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 export type PersonFieldsKey =
   | "prefixTH"
@@ -55,7 +55,7 @@ const PersonFields: StylableFC<{
   role: UserRole;
 }> = ({ form, setForm, formProps, subjectGroups, role, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("account", { keyPrefix: "profile" });
+  const { t } = useTranslation("account/about");
 
   return (
     <div style={style} className={cn(`px-[2px] [&>hr]:my-6`, className)}>
@@ -193,12 +193,12 @@ const PersonFields: StylableFC<{
       {/* Miscellaneous */}
       <Section>
         <Header level={3} className="sr-only">
-          {t("misc.title")}
+          {t("general.title")}
         </Header>
         <Columns columns={3} className="my-3 !gap-y-12">
           <TextField
             appearance="outlined"
-            label={t("general.birthDate")}
+            label={t("general.birthday")}
             inputAttr={{ type: "date" }}
             {...formProps.birthdate}
           />

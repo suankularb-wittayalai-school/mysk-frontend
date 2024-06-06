@@ -1,5 +1,6 @@
 import Favicon from "@/components/Favicon";
 import LogOutDialog from "@/components/account/LogOutDialog";
+import ReportIssueDialog from "@/components/common/ReportIssueDialog";
 import SchemeIcon from "@/components/icons/SchemeIcon";
 import AppStateContext from "@/contexts/AppStateContext";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
@@ -25,18 +26,11 @@ import {
   Text,
   useBreakpoint,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import {
-  FC,
-  ReactNode,
-  forwardRef,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { FC, ReactNode, useContext, useEffect, useState } from "react";
 
 /**
  * The root layout of MySK.
@@ -52,7 +46,7 @@ const Layout: FC<
 > = ({ children, fab, navType, childURLs }) => {
   // Translation
   const locale = useLocale();
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("common/layout");
 
   // Analytics
   const plausible = usePlausible();
@@ -75,7 +69,8 @@ const Layout: FC<
   const { pageIsLoading } = usePageIsLoading();
 
   // Dialog control
-  const [logOutOpen, setLogOutOpen] = useState<boolean>(false);
+  const [logOutOpen, setLogOutOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
 
   // Preferences
   const { preferences, setPreference } = usePreferences();
@@ -130,7 +125,7 @@ const Layout: FC<
       {/* Navigation Drawer */}
       <NavDrawer open={navOpen} onClose={() => setNavOpen(false)}>
         {/* Top-level pages */}
-        <NavDrawerSection header={t("appName")}>
+        <NavDrawerSection header={t("common:appName")}>
           <NavDrawerItem
             icon={<MaterialIcon icon="home" />}
             label={t("navigation.home")}
@@ -159,14 +154,6 @@ const Layout: FC<
           <NavDrawerItem
             icon={<MaterialIcon icon="search" />}
             label={t("navigation.search")}
-            selected={
-              router.pathname.startsWith("/search") &&
-              !(
-                router.pathname.startsWith("/search/students") ||
-                router.pathname.startsWith("/search/teachers") ||
-                router.pathname.startsWith("/search/documents")
-              )
-            }
             href="/search"
             element={Link}
           />
@@ -194,21 +181,21 @@ const Layout: FC<
           <NavDrawerItem
             icon={<MaterialIcon icon="face_6" />}
             label={t("navigation.drawer.search.students")}
-            selected={router.pathname.startsWith("/search/students")}
+            selected={router.asPath.startsWith("/search/students")}
             href="/search/students"
             element={Link}
           />
           <NavDrawerItem
             icon={<MaterialIcon icon="support_agent" />}
             label={t("navigation.drawer.search.teachers")}
-            selected={router.pathname.startsWith("/search/teachers")}
+            selected={router.asPath.startsWith("/search/teachers")}
             href="/search/teachers"
             element={Link}
           />
           <NavDrawerItem
             icon={<MaterialIcon icon="document_scanner" />}
             label={t("navigation.drawer.search.documents")}
-            selected={router.pathname.startsWith("/search/documents")}
+            selected={router.asPath.startsWith("/search/documents")}
             href="/search/documents"
             element={Link}
           />
@@ -217,24 +204,9 @@ const Layout: FC<
         {/* About */}
         <NavDrawerSection header={t("navigation.drawer.about.title")}>
           <NavDrawerItem
-            icon={<MaterialIcon icon="contact_support" />}
-            label={t("navigation.drawer.about.help")}
-            // TODO: Change this back to `/help` when the Help page is done
-            href="https://docs.google.com/document/d/1yAEVK09BgbpFIPpG5j1xvfCRUGUdRyL9S1gAxh9UjfU/edit?usp=share_link"
-            // eslint-disable-next-line react/display-name
-            element={forwardRef((props, ref) => (
-              <a
-                {...props}
-                ref={ref}
-                onClick={() =>
-                  plausible("Open User Guide", {
-                    props: { location: "Navigation Drawer" },
-                  })
-                }
-                target="_blank"
-                rel="noreferrer"
-              />
-            ))}
+            icon={<MaterialIcon icon="report" />}
+            label={t("navigation.drawer.about.report")}
+            onClick={() => setReportOpen(true)}
           />
           {mysk.user?.is_admin && (
             <NavDrawerItem
@@ -324,7 +296,7 @@ const Layout: FC<
         >
           <NavBarItem
             icon={<Favicon />}
-            label={t("appName")}
+            label={t("common:appName")}
             selected={router.pathname.startsWith(homeURL)}
             href={homeURL}
             element={Link}
@@ -375,8 +347,13 @@ const Layout: FC<
         </NavBar>
       )}
 
-      {/* Log out Dialog */}
+      {/* Dialogs */}
       <LogOutDialog open={logOutOpen} onClose={() => setLogOutOpen(false)} />
+      <ReportIssueDialog
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        onSubmit={() => setReportOpen(false)}
+      />
 
       {/* Page loading indicator */}
       <Progress

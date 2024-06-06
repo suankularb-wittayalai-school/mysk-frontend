@@ -1,0 +1,13 @@
+{
+  "title": "Search documents",
+  "form": {
+    "subject": "Search subject",
+    "subject_helper": "Enter partially or fully the subject of a document",
+    "attendTo": "Search attend to",
+    "attendTo_helper": "Enter partially or fully the attend to of a document",
+    "month": "Search month",
+    "month_helper": "Enter the publication month of a document",
+    "code": "Search code",
+    "code_helper": "Enter fully the code of a document"
+  }
+}

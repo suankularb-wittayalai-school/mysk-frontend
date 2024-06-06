@@ -1,0 +1,32 @@
+{
+  "navigation": {
+    "home": "หน้าหลัก",
+    "manage": "ภาพรวม",
+    "classes": "ห้องเรียน",
+    "search": "ค้นหา",
+    "news": "ข่าวสาร",
+    "account": "บัญชีผู้ใช้",
+    "colorScheme": {
+      "dark": "โหมดมืด",
+      "light": "โหมดสว่าง"
+    },
+    "language": "English",
+    "logOut": "ออกจากระบบ",
+    "drawer": {
+      "search": {
+        "title": "ค้นหา",
+        "students": "นักเรียน",
+        "teachers": "ครู",
+        "documents": "เอกสารโรงเรียน"
+      },
+      "about": {
+        "title": "เกี่ยวกับ",
+        "report": "รายงานปัญหา",
+        "admin": "แผงควบคุม",
+        "language": "English",
+        "logOut": "ออกจากระบบ"
+      }
+    }
+  },
+  "pageLoading": "หน้ากำลังโหลด…"
+}

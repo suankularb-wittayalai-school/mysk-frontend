@@ -8,7 +8,7 @@ import getLocaleName from "@/utils/helpers/getLocaleName";
 import { StylableFC } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
 import { Interactive, Snackbar, Text } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useContext } from "react";
 import Barcode from "react-barcode";
 import QRCode from "react-qr-code";
@@ -25,10 +25,7 @@ const IDCardDialog: StylableFC<{
   person: Student;
   onClose: () => void;
 }> = ({ open, person, onClose, style, className }) => {
-  const { t } = useTranslation("account", {
-    keyPrefix: "profile.dialog.idCard",
-  });
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("account/about/idCardDialog");
 
   const { setSnackbar } = useContext(SnackbarContext);
 
@@ -43,7 +40,7 @@ const IDCardDialog: StylableFC<{
    */
   function copyIDToClipboard() {
     navigator.clipboard.writeText(person.student_id);
-    setSnackbar(<Snackbar>{tx("snackbar.copiedToClipboard")}</Snackbar>);
+    setSnackbar(<Snackbar>{t("common:snackbar.copiedToClipboard")}</Snackbar>);
   }
 
   return (

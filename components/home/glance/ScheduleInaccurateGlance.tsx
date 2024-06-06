@@ -1,22 +1,30 @@
+import TextGlance from "@/components/home/glance/TextGlance";
 import cn from "@/utils/helpers/cn";
+import { StylableFC } from "@/utils/types/common";
 import { MaterialIcon } from "@suankularb-components/react";
-import { Trans, useTranslation } from "next-i18next";
-import TextGlance from "./TextGlance";
+import Trans from "next-translate/Trans";
 
-const ScheduleInaccurateGlance = (() => {
-  const { t: ts } = useTranslation("schedule");
-
-  return (
-    <TextGlance
-      icon={<MaterialIcon icon="warning" size={20} />} visible
-      className={cn(`!bg-error-container !text-on-error-container 
-        !border-error-container`)}
-    >
-      <Trans i18nKey="inaccurateNotice" t={ts}>
-        <a href="http://www.sk.ac.th/" target="_blank" className="link" />
-      </Trans>
-    </TextGlance>
-  );
-});
+/**
+ * Warns the user that the Schedule data is still a work in progress and may not
+ * be accurate.
+ */
+const ScheduleInaccurateGlance: StylableFC = ({ style, className }) => (
+  <TextGlance
+    icon={<MaterialIcon icon="warning" size={20} />}
+    visible
+    style={style}
+    className={cn(
+      `!border-0 !bg-error-container *:!text-on-error-container`,
+      className,
+    )}
+  >
+    <Trans
+      i18nKey="home/glance/scheduleInaccurate:text"
+      components={{
+        0: <a href="http://www.sk.ac.th/" target="_blank" className="link" />,
+      }}
+    />
+  </TextGlance>
+);
 
 export default ScheduleInaccurateGlance;

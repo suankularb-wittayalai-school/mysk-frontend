@@ -21,13 +21,13 @@ import {
   EASING,
   Header,
   Search,
-  transition
+  transition,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { LayoutGroup, motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
 
 /**
@@ -44,7 +44,7 @@ const TeachPage: CustomPage<{
   teachingSubjects: SubjectClassrooms[];
 }> = ({ schedule, teacher, teachingSubjects }) => {
   const locale = useLocale();
-  const { t } = useTranslation("teach");
+  const { t } = useTranslation();
 
   const [query, setQuery] = useState("");
 
@@ -66,7 +66,7 @@ const TeachPage: CustomPage<{
           layout="position"
           transition={transition(DURATION.medium4, EASING.standard)}
         >
-          <Header>{t("schedule.title")}</Header>
+          <Header>{t("schedule/common:title.teacher")}</Header>
           <Schedule
             schedule={schedule}
             subjectsInCharge={teacher.subjects_in_charge}
@@ -84,9 +84,11 @@ const TeachPage: CustomPage<{
           transition={transition(DURATION.medium4, EASING.standard)}
         >
           <Columns columns={3} className="!items-end">
-            <Header className="md:col-span-2">{t("subjects.title")}</Header>
+            <Header className="md:col-span-2">
+              {t("home/subjectList:title")}
+            </Header>
             <Search
-              alt="Search subjects"
+              alt={t("home/subjectList:searchAlt")}
               value={query}
               locale={locale}
               onChange={setQuery}
@@ -152,9 +154,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "account",
         "home",
-        "teach",
         "classes",
-        "schedule",
       ])),
       schedule,
       teacher,

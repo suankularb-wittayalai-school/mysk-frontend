@@ -5,7 +5,7 @@ import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import { StylableFC } from "@/utils/types/common";
-import { Student, Teacher, User } from "@/utils/types/person";
+import { Student, Teacher, User, UserRole } from "@/utils/types/person";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { ComponentProps, ReactNode, useEffect, useState } from "react";
 
@@ -17,7 +17,6 @@ import { ComponentProps, ReactNode, useEffect, useState } from "react";
  * @param children The component to wrap.
  * @param open Whether the Dialog is open and shown.
  * @param person The Student or Teacher to display the details of.
- * @param user The currently logged in user. Used for permissions.
  * @param onClose Triggers when the Dialog is closed.
  * @param options Options to customize the Details Card.
  */
@@ -25,25 +24,22 @@ const WithPersonDetails: StylableFC<{
   children: ReactNode;
   open?: boolean;
   person: Pick<Student | Teacher, "id" | "role">;
-  user?: User;
   onClose: () => void;
   options?: ComponentProps<
     typeof StudentDetailsCard | typeof TeacherDetailsCard
   >["options"];
-}> = ({ children, open, person, user, onClose, options, style, className }) => {
+}> = ({ children, open, person, onClose, options, style, className }) => {
   const supabase = useSupabaseClient();
   const mysk = useMySKClient();
-  const [personDetails, setPersonDetails] = useState<Student | Teacher>();
 
-  const DetailsCard = {
-    student: StudentDetailsCard,
-    teacher: TeacherDetailsCard,
-  }[person.role];
+  const [personDetails, setPersonDetails] = useState<Student | Teacher | null>(
+    null,
+  );
 
   useEffect(() => {
     if (!open || person.id === personDetails?.id) return;
     (async () => {
-      setPersonDetails(undefined);
+      setPersonDetails(null);
       const { data, error } = await {
         student: getStudentByID,
         teacher: getTeacherByID,
@@ -66,7 +62,17 @@ const WithPersonDetails: StylableFC<{
         style={style}
         className={className}
       >
-        <DetailsCard {...{ [person.role]: personDetails, user, options }} />
+        {person.role === UserRole.student ? (
+          <StudentDetailsCard
+            student={personDetails as Student}
+            options={options}
+          />
+        ) : (
+          <TeacherDetailsCard
+            teacher={personDetails as Teacher}
+            options={options}
+          />
+        )}
       </LookupDetailsDialog>
     </>
   );

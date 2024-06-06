@@ -89,12 +89,16 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
   const studentsMap = objectify(students, (student) => student.id);
   for (const electiveSubject of electiveSubjects) {
     electiveSubject.students = sortStudents(
-      electiveSubject.students.map((student) => ({
-        ...studentsMap[student.id],
-        chosen_elective: pick(electiveSubject, [
+      electiveSubject.students.map((student) => {
+        const detailedStudent = studentsMap[student.id];
+        // Fall back to the compact Student if the detailed Student is not
+        // found.
+        if (!detailedStudent) return student;
+        detailedStudent.chosen_elective = pick(electiveSubject, [
           "randomized_students",
-        ]) as ElectiveSubject,
-      })),
+        ]) as ElectiveSubject;
+        return detailedStudent;
+      }),
     );
   }
 

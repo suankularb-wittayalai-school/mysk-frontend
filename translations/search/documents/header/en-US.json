@@ -1,0 +1,10 @@
+{
+  "action": {
+    "share": "Share",
+    "popOut": "Pop out",
+    "download": "Download"
+  },
+  "snackbar": {
+    "download": "Getting that file for you…"
+  }
+}

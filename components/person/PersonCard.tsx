@@ -64,7 +64,7 @@ const PersonCard: StylableFC<
             person.role === UserRole.student && (person as Student).classroom
               ? sift([
                   !options?.hideClassroomInSubtitle &&
-                    t("class", (person as Student).classroom),
+                    t("class", (person as Student).classroom!),
                   t("classNo", { classNo: (person as Student).class_no }),
                 ]).join(" • ")
               : (person as Teacher).subject_group &&

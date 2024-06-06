@@ -1,4 +1,3 @@
-// Imports
 import ContactCard from "@/components/account/ContactCard";
 import useForm from "@/utils/helpers/useForm";
 import { StylableFC } from "@/utils/types/common";
@@ -10,11 +9,12 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
+  Divider,
   MenuItem,
   Select,
   TextField,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { ComponentProps, useReducer } from "react";
 
 const ContactDialog: StylableFC<{
@@ -23,10 +23,7 @@ const ContactDialog: StylableFC<{
   onClose: () => void;
   onSubmit: (contact: Contact) => void;
 }> = ({ open, contact, onClose, onSubmit }) => {
-  const { t } = useTranslation("account", {
-    keyPrefix: "contacts.dialog.contact",
-  });
-  const { t: ta } = useTranslation("account");
+  const { t } = useTranslation("account/contacts/contactDialog");
 
   /**
    * Map of Contact types to their respective Text Field props.
@@ -98,7 +95,7 @@ const ContactDialog: StylableFC<{
     <Dialog open={open} width={580} onClose={onClose}>
       <DialogHeader
         title={t(`title.${contact ? "edit" : "add"}`)}
-        desc={ta("contacts.desc")}
+        desc={t("account/contacts:desc")}
       />
       <DialogContent className="px-6">
         <Columns columns={2} className="!gap-y-8">
@@ -124,23 +121,26 @@ const ContactDialog: StylableFC<{
           {/* Type */}
           <Select
             appearance="outlined"
-            label={t("type.label")}
+            label={t("form.type")}
             {...formProps.type}
           >
-            <MenuItem value="phone">{t("type.phone")}</MenuItem>
-            <MenuItem value="email">{t("type.email")}</MenuItem>
-            <MenuItem value="facebook">{t("type.facebook")}</MenuItem>
-            <MenuItem value="line">{t("type.line")}</MenuItem>
-            <MenuItem value="instagram">{t("type.instagram")}</MenuItem>
-            <MenuItem value="website">{t("type.website")}</MenuItem>
-            <MenuItem value="discord">{t("type.discord")}</MenuItem>
-            <MenuItem value="other">{t("type.other")}</MenuItem>
+            <MenuItem value="phone">{t("common:contact.phone")}</MenuItem>
+            <MenuItem value="email">{t("common:contact.email")}</MenuItem>
+            <MenuItem value="facebook">{t("common:contact.facebook")}</MenuItem>
+            <MenuItem value="line">{t("common:contact.line")}</MenuItem>
+            <MenuItem value="instagram">
+              {t("common:contact.instagram")}
+            </MenuItem>
+            <MenuItem value="website">{t("common:contact.website")}</MenuItem>
+            <MenuItem value="discord">{t("common:contact.discord")}</MenuItem>
+            <Divider className="my-2" />
+            <MenuItem value="other">{t("common:contact.other")}</MenuItem>
           </Select>
 
           {/* Value */}
           <TextField
             appearance="outlined"
-            label={t(`value.${form.type.toLowerCase()}`)}
+            label={t(`form.value.${form.type.toLowerCase()}`)}
             helperMsg={contactValuesMap[form.type as ContactType].helperMsg}
             inputAttr={{
               type: contactValuesMap[form.type as ContactType].type,
@@ -158,14 +158,14 @@ const ContactDialog: StylableFC<{
           {/* Label */}
           <TextField
             appearance="outlined"
-            label={t("nameTH")}
-            helperMsg={t("name_helper")}
+            label={t("form.nameTH")}
+            helperMsg={t("form.name_helper")}
             {...formProps.nameTH}
           />
           <TextField
             appearance="outlined"
-            label={t("nameEN")}
-            helperMsg={t("name_helper")}
+            label={t("form.nameEN")}
+            helperMsg={t("form.name_helper")}
             {...formProps.nameEN}
           />
         </Columns>

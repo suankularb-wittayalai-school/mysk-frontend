@@ -1,4 +1,5 @@
 import AttendanceFigureEvent from "@/components/attendance/AttendanceFigureEvent";
+import useLocale from "@/utils/helpers/useLocale";
 import { StudentAttendance } from "@/utils/types/attendance";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
@@ -13,7 +14,7 @@ import {
   ListItemContent,
   MaterialIcon,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 
 /**
@@ -30,9 +31,8 @@ const AbsenceHistoryDialog: StylableFC<{
   classroom?: Pick<Classroom, "number">;
   onClose: () => void;
 }> = ({ open, attendances, classroom, onClose, style, className }) => {
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "students.detail.attendance.dialog",
-  });
+  const locale = useLocale();
+  const { t } = useTranslation("search/students/absenceHistoryDialog");
 
   const absences = attendances.filter(
     (attendance) => attendance.assembly.is_present === false,
@@ -86,10 +86,12 @@ const AbsenceHistoryDialog: StylableFC<{
             <ListItemContent
               title={
                 absence.assembly.absence_reason ||
-                t(`history.item.title.${absence.assembly.absence_type}`)
+                t(`history.item.${absence.assembly.absence_type}`)
               }
-              desc={t("history.item.subtitle", {
-                date: new Date(absence.date),
+              desc={new Date(absence.date).toLocaleDateString(locale, {
+                weekday: "short",
+                day: "numeric",
+                month: "short",
               })}
             />
             <AttendanceFigureEvent

@@ -13,7 +13,7 @@ import {
   InputChip,
   MaterialIcon,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
 
 /**
@@ -26,8 +26,7 @@ const TeachingSubjectCard: StylableFC<{
   subject: SubjectClassrooms;
 }> = ({ subject, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("teach", { keyPrefix: "subjects" });
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("home/subjectList");
 
   const [classesOpen, setClassesOpen] = useState(false);
 
@@ -44,7 +43,7 @@ const TeachingSubjectCard: StylableFC<{
             <Button
               appearance="text"
               icon={<MaterialIcon icon="edit" />}
-              alt={t("action.seeDetails")}
+              alt={t("card.action.seeDetails")}
               onClick={() => setClassesOpen(true)}
               className="!my-4"
             />
@@ -53,16 +52,16 @@ const TeachingSubjectCard: StylableFC<{
         <CardContent className="!p-3 !pt-0">
           {subject.classrooms.length ? (
             <ChipSet>
-              {subject.classrooms.map((classItem) => (
-                <InputChip key={classItem.id}>
-                  {tx("class", { number: classItem.number })}
+              {subject.classrooms.map((classroom) => (
+                <InputChip key={classroom.id}>
+                  {t("common:class", { number: classroom.number })}
                 </InputChip>
               ))}
             </ChipSet>
           ) : (
             <Actions className="!-mt-2.5">
               <Button appearance="filled" onClick={() => setClassesOpen(true)}>
-                {t("action.setUp")}
+                {t("card.action.setUp")}
               </Button>
             </Actions>
           )}

@@ -11,7 +11,7 @@ import {
   MaterialIcon,
   Text,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * A Dialog displaying all options in an Elective Period.
@@ -25,9 +25,7 @@ const ElectivePeriodDialog: StylableFC<{
   period: SchedulePeriod;
   onClose: () => void;
 }> = ({ open, period, onClose, style, className }) => {
-  const { t } = useTranslation("schedule", {
-    keyPrefix: "dialog.electivePeriodDetails",
-  });
+  const { t } = useTranslation("schedule/periodDialog");
 
   const mysk = useMySKClient();
 
@@ -72,7 +70,7 @@ const ElectivePeriodDialog: StylableFC<{
           onClick={onClose}
           className="!text-on-surface-variant state-layer:!bg-on-surface-variant"
         />
-        <Text type="title-large">{t("title")}</Text>
+        <Text type="title-large">{t("title.elective")}</Text>
       </div>
       <DialogContent
         height={400}

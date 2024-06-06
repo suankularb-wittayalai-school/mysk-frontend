@@ -11,7 +11,8 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
-import { Trans, useTranslation } from "next-i18next";
+import Trans from "next-translate/Trans";
+import useTranslation from "next-translate/useTranslation";
 import { ReactNode } from "react";
 
 const SearchFiltersCard: StylableFC<{
@@ -20,9 +21,7 @@ const SearchFiltersCard: StylableFC<{
   title: string;
   onSubmit: () => void;
 }> = ({ children, icon, title, onSubmit, style, className }) => {
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "common.searchFilters",
-  });
+  const { t } = useTranslation("search/landing");
 
   return (
     <motion.div
@@ -50,7 +49,10 @@ const SearchFiltersCard: StylableFC<{
         className="flex flex-col gap-4 p-4 pt-0"
       >
         <Text type="body-medium" element="p">
-          <Trans i18nKey="common.searchFilters.desc" ns="lookup" />
+          <Trans
+            i18nKey="search/landing:filters.desc"
+            components={{ br: <br /> }}
+          />
         </Text>
         <Columns columns={4} className="!gap-y-12 py-2">
           {children}
@@ -61,7 +63,7 @@ const SearchFiltersCard: StylableFC<{
             icon={<MaterialIcon icon="search" />}
             onClick={onSubmit}
           >
-            {t("action.search")}
+            {t("filters.action.search")}
           </Button>
         </Actions>
       </motion.div>
