@@ -3,7 +3,7 @@ import cn from "@/utils/helpers/cn";
 import { StudentCertificate } from "@/utils/types/certificate";
 import { StylableFC } from "@/utils/types/common";
 import { Card, MaterialIcon, Text } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { camel } from "radash";
 
 /**
@@ -14,7 +14,7 @@ import { camel } from "radash";
 const CertificateCard: StylableFC<{
   certificate: StudentCertificate;
 }> = ({ certificate, style, className }) => {
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("common");
 
   return (
     <Card
@@ -40,7 +40,7 @@ const CertificateCard: StylableFC<{
       {/* Text */}
       <div className="sm:col-span-2 md:col-span-1">
         <Text type="headline-small" element="h3">
-          {tx(`certificate.${camel(certificate.certificate_type)}`)}
+          {t(`certificate.${camel(certificate.certificate_type)}`)}
         </Text>
         <Text type="title-medium" element="p" className="empty:hidden">
           {certificate.certificate_detail}

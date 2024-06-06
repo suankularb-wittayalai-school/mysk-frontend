@@ -5,9 +5,8 @@ import getContactsOfPerson from "@/utils/backend/contact/getContactsOfPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import getPersonIDFromUser from "@/utils/backend/person/getPersonIDFromUser";
 import useContactActions from "@/utils/helpers/contact/useContactActions";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
-import { UserRole } from "@/utils/types/person";
 import {
   Actions,
   Button,
@@ -17,8 +16,7 @@ import {
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { useState } from "react";
 
@@ -27,15 +25,12 @@ import { useState } from "react";
  *
  * @param contacts The list of Contacts of the currently logged-in user.
  * @param personID The ID of the Person of the currently logged-in user.
- * @param role The role of the currently logged-in user.
  */
 const YourContactsPage: CustomPage<{
   contacts: Contact[];
   personID: string;
-  role: UserRole;
-}> = ({ contacts, personID, role }) => {
-  const { t } = useTranslation("account", { keyPrefix: "contacts" });
-  const { t: tx } = useTranslation("common");
+}> = ({ contacts, personID }) => {
+  const { t } = useTranslation("account/contacts");
 
   const { handleAdd, handleRemove, handleEdit } = useContactActions(personID);
   const [addOpen, setAddOpen] = useState(false);
@@ -43,9 +38,9 @@ const YourContactsPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: t("title") })}</title>
+        <title>{t("common:tabName", { tabName: t("title") })}</title>
       </Head>
-      <ProfileLayout role={role}>
+      <ProfileLayout title={t("title")}>
         {/* Add Button */}
         <Actions align="left" className="mb-3">
           <Button
@@ -84,11 +79,7 @@ const YourContactsPage: CustomPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const mysk = await createMySKClient(req);
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
@@ -99,17 +90,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { data: personID } = await getPersonIDFromUser(supabase, mysk.user!);
   const { data: contacts } = await getContactsOfPerson(supabase, personID!);
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "account",
-      ])),
-      contacts,
-      personID,
-      role,
-    },
-  };
+  return { props: { contacts, personID, role } };
 };
 
 export default YourContactsPage;

@@ -1,0 +1,8 @@
+{
+  "title": "Account",
+  "navigation": {
+    "about": "About you",
+    "contacts": "Your contacts",
+    "certificates": "Certificates"
+  }
+}

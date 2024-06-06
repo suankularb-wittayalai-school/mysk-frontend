@@ -1,0 +1,35 @@
+{
+  "title": {
+    "add": "Add contact",
+    "edit": "Edit contact"
+  },
+  "form": {
+    "nameTH": "Thai contact label",
+    "nameEN": "English contact label",
+    "name_helper": "(Optional)",
+    "type": "Platform",
+    "value": {
+      "phone": "Phone number",
+      "email": "Email address",
+      "website": "URL",
+      "facebook": "Facebook name",
+      "line": "LINE ID/invite link",
+      "instagram": "Instagram username",
+      "discord": "Discord invite link/username",
+      "other": "Value"
+    },
+    "value_error": "Invalid value.",
+    "includes": {
+      "title": "Includes",
+      "students": "Students",
+      "teachers": "Teachers",
+      "parents": "Parents",
+      "other": "Other"
+    }
+  },
+  "action": {
+    "cancel": "Cancel",
+    "add": "Add",
+    "save": "Save"
+  }
+}

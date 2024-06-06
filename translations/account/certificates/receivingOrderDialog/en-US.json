@@ -1,0 +1,7 @@
+{
+  "title": "Receiving order {{order, number}}",
+  "desc": "You are the {{order}} person to receive the certificate. Remember this number as it is how your registration table is identified.",
+  "action": {
+    "done": "Done"
+  }
+}

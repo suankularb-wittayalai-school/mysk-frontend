@@ -14,7 +14,7 @@ import {
   Section,
   Text,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
 
 /**
@@ -29,7 +29,7 @@ const CertificatesYearSection: StylableFC<{
   certificates: StudentCertificate[];
 }> = ({ year, certificates, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("account", { keyPrefix: "certificates" });
+  const { t } = useTranslation("account/certificates");
 
   const [orderOpen, setOrderOpen] = useState(false);
   const [seatOpen, setSeatOpen] = useState(false);
@@ -79,7 +79,7 @@ const CertificatesYearSection: StylableFC<{
       })()}
 
       {/* List */}
-      <ul className="contents">
+      <ul role="list" className="contents">
         {certificates?.map((certificate) => (
           <li key={certificate.id}>
             <CertificateCard certificate={certificate} />

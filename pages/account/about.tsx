@@ -1,9 +1,9 @@
+import ProfileLayout from "@/components/account/ProfileLayout";
 import AboutHeader from "@/components/account/about/AboutHeader";
 import NameChangeDialog from "@/components/account/about/NameChangeDialog";
 import PersonFields, {
   PersonFieldsKey,
 } from "@/components/account/about/PersonFields";
-import ProfileLayout from "@/components/account/ProfileLayout";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
@@ -15,7 +15,7 @@ import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import { pantsSizeRegex } from "@/utils/patterns";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage } from "@/utils/types/common";
 import { Student, Teacher, UserRole } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
 import {
@@ -27,8 +27,7 @@ import {
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { useContext, useState } from "react";
 
@@ -43,8 +42,7 @@ const AboutYouPage: CustomPage<{
   user: Student | Teacher;
   subjectGroups: SubjectGroup[];
 }> = ({ user, subjectGroups }) => {
-  const { t } = useTranslation("account", { keyPrefix: "profile" });
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("account/about");
 
   const { setSnackbar } = useContext(SnackbarContext);
   const refreshProps = useRefreshProps();
@@ -126,12 +124,12 @@ const AboutYouPage: CustomPage<{
         const { error } = await updatePerson(supabase, form, user);
 
         if (error) {
-          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+          setSnackbar(<Snackbar>{t("common:snackbar.failure")}</Snackbar>);
           return false;
         }
 
         await refreshProps();
-        setSnackbar(<Snackbar>{tx("snackbar.changesSaved")}</Snackbar>);
+        setSnackbar(<Snackbar>{t("common:snackbar.changesSaved")}</Snackbar>);
         return true;
       },
       toggleLoading,
@@ -142,9 +140,9 @@ const AboutYouPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: t("title") })}</title>
+        <title>{t("common:tabName", { tabName: t("title") })}</title>
       </Head>
-      <ProfileLayout role={user.role}>
+      <ProfileLayout title={t("title")}>
         <AboutHeader
           person={user}
           onSave={handleSave}
@@ -198,11 +196,7 @@ const AboutYouPage: CustomPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const mysk = await createMySKClient(req);
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
@@ -215,16 +209,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const { data: subjectGroups } = await getSubjectGroups(supabase);
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "account",
-      ])),
-      user,
-      subjectGroups,
-    },
-  };
+  return { props: { user, subjectGroups } };
 };
 
 export default AboutYouPage;

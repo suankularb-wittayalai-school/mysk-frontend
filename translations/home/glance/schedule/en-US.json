@@ -1,6 +1,6 @@
 {
   "title": {
-    "assembly": "Go to asssembly now",
+    "assembly": "Go to assembly now",
     "homeroom": "Go to homeroom now",
     "learnCurrent_one": "You’re learning {{value}}",
     "learnCurrent_other": "You’re learning your chosen elective",

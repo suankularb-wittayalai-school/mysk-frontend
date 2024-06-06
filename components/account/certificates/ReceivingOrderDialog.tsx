@@ -5,7 +5,7 @@ import {
   Dialog,
   DialogHeader,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * A Dialog that shows the user’s receiving order number.
@@ -19,10 +19,7 @@ const ReceivingOrderDialog: StylableFC<{
   receivingOrder: number;
   onClose: () => void;
 }> = ({ open, receivingOrder, onClose, style, className }) => {
-  const { t } = useTranslation("account", {
-    keyPrefix: "certificates.dialog.order",
-  });
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("account/certificates/receivingOrderDialog");
 
   return (
     <Dialog
@@ -35,7 +32,7 @@ const ReceivingOrderDialog: StylableFC<{
       <DialogHeader
         title={t("title", { order: receivingOrder })}
         desc={t("desc", {
-          order: tx("ordinal", { count: receivingOrder, ordinal: true }),
+          order: t("common:ordinal", { count: receivingOrder }),
         })}
       />
       <Actions>

@@ -8,6 +8,13 @@
   },
   "class": "M.{{number}}",
   "classNo": "No. {{classNo}}",
+  "role": {
+    "student": "Student",
+    "teacher": "Teacher",
+    "management": "Management",
+    "organization": "Organization",
+    "staff": "Staff"
+  },
   "contact": {
     "phone": "Phone",
     "email": "Email",

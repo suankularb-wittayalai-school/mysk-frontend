@@ -8,7 +8,7 @@ import {
   DialogHeader,
   Text,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * A Dialog that shows the user’s seat in the Suankularb Ramluek hall.
@@ -22,10 +22,7 @@ const SeatDialog: StylableFC<{
   seat: string;
   onClose: () => void;
 }> = ({ open, seat, onClose, style, className }) => {
-  const { t } = useTranslation("account", {
-    keyPrefix: "certificates.dialog.seat",
-  });
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("account/certificates/seatDialog");
 
   if (!/[A-Z]\d?-(\u0E2A)?\d{1,2}/.test(seat)) return null;
 
@@ -44,7 +41,7 @@ const SeatDialog: StylableFC<{
       <DialogHeader
         title={t("title", { seat })}
         desc={t("desc", {
-          column: tx("ordinal", { count: column, ordinal: true }),
+          column: t("common:ordinal", { count: column }),
           row,
         })}
         className="!pb-0"

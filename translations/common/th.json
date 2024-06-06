@@ -8,6 +8,13 @@
   },
   "class": "ม.{{number}}",
   "classNo": "เลขที่ {{classNo}}",
+  "role": {
+    "student": "นักเรียน",
+    "teacher": "ครู",
+    "management": "ผู้บริหาร",
+    "organization": "องค์กร",
+    "staff": "บุคลากร"
+  },
   "contact": {
     "phone": "โทรศัพท์",
     "email": "อีเมล",

@@ -2,30 +2,37 @@ import ProfileNavigation from "@/components/account/ProfileNavigation";
 import PageHeader from "@/components/common/PageHeader";
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
-import { UserRole } from "@/utils/types/person";
 import { ContentLayout } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { ReactNode } from "react";
 
 /**
  * The layout for Profile pages.
- * 
+ *
  * @param children The content of the page.
- * @param role The role of the currently logged in user.
+ * @param title The title of the page for mobile.
  */
 const ProfileLayout: StylableFC<{
   children: ReactNode;
-  role: UserRole;
-}> = ({ children, role, style, className }) => {
-  const { t } = useTranslation("account");
+  title?: string;
+}> = ({ children, title, style, className }) => {
+  const { t } = useTranslation("account/common");
 
   return (
     <>
-      <PageHeader parentURL="/account">{t("title")}</PageHeader>
+      <PageHeader
+        parentURL="/account"
+        className="[&>*>:first-child]:sm:!hidden"
+      >
+        {title && <span className="sm:hidden">{title}</span>}
+        <span className={title ? "hidden sm:block" : undefined}>
+          {t("title")}
+        </span>
+      </PageHeader>
       <ContentLayout>
         <div className="!-mb-9 contents sm:grid sm:grid-cols-[1fr,3fr] sm:gap-6">
           <section className="hidden sm:block">
-            <ProfileNavigation role={role} />
+            <ProfileNavigation />
           </section>
           <section
             style={style}

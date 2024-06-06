@@ -20,8 +20,8 @@ import {
   MaterialIcon,
   Snackbar,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
 import { sift } from "radash";
 import { forwardRef, useContext } from "react";
@@ -39,7 +39,7 @@ const ContactCard: StylableFC<{
   onRemove?: () => void;
 }> = ({ contact, onChange, onRemove, style, className }) => {
   const locale = useLocale();
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("common");
 
   const plausible = usePlausible();
   const { setSnackbar } = useContext(SnackbarContext);
@@ -55,17 +55,6 @@ const ContactCard: StylableFC<{
     website: <MaterialIcon icon="language" />,
     discord: <Image src={DiscordLogo} alt="" />,
     other: <MaterialIcon icon="forum" />,
-  };
-
-  const subtitleMap = {
-    phone: tx("contact.phone"),
-    email: tx("contact.email"),
-    facebook: tx("contact.facebook"),
-    line: tx("contact.line"),
-    instagram: tx("contact.instagram"),
-    website: tx("contact.website"),
-    discord: tx("contact.discord"),
-    other: tx("contact.other"),
   };
 
   return (
@@ -98,7 +87,7 @@ const ContactCard: StylableFC<{
                 });
                 navigator.clipboard.writeText(contact.value);
                 setSnackbar(
-                  <Snackbar>{tx("snackbar.copiedToClipboard")}</Snackbar>,
+                  <Snackbar>{t("snackbar.copiedToClipboard")}</Snackbar>,
                 );
               },
             }
@@ -135,7 +124,7 @@ const ContactCard: StylableFC<{
         }
         subtitle={sift([
           contact.name?.th && getLocaleString(contact.name, locale),
-          subtitleMap[contact.type],
+          t(`contact.${contact.type}`),
         ]).join(" • ")}
         className={cn(
           `[&_h3>a]:link !grid grow grid-cols-[2.5rem,minmax(0,1fr)]
