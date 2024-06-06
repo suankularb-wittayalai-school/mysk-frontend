@@ -50,5 +50,8 @@
     "failure": "Task failed, please try again",
     "formInvalid": "Check the form and try again",
     "copiedToClipboard": "Copied to clipboard"
+  },
+  "action": {
+    "report": "Report issue"
   }
 }
