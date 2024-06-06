@@ -1,12 +1,10 @@
+import Logo from "@/components/Logo";
 import AccountNotFoundDialog from "@/components/account/AccountNotFoundDialog";
 import AppDrawer from "@/components/common/AppDrawer";
-import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import GSIButton from "@/components/landing/GSIButton";
 import LandingActions from "@/components/landing/LandingActions";
 import LandingBlobs from "@/components/landing/LandingBlobs";
 import LanguageSwitcher from "@/components/landing/LanguageSwitcher";
-import MySKLogoDark from "@/public/icons/petals-dark.svg";
-import MySKLogoLight from "@/public/icons/petals-light.svg";
 import flagUserAsOnboarded from "@/utils/backend/account/flagUserAsOnboarded";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
@@ -131,12 +129,7 @@ const LandingPage: CustomPage = () => {
           >
             {/* Aside */}
             <section className="flex flex-col">
-              <MultiSchemeImage
-                srcLight={MySKLogoLight}
-                srcDark={MySKLogoDark}
-                alt={t("aside.logoAlt")}
-                className="*:w-20"
-              />
+              <Logo alt={t("aside.logoAlt")} className="*:w-20" />
               <Text element="h1" type="headline-large" className="sm:max-w-48">
                 {t("aside.title")}
               </Text>
