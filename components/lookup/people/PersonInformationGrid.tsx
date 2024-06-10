@@ -117,7 +117,9 @@ const PersonInformationGrid: StylableFC<{
               className="!py-2 [&_span]:!font-body"
             />
             <CardContent className="!py-2.5">
-              TODO
+              {person.role === UserRole.student && (
+                <AgeCircle birthday={new Date(person.birthdate)} />
+              )}
             </CardContent>
           </Card>
         )}
