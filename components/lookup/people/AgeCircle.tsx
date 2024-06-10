@@ -23,6 +23,9 @@ const AgeCircle: StylableFC<{
     birthday.getFullYear() + ageInYears + 1,
   );
   const daysToNextBirthday = differenceInDays(nextBirthday, new Date());
+  const percentage = !isToday(birthday)
+    ? (daysToNextBirthday / getDaysInYear(birthday)) * 100
+    : 0;
 
   return (
     <div
@@ -33,14 +36,7 @@ const AgeCircle: StylableFC<{
         className,
       )}
     >
-      <div
-        style={{
-          top: !isToday(birthday)
-            ? `${(daysToNextBirthday / getDaysInYear(birthday)) * 100}%`
-            : 0,
-        }}
-        className="absolute -mt-[4px]"
-      >
+      <div style={{ top: `${percentage}%` }} className="absolute -mt-[4px]">
         <svg
           width={40}
           height={44}
@@ -56,7 +52,15 @@ const AgeCircle: StylableFC<{
         </svg>
       </div>
 
-      <Text type="title-medium" className="position-center">
+      <Text
+        type="title-medium"
+        className={cn(
+          `position-center`,
+          percentage >= 70
+            ? `text-on-surface-variant`
+            : `text-on-primary-container`,
+        )}
+      >
         {ageInYears}
       </Text>
     </div>
