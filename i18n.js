@@ -33,7 +33,7 @@ module.exports = {
     ],
     "/teach": ["home/classroomSubjectDialog", "home/subjectClassesDialog"],
     // Schedule
-    "rgx:/(learn|teach|classes|search/(students|teachers)/results|admin/schedule)$":
+    "rgx:/(learn|teach|(teach|manage)/electives|classes|search/(students|teachers)/results|admin/schedule)$":
       ["schedule/common", "schedule/periodDialog"],
     // Schedule editor
     "rgx:/(teach|admin/schedule)$": [
@@ -57,7 +57,7 @@ module.exports = {
     ],
     // Search Teachers
     "/search/teachers/results": ["search/teachers/list"],
-    "rgx:/(search/teachers/results|learn|teach|classes)$": [
+    "rgx:/(search/teachers/results|learn|teach|(teach|manage)/electives|classes)$": [
       "search/teachers/header",
       "search/teachers/detail",
     ],
@@ -67,7 +67,7 @@ module.exports = {
       "search/documents/header",
       "search/documents/detail",
     ],
-    // Account pages
+    // Account
     "rgx:/account(/(about|contacts|certificates))?$": ["account/common"],
     "/account/about": [
       "account/about",
