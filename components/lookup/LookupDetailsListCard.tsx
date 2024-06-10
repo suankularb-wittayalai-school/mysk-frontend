@@ -14,7 +14,7 @@ const LookupDetailsListCard: StylableFC<{
 }> = ({ children, title, style, className }) => {
   return (
     <section style={style} className={cn(`flex flex-col gap-2`, className)}>
-      <div className="flex flex-row items-center rounded-md bg-surface px-3 py-2">
+      <div className="flex flex-row items-center px-3 [&_.skc-button]:!-mt-2">
         {title}
       </div>
       {/* I don’t know why but the scrollbar only shows if I put in `h-0`

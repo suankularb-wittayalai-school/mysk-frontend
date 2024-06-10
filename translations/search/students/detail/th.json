@@ -9,11 +9,7 @@
     "fullName": "ชื่อ-สกุล",
     "nickname": "ชื่อเล่น",
     "classroom": "ห้องเรียน",
-    "birthday": {
-      "title": "วันเกิด",
-      "date": "{{date, datetime(day: numeric; month: long;)}}",
-      "age": "อายุ {{count, number}} ปี"
-    }
+    "birthday": "วันเกิด"
   },
   "attendance": {
     "title": "การเข้าเรียน",

@@ -1,6 +1,11 @@
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
-import { transition, DURATION, EASING } from "@suankularb-components/react";
+import {
+  transition,
+  DURATION,
+  EASING,
+  Card,
+} from "@suankularb-components/react";
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
 
@@ -25,22 +30,24 @@ import { ReactNode } from "react";
  */
 const LookupDetailsContent: StylableFC<{
   children: ReactNode;
-}> = ({ children, style, className }) => {
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={transition(DURATION.medium2, EASING.standardDecelerate)}
-      style={style}
+}> = ({ children, style, className }) => (
+  <motion.section
+    initial={{ opacity: 0, y: 40 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={transition(DURATION.medium2, EASING.standardDecelerate)}
+    style={style}
+    className={cn(`grow relative`, className)}
+  >
+    <Card
+      appearance="filled"
       className={cn(
-        `flex grow flex-col gap-5 overflow-auto rounded-t-lg
-        bg-surface-container p-4 sm:overflow-visible md:overflow-auto`,
-        className,
+        `flex absolute inset-0 flex-col gap-5 overflow-auto !rounded-t-lg
+        !bg-surface-container p-4 sm:overflow-visible md:overflow-auto`,
       )}
     >
       {children}
-    </motion.section>
-  );
-};
+    </Card>
+  </motion.section>
+);
 
 export default LookupDetailsContent;

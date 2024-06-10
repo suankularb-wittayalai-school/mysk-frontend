@@ -24,21 +24,12 @@ const PersonContactGrid: StylableFC<{
 
   return (
     <section style={style} className={cn(`space-y-2`, className)}>
-      <Text
-        type="title-medium"
-        element="h3"
-        className="rounded-md bg-surface px-3 py-2"
-      >
+      <Text type="title-medium" element="h3" className="px-3">
         {t("contacts.title")}
       </Text>
       <Columns columns={2} className="!gap-2">
         {contacts.map((contact) => (
-          <ContactCard
-            key={contact.id}
-            contact={contact}
-            className={cn(`!border-0 hover:m-[-1px] hover:!border-1
-              focus:m-[-1px] focus:!border-1`)}
-          />
+          <ContactCard key={contact.id} contact={contact} />
         ))}
       </Columns>
     </section>

@@ -18,11 +18,7 @@ const StudentCertificateGrid: StylableFC<{
 
   return (
     <section style={style} className={cn(`space-y-2`, className)}>
-      <Text
-        type="title-medium"
-        element="h3"
-        className="rounded-md bg-surface px-3 py-2"
-      >
+      <Text type="title-medium" element="h3" className="px-3">
         {t("certificates.title")}
       </Text>
       <Columns columns={2} className="!gap-2">
