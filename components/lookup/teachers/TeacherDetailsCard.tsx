@@ -1,14 +1,11 @@
-import MultilangText from "@/components/common/MultilingualText";
 import LookupDetailsContent from "@/components/lookup//LookupDetailsContent";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
-import InformationCard from "@/components/lookup/people/InformationCard";
 import PersonContactGrid from "@/components/lookup/people/PersonContactGrid";
 import PersonHeader from "@/components/lookup/people/PersonHeader";
 import PersonInformationGrid from "@/components/lookup/people/PersonInformationGrid";
 import PersonScheduleCard from "@/components/lookup/people/PersonScheduleCard";
 import CurrentTeachingPeriodCard from "@/components/lookup/teachers/CurrentTeachingPeriodCard";
 import StarbucksCard from "@/components/lookup/teachers/StarbucksCard";
-import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import useToggle from "@/utils/helpers/useToggle";
@@ -25,7 +22,6 @@ import {
 } from "@suankularb-components/react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import useTranslation from "next-translate/useTranslation";
-import { sift } from "radash";
 
 /**
  * A Card that contains the details of a Teacher in Lookup Teachers.

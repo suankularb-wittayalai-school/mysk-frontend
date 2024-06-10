@@ -1,11 +1,13 @@
 import MultilangText from "@/components/common/MultilingualText";
 import ReportIssueButton from "@/components/common/ReportIssueButton";
-import InformationCard from "@/components/lookup/people/InformationCard";
 import { StylableFC } from "@/utils/types/common";
 import { Person } from "@/utils/types/person";
 import {
   Actions,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -37,22 +39,36 @@ const NameChangeDialog: StylableFC<{
     >
       <DialogHeader title={t("title")} desc={t("desc")} />
       <DialogContent className="grid grid-cols-2 gap-2 px-4">
-        <InformationCard title={t("grid.prefix")}>
-          <MultilangText text={person.prefix} />
-        </InformationCard>
-        <InformationCard title={t("grid.firstName")}>
-          <MultilangText text={person.first_name} />
-        </InformationCard>
-        <InformationCard title={t("grid.middleName")}>
-          {person.middle_name?.th ? (
-            <MultilangText text={person.middle_name} />
-          ) : (
-            <span className="text-on-surface-variant">{t("noMiddleName")}</span>
-          )}
-        </InformationCard>
-        <InformationCard title={t("grid.lastName")}>
-          <MultilangText text={person.last_name} />
-        </InformationCard>
+        <Card appearance="filled">
+          <CardHeader title={t("grid.prefix")} />
+          <CardContent>
+            <MultilangText text={person.prefix} />
+          </CardContent>
+        </Card>
+        <Card appearance="filled">
+          <CardHeader title={t("grid.firstName")} />
+          <CardContent>
+            <MultilangText text={person.first_name} />
+          </CardContent>
+        </Card>
+        <Card appearance="filled">
+          <CardHeader title={t("grid.middleName")} />
+          <CardContent>
+            {person.middle_name?.th ? (
+              <MultilangText text={person.middle_name} />
+            ) : (
+              <span className="text-on-surface-variant">
+                {t("noMiddleName")}
+              </span>
+            )}
+          </CardContent>
+        </Card>
+        <Card appearance="filled">
+          <CardHeader title={t("grid.lastName")} />
+          <CardContent>
+            <MultilangText text={person.last_name} />
+          </CardContent>
+        </Card>
       </DialogContent>
       <Actions>
         <Button appearance="text" onClick={onClose}>

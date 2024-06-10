@@ -6,6 +6,7 @@ import { StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import {
   AssistChip,
+  Card,
   ChipSet,
   DURATION,
   EASING,
@@ -37,8 +38,8 @@ const ElectiveStudentListCard: StylableFC<{
   const [query, setQuery] = useState("");
 
   return (
-    <section style={style} className={cn(`grid grid-cols-2 gap-6`, className)}>
-      <div className="flex flex-col gap-2 py-4 pl-6">
+    <section style={style} className={cn(`grid grid-cols-2`, className)}>
+      <div className="flex flex-col gap-2 py-4 pl-6 pr-3">
         <Text type="title-medium">{t("title")}</Text>
         <ChipSet>
           <AssistChip
@@ -60,7 +61,7 @@ const ElectiveStudentListCard: StylableFC<{
       <div className="overflow-y-auto overflow-x-hidden">
         {/* Search */}
         <div
-          className={cn(`sticky top-0 z-10 pb-3 pr-4 pt-4 before:absolute
+          className={cn(`sticky top-0 z-10 pb-3 pl-3 pr-4 pt-4 before:absolute
             before:inset-0 before:rounded-tr-xl before:bg-gradient-to-b
             before:from-surface-bright`)}
         >
@@ -77,13 +78,19 @@ const ElectiveStudentListCard: StylableFC<{
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={transition(DURATION.medium2, EASING.standardDecelerate)}
-          className="space-y-1 pb-4 pr-4"
+          className="space-y-1 pb-4 pl-3 pr-4"
         >
-          <ElectiveStudentList
-            electiveSubject={electiveSubject}
-            query={query}
-            className="[&_button]:!border-0 [&_button]:!bg-surface-container"
-          />
+          <Card
+            appearance="filled"
+            // See: https://stackoverflow.com/a/68211003
+            className={cn(`!bg-transparent
+              [&_button:not(.skc-fullscreen-dialog_*)]:!bg-surface-container`)}
+          >
+            <ElectiveStudentList
+              electiveSubject={electiveSubject}
+              query={query}
+            />
+          </Card>
         </motion.div>
       </div>
     </section>
