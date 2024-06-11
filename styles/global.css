@@ -124,6 +124,15 @@
   backdrop-filter: blur(16px) !important;
 }
 
+.skc-card-header__content > .skc-card-header__subtitle {
+  font-family: var(--font-body);
+}
+.skc-card--filled
+  .skc-dialog
+  :is(.skc-text-field__label, .skc-chip-field__label, .skc-select__label) {
+  background-color: var(--surface-container-high) !important;
+}
+
 /* Inset card support
   Temporary until the SK Components library is updated.
   PS: this is not good code. Please don’t learn from this.
@@ -136,7 +145,7 @@
 :is(.skc-card, .skc-dialog)
   .skc-card:has(> .skc-card-content)
   .skc-card-header {
-  padding: 0.5rem 0.75rem 0.25rem;
+  padding: 0.5rem 0.75rem 0;
 }
 :is(.skc-card, .skc-dialog)
   .skc-card.skc-card:not(> .skc-card-content)
