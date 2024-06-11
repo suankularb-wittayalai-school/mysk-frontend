@@ -119,9 +119,9 @@ const PersonInformationGrid: StylableFC<{
               title={t("information.birthday")}
               subtitle={new Date(person.birthdate).toLocaleString(locale, {
                 day: "numeric",
-                month: "short",
+                month: locale === "th" ? "long" : "short",
               })}
-              className="!py-2 [&_span]:!font-body"
+              className="grow !py-2"
             />
             <CardContent className="!py-2.5">
               {person.role === UserRole.student && (
