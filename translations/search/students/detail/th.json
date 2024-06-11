@@ -9,7 +9,8 @@
     "fullName": "ชื่อ-สกุล",
     "nickname": "ชื่อเล่น",
     "classroom": "ห้องเรียน",
-    "birthday": "วันเกิด"
+    "birthday": "วันเกิด",
+    "studentID": "รหัสนักเรียน"
   },
   "attendance": {
     "title": "การเข้าเรียน",

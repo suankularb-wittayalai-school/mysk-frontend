@@ -1,5 +1,6 @@
 import MultilangText from "@/components/common/MultilingualText";
 import AgeCircle from "@/components/lookup/people/AgeCircle";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import classroomOfPerson from "@/utils/helpers/classroom/classroomOfPerson";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
@@ -7,7 +8,13 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { Student, Teacher, UserRole } from "@/utils/types/person";
-import { Card, CardContent, CardHeader } from "@suankularb-components/react";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  MaterialIcon,
+} from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
 import { sift } from "radash";
 
@@ -29,6 +36,8 @@ const PersonInformationGrid: StylableFC<{
   );
 
   const classroom = classroomOfPerson(person);
+
+  const mysk = useMySKClient();
 
   return (
     <section
@@ -90,11 +99,9 @@ const PersonInformationGrid: StylableFC<{
             )}
           />
           <CardContent>
-            <span>
-              {t("common:class", { number: classroom.number })}
-              {person.role === UserRole.student &&
-                ` (${t("common:classNo", { classNo: person.class_no })})`}
-            </span>
+            {t("common:class", { number: classroom.number })}
+            {person.role === UserRole.student &&
+              ` (${t("common:classNo", { classNo: person.class_no })})`}
           </CardContent>
         </Card>
       )}
@@ -121,6 +128,14 @@ const PersonInformationGrid: StylableFC<{
                 <AgeCircle birthday={new Date(person.birthdate)} />
               )}
             </CardContent>
+          </Card>
+        )}
+
+      {person.role === UserRole.student &&
+        (mysk.user?.is_admin || mysk.user?.role !== UserRole.student) && (
+          <Card appearance="filled">
+            <CardHeader title={t("information.studentID")} />
+            <CardContent>{person.student_id}</CardContent>
           </Card>
         )}
     </section>

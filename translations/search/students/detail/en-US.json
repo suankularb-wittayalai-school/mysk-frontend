@@ -9,7 +9,8 @@
     "fullName": "Full name",
     "nickname": "Nickname",
     "classroom": "Classroom",
-    "birthday": "Birthday"
+    "birthday": "Birthday",
+    "studentID": "Student ID"
   },
   "attendance": {
     "title": "Attendance",
