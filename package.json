@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@serwist/next": "^9.0.2",
+    "@serwist/next": "^9.0.3",
     "@suankularb-components/react": "^3.3.2",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/auth-helpers-react": "^0.5.0",
@@ -35,7 +35,7 @@
     "react-dom": "^18.3.1",
     "react-i18next": "^14.1.2",
     "react-markdown": "^9.0.1",
-    "react-qr-code": "^2.0.13",
+    "react-qr-code": "^2.0.14",
     "react-wrap-balancer": "^1.1.1",
     "remark-gfm": "^4.0.0",
     "sharp": "^0.33.4",
@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@types/google-one-tap": "^1.2.6",
-    "@types/node": "^20.13.0",
+    "@types/node": "^20.14.2",
     "@types/qs": "^6.9.15",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
@@ -52,10 +52,10 @@
     "eslint-config-next": "^14.2.3",
     "next-translate-plugin": "^2.6.2",
     "postcss": "^8.4.38",
-    "prettier": "^3.2.5",
+    "prettier": "^3.3.2",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "serwist": "^9.0.2",
-    "tailwindcss": "^3.4.3",
+    "tailwindcss": "^3.4.4",
     "typescript": "^5.4.5"
   }
 }
