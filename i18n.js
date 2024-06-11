@@ -50,17 +50,16 @@ module.exports = {
     "rgx:/search/\\w+/results$": ["search/common"],
     // Search Students
     "/search/students/results": ["search/students/list"],
-    "rgx:/(search/students/results|(teach|manage)/electives|classes)$": [
-      "search/students/header",
-      "search/students/detail",
-      "search/students/absenceHistoryDialog",
-    ],
+    "rgx:/(search/students/results|(teach|manage)/electives|classes(/\\[classNumber\\]/attendance/date/\\[date\\])?)$":
+      [
+        "search/students/header",
+        "search/students/detail",
+        "search/students/absenceHistoryDialog",
+      ],
     // Search Teachers
     "/search/teachers/results": ["search/teachers/list"],
-    "rgx:/(search/teachers/results|learn|teach|(teach|manage)/electives|classes)$": [
-      "search/teachers/header",
-      "search/teachers/detail",
-    ],
+    "rgx:/(search/teachers/results|learn|teach|(teach|manage)/electives|classes)$":
+      ["search/teachers/header", "search/teachers/detail"],
     // Search Documents
     "/search/documents/results": [
       "search/documents/list",
@@ -74,7 +73,10 @@ module.exports = {
       "account/about/idCardDialog",
       "account/about/nameChangeDialog",
     ],
-    "/account/contacts": ["account/contacts", "account/contacts/contactDialog"],
+    "rgx:/(account/contacts|classes)$": [
+      "account/contacts",
+      "account/contacts/contactDialog",
+    ],
     "/account/certificates": [
       "account/certificates",
       "account/certificates/receivingOrderDialog",
