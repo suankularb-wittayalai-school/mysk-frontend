@@ -24,7 +24,7 @@ const ClassAdvisorGrid: StylableFC<{
       <Text
         type="title-medium"
         element="h3"
-        className="mb-1 rounded-md bg-surface px-3 py-2 md:col-span-2"
+        className="mb-1 px-3 md:col-span-2"
       >
         {t("title")}
       </Text>

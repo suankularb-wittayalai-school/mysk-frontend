@@ -9,11 +9,8 @@
     "fullName": "Full name",
     "nickname": "Nickname",
     "classroom": "Classroom",
-    "birthday": {
-      "title": "Birthday",
-      "age_one": "1 year old",
-      "age_other": "{{count, number}} years old"
-    }
+    "birthday": "Birthday",
+    "studentID": "Student ID"
   },
   "attendance": {
     "title": "Attendance",

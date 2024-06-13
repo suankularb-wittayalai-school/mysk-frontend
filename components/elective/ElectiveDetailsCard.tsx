@@ -3,7 +3,6 @@ import ChooseButton from "@/components/elective/ChooseButton";
 import ElectiveDetailsHeader from "@/components/elective/ElectiveDetailsHeader";
 import ElectiveStudentList from "@/components/elective/ElectiveStudentList";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
-import InformationCard from "@/components/lookup/people/InformationCard";
 import PeopleChipSet from "@/components/person/PeopleChipSet";
 import RoomChip from "@/components/room/RoomChip";
 import cn from "@/utils/helpers/cn";
@@ -15,6 +14,9 @@ import { UserRole } from "@/utils/types/person";
 import {
   Actions,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
   ChipSet,
   MaterialIcon,
   Search,
@@ -61,44 +63,53 @@ const ElectiveDetailsCard: StylableFC<{
           <ElectiveDetailsHeader electiveSubject={electiveSubject} />
 
           <LookupDetailsContent className="!rounded-xl pb-28 md:pb-4">
-            <div className={cn(`grid grid-cols-2 gap-2 *:bg-surface-bright`)}>
+            <div className="grid grid-cols-2 gap-2">
               {/* Subject name */}
-              <InformationCard
-                title={t("information.name")}
-                className="col-span-2 sm:col-span-1"
-              >
-                <MultilangText text={electiveSubject.name} />
-              </InformationCard>
+              <Card appearance="filled" className="col-span-2 sm:col-span-1">
+                <CardHeader title={t("information.name")} />
+                <CardContent>
+                  <MultilangText text={electiveSubject.name} />
+                </CardContent>
+              </Card>
 
               {/* Subject code */}
-              <InformationCard title={t("information.code")}>
-                <MultilangText text={electiveSubject.code} />
-              </InformationCard>
+              <Card appearance="filled">
+                <CardHeader title={t("information.code")} />
+                <CardContent>
+                  <MultilangText text={electiveSubject.code} />
+                </CardContent>
+              </Card>
 
               {/* Teachers */}
-              <InformationCard title={t("information.teachers")}>
-                <PeopleChipSet
-                  people={electiveSubject.teachers.map((teacher) => ({
-                    ...teacher,
-                    role: UserRole.teacher,
-                  }))}
-                  scrollable
-                  className="fade-out-to-r -mx-3 pb-1 *:pl-3 *:pr-8"
-                />
-              </InformationCard>
+              <Card appearance="filled">
+                <CardHeader title={t("information.teachers")} />
+                <CardContent>
+                  <PeopleChipSet
+                    people={electiveSubject.teachers.map((teacher) => ({
+                      ...teacher,
+                      role: UserRole.teacher,
+                    }))}
+                    scrollable
+                    className="fade-out-to-r -mx-3 pb-1 *:pl-3 *:pr-8"
+                  />
+                </CardContent>
+              </Card>
 
               {/* Room */}
               {electiveSubject.room && (
-                <InformationCard title={t("information.room")}>
-                  <ChipSet
-                    scrollable
-                    className="fade-out-to-r -mx-3 pb-1 *:pl-3 *:pr-8"
-                  >
-                    {electiveSubject.room.split(", ").map((room) => (
-                      <RoomChip key={room} room={room} />
-                    ))}
-                  </ChipSet>
-                </InformationCard>
+                <Card appearance="filled">
+                  <CardHeader title={t("information.room")} />
+                  <CardContent>
+                    <ChipSet
+                      scrollable
+                      className="fade-out-to-r -mx-3 pb-1 *:pl-3 *:pr-8"
+                    >
+                      {electiveSubject.room.split(", ").map((room) => (
+                        <RoomChip key={room} room={room} />
+                      ))}
+                    </ChipSet>
+                  </CardContent>
+                </Card>
               )}
             </div>
 
@@ -140,10 +151,6 @@ const ElectiveDetailsCard: StylableFC<{
               <ElectiveStudentList
                 electiveSubject={electiveSubject}
                 query={query}
-                className={cn(`[&_button:focus]:m-[-1px]
-                  [&_button:focus]:!border-1 [&_button:hover]:m-[-1px]
-                  [&_button:hover]:!border-1 [&_button]:!border-0
-                  [&_button]:bg-surface-bright`)}
               />
             </section>
 

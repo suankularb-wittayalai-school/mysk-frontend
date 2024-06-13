@@ -34,7 +34,11 @@ const LookupScheduleCard: StylableFC<{
           animate={{ opacity: 1, y: 0 }}
           transition={transition(DURATION.medium2, EASING.standardDecelerate)}
           style={{ ...style, borderRadius: 12 }}
-          className={cn(`overflow-hidden rounded-md bg-surface`, className)}
+          className={cn(
+            `-mx-4 overflow-hidden !rounded-none sm:mx-0 sm:!rounded-md sm:border-1
+            sm:border-outline-variant`,
+            className,
+          )}
         >
           {loading ? (
             <motion.div
@@ -63,6 +67,9 @@ const LookupScheduleCard: StylableFC<{
                   md:[&>figure>ul>li>div:first-child]:!sticky
                   sm:[&>figure>ul>li>ul:first-child>li:first-child]:!static
                   md:[&>figure>ul>li>ul:first-child>li:first-child]:!sticky`,
+                  // Change background color to match Lookup Details Content.
+                  `[&>figure>ul>li>div:first-child]:bg-surface-container
+                  [&>figure>ul>li>ul:first-child>li:first-child]:bg-surface-container`,
                   // Add right padding to content (and fix left padding on
                   // mobile).
                   `[&>figure>ul]:!px-3 sm:[&>figure>ul]:!pl-0 sm:[&>figure>ul]:!pr-3`,

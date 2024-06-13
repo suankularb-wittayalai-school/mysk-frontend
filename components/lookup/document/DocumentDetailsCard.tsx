@@ -125,7 +125,7 @@ const DocumentDetailsCard: StylableFC<{
               src={
                 document.document_link.includes("drive.google.com")
                   ? document.document_link.replace(
-                      /\/view\?usp=[a-z]+/,
+                      /\/view\?usp=.+/,
                       "/preview",
                     )
                   : document.document_link

@@ -1,6 +1,11 @@
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
-import { DURATION, EASING, transition } from "@suankularb-components/react";
+import {
+  Card,
+  DURATION,
+  EASING,
+  transition,
+} from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ReactNode } from "react";
 
@@ -31,7 +36,9 @@ const Glance: StylableFC<{
             className,
           )}
         >
-          {children}
+          <Card appearance="filled" className="!contents">
+            {children}
+          </Card>
         </motion.div>
       )}
     </AnimatePresence>

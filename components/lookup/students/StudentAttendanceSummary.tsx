@@ -77,7 +77,7 @@ const StudentAttendanceSummary: StylableFC<{
       style={style}
       className={cn(`space-y-2`, className)}
     >
-      <div className="flex flex-row items-center rounded-md bg-surface pl-3 pr-1">
+      <div className="-my-2 flex flex-row items-center pl-3 pr-1">
         <Text
           type="title-medium"
           element={(props) => <h3 id="detail-attendance" {...props} />}
@@ -109,7 +109,7 @@ const StudentAttendanceSummary: StylableFC<{
           className={cn(
             `grid grid-cols-2 gap-2 *:h-20 *:rounded-md md:grid-cols-4
             [&>:last-child]:col-span-2`,
-            loading && `animate-pulse *:bg-surface`,
+            loading && `animate-pulse *:bg-surface-bright`,
           )}
         >
           {!loading ? (
@@ -127,14 +127,14 @@ const StudentAttendanceSummary: StylableFC<{
                   attendances.map((attendance) => attendance.assembly),
                 )}
                 className={cn(`!grid !grid-cols-2 !items-stretch gap-1
-                  *:gap-0.5 *:rounded-md *:bg-surface *:pl-2 *:pr-3`)}
+                  *:gap-0.5 *:rounded-md *:bg-surface-bright *:pl-2 *:pr-3`)}
               />
               <AttendanceFigure
                 interval={interval}
                 attendances={attendances.filter((attendance) =>
                   isWithinInterval(new Date(attendance.date), interval),
                 )}
-                className="!h-auto bg-surface p-2"
+                className="!h-auto [&_.bg-surface-container]:bg-surface-bright"
               />
             </>
           ) : (
