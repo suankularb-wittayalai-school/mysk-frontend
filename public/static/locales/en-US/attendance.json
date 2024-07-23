@@ -51,9 +51,10 @@
   },
   "item": {
     "classNo": "No. {{classNo}}",
-    "lateChip": {
-      "onTime": "On time",
-      "late": "Late"
+    "attendanceChip": {
+      "onTime": "P",
+      "late": "L",
+      "absent": "A"
     },
     "absenceType": {
       "sick": "Sick",

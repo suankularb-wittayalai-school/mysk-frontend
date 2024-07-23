@@ -50,9 +50,10 @@
   },
   "item": {
     "classNo": "เลขที่ {{classNo}}",
-    "lateChip": {
+    "attendanceChip": {
       "onTime": "ทัน",
-      "late": "สาย"
+      "late": "สาย",
+      "absent": "ลา"
     },
     "absenceType": {
       "sick": "ลาป่วย",
