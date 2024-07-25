@@ -51,7 +51,6 @@ const AttendanceListItem: StylableFC<{
   editable?: boolean;
   onAttendanceChange: (attendance: StudentAttendance) => void;
 }> = ({ attendance, shownEvent, date, editable, onAttendanceChange }) => {
-  console.log(attendance);
   const locale = useLocale();
   const { t } = useTranslation("attendance", { keyPrefix: "item" });
   const { t: tx } = useTranslation("common");
