@@ -50,8 +50,8 @@
   },
   "item": {
     "classNo": "เลขที่ {{classNo}}",
-    "attendanceChip": {
-      "onTime": "ทัน",
+    "chip": {
+      "onTime": "มา",
       "late": "สาย",
       "absent": "ลา"
     },

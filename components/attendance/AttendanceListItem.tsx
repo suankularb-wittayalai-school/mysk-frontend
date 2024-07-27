@@ -208,7 +208,7 @@ const AttendanceListItem: StylableFC<{
                   }
                 : null)}
             >
-              {t("attendanceChip.onTime")}
+              {t("chip.onTime")}
             </InputChip>
             <InputChip
               onClick={() => {
@@ -228,7 +228,7 @@ const AttendanceListItem: StylableFC<{
                   }
                 : null)}
             >
-              {t("attendanceChip.late")}
+              {t("chip.late")}
             </InputChip>
             <InputChip
               onClick={() => {
@@ -248,7 +248,7 @@ const AttendanceListItem: StylableFC<{
                   }
                 : null)}
             >
-              {t("attendanceChip.absent")}
+              {t("chip.absent")}
             </InputChip>
           </ChipSet>
         </ListItem>
