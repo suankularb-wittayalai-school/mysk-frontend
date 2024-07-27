@@ -189,7 +189,7 @@ const AttendanceListItem: StylableFC<{
             ]).join(" • ")}
             className="w-0 [&>span]:!truncate"
           />
-          <ChipSet>
+          <ChipSet className="-mr-4 -space-x-1">
             <InputChip
               onClick={() => {
                 setAttendanceOfShownEvent({
