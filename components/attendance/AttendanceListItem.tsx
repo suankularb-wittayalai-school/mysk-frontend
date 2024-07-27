@@ -63,18 +63,6 @@ const AttendanceListItem: StylableFC<{
   const [studentOpen, setStudentOpen] = useState(false);
 
   /**
-   * Whether to show which chip as selected.
-   */
-  const chipState =
-    attendance[shownEvent].is_present === true
-      ? "present"
-      : attendance[shownEvent].is_present === null
-        ? null
-        : attendance[shownEvent].absence_type === AbsenceType.late
-          ? "late"
-          : "absent";
-
-  /**
    * Sets the Attendance of the shown Event. Also sets the Attendance for
    * Homeroom if the shown Event is Assembly.
    *
@@ -211,8 +199,14 @@ const AttendanceListItem: StylableFC<{
                   absence_reason: null,
                 });
               }}
-              selected={chipState === "present"}
-              className={chipState === "present" ? "!bg-primary-container" : ""}
+              {...(attendance[shownEvent].is_present === true
+                ? {
+                    selected: true,
+                    className: cn(`!bg-primary-container
+                      !text-on-primary-container
+                      state-layer:!bg-on-primary-container`),
+                  }
+                : null)}
             >
               {t("attendanceChip.onTime")}
             </InputChip>
@@ -225,8 +219,14 @@ const AttendanceListItem: StylableFC<{
                   absence_reason: null,
                 });
               }}
-              selected={chipState === "late"}
-              className={chipState === "late" ? "!bg-tertiary-container" : ""}
+              {...(attendance[shownEvent].absence_type === AbsenceType.late
+                ? {
+                    selected: true,
+                    className: cn(`!bg-tertiary-container
+                      !text-on-tertiary-container
+                      state-layer:!bg-on-tertiary-container`),
+                  }
+                : null)}
             >
               {t("attendanceChip.late")}
             </InputChip>
@@ -238,10 +238,15 @@ const AttendanceListItem: StylableFC<{
                   absence_type: AbsenceType.sick,
                 });
               }}
-              selected={chipState === "absent"}
-              className={
-                chipState === "absent" ? "!bg-secondary-container" : ""
-              }
+              {...(attendance[shownEvent].is_present === false &&
+              attendance[shownEvent].absence_type !== AbsenceType.late
+                ? {
+                    selected: true,
+                    className: cn(`!bg-secondary-container
+                      !text-on-secondary-container
+                      state-layer:!bg-on-secondary-container`),
+                  }
+                : null)}
             >
               {t("attendanceChip.absent")}
             </InputChip>
