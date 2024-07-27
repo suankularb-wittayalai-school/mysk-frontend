@@ -1,4 +1,5 @@
 import AbsenceTypeSelector from "@/components/attendance/AbsenceTypeSelector";
+import AttendanceSelector from "@/components/attendance/AttendanceSelector";
 import PersonAvatar from "@/components/common/PersonAvatar";
 import WithPersonDetails from "@/components/person/WithPersonDetails";
 import SnackbarContext from "@/contexts/SnackbarContext";
@@ -18,7 +19,6 @@ import {
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import {
-  ChipSet,
   DURATION,
   EASING,
   Interactive,
@@ -27,7 +27,6 @@ import {
   Snackbar,
   TextField,
   transition,
-  InputChip,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { motion } from "framer-motion";
@@ -189,68 +188,12 @@ const AttendanceListItem: StylableFC<{
             ]).join(" • ")}
             className="w-0 [&>span]:!truncate"
           />
-          <ChipSet className="-mr-4 -space-x-1">
-            <InputChip
-              onClick={() => {
-                setAttendanceOfShownEvent({
-                  ...attendance[shownEvent],
-                  is_present: true,
-                  absence_type: null,
-                  absence_reason: null,
-                });
-              }}
-              {...(attendance[shownEvent].is_present === true
-                ? {
-                    selected: true,
-                    className: cn(`!bg-primary-container
-                      !text-on-primary-container
-                      state-layer:!bg-on-primary-container`),
-                  }
-                : null)}
-            >
-              {t("chip.onTime")}
-            </InputChip>
-            <InputChip
-              onClick={() => {
-                setAttendanceOfShownEvent({
-                  ...attendance[shownEvent],
-                  is_present: false,
-                  absence_type: AbsenceType.late,
-                  absence_reason: null,
-                });
-              }}
-              {...(attendance[shownEvent].absence_type === AbsenceType.late
-                ? {
-                    selected: true,
-                    className: cn(`!bg-tertiary-container
-                      !text-on-tertiary-container
-                      state-layer:!bg-on-tertiary-container`),
-                  }
-                : null)}
-            >
-              {t("chip.late")}
-            </InputChip>
-            <InputChip
-              onClick={() => {
-                setAttendanceOfShownEvent({
-                  ...attendance[shownEvent],
-                  is_present: false,
-                  absence_type: AbsenceType.sick,
-                });
-              }}
-              {...(attendance[shownEvent].is_present === false &&
-              attendance[shownEvent].absence_type !== AbsenceType.late
-                ? {
-                    selected: true,
-                    className: cn(`!bg-secondary-container
-                      !text-on-secondary-container
-                      state-layer:!bg-on-secondary-container`),
-                  }
-                : null)}
-            >
-              {t("chip.absent")}
-            </InputChip>
-          </ChipSet>
+          <AttendanceSelector
+            attendance={attendance}
+            shownEvent={shownEvent}
+            setAttendanceOfShownEvent={setAttendanceOfShownEvent}
+            className="-mr-4 -space-x-1"
+          />
         </ListItem>
 
         {/* Absence type */}
