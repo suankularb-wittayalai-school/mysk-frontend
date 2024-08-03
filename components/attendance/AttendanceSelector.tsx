@@ -43,7 +43,7 @@ const AttendanceSelector: StylableFC<{
             }
           : null)}
       >
-        {t("chip.onTime")}
+        <span className="-mx-1">{t("chip.onTime")}</span>
       </InputChip>
       <InputChip
         onClick={() => {
@@ -63,7 +63,7 @@ const AttendanceSelector: StylableFC<{
             }
           : null)}
       >
-        {t("chip.late")}
+        <span className="-mx-1">{t("chip.late")}</span>
       </InputChip>
       <InputChip
         onClick={() => {
@@ -83,7 +83,7 @@ const AttendanceSelector: StylableFC<{
             }
           : null)}
       >
-        {t("chip.absent")}
+        <span className="-mx-1">{t("chip.absent")}</span>
       </InputChip>
     </ChipSet>
   );
