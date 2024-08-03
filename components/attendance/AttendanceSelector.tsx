@@ -11,23 +11,14 @@ import { useTranslation } from "next-i18next";
 const AttendanceSelector: StylableFC<{
   attendance: StudentAttendance;
   shownEvent: AttendanceEvent;
-  setAttendanceOfShownEvent: (
-    eventAttendance: StudentAttendance[AttendanceEvent],
-    options?: Partial<{ noSave: boolean }>,
-  ) => void;
-}> = ({
-  attendance,
-  shownEvent,
-  setAttendanceOfShownEvent,
-  style,
-  className,
-}) => {
+  onChange: (attendance: StudentAttendance[AttendanceEvent]) => void;
+}> = ({ attendance, shownEvent, onChange, style, className }) => {
   const { t } = useTranslation("attendance", { keyPrefix: "item" });
   return (
     <ChipSet style={style} className={className}>
       <InputChip
         onClick={() => {
-          setAttendanceOfShownEvent({
+          onChange({
             ...attendance[shownEvent],
             is_present: true,
             absence_type: null,
@@ -47,7 +38,7 @@ const AttendanceSelector: StylableFC<{
       </InputChip>
       <InputChip
         onClick={() => {
-          setAttendanceOfShownEvent({
+          onChange({
             ...attendance[shownEvent],
             is_present: false,
             absence_type: AbsenceType.late,
@@ -67,7 +58,7 @@ const AttendanceSelector: StylableFC<{
       </InputChip>
       <InputChip
         onClick={() => {
-          setAttendanceOfShownEvent({
+          onChange({
             ...attendance[shownEvent],
             is_present: false,
             absence_type: AbsenceType.sick,

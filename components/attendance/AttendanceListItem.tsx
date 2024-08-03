@@ -191,7 +191,7 @@ const AttendanceListItem: StylableFC<{
           <AttendanceSelector
             attendance={attendance}
             shownEvent={shownEvent}
-            setAttendanceOfShownEvent={setAttendanceOfShownEvent}
+            onChange={setAttendanceOfShownEvent}
             className="-mr-4 -space-x-1"
           />
         </ListItem>
