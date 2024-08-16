@@ -58,7 +58,7 @@
     "absenceType": {
       "sick": "ลาป่วย",
       "covid": "โควิด-19",
-      "activity":"กิจกรรม",
+      "activity": "กิจกรรม",
       "business": "ลากิจ",
       "absent": "ขาดไม่มีเหตุ",
       "dropped": "พักการเรียน",
