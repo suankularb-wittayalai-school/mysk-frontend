@@ -108,6 +108,10 @@ const PersonInformationGrid: StylableFC<{
 
       {/* Birthday */}
       {person.birthdate &&
+        // Hide teachers birthday if the user is a student, except admins.
+        (mysk.user?.is_admin || 
+          !(mysk.user?.role === UserRole.student && 
+            person.role === UserRole.teacher)) && 
         // Assuming no real person is born on Jan 1, 1970.
         person.birthdate !== "1970-01-01" && (
           <Card
