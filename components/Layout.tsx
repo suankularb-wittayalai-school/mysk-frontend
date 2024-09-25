@@ -261,9 +261,7 @@ const Layout: FC<
               <NavBarItem
                 icon={
                   <SchemeIcon
-                    colorScheme={
-                      (colorScheme === "dark" ? "light" : "dark") || "light"
-                    }
+                    colorScheme={colorScheme === "dark" ? "light" : "dark"}
                   />
                 }
                 label={t(
