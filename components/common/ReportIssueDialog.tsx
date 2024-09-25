@@ -15,7 +15,7 @@ import {
 import { usePlausible } from "next-plausible";
 import useTranslation from "next-translate/useTranslation";
 import { title } from "radash";
-import { forwardRef, useState } from "react";
+import { ForwardedRef, forwardRef, useState } from "react";
 
 enum ReportingCategory {
   /** For issues with the school-issue Google Workspace account. */
@@ -103,7 +103,7 @@ const ReportIssueDialog: StylableFC<{
           element={
             selectedCategory
               ? // eslint-disable-next-line react/display-name
-                forwardRef((props, ref) => (
+                forwardRef((props, ref: ForwardedRef<HTMLAnchorElement>) => (
                   <a ref={ref} {...props} target="_blank" />
                 ))
               : "button"
