@@ -1,0 +1,10 @@
+{
+  "action": {
+    "print": "พิมพ์",
+    "attendance": {
+      "view": "ดูการเช็กชื่อ",
+      "edit": "เช็กชื่อ"
+    },
+    "saveContact": "บันทึก"
+  }
+}

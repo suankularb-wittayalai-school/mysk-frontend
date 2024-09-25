@@ -11,8 +11,8 @@ import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { Button, MaterialIcon, Text } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * The list of Students inside Class Details Card.
@@ -24,7 +24,7 @@ const ClassStudentList: StylableFC<{
   students: Classroom["students"];
   classroom: Pick<Classroom, "id" | "number">;
 }> = ({ students, classroom, style, className }) => {
-  const { t } = useTranslation("classes", { keyPrefix: "detail.students" });
+  const { t } = useTranslation("classes/detail");
 
   const plausible = usePlausible();
   const supabase = useSupabaseClient();
@@ -76,7 +76,7 @@ const ClassStudentList: StylableFC<{
       title={
         <>
           <Text type="title-medium" className="grow">
-            {t("title")}
+            {t("students.title")}
           </Text>
           <Button
             appearance="text"
@@ -85,7 +85,7 @@ const ClassStudentList: StylableFC<{
             onClick={handleSaveVCard}
             className="!-m-2"
           >
-            {t("action.saveAll")}
+            {t("students.action.saveAll")}
           </Button>
         </>
       }

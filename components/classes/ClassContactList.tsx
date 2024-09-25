@@ -15,8 +15,8 @@ import {
   Text,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { useContext, useState } from "react";
 
 /**
@@ -26,6 +26,7 @@ import { useContext, useState } from "react";
  * @param contacts The list of contacts to display.
  * @param classroomID The ID of the Classroom the Contacts belong to.
  * @param editable Whether the list is editable or not.
+ * @param refreshData Should refresh Classroom data.
  */
 const ClassContactList: StylableFC<{
   contacts: Contact[];
@@ -33,7 +34,7 @@ const ClassContactList: StylableFC<{
   editable?: boolean;
   refreshData: () => void;
 }> = ({ contacts, classroomID, editable, refreshData, style, className }) => {
-  const { t } = useTranslation("classes", { keyPrefix: "detail.contacts" });
+  const { t } = useTranslation("classes/detail");
   const { t: tx } = useTranslation("common");
 
   const plausible = usePlausible();
@@ -83,7 +84,7 @@ const ClassContactList: StylableFC<{
     <LookupDetailsListCard
       title={
         <Text type="title-medium" element="h3">
-          {t("title")}
+          {t("contacts.title")}
         </Text>
       }
       style={style}

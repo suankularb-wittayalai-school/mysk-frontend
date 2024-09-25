@@ -1,0 +1,17 @@
+{
+  "advisors": {
+    "title": "Class advisors"
+  },
+  "students": {
+    "title": "Students",
+    "action": {
+      "saveAll": "Save all"
+    }
+  },
+  "contacts": {
+    "title": "Contacts",
+    "action": {
+      "add": "Add contact"
+    }
+  }
+}
