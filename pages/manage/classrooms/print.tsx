@@ -7,8 +7,8 @@ import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
 import { GetStaticProps } from "next";
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 
 /**
@@ -22,7 +22,7 @@ const ClassroomsBulkPrintPage: CustomPage<{
     students: Student[];
   })[];
 }> = ({ classrooms }) => {
-  const { t } = useTranslation("classes", { keyPrefix: "print" });
+  const { t } = useTranslation("classes/print");
   const { t: tx } = useTranslation("common");
 
   return (
@@ -56,17 +56,13 @@ const ClassroomsBulkPrintPage: CustomPage<{
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
   const mysk = await createMySKClient();
-
   const { data: classrooms } = await getClassroomsForBulkPrint(supabase, mysk);
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "classes",
-      ])),
+      ...(await serverSideTranslations(locale as LangCode, ["common"])),
       classrooms,
     },
     revalidate: 60,

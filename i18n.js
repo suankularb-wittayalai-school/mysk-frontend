@@ -42,7 +42,7 @@ module.exports = {
     ],
     // Classes
     "/classes": ["classes/list", "classes/header", "classes/detail"],
-    "rgx:/((classes/\\[classNumber\\]|manage/classrooms)/print)$": [
+    "rgx:/((classes/\\[classNumber\\]|manage/(classrooms|electives))/print)$": [
       "classes/print",
     ],
     // Search
