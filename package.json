@@ -23,7 +23,7 @@
     "google-auth-library": "^9.14.1",
     "i18next": "^23.15.1",
     "ios-pwa-splash": "^1.0.0",
-    "next": "^14.2.8",
+    "next": "^14.2.3",
     "next-i18next": "^15.3.1",
     "next-plausible": "^3.12.2",
     "next-translate": "^2.6.2",
