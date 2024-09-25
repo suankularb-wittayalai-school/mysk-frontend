@@ -73,6 +73,7 @@ const LookupClassCard: StylableFC<{
   })();
 
   useEffect(() => {
+    if (schoolSessionState !== SchoolSessionState.schedule) return;
     (async () => {
       setLoading(true);
       const { data, error, isCurrent } = await getRelevantPeriodOfClass(
