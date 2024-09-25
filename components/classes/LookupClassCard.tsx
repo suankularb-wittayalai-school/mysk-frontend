@@ -20,10 +20,18 @@ import {
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { differenceInSeconds } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { sift } from "radash";
 import { useEffect, useState } from "react";
+
+/** The possible views of a Lookup Class Card. */
+enum LookupClassCardView {
+  inProgress = "inProgress",
+  lunch = "lunch",
+  upcoming = "upcoming",
+  finished = "finished",
+}
 
 /**
  * Lookup Class Card is a card that displays a Classroom in the Lookup Classes
@@ -39,7 +47,7 @@ const LookupClassCard: StylableFC<{
   onClick: (value: string) => void;
 }> = ({ classroom, selected, onClick, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("classes", { keyPrefix: "list.item" });
+  const { t } = useTranslation("classes/list");
   const { t: tx } = useTranslation("common");
 
   const plausible = usePlausible();
@@ -50,6 +58,19 @@ const LookupClassCard: StylableFC<{
   const [period, setPeriod] = useState<
     (SchedulePeriod & { is_current: boolean }) | null
   >(null);
+
+  const view: LookupClassCardView | null = (() => {
+    // Hide the state indicators if it’s after school.
+    if (loading || schoolSessionState === SchoolSessionState.after) return null;
+    if (period?.is_current) return LookupClassCardView.inProgress;
+    if (
+      schoolSessionState === SchoolSessionState.schedule &&
+      [4, 5].includes(periodNumber)
+    )
+      return LookupClassCardView.lunch;
+    if (period) return LookupClassCardView.upcoming;
+    return LookupClassCardView.finished;
+  })();
 
   useEffect(() => {
     (async () => {
@@ -105,14 +126,14 @@ const LookupClassCard: StylableFC<{
               {sift([
                 classroom.main_room,
                 (() => {
-                  if (loading) return;
-                  if (!period) return t("period.finished");
+                  if (!view) return;
+                  if (!period) return t("item.period.finished");
                   if (period.is_current)
                     return getLocaleString(
                       period.content[0].subject.name,
                       locale,
                     );
-                  return t("period.upcoming", {
+                  return t("item.period.upcoming", {
                     time: getTodaySetToPeriodTime(period.start_time, "start"),
                   });
                 })(),
@@ -122,12 +143,12 @@ const LookupClassCard: StylableFC<{
         }
         className="grow [&>*>*]:block [&>*>*]:!truncate [&>*]:w-full"
       />
-      {loading || period?.is_current ? (
+      {!view ? null : loading || period?.is_current ? (
         // +1px on all sides to compensate for the lack of border
         <div className="m-[calc(0.75rem+1px)] h-12">
           <Progress
             appearance="circular"
-            alt="Period progress in percent"
+            alt={t("item.stateAlt.inProgress")}
             value={percentage}
             visible={!loading && period?.is_current}
             className={cn(
@@ -138,20 +159,27 @@ const LookupClassCard: StylableFC<{
         </div>
       ) : (
         <div
+          title={t(`item.stateAlt.${view}`)}
           className={cn(
             `m-3 rounded-full border-1 border-outline-variant
             bg-surface-container p-3 transition-[border-color]`,
             selected && `sm:group-focus:border-primary`,
           )}
         >
-          {schoolSessionState === SchoolSessionState.schedule &&
-          [4, 5].includes(periodNumber) ? (
-            <MaterialIcon icon="fastfood" className="text-tertiary" />
-          ) : period ? (
-            <MaterialIcon icon="hourglass" className="text-outline" />
-          ) : (
-            <MaterialIcon icon="home" className="text-secondary" />
-          )}
+          {
+            {
+              lunch: <MaterialIcon icon="fastfood" className="text-tertiary" />,
+              upcoming: (
+                <MaterialIcon icon="hourglass" className="text-outline" />
+              ),
+              finished: <MaterialIcon icon="home" className="text-secondary" />,
+            }[
+              view as Exclude<
+                LookupClassCardView,
+                LookupClassCardView.inProgress
+              >
+            ]
+          }
         </div>
       )}
     </Card>
