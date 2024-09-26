@@ -1,0 +1,16 @@
+{
+  "title": "Classrooms",
+  "yourClass": "Your class",
+  "item": {
+    "period": {
+      "upcoming": "Next at {{time, time)}}",
+      "finished": "Finished for today"
+    },
+    "stateAlt": {
+      "inProgress": "Period progress in percent",
+      "lunch": "Dismissed to lunch",
+      "upcoming": "Class not in session but will return soon",
+      "finished": "Finished for today"
+    }
+  }
+}

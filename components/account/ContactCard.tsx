@@ -24,7 +24,7 @@ import { usePlausible } from "next-plausible";
 import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
 import { sift } from "radash";
-import { forwardRef, useContext } from "react";
+import { ForwardedRef, forwardRef, useContext } from "react";
 
 /**
  * A contact Card.
@@ -74,7 +74,7 @@ const ContactCard: StylableFC<{
               href: getContactURL(contact),
               element: !["phone", "email"].includes(contact.type)
                 ? // eslint-disable-next-line react/display-name
-                  forwardRef((props, ref) => (
+                  forwardRef((props, ref: ForwardedRef<HTMLAnchorElement>) => (
                     <a {...props} ref={ref} target="_blank" rel="noreferrer" />
                   ))
                 : "a",

@@ -1,0 +1,10 @@
+{
+  "action": {
+    "print": "Print",
+    "attendance": {
+      "view": "View attendance",
+      "edit": "Take attendance"
+    },
+    "saveContact": "Save contact"
+  }
+}

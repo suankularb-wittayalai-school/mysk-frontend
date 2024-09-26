@@ -20,7 +20,7 @@ import {
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
 import useTranslation from "next-translate/useTranslation";
-import { forwardRef } from "react";
+import { ForwardedRef, forwardRef } from "react";
 
 /**
  * A Card that displays a Classroom Subject.
@@ -77,9 +77,11 @@ const ClassroomSubjectCard: StylableFC<{
               ? {
                   href: url,
                   // eslint-disable-next-line react/display-name
-                  element: forwardRef((props, ref) => (
-                    <a ref={ref} {...props} target="_blank" />
-                  )),
+                  element: forwardRef(
+                    (props, ref: ForwardedRef<HTMLAnchorElement>) => (
+                      <a ref={ref} {...props} target="_blank" />
+                    ),
+                  ),
                 }
               : {
                   onClick: () => {

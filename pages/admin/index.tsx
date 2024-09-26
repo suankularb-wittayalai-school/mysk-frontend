@@ -15,7 +15,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
 import Head from "next/head";
 import Link from "next/link";
-import { forwardRef } from "react";
+import { ForwardedRef, forwardRef } from "react";
 
 /**
  * A landing page for admins. Contains links to manage the database and the
@@ -52,9 +52,11 @@ const AdminPanelPage: CustomPage = () => {
               href={supabaseURL}
               onClick={() => plausible("Open Supabase Table Editor")}
               // eslint-disable-next-line react/display-name
-              element={forwardRef((props, ref) => (
-                <a {...props} ref={ref} target="_blank" />
-              ))}
+              element={forwardRef(
+                (props, ref: ForwardedRef<HTMLAnchorElement>) => (
+                  <a {...props} ref={ref} target="_blank" />
+                ),
+              )}
             >
               {t("supabase.action.browse")}
             </Button>
@@ -62,9 +64,11 @@ const AdminPanelPage: CustomPage = () => {
               appearance="outlined"
               href="https://supabase.com/docs"
               // eslint-disable-next-line react/display-name
-              element={forwardRef((props, ref) => (
-                <a {...props} ref={ref} target="_blank" />
-              ))}
+              element={forwardRef(
+                (props, ref: ForwardedRef<HTMLAnchorElement>) => (
+                  <a {...props} ref={ref} target="_blank" />
+                ),
+              )}
             >
               {t("supabase.action.readDocs")}
             </Button>

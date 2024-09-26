@@ -46,7 +46,14 @@ import {
 } from "@tanstack/react-table";
 import { AnimatePresence, motion } from "framer-motion";
 import useTranslation from "next-translate/useTranslation";
-import { forwardRef, useContext, useEffect, useMemo, useState } from "react";
+import {
+  ForwardedRef,
+  forwardRef,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 /**
  * Row actions for a Class this subject is taught to.
@@ -74,7 +81,7 @@ const ClassRowActions: StylableFC<{
           tooltip={t("rowAction.classLink")}
           href={row.ggc_link}
           // eslint-disable-next-line react/display-name
-          element={forwardRef((props, ref) => (
+          element={forwardRef((props, ref: ForwardedRef<HTMLAnchorElement>) => (
             <a {...props} ref={ref} target="_blank" rel="noreferrer" />
           ))}
           className="!text-secondary state-layer:!bg-secondary"
@@ -87,7 +94,7 @@ const ClassRowActions: StylableFC<{
           tooltip={t("rowAction.meetLink")}
           href={row.gg_meet_link}
           // eslint-disable-next-line react/display-name
-          element={forwardRef((props, ref) => (
+          element={forwardRef((props, ref: ForwardedRef<HTMLAnchorElement>) => (
             <a {...props} ref={ref} target="_blank" rel="noreferrer" />
           ))}
           className="!text-secondary state-layer:!bg-secondary"
