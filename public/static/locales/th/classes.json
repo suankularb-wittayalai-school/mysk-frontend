@@ -1,0 +1,68 @@
+{
+  "title": "ห้องเรียน",
+  "list": {
+    "yourClass": "ห้องเรียนของคุณ",
+    "item": {
+      "period": {
+        "upcoming": "คาบต่อไปเวลา {{time, datetime(hour: 2-digit; minute: 2-digit; hour12: false;)}}",
+        "finished": "เลิกเรียนแล้ว"
+      }
+    }
+  },
+  "header": {
+    "action": {
+      "print": "พิมพ์",
+      "attendance": {
+        "view": "ดูการเช็กชื่อ",
+        "edit": "เช็กชื่อ"
+      },
+      "saveContact": "บันทึก"
+    }
+  },
+  "detail": {
+    "advisors": {
+      "title": "ครูที่ปรึกษา"
+    },
+    "students": {
+      "title": "นักเรียน",
+      "item": {
+        "classNo": "เลขที่ {{classNo}}"
+      },
+      "action": {
+        "saveAll": "บันทึกทั้งหมด"
+      }
+    },
+    "contacts": {
+      "title": "ช่องทางการติดต่อ",
+      "action": {
+        "add": "เพิ่มช่องทางการติดต่อ"
+      }
+    }
+  },
+  "print": {
+    "title": "พิมพ์ใบรายชื่อ",
+    "language": "ภาษา",
+    "columns": {
+      "label": "ข้อมูลที่แสดง",
+      "index": "ลำดับ",
+      "classNo": "เลขที่ในห้อง",
+      "studentID": "เลขประจำตัวนักเรียน",
+      "prefix": "คำนำหน้าชื่อ",
+      "fullName": "ชื่อจริง-นามสกุล",
+      "nickname": "ชื่อเล่น",
+      "classroom": "ห้องเรียน",
+      "allergies": "ภูมิแพ้/อาหารที่แพ้ (ภาษาไทย)",
+      "shirtSize": "ไซส์เสื้อ",
+      "pantsSize": "ขนาดกางเกงนักเรียน",
+      "elective": "วิชาเลือก"
+    },
+    "filters": {
+      "label": "ตัวกรอง",
+      "noElective": "ไม่มีวิชาเลือก",
+      "hasAllergies": "มีภูมิแพ้"
+    },
+    "numEmpty": "เพิ่มหลัก",
+    "enableNotes": "หลักหมายเหตุ",
+    "enableTimestamp": "ประทับเวลา"
+  }
+}

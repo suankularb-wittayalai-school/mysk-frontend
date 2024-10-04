@@ -2,6 +2,7 @@
   "history": {
     "title": "Absence history",
     "item": {
+      "null": "No data",
       "late": "Late",
       "sick": "Sick leave",
       "business": "Business leave",
