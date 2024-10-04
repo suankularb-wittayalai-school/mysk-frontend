@@ -10,10 +10,16 @@ import {
   Snackbar,
   Text,
 } from "@suankularb-components/react";
-import useTranslation from "next-translate/useTranslation";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { unique } from "radash";
-import { forwardRef, useContext, useEffect, useState } from "react";
+import {
+  ForwardedRef,
+  forwardRef,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import Balancer from "react-wrap-balancer";
 
 /**
@@ -127,9 +133,11 @@ const StarbucksCard: StylableFC = ({ style, className }) => {
               })
             }
             // eslint-disable-next-line react/display-name
-            element={forwardRef((props, ref) => (
-              <a {...props} ref={ref} target="_blank" rel="noreferrer" />
-            ))}
+            element={forwardRef(
+              (props, ref: ForwardedRef<HTMLAnchorElement>) => (
+                <a {...props} ref={ref} target="_blank" rel="noreferrer" />
+              ),
+            )}
           >
             {t("starbucks.action.openStarbucks")}
           </AssistChip>

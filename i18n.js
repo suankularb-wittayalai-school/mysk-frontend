@@ -40,6 +40,11 @@ module.exports = {
       "schedule/editor/editDialog",
       "schedule/editor/hoverMenu",
     ],
+    // Classes
+    "/classes": ["classes/list", "classes/header", "classes/detail"],
+    "rgx:/((classes/\\[classNumber\\]|manage/(classrooms|electives))/print)$": [
+      "classes/print",
+    ],
     // Search
     "/search/[view]": [
       "search/landing",

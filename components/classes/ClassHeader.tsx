@@ -1,7 +1,7 @@
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import classroomOfPerson from "@/utils/helpers/classroom/classroomOfPerson";
 import cn from "@/utils/helpers/cn";
 import useConvertContactsForVCard from "@/utils/helpers/contact/useConvertContactsForVCard";
-import classroomOfPerson from "@/utils/helpers/classroom/classroomOfPerson";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
@@ -15,10 +15,10 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { title } from "radash";
-import { usePlausible } from "next-plausible";
 
 /**
  * The header of a Class Details Card, including the class number, actions for
@@ -29,7 +29,7 @@ import { usePlausible } from "next-plausible";
 const ClassHeader: StylableFC<{
   classroom: Omit<Classroom, "students" | "year" | "subjects">;
 }> = ({ classroom, style, className }) => {
-  const { t } = useTranslation("classes", { keyPrefix: "header" });
+  const { t } = useTranslation("classes/header");
   const { t: tx } = useTranslation("common");
 
   const mysk = useMySKClient();
