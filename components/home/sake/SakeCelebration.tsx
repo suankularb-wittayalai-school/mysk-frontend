@@ -61,10 +61,10 @@ const SakeCelebration: StylableFC = ({ style, className }) => {
       <Image
         src={SakeImage}
         alt={t("headshotAlt")}
-        className="absolute right-0 top-0 h-64 w-auto"
+        className="absolute right-0 top-8 h-64 w-auto sm:top-0"
       />
       <div
-        className={cn(`mt-64 flex h-full flex-col rounded-tl-[inherit]
+        className={cn(`relative mt-64 flex h-full flex-col rounded-t-[inherit]
           bg-surface p-6 text-on-surface sm:mt-0 sm:rounded-none
           sm:bg-transparent sm:pr-56 sm:text-on-surface-variant`)}
       >
