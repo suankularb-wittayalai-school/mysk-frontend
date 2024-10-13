@@ -1,6 +1,16 @@
 /** @param {string} lang */
 const formatters = (lang) => ({
   number: new Intl.NumberFormat(lang),
+  ordinal: {
+    /** @param {string} value */
+    format: (value) => {
+      if (lang === "th") return value;
+      const ordinalRules = new Intl.PluralRules(lang, { type: "ordinal" });
+      const suffixes = { one: "st", two: "nd", few: "rd", other: "th" };
+      const suffix = suffixes[ordinalRules.select(Number(value))];
+      return value + suffix;
+    },
+  },
   and: new Intl.ListFormat(lang, { type: "conjunction" }),
   or: new Intl.ListFormat(lang, { type: "disjunction" }),
   day: new Intl.DateTimeFormat(lang, { weekday: "long" }),
