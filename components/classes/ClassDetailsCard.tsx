@@ -57,7 +57,10 @@ const ClassDetailsCard: StylableFC<{
       {classroom && mysk.user && (
         <>
           <ClassHeader classroom={classroom} />
-          <LookupDetailsContent className="!overflow-auto">
+          <LookupDetailsContent
+            className={cn(`!overflow-auto rounded-lg sm:*:static
+              md:*:absolute`)}
+          >
             <LayoutGroup>
               {/* Schedule */}
               {(!isOwnClass || mysk.user.role !== UserRole.student) && (
