@@ -99,6 +99,8 @@ module.exports = {
       "search/documents/header",
       "search/documents/detail",
     ],
+    // News,
+    "rgx:/news(/\\[id\\])?$": ["news"],
     // Account
     "rgx:/account(/(about|contacts|certificates))?$": ["account/common"],
     "/account/about": [

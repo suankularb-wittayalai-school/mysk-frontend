@@ -3,10 +3,11 @@ import ArticleFormatter from "@/components/news/ArticleFormatter";
 import NewsImage from "@/components/news/NewsImage";
 import NewsMeta from "@/components/news/NewsMeta";
 import getNewsArticleByID from "@/utils/backend/news/getNewsArticleByID";
+import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { supabase } from "@/utils/supabase-backend";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage } from "@/utils/types/common";
 import { NewsArticle } from "@/utils/types/news";
 import {
   Actions,
@@ -16,8 +17,7 @@ import {
   Text,
 } from "@suankularb-components/react";
 import { GetStaticPaths, GetStaticProps } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import shortUUID from "short-uuid";
 
@@ -67,7 +67,10 @@ const NewsArticlePage: CustomPage<{ article: NewsArticle }> = ({ article }) => {
             className="md:col-span-4 md:col-start-2"
           />
 
-          <section className="flex flex-col justify-between gap-4 md:col-span-6 md:col-start-6">
+          <section
+            className={cn(`flex flex-col justify-between gap-4 md:col-span-6
+              md:col-start-6`)}
+          >
             <div>
               <Text
                 type="headline-large"
@@ -120,7 +123,7 @@ const NewsArticlePage: CustomPage<{ article: NewsArticle }> = ({ article }) => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { fromUUID, toUUID } = shortUUID();
 
   const id = params!.id as string;
@@ -141,13 +144,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   );
   if (error) return { notFound: true };
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
-      article,
-    },
-    revalidate: 300,
-  };
+  return { props: { article }, revalidate: 300 };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
