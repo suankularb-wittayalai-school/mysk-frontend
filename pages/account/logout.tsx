@@ -1,6 +1,7 @@
 import UserContext from "@/contexts/UserContext";
 import { CustomPage } from "@/utils/types/common";
 import { Progress } from "@suankularb-components/react";
+import { GetStaticProps } from "next";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { useContext, useEffect } from "react";
@@ -32,6 +33,8 @@ const LogOutPage: CustomPage = () => {
     </div>
   );
 };
+
+export const getStaticProps: GetStaticProps = () => ({ props: {} });
 
 LogOutPage.navType = "hidden";
 
