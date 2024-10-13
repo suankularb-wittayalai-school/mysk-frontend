@@ -59,8 +59,7 @@ const DateAttendancePage: CustomPage<{
   homeroomContent,
   classroom,
 }) => {
-  const { t: t } = useTranslation("attendance/day");
-  const { t: ta } = useTranslation("attendance/common");
+  const { t } = useTranslation("attendance/common");
   const { t: tx } = useTranslation("common");
 
   const plausible = usePlausible();
@@ -89,12 +88,12 @@ const DateAttendancePage: CustomPage<{
       <Head>
         <title>
           {tx("tabName", {
-            tabName: ta("title", { classNumber: classroom.number }),
+            tabName: t("title", { classNumber: classroom.number }),
           })}
         </title>
       </Head>
       <PageHeader parentURL="/classes">
-        {ta("title", { classNumber: classroom.number })}
+        {t("title", { classNumber: classroom.number })}
       </PageHeader>
       <ContentLayout className="*:lg:!items-center">
         <AttendanceViewSelector
@@ -106,13 +105,13 @@ const DateAttendancePage: CustomPage<{
           <Button
             appearance="outlined"
             icon={<MaterialIcon icon="bar_chart" />}
-            alt={ta("action.statistics")}
+            alt={t("action.statistics")}
             onClick={() => {
               setStatisticsOpen(true);
               plausible("Open School-wide Attendance Statistics");
             }}
           >
-            {ta("viewSelector.action.statistics")}
+            {t("viewSelector.action.statistics")}
           </Button>
           <AttendanceStatisticsDialog
             open={statisticsOpen}
@@ -152,7 +151,7 @@ const DateAttendancePage: CustomPage<{
                 }}
                 className="!mx-4 !mt-3 sm:!mx-0 md:!hidden"
               >
-                {t("action.editHomeroom")}
+                {t("attendance/day:action.editHomeroom")}
               </Button>
             )}
             <HomeroomContentDialog
