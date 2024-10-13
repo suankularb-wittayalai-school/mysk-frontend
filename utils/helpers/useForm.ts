@@ -7,7 +7,7 @@ import {
   FormControlValues,
 } from "@/utils/types/common";
 import { Snackbar } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { createElement, useContext, useMemo, useState } from "react";
 
 /**
