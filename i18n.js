@@ -45,6 +45,12 @@ module.exports = {
       "common/layout",
       "common/reportIssueDialog",
     ],
+    // Landing
+    "/": [
+      "landing/common",
+      "landing/accountNotFoundDialog",
+      "landing/gsiUnavailableDialog",
+    ],
     // Home pages
     "rgx:/(learn|teach)$": [
       "home/glance/birthday",
