@@ -41,7 +41,15 @@ module.exports = {
       "schedule/editor/hoverMenu",
     ],
     // Classes
-    "/classes": ["classes/list", "classes/header", "classes/detail"],
+    "rgx:/(classes|search/(students|teachers)/results)$": [
+      "classes/list",
+      "classes/header",
+      "classes/detail",
+      // FIXME: This is kinda stupid but Current Period Card uses it right now.
+      // Ideally there should be a role of Current Period Card that just pulls
+      // from `classes/detail` but I’m too lazy to do that right now.
+      "search/students/detail",
+    ],
     "rgx:/((classes/\\[classNumber\\]|manage/(classrooms|electives))/print)$": [
       "classes/print",
     ],

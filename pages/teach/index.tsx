@@ -154,7 +154,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "account",
         "home",
-        "classes",
       ])),
       schedule,
       teacher,

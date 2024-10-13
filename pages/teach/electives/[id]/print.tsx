@@ -7,7 +7,7 @@ import sortStudents from "@/utils/helpers/person/sortStudents";
 import { supabase } from "@/utils/supabase-backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
-import { Student, UserRole } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -103,7 +103,6 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
-        "classes",
         "elective",
       ])),
       electiveSubject,

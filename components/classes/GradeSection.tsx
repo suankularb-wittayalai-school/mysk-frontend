@@ -11,8 +11,8 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { useEffect, useState } from "react";
 
 /**
