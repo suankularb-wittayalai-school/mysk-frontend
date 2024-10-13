@@ -1,0 +1,19 @@
+{
+  "title": "Admin panel",
+  "supabase": {
+    "title": "Supabase",
+    "desc": "The MySK database is stored in Supabase and fetched via MySK API. View and edit tables in its dashboard.",
+    "action": {
+      "browse": "Browse",
+      "readDocs": "Read docs"
+    }
+  },
+  "schedule": {
+    "title": "Schedule editor",
+    "desc": "Correct any schedule import errors of any classroom using tools meant for teachers.",
+    "action": {
+      "continue": "Continue"
+    }
+  },
+  "warning": "Any changes made in this panel will immediately affect users. Proceed with caution."
+}

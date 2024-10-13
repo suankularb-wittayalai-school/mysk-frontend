@@ -136,6 +136,9 @@ module.exports = {
       "account/certificates/seatDialog",
     ],
     "/account/logout": ["account/logOut"],
+    // Admin Panel
+    "/admin": ["admin/landing"],
+    "/admin/schedule": ["admin/schedule", "admin/schedule/getClassroomDialog"],
   },
   logBuild: false,
   interpolation: {
