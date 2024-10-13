@@ -47,8 +47,10 @@ module.exports = {
     ],
     // Home pages
     "rgx:/(learn|teach)$": [
+      "home/glance/birthday",
       "home/glance/schedule",
       "home/glance/scheduleInaccurate",
+      "home/sakeCelebrationDialog",
       "home/subjectList",
     ],
     "/teach": ["home/classroomSubjectDialog", "home/subjectClassesDialog"],

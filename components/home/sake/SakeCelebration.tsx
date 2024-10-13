@@ -6,7 +6,7 @@ import getISODateString from "@/utils/helpers/getISODateString";
 import getLocaleYear from "@/utils/helpers/getLocaleYear";
 import { StylableFC } from "@/utils/types/common";
 import { Text } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
  * parody of those pop-ups celebrating holidays you see on Thai websites.
  */
 const SakeCelebration: StylableFC = ({ style, className }) => {
-  const { t } = useTranslation("home", { keyPrefix: "dialog.sakeCelebration" });
+  const { t } = useTranslation("home/sakeCelebrationDialog");
 
   const [open, setOpen] = useState(false);
 
@@ -69,9 +69,7 @@ const SakeCelebration: StylableFC = ({ style, className }) => {
           sm:bg-transparent sm:pr-56 sm:text-on-surface-variant`)}
       >
         <Text type="body-large" element="p">
-          {t("body", {
-            year: getLocaleYear("th", new Date().getFullYear(), "AD"),
-          })}
+          {t("body", { year: getLocaleYear("th", new Date().getFullYear()) })}
         </Text>
         <div aria-hidden className="min-h-4 grow" />
         <Text type="title-medium" element="p">
