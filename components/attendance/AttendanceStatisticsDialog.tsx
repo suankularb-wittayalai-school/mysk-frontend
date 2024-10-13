@@ -17,7 +17,7 @@ import {
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useEffect, useState } from "react";
 
 /**
@@ -33,9 +33,7 @@ const AttendanceStatisticsDialog: StylableFC<{
   date: string | Date;
   onClose: () => void;
 }> = ({ open, date, onClose, style, className }) => {
-  const { t } = useTranslation("attendance", {
-    keyPrefix: "viewSelector.dialog.statistics",
-  });
+  const { t } = useTranslation("attendance/statisticsDialog");
   const { t: tx } = useTranslation("common");
 
   const supabase = useSupabaseClient();

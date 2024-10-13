@@ -10,7 +10,7 @@ import { StudentAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import { Card, CardHeader } from "@suankularb-components/react";
 import { getDaysInMonth } from "date-fns";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { sift } from "radash";
 
 /**
@@ -27,7 +27,7 @@ const MonthStudentCard: StylableFC<{
   attendances: (Omit<StudentAttendance, "student"> & { date: string })[];
 }> = ({ student, attendances, date, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("attendance", { keyPrefix: "month" });
+  const { t: tx } = useTranslation("common");
 
   const interval = {
     start: date.setDate(1),
@@ -63,7 +63,7 @@ const MonthStudentCard: StylableFC<{
         }
         title={getLocaleName(locale, student)}
         subtitle={sift([
-          t("item.classNo", { classNo: student.class_no }),
+          tx("classNo", { classNo: student.class_no }),
           student.nickname?.th && getLocaleString(student.nickname, locale),
         ]).join(" • ")}
         className={cn(`!grid grid-cols-[2.5rem,minmax(0,1fr)]

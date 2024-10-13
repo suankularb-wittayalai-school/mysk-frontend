@@ -1,0 +1,23 @@
+{
+  "title": "การเช็กชื่อ ม.{{classNumber}}",
+  "viewSelector": {
+    "view": {
+      "title": "เลือกขอบเวลา…",
+      "date": "รายวัน",
+      "month": "รายเดือน"
+    },
+    "action": {
+      "print": "พิมพ์",
+      "statistics": "ดูสถิติโรงเรียน",
+      "date": {
+        "date": "{{date, dateshort}}",
+        "month": "{{date, monthshort}}"
+      }
+    }
+  },
+  "event": {
+    "title": "เลือกคาบ…",
+    "assembly": "เข้าแถว",
+    "homeroom": "โฮมรูม"
+  }
+}

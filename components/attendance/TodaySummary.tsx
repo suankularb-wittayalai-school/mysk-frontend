@@ -11,7 +11,7 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
 
@@ -37,7 +37,7 @@ const TodaySummary: StylableFC<{
   homeroomContent: HomeroomContent;
   classroomID: string;
 }> = ({ attendances, homeroomContent, classroomID, style, className }) => {
-  const { t } = useTranslation("attendance", { keyPrefix: "day" });
+  const { t } = useTranslation("attendance/day");
 
   // Count the number of students who are marked as late at Assembly.
   // Since being ”late” refers to arrving late to Assembly, we only count those

@@ -1,0 +1,35 @@
+{
+  "title": "{{late, number}} late • {{absent, number}} absent",
+  "item": {
+    "chip": {
+      "onTime": "P",
+      "late": "L",
+      "absent": "A"
+    },
+    "absenceType": {
+      "sick": "Sick",
+      "covid": "COVID-19",
+      "activity": "Activity",
+      "business": "Personal",
+      "absent": "Absent",
+      "dropped": "Dropped",
+      "other": "Other"
+    },
+    "enterReason": "Enter reason"
+  },
+  "homeroom": {
+    "title": "Homeroom",
+    "field": "What did you talk about?",
+    "action": {
+      "add": "Add homeroom",
+      "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel"
+    }
+  },
+  "action": {
+    "editHomeroom": "Edit homeroom content",
+    "clear": "Clear",
+    "markAll": "Mark all present"
+  }
+}

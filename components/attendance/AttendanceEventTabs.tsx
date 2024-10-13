@@ -1,8 +1,7 @@
-// Imports
 import { AttendanceEvent } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import { MaterialIcon, Tab, TabsContainer } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * Tabs for switching between Assembly and Homeroom Attendance.
@@ -14,7 +13,7 @@ const AttendanceEventTabs: StylableFC<{
   event: AttendanceEvent;
   onEventChange: (event: AttendanceEvent) => void;
 }> = ({ event, onEventChange, style, className }) => {
-  const { t } = useTranslation("attendance");
+  const { t } = useTranslation("attendance/common");
 
   return (
     <TabsContainer
