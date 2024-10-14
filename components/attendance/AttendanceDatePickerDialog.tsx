@@ -21,7 +21,7 @@ import {
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { isFuture, isPast, isWeekend } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 
@@ -41,9 +41,7 @@ const AttendanceDatePickerDialog: StylableFC<{
   onClose: () => void;
   onSubmit: ({ date, classroom }: { date: string; classroom: string }) => void;
 }> = ({ open, view, type, onClose, onSubmit, style, className }) => {
-  const { t } = useTranslation("attendance", {
-    keyPrefix: "viewSelector.dialog.date",
-  });
+  const { t } = useTranslation("attendance/dateDialog");
 
   const router = useRouter();
   const supabase = useSupabaseClient();

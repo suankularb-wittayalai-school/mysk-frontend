@@ -5,7 +5,7 @@ import {
 } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import { ChipSet, FilterChip } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * The text to put in the `absence_reason` field when the absence is due to
@@ -23,7 +23,7 @@ const AbsenceTypeSelector: StylableFC<{
   attendance: StudentAttendance[AttendanceEvent];
   onChange: (attendance: StudentAttendance[AttendanceEvent]) => void;
 }> = ({ attendance, onChange, style, className }) => {
-  const { t } = useTranslation("attendance", { keyPrefix: "item.absenceType" });
+  const { t } = useTranslation("attendance/day");
 
   const value = attendance.absence_type;
 
@@ -52,7 +52,7 @@ const AbsenceTypeSelector: StylableFC<{
         }
         onClick={() => handleTypeChange(AbsenceType.sick)}
       >
-        {t("sick")}
+        {t("item.absenceType.sick")}
       </FilterChip>
       <FilterChip
         selected={attendance.absence_reason === COVID_REASON}
@@ -65,7 +65,7 @@ const AbsenceTypeSelector: StylableFC<{
           })
         }
       >
-        {t("covid")}
+        {t("item.absenceType.covid")}
       </FilterChip>
       <FilterChip
         selected={value === AbsenceType.activity}
@@ -78,31 +78,31 @@ const AbsenceTypeSelector: StylableFC<{
           })
         }
       >
-        {t("activity")}
+        {t("item.absenceType.activity")}
       </FilterChip>
       <FilterChip
         selected={value === AbsenceType.business}
         onClick={() => handleTypeChange(AbsenceType.business)}
       >
-        {t("business")}
+        {t("item.absenceType.business")}
       </FilterChip>
       <FilterChip
         selected={value === AbsenceType.absent}
         onClick={() => handleTypeChange(AbsenceType.absent)}
       >
-        {t("absent")}
+        {t("item.absenceType.absent")}
       </FilterChip>
       <FilterChip
         selected={value === AbsenceType.dropped}
         onClick={() => handleTypeChange(AbsenceType.dropped)}
       >
-        {t("dropped")}
+        {t("item.absenceType.dropped")}
       </FilterChip>
       <FilterChip
         selected={value === AbsenceType.other}
         onClick={() => handleTypeChange(AbsenceType.other)}
       >
-        {t("other")}
+        {t("item.absenceType.other")}
       </FilterChip>
     </ChipSet>
   );

@@ -1,0 +1,14 @@
+{
+  "desc": "Enter the date and classroom to go to.",
+  "form": {
+    "date": "Date",
+    "classroom": "Classroom"
+  },
+  "action": {
+    "cancel": "Cancel",
+    "go": "Go"
+  },
+  "snackbar": {
+    "classNotFound": "Class not found"
+  }
+}

@@ -20,8 +20,8 @@ import {
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { isToday } from "date-fns";
 import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { mapValues, omit } from "radash";
 import { useContext } from "react";
 
@@ -49,7 +49,7 @@ const AttendanceBulkActions: StylableFC<{
   style,
   className,
 }) => {
-  const { t } = useTranslation("attendance", { keyPrefix: "day" });
+  const { t } = useTranslation("attendance/day");
   const { t: tx } = useTranslation("common");
 
   const plausible = usePlausible();

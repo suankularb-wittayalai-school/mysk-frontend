@@ -20,7 +20,6 @@ import { DURATION, SplitLayout } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { alphabetical, camel, sort } from "radash";
@@ -142,17 +141,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     (student) => student.classroom?.number || 1000,
   );
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "attendance",
-        "classes",
-      ])),
-      filters,
-      students,
-    },
-  };
+  return { props: { filters, students } };
 };
 
 export default SearchStudentsResultsPage;

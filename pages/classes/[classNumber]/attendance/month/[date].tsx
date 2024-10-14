@@ -11,17 +11,16 @@ import tallyAttendances from "@/utils/helpers/attendance/tallyAttendances";
 import { supabase } from "@/utils/supabase-backend";
 import { StudentAttendance } from "@/utils/types/attendance";
 import { Classroom } from "@/utils/types/classroom";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage } from "@/utils/types/common";
 import { ContentLayout } from "@suankularb-components/react";
 import { GetStaticPaths, GetStaticProps } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { group } from "radash";
 
 /**
  * Month Attendance page displays Attendance of a Classroom of a specific month.
- * 
+ *
  * @param date The month to display Attendance for in `YYYY-MM`.
  * @param classroom The Classroom to display Attendance for.
  * @param students The list of Students in the Classroom with their Attendance.
@@ -34,7 +33,7 @@ const MonthAttendancePage: CustomPage<{
     attendances: (Omit<StudentAttendance, "student"> & { date: string })[];
   }[];
 }> = ({ date, classroom, students }) => {
-  const { t } = useTranslation("attendance");
+  const { t } = useTranslation("attendance/common");
   const { t: tx } = useTranslation("common");
 
   return (
@@ -91,7 +90,7 @@ const MonthAttendancePage: CustomPage<{
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { classNumber, date } = params as { [key: string]: string };
 
   const { data: classroom, error } = await getClassroomByNumber(
@@ -106,18 +105,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
     date as `${number}-${number}`,
   );
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "attendance",
-      ])),
-      date,
-      classroom,
-      students,
-    },
-    revalidate: 10,
-  };
+  return { props: { date, classroom, students }, revalidate: 10 };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => ({

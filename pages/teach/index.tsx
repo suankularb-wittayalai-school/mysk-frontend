@@ -150,12 +150,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "account",
-        "home",
-        "classes",
-      ])),
+      ...(await serverSideTranslations(locale as LangCode, ["common"])),
       schedule,
       teacher,
       teachingSubjects,

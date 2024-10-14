@@ -1,0 +1,7 @@
+{
+  "title": "News",
+  "date": "{{date, date}}",
+  "action": {
+    "share": "Share"
+  }
+}

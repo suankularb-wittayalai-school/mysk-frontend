@@ -13,13 +13,11 @@ import useListDetail from "@/utils/helpers/search/useListDetail";
 import useBreakpoint, { Breakpoint } from "@/utils/helpers/useBreakpoint";
 import { supabase } from "@/utils/supabase-backend";
 import { Classroom } from "@/utils/types/classroom";
-import { LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { SplitLayout } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { LayoutGroup } from "framer-motion";
 import { GetStaticProps, NextPage } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { first, group } from "radash";
@@ -155,13 +153,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
   const { data: classrooms } = await getLookupClassrooms(supabase);
 
   return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "attendance",
-      ])),
-      classrooms,
-    },
+    props: { classrooms },
     revalidate: 300,
   };
 };

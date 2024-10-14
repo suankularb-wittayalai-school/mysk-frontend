@@ -1,0 +1,7 @@
+{
+  "title": "Account not found",
+  "desc": "There might be a problem with your account. If you are a current student, please report this issue via <0>this form</0>.",
+  "action": {
+    "gotIt": "Got it"
+  }
+}

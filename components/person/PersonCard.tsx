@@ -6,7 +6,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { Person, Student, Teacher, UserRole } from "@/utils/types/person";
 import { Card, CardHeader } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { sift } from "radash";
 import { ComponentProps, useState } from "react";
 
@@ -35,7 +35,7 @@ const PersonCard: StylableFC<
   }
 > = ({ person, options, ...props }) => {
   const locale = useLocale();
-  const { t } = useTranslation("common");
+  const { t: tx } = useTranslation("common");
 
   const [detailsOpen, setDetailsOpen] = useState(false);
 
@@ -64,8 +64,8 @@ const PersonCard: StylableFC<
             person.role === UserRole.student && (person as Student).classroom
               ? sift([
                   !options?.hideClassroomInSubtitle &&
-                    t("class", (person as Student).classroom!),
-                  t("classNo", { classNo: (person as Student).class_no }),
+                    tx("class", (person as Student).classroom!),
+                  tx("classNo", { classNo: (person as Student).class_no }),
                 ]).join(" • ")
               : (person as Teacher).subject_group &&
                 getLocaleString((person as Teacher).subject_group.name, locale),
@@ -73,7 +73,7 @@ const PersonCard: StylableFC<
               person.nickname?.th &&
               getLocaleString(person.nickname, locale),
           ]).join(" • ")}
-          className="[&_h3]:!leading-none [&_h3]:my-1"
+          className="[&_h3]:my-1 [&_h3]:!leading-none"
         />
       </Card>
     </WithPersonDetails>

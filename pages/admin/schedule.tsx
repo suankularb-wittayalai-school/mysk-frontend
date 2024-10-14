@@ -6,7 +6,7 @@ import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { Classroom } from "@/utils/types/classroom";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import {
@@ -19,8 +19,7 @@ import {
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetStaticProps } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { alphabetical, unique } from "radash";
 import { useState } from "react";
@@ -32,7 +31,7 @@ import Balancer from "react-wrap-balancer";
  */
 const ScheduleEditorPage: CustomPage = () => {
   const locale = useLocale();
-  const { t } = useTranslation("admin", { keyPrefix: "schedule" });
+  const { t } = useTranslation("admin/schedule");
   const { t: tx } = useTranslation("common");
 
   const supabase = useSupabaseClient();
@@ -166,10 +165,6 @@ const ScheduleEditorPage: CustomPage = () => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale as LangCode, ["common", "admin"])),
-  },
-});
+export const getStaticProps: GetStaticProps = () => ({ props: {} });
 
 export default ScheduleEditorPage;

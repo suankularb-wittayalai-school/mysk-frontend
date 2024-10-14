@@ -1,0 +1,13 @@
+{
+  "title": "Schedule editor",
+  "empty": "Load a schedule to get started.",
+  "view": {
+    "title": "Choose view…",
+    "student": "Clasroom",
+    "teacher": "Teacher"
+  },
+  "mergeOverlapping": "Merge overlapping",
+  "action": {
+    "getClassroom": "Get classroom"
+  }
+}

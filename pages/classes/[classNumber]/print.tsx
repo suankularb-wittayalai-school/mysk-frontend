@@ -102,10 +102,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "classes",
-      ])),
+      ...(await serverSideTranslations(locale as LangCode, ["common"])),
       classroom,
       students: sort(students!, (student) => student.class_no || 0),
     },

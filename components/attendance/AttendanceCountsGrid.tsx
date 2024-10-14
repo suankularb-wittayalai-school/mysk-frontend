@@ -1,11 +1,11 @@
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { MaterialIcon } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * Displays a grid of numbers for presence, late, on leave, and absence.
- * 
+ *
  * @param counts The counts of each Attendance status as returned from `getAttendanceSummary`.
  */
 const AttendanceCountsGrid: StylableFC<{
@@ -13,7 +13,7 @@ const AttendanceCountsGrid: StylableFC<{
     [key in "present" | "late" | "onLeave" | "absent" | "empty"]: number;
   };
 }> = ({ counts, style, className }) => {
-  const { t } = useTranslation("attendance", { keyPrefix: "month" });
+  const { t } = useTranslation("attendance/month");
 
   return (
     <ul

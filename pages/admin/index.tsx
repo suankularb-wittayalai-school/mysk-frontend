@@ -1,7 +1,7 @@
 import PageHeader from "@/components/common/PageHeader";
 import ManagePageCard from "@/components/manage/ManagePageCard";
 import cn from "@/utils/helpers/cn";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage } from "@/utils/types/common";
 import {
   Button,
   Columns,
@@ -10,9 +10,8 @@ import {
   Text,
 } from "@suankularb-components/react";
 import { GetStaticProps } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import Link from "next/link";
 import { ForwardedRef, forwardRef } from "react";
@@ -22,7 +21,7 @@ import { ForwardedRef, forwardRef } from "react";
  * schedule editor.
  */
 const AdminPanelPage: CustomPage = () => {
-  const { t } = useTranslation("admin");
+  const { t } = useTranslation("admin/landing");
   const { t: tx } = useTranslation("common");
 
   const plausible = usePlausible();
@@ -97,10 +96,6 @@ const AdminPanelPage: CustomPage = () => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale as LangCode, ["common", "admin"])),
-  },
-});
+export const getStaticProps: GetStaticProps = () => ({ props: {} });
 
 export default AdminPanelPage;

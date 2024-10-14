@@ -1,11 +1,10 @@
-// Imports
 import NewsImage from "@/components/news/NewsImage";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { NewsArticle } from "@/utils/types/news";
 import { Interactive, Text } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { FC } from "react";
 import shortUUID from "short-uuid";
@@ -73,7 +72,10 @@ const LatestArticlesSection: FC<{
           className={cn(`p-2 px-4 sm:col-span-2 sm:-m-2 sm:rounded-lg sm:px-2
             md:col-span-1`)}
         >
-          <article className="grid grid-cols-4 gap-x-4 gap-y-3 sm:gap-x-6 md:grid-cols-1">
+          <article
+            className={cn(`grid grid-cols-4 gap-x-4 gap-y-3 sm:gap-x-6
+              md:grid-cols-1`)}
+          >
             <NewsImage
               image={asideArticle.image}
               priority

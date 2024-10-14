@@ -1,0 +1,23 @@
+{
+  "title": "M.{{classNumber}} attendance",
+  "viewSelector": {
+    "view": {
+      "title": "Choose scope…",
+      "date": "Daily",
+      "month": "Monthly"
+    },
+    "action": {
+      "print": "Print",
+      "statistics": "View statistics",
+      "date": {
+        "date": "{{date, dateshort}}",
+        "month": "{{date, monthshort}}"
+      }
+    }
+  },
+  "event": {
+    "title": "Choose event…",
+    "assembly": "Assembly",
+    "homeroom": "Homeroom"
+  }
+}

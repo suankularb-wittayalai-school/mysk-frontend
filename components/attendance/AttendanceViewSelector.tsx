@@ -9,7 +9,7 @@ import {
   SegmentedButton,
 } from "@suankularb-components/react";
 import { isToday } from "date-fns";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { ReactNode, useState } from "react";
 
@@ -44,7 +44,7 @@ const AttendanceViewSelector: StylableFC<{
   classroom: Pick<Classroom, "number">;
   date: string;
 }> = ({ children, view, classroom, date, style, className }) => {
-  const { t } = useTranslation("attendance", { keyPrefix: "viewSelector" });
+  const { t } = useTranslation("attendance/common");
 
   const router = useRouter();
 
@@ -103,7 +103,7 @@ const AttendanceViewSelector: StylableFC<{
       )}
     >
       <SegmentedButton
-        alt={t("view.title")}
+        alt={t("viewSelector.view.title")}
         className="!grid grow !grid-cols-2 md:!flex"
       >
         {[AttendanceView.date, AttendanceView.month].map((buttonView) => (
@@ -113,7 +113,7 @@ const AttendanceViewSelector: StylableFC<{
             selected={view === buttonView}
             onClick={() => handleChangeView(buttonView)}
           >
-            {t(`view.${buttonView}`)}
+            {t(`viewSelector.view.${buttonView}`)}
           </Button>
         ))}
       </SegmentedButton>
@@ -138,7 +138,7 @@ const AttendanceViewSelector: StylableFC<{
             : undefined
         }
       >
-        {t(`action.date.${view}`, { date: new Date(date) })}
+        {t(`viewSelector.action.date.${view}`, { date: new Date(date) })}
       </Button>
       <AttendanceDatePickerDialog
         open={datePickerOpen}
