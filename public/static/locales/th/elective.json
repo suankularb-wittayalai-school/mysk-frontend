@@ -5,6 +5,7 @@
   "list": {
     "searchAlt": "ค้นหาวิชาเลือก",
     "enrolled": "ที่ลงทะเบียนอยู่",
+    "previouslyEnrolled": "เคยเรียนแล้ว",
     "enrollment": {
       "alt": "ลงทะเบียนแล้ว {{count}} คน จาก {{max}} คน",
       "label": "<0>{{count}}</0>/{{max}}",
