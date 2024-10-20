@@ -6,7 +6,7 @@ import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { Card, Text } from "@suankularb-components/react";
 import { getDaysInMonth, lastDayOfMonth } from "date-fns";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { list, omit } from "radash";
 
 /**
@@ -22,7 +22,7 @@ const MonthAttendanceSummary: StylableFC<{
   classroom: Pick<Classroom, "number">;
   counts: ({ date: Date } & ReturnType<typeof tallyAttendances>)[];
 }> = ({ date, classroom, counts, style, className }) => {
-  const { t } = useTranslation("attendance", { keyPrefix: "month.summary" });
+  const { t } = useTranslation("attendance/month");
   const { t: tx } = useTranslation("common");
 
   const formattedCounts = (() => {
@@ -58,7 +58,7 @@ const MonthAttendanceSummary: StylableFC<{
           element="p"
           className="text-on-surface-variant"
         >
-          {t("subtitle", { date })}
+          {t("summary.subtitle", { date })}
         </Text>
       </hgroup>
       <div className="overflow-auto md:contents">

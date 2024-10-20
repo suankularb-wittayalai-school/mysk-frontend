@@ -1,0 +1,16 @@
+{
+  "legend": {
+    "present": "Present",
+    "late": "Late",
+    "onLeave": "On leave",
+    "absent": "Absent",
+    "empty": "No data"
+  },
+  "chart": "Chart",
+  "summary": {
+    "subtitle": "{{date, month}}"
+  },
+  "item": {
+    "day": "{{date, dateonly}}"
+  }
+}

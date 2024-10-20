@@ -6,8 +6,8 @@ import { StylableFC } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
 import { MaterialIcon } from "@suankularb-components/react";
 import { differenceInYears } from "date-fns";
-import { TOptions } from "i18next";
-import { Trans, useTranslation } from "next-i18next";
+import Trans from "next-translate/Trans";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * A Glance that celebrates a Student’s birthday.
@@ -35,8 +35,7 @@ const BirthdayGlance: StylableFC<{
       className={className}
     >
       <Trans
-        i18nKey="glance.birthday"
-        ns="home"
+        i18nKey="home/glance/birthday:body"
         values={{
           name: person!.nickname?.th
             ? getLocaleString(person!.nickname, locale)
@@ -44,7 +43,7 @@ const BirthdayGlance: StylableFC<{
                 middleName: false,
                 lastName: false,
               }),
-          year: tx("ordinal", { count: age, ordinal: true } as TOptions),
+          year: tx("ordinal", { count: age }),
         }}
         components={{ b: <strong /> }}
       />

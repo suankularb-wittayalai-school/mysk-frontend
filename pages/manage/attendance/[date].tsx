@@ -36,6 +36,7 @@ import Image from "next/image";
 import router from "next/router";
 import { mapValues } from "radash";
 import { useState } from "react";
+import useNextTranslation from "next-translate/useTranslation";
 
 /**
  * The Attendance Overview page displays the Attendance of all Classrooms in the
@@ -52,7 +53,7 @@ const AttendanceOverviewPage: CustomPage<{
   };
 }> = ({ date, attendances: { grades, classrooms } }) => {
   const { t } = useTranslation("manage", { keyPrefix: "attendance" });
-  const { t: ta } = useTranslation("attendance");
+  const { t: ta } = useNextTranslation("attendance/common"); // Temporary until full Manage migration
   const { t: tx } = useTranslation("common");
 
   /**
@@ -158,7 +159,10 @@ const AttendanceOverviewPage: CustomPage<{
                     {t("chart.summary.late", { count: totals.late })}
                   </Text>
                 </div>
-                <div className="flex h-1 flex-row gap-1 overflow-hidden rounded-full *:rounded-full">
+                <div
+                  className={cn(`flex h-1 flex-row gap-1 overflow-hidden
+                    rounded-full *:rounded-full`)}
+                >
                   <div className="grow bg-primary" />
                   <div
                     style={{
@@ -200,7 +204,6 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
-        "attendance",
         "manage",
       ])),
       date,

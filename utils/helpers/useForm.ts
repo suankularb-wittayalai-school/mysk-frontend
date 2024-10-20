@@ -1,4 +1,3 @@
-// Imports
 import SnackbarContext from "@/contexts/SnackbarContext";
 import useLocale from "@/utils/helpers/useLocale";
 import {
@@ -8,7 +7,7 @@ import {
   FormControlValues,
 } from "@/utils/types/common";
 import { Snackbar } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { createElement, useContext, useMemo, useState } from "react";
 
 /**
@@ -17,14 +16,16 @@ import { createElement, useContext, useMemo, useState } from "react";
  * @param formSpecs The form specifications: an array of objects with the key, the default value, and a validation function for that field.
  *
  * @returns
- * `form` — Form values;
- * `setForm` — Form values setter;
- * `resetForm` — Replace all form values with defaults;
- * `openFormSnackbar` — Show a Snackbar if the form is invalid;
- * `formValids` — Validation result for each field;
- * `formValidsStrict` — Validation result for each field, taking `required` into account;
- * `formOK` — If the form as a whole is valid;
- * `formProps` — Props for each field’s Text Field or Select component.
+ * | Property           | Description                                                                 |
+ * | ------------------ | --------------------------------------------------------------------------- |
+ * | `form`             | Form values                                                                 |
+ * | `setForm`          | Form values setter                                                          |
+ * | `resetForm`        | Replace all form values with defaults                                       |
+ * | `openFormSnackbar` | Show a Snackbar if the form is invalid                                      |
+ * | `formValids`       | Validation result for each field                                            |
+ * | `formValidsStrict` | Validation result for each field, taking `required` into account            |
+ * | `formOK`           | If the form as a whole is valid                                             |
+ * | `formProps`        | Props for each field’s Text Field or Select component                       |
  */
 export default function useForm<KeyEnum extends string | symbol>(
   formSpecs: {
@@ -41,7 +42,7 @@ export default function useForm<KeyEnum extends string | symbol>(
   // Snackbar
   const { setSnackbar } = useContext(SnackbarContext);
 
-  // An object with default values
+  /** An object with default values. */
   const defaultForm = useMemo<FormControlValues<KeyEnum>>(
     () =>
       formSpecs.reduce(
@@ -51,13 +52,13 @@ export default function useForm<KeyEnum extends string | symbol>(
     [formSpecs],
   );
 
-  // The actual “form control” part of this
+  // The actual “form control” part of this.
   const [formValues, setFormValues] =
     useState<FormControlValues<KeyEnum>>(defaultForm);
 
   // Form validation
 
-  // Both form valid states and error messages
+  // Both form valid states and error messages.
   const formMessages: FormControlValidsWMessages<KeyEnum> = Object.keys(
     formValues,
   ).reduce((form, key, idx) => {
@@ -72,7 +73,7 @@ export default function useForm<KeyEnum extends string | symbol>(
     };
   }, {} as FormControlValids<KeyEnum>);
 
-  // Form error states
+  /** Form error states. */
   const formValids: FormControlValids<KeyEnum> = Object.keys(
     formMessages,
   ).reduce((form, key) => {
@@ -85,7 +86,7 @@ export default function useForm<KeyEnum extends string | symbol>(
     };
   }, {} as FormControlValids<KeyEnum>);
 
-  // Form validation (taking into account `required`)
+  /** Form validation (taking into account `required`). */
   const formValidsStrict: FormControlValids<KeyEnum> = Object.keys(
     formValids,
   ).reduce((form, key, idx) => {
@@ -99,12 +100,11 @@ export default function useForm<KeyEnum extends string | symbol>(
   }, {} as FormControlValids<KeyEnum>);
   const formOK = Object.values(formValidsStrict).every((valid) => valid);
 
-  // Props for a Text Field/Select
+  /** Props for a Text Field/Select. */
   const formProps: FormControlProps<KeyEnum> = Object.keys(formValues).reduce(
     (form, key, idx) => ({
       ...form,
       [key]: {
-        // (@SiravitPhokeed)
         // The spread operator is used as to not override the original helper
         // message with `undefined` when there is no error. Otherwise, the
         // original helper message would never be shown.
@@ -129,9 +129,7 @@ export default function useForm<KeyEnum extends string | symbol>(
   );
 
   return {
-    /**
-     * An object with values representing the value inside each field.
-     */
+    /** An object with values representing the value inside each field. */
     form: formValues,
 
     /**
@@ -177,14 +175,10 @@ export default function useForm<KeyEnum extends string | symbol>(
      */
     formValidsStrict,
 
-    /**
-     * If all fields inside the form are valid.
-     */
+    /** If all fields inside the form are valid. */
     formOK,
 
-    /**
-     * Props for each field’s Text Field or Select component.
-     */
+    /** Props for each field’s Text Field or Select component. */
     formProps,
   };
 }

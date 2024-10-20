@@ -6,7 +6,7 @@ import {
 } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import { ChipSet, InputChip } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * A Chip Set for selecting an Attendance of a Student.
@@ -20,7 +20,8 @@ const AttendanceSelector: StylableFC<{
   shownEvent: AttendanceEvent;
   onChange: (attendance: StudentAttendance[AttendanceEvent]) => void;
 }> = ({ attendance, shownEvent, onChange, style, className }) => {
-  const { t } = useTranslation("attendance", { keyPrefix: "item" });
+  const { t } = useTranslation("attendance/day");
+
   return (
     <ChipSet style={style} className={className}>
       <InputChip
@@ -41,28 +42,30 @@ const AttendanceSelector: StylableFC<{
             }
           : null)}
       >
-        <span className="-mx-1">{t("chip.onTime")}</span>
+        <span className="-mx-1">{t("item.chip.onTime")}</span>
       </InputChip>
-      <InputChip
-        onClick={() => {
-          onChange({
-            ...attendance[shownEvent],
-            is_present: false,
-            absence_type: AbsenceType.late,
-            absence_reason: null,
-          });
-        }}
-        {...(attendance[shownEvent].absence_type === AbsenceType.late
-          ? {
-              selected: true,
-              className: cn(`!bg-tertiary-container
-              !text-on-tertiary-container
-              state-layer:!bg-on-tertiary-container`),
-            }
-          : null)}
-      >
-        <span className="-mx-1">{t("chip.late")}</span>
-      </InputChip>
+      {shownEvent === "assembly" && (
+        <InputChip
+          onClick={() => {
+            onChange({
+              ...attendance[shownEvent],
+              is_present: false,
+              absence_type: AbsenceType.late,
+              absence_reason: null,
+            });
+          }}
+          {...(attendance[shownEvent].absence_type === AbsenceType.late
+            ? {
+                selected: true,
+                className: cn(`!bg-tertiary-container
+                  !text-on-tertiary-container
+                  state-layer:!bg-on-tertiary-container`),
+              }
+            : null)}
+        >
+          <span className="-mx-1">{t("item.chip.late")}</span>
+        </InputChip>
+      )}
       <InputChip
         onClick={() => {
           onChange({
@@ -81,7 +84,7 @@ const AttendanceSelector: StylableFC<{
             }
           : null)}
       >
-        <span className="-mx-1">{t("chip.absent")}</span>
+        <span className="-mx-1">{t("item.chip.absent")}</span>
       </InputChip>
     </ChipSet>
   );

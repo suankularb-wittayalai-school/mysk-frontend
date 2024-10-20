@@ -40,7 +40,7 @@
     "bigGaruda": "หนังสือออก",
     "other": "อื่น ๆ"
   },
-  "ordinal": "{{count, number}}",
+  "ordinal": "{{count, ordinal}}",
   "snackbar": {
     "changesSaved": "บันทึกการแก้ไขสำเร็จ",
     "failure": "เกิดข้อผิดพลาด โปรดลองอีกครั้ง",

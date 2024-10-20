@@ -1,0 +1,3 @@
+{
+  "body": "<b>Today is {{name}}'s {{year}} birthday!</b> Get them something nice."
+}

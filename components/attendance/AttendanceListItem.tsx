@@ -30,7 +30,7 @@ import {
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { sift } from "radash";
 import { useContext, useState } from "react";
 
@@ -51,7 +51,7 @@ const AttendanceListItem: StylableFC<{
   onAttendanceChange: (attendance: StudentAttendance) => void;
 }> = ({ attendance, shownEvent, date, editable, onAttendanceChange }) => {
   const locale = useLocale();
-  const { t } = useTranslation("attendance", { keyPrefix: "item" });
+  const { t } = useTranslation("attendance/day");
   const { t: tx } = useTranslation("common");
 
   const supabase = useSupabaseClient();
@@ -181,7 +181,7 @@ const AttendanceListItem: StylableFC<{
           <ListItemContent
             title={getLocaleName(locale, attendance.student)}
             desc={sift([
-              t("classNo", { classNo: attendance.student.class_no }),
+              tx("classNo", { classNo: attendance.student.class_no }),
               (attendance.student.nickname?.th ||
                 attendance.student.nickname?.["en-US"]) &&
                 getLocaleString(attendance.student.nickname, locale),
@@ -216,7 +216,7 @@ const AttendanceListItem: StylableFC<{
           >
             <TextField<string>
               appearance="outlined"
-              label={t("enterReason")}
+              label={t("item.enterReason")}
               value={attendance[shownEvent].absence_reason || ""}
               onChange={(absence_reason) => {
                 setAttendanceOfShownEvent({

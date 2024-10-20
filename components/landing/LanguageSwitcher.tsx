@@ -3,8 +3,8 @@ import usePreferences from "@/utils/helpers/usePreferences";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import { LangCode, StylableFC } from "@/utils/types/common";
 import { Button, SegmentedButton } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -16,9 +16,7 @@ const LanguageSwitcher: StylableFC = ({ style, className }) => {
   const [visibleLocale, setVisibleLocale] = useState<LangCode>(
     locale as LangCode,
   );
-  const { t } = useTranslation("landing", {
-    keyPrefix: "aside.languageSwitcher",
-  });
+  const { t } = useTranslation("landing/common");
 
   const plausible = usePlausible();
   const { setPreference } = usePreferences();
@@ -54,7 +52,7 @@ const LanguageSwitcher: StylableFC = ({ style, className }) => {
           selected={visibleLocale === locale}
           onClick={() => changeLocaleTo(locale)}
         >
-          {t(locale)}
+          {t(`aside.languageSwitcher.${locale}`)}
         </Button>
       ))}
     </SegmentedButton>

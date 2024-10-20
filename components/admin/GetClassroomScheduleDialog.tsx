@@ -16,14 +16,14 @@ import {
   TextField,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { useContext } from "react";
 
 /**
  * A Dialog to get the Classroom to load the Schedule for. Doesn’t actually load
  * the Schedule, just gets the Classroom.
- * 
+ *
  * @param open Whether the Dialog is open and shown.
  * @param onClose Triggers when the Dialog is closed.
  * @param onSubmit Triggers when the Classroom is submitted.
@@ -33,9 +33,7 @@ const GetClassroomScheduleDialog: StylableFC<{
   onClose: () => void;
   onSubmit: (classroom: Pick<Classroom, "id" | "number">) => void;
 }> = ({ open, onClose, onSubmit, style, className }) => {
-  const { t } = useTranslation("admin", {
-    keyPrefix: "schedule.dialog.getClassroom",
-  });
+  const { t } = useTranslation("admin/schedule/getClassroomDialog");
   const { t: tx } = useTranslation("common");
 
   const { form, formOK, openFormSnackbar, formProps } = useForm<"classroom">([

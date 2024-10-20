@@ -11,8 +11,8 @@ import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student, UserRole } from "@/utils/types/person";
 import { GetStaticPaths, GetStaticProps } from "next";
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { sift, sort } from "radash";
 
@@ -31,7 +31,7 @@ const ClassroomPrintPage: CustomPage<{
   >;
   students: Student[];
 }> = ({ classroom, students }) => {
-  const { t } = useTranslation("classes", { keyPrefix: "print" });
+  const { t } = useTranslation("classes/print");
   const { t: tx } = useTranslation("common");
 
   const mysk = useMySKClient();
@@ -102,10 +102,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "classes",
-      ])),
+      ...(await serverSideTranslations(locale as LangCode, ["common"])),
       classroom,
       students: sort(students!, (student) => student.class_no || 0),
     },

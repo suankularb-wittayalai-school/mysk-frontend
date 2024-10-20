@@ -3,7 +3,7 @@ import { HomeroomView } from "@/components/attendance/TodaySummary";
 import useHomeroomContent from "@/utils/helpers/attendance/useHomeroomContent";
 import { HomeroomContent } from "@/utils/types/attendance";
 import { Actions, Button, TextField } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { FC } from "react";
 
 /**
@@ -18,7 +18,7 @@ const HomeroomContentEditor: FC<{
   classroomID: string;
   onViewChange: (view: HomeroomView) => void;
 }> = ({ homeroomContent, classroomID, onViewChange }) => {
-  const { t } = useTranslation("attendance", { keyPrefix: "day.homeroom" });
+  const { t } = useTranslation("attendance/day");
 
   const { field, setField, handleCancel, handleSave, loading } =
     useHomeroomContent(
@@ -37,7 +37,7 @@ const HomeroomContentEditor: FC<{
     <>
       <TextField<string>
         appearance="outlined"
-        label={t("field")}
+        label={t("homeroom.field")}
         behavior="multi-line"
         value={field}
         onChange={setField}
@@ -46,10 +46,10 @@ const HomeroomContentEditor: FC<{
       />
       <Actions>
         <Button appearance="text" onClick={handleCancel}>
-          {t("action.cancel")}
+          {t("homeroom.action.cancel")}
         </Button>
         <Button appearance="filled" disabled={loading} onClick={handleSave}>
-          {t("action.save")}
+          {t("homeroom.action.save")}
         </Button>
       </Actions>
     </>

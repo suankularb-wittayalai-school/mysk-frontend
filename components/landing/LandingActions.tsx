@@ -4,8 +4,8 @@ import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { Actions, Button, MaterialIcon } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { ForwardedRef, forwardRef } from "react";
 
 /**
@@ -13,7 +13,7 @@ import { ForwardedRef, forwardRef } from "react";
  */
 const LandingActions: StylableFC = ({ style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("landing", { keyPrefix: "action" });
+  const { t } = useTranslation("landing/common");
 
   const plausible = usePlausible();
 
@@ -44,7 +44,7 @@ const LandingActions: StylableFC = ({ style, className }) => {
           <a ref={ref} {...props} target="_blank" rel="noreferrer" />
         ))}
       >
-        {t("help")}
+        {t("action.help")}
       </Button>
       <ReportIssueButton location="Landing" />
       <Button
@@ -59,7 +59,7 @@ const LandingActions: StylableFC = ({ style, className }) => {
           <a ref={ref} {...props} target="_blank" />
         ))}
       >
-        {t("new")}
+        {t("action.new")}
       </Button>
     </Actions>
   );

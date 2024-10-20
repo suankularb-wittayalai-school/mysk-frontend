@@ -9,7 +9,7 @@ import {
   DialogHeader,
   TextField,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * Dialog to edit Homeroom Content.
@@ -25,9 +25,7 @@ const HomeroomContentDialog: StylableFC<{
   classroomID: string;
   onClose: () => void;
 }> = ({ open, homeroomContent, classroomID, onClose, style, className }) => {
-  const { t } = useTranslation("attendance", {
-    keyPrefix: "day.dialog.homeroom",
-  });
+  const { t } = useTranslation("attendance/homeroomDialog");
 
   const { field, setField, handleCancel, handleSave, loading } =
     useHomeroomContent(homeroomContent, classroomID, onClose, onClose);

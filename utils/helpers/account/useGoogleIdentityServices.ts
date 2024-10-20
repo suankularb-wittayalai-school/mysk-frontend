@@ -12,8 +12,8 @@ import { User } from "@/utils/types/person";
 import { Snackbar } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GsiButtonConfiguration, IdConfiguration } from "google-one-tap";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { createElement, useContext, useEffect } from "react";
 
@@ -42,7 +42,7 @@ export default function useGoogleIdentityServices(
   const { parentButtonID, buttonWidth, onStateChange, onNotFound } = options;
 
   const locale = useLocale();
-  const { t } = useTranslation("landing");
+  const { t } = useTranslation("landing/gsiUnavailableDialog");
   const { t: tx } = useTranslation("common");
 
   const plausible = usePlausible();
@@ -109,7 +109,7 @@ export default function useGoogleIdentityServices(
   async function promptForManualCredential() {
     onStateChange?.(GSIStatus.chooserShown);
     setTimeout(() => {
-      const credential = prompt(t("dialog.gsiUnavailable"));
+      const credential = prompt(t("desc"));
       if (!credential) return;
       plausible("Log in", { props: { method: "Manual Credential String" } });
       logInWithGoogle(credential);

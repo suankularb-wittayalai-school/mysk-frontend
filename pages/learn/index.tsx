@@ -12,7 +12,7 @@ import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSub
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
 import useLocale from "@/utils/helpers/useLocale";
 import { BackendReturn } from "@/utils/types/backend";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage } from "@/utils/types/common";
 import { IDOnly } from "@/utils/types/fetch";
 import { Student, UserRole } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
@@ -28,7 +28,6 @@ import {
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { LayoutGroup, motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
 
@@ -165,12 +164,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "account",
-        "home",
-        "classes",
-      ])),
       birthdayBoys: birthdayBoys || [],
       schedule: schedule || createEmptySchedule(1, 5),
       subjectList,

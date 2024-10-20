@@ -40,10 +40,7 @@
     "bigGaruda": "External",
     "other": "Other"
   },
-  "ordinal_one": "{{count, number}}st",
-  "ordinal_two": "{{count, number}}nd",
-  "ordinal_few": "{{count, number}}rd",
-  "ordinal_other": "{{count, number}}th",
+  "ordinal": "{{count, ordinal}}",
   "snackbar": {
     "loading": "Loading…",
     "changesSaved": "Changes saved",

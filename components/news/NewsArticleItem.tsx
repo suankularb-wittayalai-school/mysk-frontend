@@ -1,4 +1,3 @@
-// Imports
 import NewsImage from "@/components/news/NewsImage";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -6,7 +5,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { NewsArticle } from "@/utils/types/news";
 import { Interactive, Text } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import shortUUID from "short-uuid";
 

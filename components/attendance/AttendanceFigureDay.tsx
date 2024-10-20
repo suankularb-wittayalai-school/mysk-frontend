@@ -8,7 +8,7 @@ import {
   isSaturday,
   isSunday,
 } from "date-fns";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { ReactNode } from "react";
 
 /**
@@ -23,7 +23,7 @@ const AttendanceFigureDay: StylableFC<{
   date: Date;
   interval: Interval;
 }> = ({ children, date, interval, style, className }) => {
-  const { t } = useTranslation("attendance", { keyPrefix: "month" });
+  const { t } = useTranslation("attendance/month");
 
   // Show Divider as weekends.
   if (isSaturday(date)) {

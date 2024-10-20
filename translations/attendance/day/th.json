@@ -1,0 +1,35 @@
+{
+  "title": "มาสาย {{late, number}} • ขาด {{absent, number}}",
+  "item": {
+    "chip": {
+      "onTime": "มา",
+      "late": "สาย",
+      "absent": "ลา"
+    },
+    "absenceType": {
+      "sick": "ลาป่วย",
+      "covid": "โควิด-19",
+      "activity": "กิจกรรม",
+      "business": "ลากิจ",
+      "absent": "ขาดไม่มีเหตุ",
+      "dropped": "พักการเรียน",
+      "other": "อื่น ๆ"
+    },
+    "enterReason": "ระบุเหตุผล"
+  },
+  "homeroom": {
+    "title": "โฮมรูม",
+    "field": "โฮมรูมวันนี้พูดเรื่องอะไรบ้าง?",
+    "action": {
+      "add": "เพิ่มข้อมูลโฮมรูม",
+      "edit": "แก้ไข",
+      "save": "บันทึก",
+      "cancel": "ยกเลิก"
+    }
+  },
+  "action": {
+    "editHomeroom": "แก้ไขข้อมูลโฮมรูม",
+    "clear": "ลบทั้งหมด",
+    "markAll": "เช็กมาทุกคน"
+  }
+}
