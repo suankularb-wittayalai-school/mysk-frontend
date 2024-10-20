@@ -5,6 +5,7 @@
   "list": {
     "searchAlt": "Search electives",
     "enrolled": "Currently enrolled",
+    "previouslyEnrolled": "Previously enrolled",
     "enrollment": {
       "alt": "{{count}} enrolled out of {{max}}",
       "label": "<0>{{count}}</0>/{{max}}",
