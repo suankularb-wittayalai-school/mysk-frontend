@@ -79,9 +79,6 @@ const LearnElectivesPage: CustomPage<{
       }),
     { dialogBreakpoints: DIALOG_BREAKPOINTS },
   );
-  console.log(electiveSubjects);
-  console.log(previouslyEnrolled);
-  
 
   return (
     <>
@@ -103,7 +100,7 @@ const LearnElectivesPage: CustomPage<{
                   previouslyEnrolled={
                     // Change to actual check when API's available
                     electiveSubject?.id == previouslyEnrolled[0]
-                  } 
+                  }
                   onClick={() => {
                     plausible("View Elective", {
                       props: {
@@ -216,7 +213,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     { data: electiveSubjects },
     { data: enrolledElectiveSubjects },
     { data: inEnrollmentPeriod },
-    { data: previouslyEnrolled }
+    { data: previouslyEnrolled },
   ] = await Promise.all([
     // Get the list of Elective Subjects available for this Student to enroll in.
     await mysk.fetch<ElectiveSubject[]>("/v1/subjects/electives", {
@@ -246,7 +243,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     // Check if the time now is in an Enrollment Period.
     await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"),
 
-    await mysk.fetch("/v1/subjects/electives/previously-enrolled")
+    await mysk.fetch("/v1/subjects/electives/previously-enrolled"),
   ]);
 
   // If there are no Elective Subjects available, return a 404.
