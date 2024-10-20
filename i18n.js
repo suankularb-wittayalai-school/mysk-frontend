@@ -78,9 +78,8 @@ module.exports = {
       // from `classes/detail` but I’m too lazy to do that right now.
       "search/students/detail",
     ],
-    "rgx:/((classes/\\[classNumber\\]|manage/(classrooms|electives))/print)$": [
-      "classes/print",
-    ],
+    "rgx:/((classes/\\[classNumber\\]|manage/classrooms|(teach|manage)/electives)/print)$":
+      ["classes/print"],
     // Attendance
     "rgx:/(classes/\\[classNumber\\]/attendance/(date|month)|manage/attendance)/\\[date\\]$":
       ["attendance/common", "attendance/dateDialog"],
