@@ -131,8 +131,11 @@ const LearnElectivesPage: CustomPage<{
                 }
                 enrolledElective={enrolledElective}
                 disabled={
+                  // Check if it's in Enrollment Period.
                   !inEnrollmentPeriod ||
+                  // Check if it's a previously selected subject.
                   previouslyEnrolled.includes(selectedID!) ||
+                  // Check if it's a full class subject or not.
                   (selectedDetail === null
                     ? false
                     : selectedDetail!.cap_size <= selectedDetail!.class_size)
