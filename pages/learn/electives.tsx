@@ -220,7 +220,13 @@ export const getServerSideProps: GetServerSideProps = async ({
       query: {
         fetch_level: "default",
         descendant_fetch_level: "compact",
-        filter: { data: { applicable_classroom_ids: [student.classroom?.id] } },
+        filter: {
+          data: {
+            applicable_classroom_ids: [student.classroom?.id],
+            year: process.env.ELECTIVES_YEAR,
+            semester: process.env.ELECTIVES_SEMESTER,
+          },
+        },
         sort: { by: ["session_code"], ascending: true },
       },
     }),
