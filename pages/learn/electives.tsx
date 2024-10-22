@@ -49,7 +49,7 @@ const LearnElectivesPage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
   enrolledElective: ElectiveSubject | null;
   inEnrollmentPeriod: boolean;
-  previouslyEnrolled: any;
+  previouslyEnrolled: string[];
   incomingTrades: ElectiveTradeOffer[];
   outgoingTrades: ElectiveTradeOffer[];
 }> = ({
@@ -97,10 +97,9 @@ const LearnElectivesPage: CustomPage<{
                   electiveSubject={electiveSubject}
                   selected={selectedID === electiveSubject.id}
                   enrolled={enrolledElective?.id === electiveSubject.id}
-                  previouslyEnrolled={
-                    // Change to actual check when API's available
-                    electiveSubject?.id == previouslyEnrolled[0]
-                  }
+                  previouslyEnrolled={previouslyEnrolled.includes(
+                    electiveSubject?.id,
+                  )}
                   onClick={() => {
                     plausible("View Elective", {
                       props: {
@@ -132,7 +131,11 @@ const LearnElectivesPage: CustomPage<{
                 }
                 enrolledElective={enrolledElective}
                 disabled={
-                  !inEnrollmentPeriod || enrolledElective?.id === selectedID
+                  !inEnrollmentPeriod ||
+                  previouslyEnrolled.includes(selectedID!) ||
+                  (selectedDetail === null
+                    ? false
+                    : selectedDetail!.cap_size <= selectedDetail!.class_size)
                 }
                 className="!pointer-events-auto"
               />
