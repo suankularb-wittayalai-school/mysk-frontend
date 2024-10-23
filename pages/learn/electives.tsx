@@ -49,14 +49,14 @@ const LearnElectivesPage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
   enrolledElective: ElectiveSubject | null;
   inEnrollmentPeriod: boolean;
-  previouslyEnrolled: string[];
+  previouslyEnrolledIDs: string[];
   incomingTrades: ElectiveTradeOffer[];
   outgoingTrades: ElectiveTradeOffer[];
 }> = ({
   electiveSubjects,
   enrolledElective,
   inEnrollmentPeriod,
-  previouslyEnrolled,
+  previouslyEnrolledIDs,
   incomingTrades,
   outgoingTrades,
 }) => {
@@ -97,9 +97,9 @@ const LearnElectivesPage: CustomPage<{
                   electiveSubject={electiveSubject}
                   selected={selectedID === electiveSubject.id}
                   enrolled={enrolledElective?.id === electiveSubject.id}
-                  previouslyEnrolled={previouslyEnrolled.includes(
-                    electiveSubject?.id,
-                  )}
+                  isPreviouslyEnrolled={
+                    previouslyEnrolledIDs.includes(electiveSubject?.id,)
+                  }
                   onClick={() => {
                     plausible("View Elective", {
                       props: {
@@ -134,7 +134,7 @@ const LearnElectivesPage: CustomPage<{
                   // Check if it's in Enrollment Period.
                   !inEnrollmentPeriod ||
                   // Check if it's a previously selected subject.
-                  previouslyEnrolled.includes(selectedID!) ||
+                  previouslyEnrolledIDs.includes(selectedID!) ||
                   // Check if it's a full class subject or not.
                   (selectedDetail === null
                     ? false
@@ -219,7 +219,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     { data: electiveSubjects },
     { data: enrolledElectiveSubjects },
     { data: inEnrollmentPeriod },
-    { data: previouslyEnrolled },
+    { data: previouslyEnrolledIDs },
   ] = await Promise.all([
     // Get the list of Elective Subjects available for this Student to enroll in.
     await mysk.fetch<ElectiveSubject[]>("/v1/subjects/electives", {
@@ -255,7 +255,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     // Check if the time now is in an Enrollment Period.
     await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"),
 
-    await mysk.fetch("/v1/subjects/electives/previously-enrolled"),
+    // Get array for history of Enrolled Subjects.
+    await mysk.fetch<string[]>("/v1/subjects/electives/previously-enrolled"),
   ]);
 
   // If there are no Elective Subjects available, return a 404.
@@ -312,7 +313,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       electiveSubjects,
       enrolledElective,
       inEnrollmentPeriod,
-      previouslyEnrolled,
+      previouslyEnrolledIDs,
       ...trades,
     },
   };
