@@ -32,14 +32,14 @@ const ElectiveListItem: StylableFC<{
   electiveSubject: ElectiveSubject;
   selected?: boolean;
   enrolled?: boolean;
-  previouslyEnrolled?: boolean
+  isPreviouslyEnrolled?: boolean
   onClick?: () => void;
 }> = ({
   role,
   electiveSubject,
   selected,
   enrolled,
-  previouslyEnrolled,
+  isPreviouslyEnrolled,
   onClick,
   style,
   className,
@@ -74,7 +74,7 @@ const ElectiveListItem: StylableFC<{
     >
       {/* Radio */}
       {role === UserRole.student &&
-        ((enrolled && (previouslyEnrolled == false)) ? (
+        ((enrolled && (isPreviouslyEnrolled == false)) ? (
           <MaterialIcon
             icon="check"
             fill
@@ -85,7 +85,7 @@ const ElectiveListItem: StylableFC<{
             value={selected}
             disabled={
               electiveSubject.class_size >= electiveSubject.cap_size || 
-              previouslyEnrolled == true
+              isPreviouslyEnrolled == true
             }
             inputAttr={{ name: "elective" }}
             className="py-3"
@@ -98,7 +98,7 @@ const ElectiveListItem: StylableFC<{
       >
         <ListItemContent
           overline={
-            previouslyEnrolled ? t("previouslyEnrolled") : 
+            isPreviouslyEnrolled ? t("previouslyEnrolled") : 
             (enrolled ? t("enrolled") : undefined)
           }
           title={getLocaleString(electiveSubject.name, locale)}
