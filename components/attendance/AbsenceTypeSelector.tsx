@@ -72,7 +72,7 @@ const AbsenceTypeSelector: StylableFC<{
         onClick={() =>
           onChange({
             ...attendance,
-            is_present: true,
+            is_present: false,
             absence_type: AbsenceType.activity,
             absence_reason: null,
           })
