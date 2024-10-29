@@ -4,7 +4,7 @@ import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { Text } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * A Grid of Person Cards for Advisors inside Class Details Card.
@@ -14,7 +14,7 @@ import { useTranslation } from "next-i18next";
 const ClassAdvisorGrid: StylableFC<{
   advisors: Classroom["class_advisors"];
 }> = ({ advisors, style, className }) => {
-  const { t } = useTranslation("classes", { keyPrefix: "detail.advisors" });
+  const { t } = useTranslation("classes/detail");
 
   return (
     <div
@@ -24,9 +24,9 @@ const ClassAdvisorGrid: StylableFC<{
       <Text
         type="title-medium"
         element="h3"
-        className="mb-1 rounded-md bg-surface px-3 py-2 md:col-span-2"
+        className="mb-1 px-3 md:col-span-2"
       >
-        {t("title")}
+        {t("advisors.title")}
       </Text>
 
       {advisors.map((advisor) => (

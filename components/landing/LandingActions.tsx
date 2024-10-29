@@ -6,8 +6,7 @@ import { StylableFC } from "@/utils/types/common";
 import { Actions, Button, MaterialIcon } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
-import { title } from "radash";
-import { forwardRef } from "react";
+import { ForwardedRef, forwardRef } from "react";
 
 /**
  * Supplementary actions for the Landing page.
@@ -41,7 +40,7 @@ const LandingActions: StylableFC = ({ style, className }) => {
         }
         href="https://docs.google.com/document/d/1yAEVK09BgbpFIPpG5j1xvfCRUGUdRyL9S1gAxh9UjfU/edit?usp=sharing"
         // eslint-disable-next-line react/display-name
-        element={forwardRef((props, ref) => (
+        element={forwardRef((props, ref: ForwardedRef<HTMLAnchorElement>) => (
           <a ref={ref} {...props} target="_blank" rel="noreferrer" />
         ))}
       >
@@ -56,7 +55,7 @@ const LandingActions: StylableFC = ({ style, className }) => {
         }
         href="https://github.com/suankularb-wittayalai-school/mysk-frontend/pulls?q=is%3Apr+is%3Aclosed+base%3Amain+release+in%3Atitle"
         // eslint-disable-next-line react/display-name
-        element={forwardRef((props, ref) => (
+        element={forwardRef((props, ref: ForwardedRef<HTMLAnchorElement>) => (
           <a ref={ref} {...props} target="_blank" />
         ))}
       >

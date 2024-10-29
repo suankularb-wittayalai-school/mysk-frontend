@@ -1,11 +1,15 @@
-import InformationCard from "@/components/lookup/people/InformationCard";
 import PersonChipSet from "@/components/person/PeopleChipSet";
 import RoomChip from "@/components/room/RoomChip";
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { PeriodContentItem } from "@/utils/types/schedule";
-import { ChipSet } from "@suankularb-components/react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  ChipSet,
+} from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
 import { sift } from "radash";
 
@@ -29,26 +33,32 @@ const SingleSubjectDetails: StylableFC<{
       )}
     >
       {/* Teachers */}
-      <InformationCard title={t("subject.teachers")}>
-        <PersonChipSet
-          scrollable
-          people={period.teachers.map((teacher) => ({
-            role: UserRole.teacher,
-            ...teacher,
-          }))}
-          className="fade-out-to-r -mx-3 *:pl-3 *:pr-8"
-        />
-      </InformationCard>
+      <Card appearance="filled">
+        <CardHeader title={t("subject.teachers")} />
+        <CardContent>
+          <PersonChipSet
+            scrollable
+            people={period.teachers.map((teacher) => ({
+              role: UserRole.teacher,
+              ...teacher,
+            }))}
+            className="fade-out-to-r -mx-3 *:pl-3 *:pr-8"
+          />
+        </CardContent>
+      </Card>
 
       {/* Room */}
       {rooms.length > 0 && (
-        <InformationCard title={t("subject.room")}>
-          <ChipSet scrollable className="fade-out-to-r -mx-3 *:pl-3 *:pr-8">
-            {rooms.map((room) => (
-              <RoomChip key={room} room={room} />
-            ))}
-          </ChipSet>
-        </InformationCard>
+        <Card appearance="filled">
+          <CardHeader title={t("subject.room")} />
+          <CardContent>
+            <ChipSet scrollable className="fade-out-to-r -mx-3 *:pl-3 *:pr-8">
+              {rooms.map((room) => (
+                <RoomChip key={room} room={room} />
+              ))}
+            </ChipSet>
+          </CardContent>
+        </Card>
       )}
     </div>
   );

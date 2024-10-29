@@ -39,39 +39,15 @@
       @apply [color-scheme:dark];
     }
   }
-
-  .light .skc-page-header__blob-primary {
-    @apply !fill-primary-95;
-  }
-
-  .light .skc-page-header__blob-secondary {
-    @apply !fill-secondary-90;
-  }
-
-  .dark .skc-page-header__blob-primary {
-    @apply !fill-primary-20;
-  }
-
-  .dark .skc-page-header__blob-secondary {
-    @apply !fill-secondary-20;
-  }
 }
 
 @layer utilities {
+  .position-center {
+    @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2;
+  }
+
   .tap-highlight-none {
     @apply [-webkit-tap-highlight-color:transparent];
-  }
-
-  .fixed-center {
-    @apply fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2;
-  }
-
-  .center-all {
-    @apply grid place-items-center [grid-template-areas:"center"];
-  }
-
-  .center-all * {
-    @apply [grid-area:center];
   }
 
   .fade-out-to-t,
@@ -146,4 +122,50 @@
 
 .skc-nav-bar {
   backdrop-filter: blur(16px) !important;
+}
+
+.skc-card-header__content > .skc-card-header__subtitle {
+  font-family: var(--font-body);
+}
+.skc-card--filled
+  .skc-dialog
+  :is(.skc-text-field__label, .skc-chip-field__label, .skc-select__label) {
+  background-color: var(--surface-container-high) !important;
+}
+
+/* Inset card support
+  Temporary until the SK Components library is updated.
+  PS: this is not good code. Please don’t learn from this.
+*/
+
+:is(.skc-card.skc-card--filled, .skc-dialog)
+  :is(.skc-card--outlined, .skc-card--filled) {
+  background-color: var(--surface-bright);
+}
+:is(.skc-card, .skc-dialog)
+  .skc-card:has(> .skc-card-content)
+  .skc-card-header {
+  padding: 0.5rem 0.75rem 0;
+}
+:is(.skc-card, .skc-dialog)
+  .skc-card.skc-card:not(> .skc-card-content)
+  .skc-card-header {
+  padding: 0.75rem 0.25rem 0.75rem 1rem;
+}
+:is(.skc-card, .skc-dialog)
+  .skc-card:has(> .skc-card-content)
+  .skc-card-content {
+  padding: 0 0.75rem 0.5rem;
+}
+:is(.skc-card, .skc-dialog)
+  .skc-card.skc-interactive:not(.skc-interactive--no-ripple) {
+  border: 0 solid var(--outline-variant);
+}
+:is(.skc-card, .skc-dialog)
+  .skc-card.skc-interactive:not(.skc-interactive--no-ripple):is(
+    :hover,
+    :focus
+  ) {
+  border-width: 1px;
+  margin: -1px;
 }

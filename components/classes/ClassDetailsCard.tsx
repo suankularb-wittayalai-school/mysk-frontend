@@ -79,6 +79,8 @@ const ClassDetailsCard: StylableFC<{
               </motion.section>
 
               <motion.section
+                layout="position"
+                transition={positionTransition}
                 className={cn(`flex flex-col-reverse gap-x-2 gap-y-5 md:-mb-4
                   md:grid md:min-h-96 md:grow md:grid-cols-2`)}
               >

@@ -13,7 +13,7 @@ import {
   Switch,
   TextField,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { toggle } from "radash";
 import { FC } from "react";
 
@@ -43,7 +43,7 @@ const StudentsPrintOptions: FC<{
   setForm,
   formProps,
 }) => {
-  const { t } = useTranslation("classes", { keyPrefix: "print" });
+  const { t } = useTranslation("classes/print");
 
   return (
     <PrintOptions parentURL={parentURL}>

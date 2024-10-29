@@ -19,8 +19,8 @@ import { SplitLayout } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { LayoutGroup } from "framer-motion";
 import { GetStaticProps, NextPage } from "next";
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { first, group } from "radash";
 import { useEffect } from "react";
@@ -38,7 +38,7 @@ import { useEffect } from "react";
 const ClassesPage: NextPage<{
   classrooms: Pick<Classroom, "id" | "number" | "main_room">[];
 }> = ({ classrooms }) => {
-  const { t } = useTranslation("classes");
+  const { t } = useTranslation("classes/list");
   const { t: tx } = useTranslation("common");
 
   const supabase = useSupabaseClient();
@@ -103,7 +103,7 @@ const ClassesPage: NextPage<{
                   selectedID={selectedID}
                   onSelectedChange={onSelectedChange}
                   expandedByDefault
-                  titleOverride={t("list.yourClass")}
+                  titleOverride={t("yourClass")}
                 />
               )}
               {/* Other Classrooms grouped by grade */}
@@ -158,9 +158,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
-        "account",
         "attendance",
-        "classes",
       ])),
       classrooms,
     },

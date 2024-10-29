@@ -1,20 +1,20 @@
-import MultilangText from "@/components/common/MultilingualText";
 import LookupDetailsContent from "@/components/lookup//LookupDetailsContent";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
-import InformationCard from "@/components/lookup/people/InformationCard";
 import PersonContactGrid from "@/components/lookup/people/PersonContactGrid";
 import PersonHeader from "@/components/lookup/people/PersonHeader";
+import PersonInformationGrid from "@/components/lookup/people/PersonInformationGrid";
 import PersonScheduleCard from "@/components/lookup/people/PersonScheduleCard";
 import CurrentTeachingPeriodCard from "@/components/lookup/teachers/CurrentTeachingPeriodCard";
 import StarbucksCard from "@/components/lookup/teachers/StarbucksCard";
-import SubjectInChardCard from "@/components/lookup/teachers/SubjectInChargeCard";
-import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import useToggle from "@/utils/helpers/useToggle";
 import { StylableFC } from "@/utils/types/common";
 import { Teacher, UserRole } from "@/utils/types/person";
 import {
+  Card,
+  CardContent,
+  CardHeader,
   DURATION,
   EASING,
   Text,
@@ -22,7 +22,6 @@ import {
 } from "@suankularb-components/react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import useTranslation from "next-translate/useTranslation";
-import { sift } from "radash";
 
 /**
  * A Card that contains the details of a Teacher in Lookup Teachers.
@@ -74,66 +73,9 @@ const TeacherDetailsCard: StylableFC<{
                 )}
 
                 {/* Details */}
-                <motion.section
-                  layout="position"
-                  transition={positionTransition}
-                  className="grid grid-cols-2 gap-2 md:grid-cols-4"
-                >
-                  <InformationCard
-                    title={t("information.fullName")}
-                    className="col-span-2"
-                  >
-                    <MultilangText
-                      text={{
-                        th: getLocaleName("th", teacher, { prefix: true }),
-                        "en-US": getLocaleName("en-US", teacher, {
-                          prefix: true,
-                        }),
-                      }}
-                      options={{
-                        combineIfAllIdentical: true,
-                        hideIconsIfOnlyLanguage: true,
-                      }}
-                    />
-                  </InformationCard>
-                  {teacher.nickname &&
-                    sift(Object.values(teacher.nickname)).length > 0 && (
-                      <InformationCard title={t("information.nickname")}>
-                        <MultilangText
-                          text={teacher.nickname}
-                          options={{
-                            combineIfAllIdentical: true,
-                            hideIconsIfOnlyLanguage: true,
-                          }}
-                        />
-                      </InformationCard>
-                    )}
-                  <InformationCard
-                    title={t("information.subjectGroup")}
-                    className="[&>div]:line-clamp-2"
-                  >
-                    {getLocaleString(teacher.subject_group.name, locale)}
-                  </InformationCard>
-                  {teacher.class_advisor_at && (
-                    <InformationCard title={t("information.classAdvisorAt")}>
-                      {t("common:class", {
-                        number: teacher.class_advisor_at.number,
-                      })}
-                    </InformationCard>
-                  )}
-                  {teacher.birthdate &&
-                    // Assuming no real person is born on Jan 1, 1970
-                    teacher.birthdate !== "1970-01-01" && (
-                      <InformationCard title={t("information.birthday")}>
-                        <time>
-                          {new Date(teacher.birthdate).toLocaleDateString(
-                            locale,
-                            { day: "numeric", month: "long" },
-                          )}
-                        </time>
-                      </InformationCard>
-                    )}
-                </motion.section>
+                <motion.div layout="position" transition={positionTransition}>
+                  <PersonInformationGrid person={teacher} />
+                </motion.div>
 
                 {/* Contacts */}
                 {teacher.contacts.length > 0 && (
@@ -155,20 +97,26 @@ const TeacherDetailsCard: StylableFC<{
                     transition={positionTransition}
                     className="space-y-2"
                   >
-                    <Text
-                      type="title-medium"
-                      element="h3"
-                      className="rounded-md bg-surface px-3 py-2"
-                    >
+                    <Text type="title-medium" element="h3" className="px-3">
                       {t("subjects.title")}
                     </Text>
                     <div className="-mx-4 overflow-auto">
                       <ul className="flex w-fit flex-row gap-2 px-4">
                         {teacher.subjects_in_charge.map((subject) => (
-                          <SubjectInChardCard
+                          <Card
                             key={subject.id}
-                            subject={subject}
-                          />
+                            appearance="filled"
+                            element="li"
+                            className="min-w-[10rem] max-w-[15rem]"
+                          >
+                            <CardHeader
+                              title={getLocaleString(subject.name, locale)}
+                              className="*:w-full [&_h3]:truncate"
+                            />
+                            <CardContent>
+                              {getLocaleString(subject.code, locale)}
+                            </CardContent>
+                          </Card>
                         ))}
                       </ul>
                     </div>

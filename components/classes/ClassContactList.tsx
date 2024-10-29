@@ -1,6 +1,6 @@
-// Imports
 import ContactCard from "@/components/account/ContactCard";
 import ContactDialog from "@/components/account/ContactDialog";
+import LookupDetailsListCard from "@/components/lookup/LookupDetailsListCard";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import createClassroomContact from "@/utils/backend/classroom/createClassroomContact";
 import deleteContact from "@/utils/backend/contact/deleteContact";
@@ -15,8 +15,8 @@ import {
   Text,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useTranslation } from "next-i18next";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { useContext, useState } from "react";
 
 /**
@@ -26,6 +26,7 @@ import { useContext, useState } from "react";
  * @param contacts The list of contacts to display.
  * @param classroomID The ID of the Classroom the Contacts belong to.
  * @param editable Whether the list is editable or not.
+ * @param refreshData Should refresh Classroom data.
  */
 const ClassContactList: StylableFC<{
   contacts: Contact[];
@@ -33,7 +34,7 @@ const ClassContactList: StylableFC<{
   editable?: boolean;
   refreshData: () => void;
 }> = ({ contacts, classroomID, editable, refreshData, style, className }) => {
-  const { t } = useTranslation("classes", { keyPrefix: "detail.contacts" });
+  const { t } = useTranslation("classes/detail");
   const { t: tx } = useTranslation("common");
 
   const plausible = usePlausible();
@@ -80,53 +81,50 @@ const ClassContactList: StylableFC<{
   }
 
   return (
-    <div style={style} className={cn(`space-y-2`, className)}>
-      {/* Title */}
-      <Text
-        type="title-medium"
-        element="h3"
-        className="rounded-md bg-surface px-3 py-2"
-      >
-        {t("title")}
-      </Text>
+    <LookupDetailsListCard
+      title={
+        <Text type="title-medium" element="h3">
+          {t("contacts.title")}
+        </Text>
+      }
+      style={style}
+      className={className}
+    >
+      {/* List */}
+      {contacts.map((contact) => (
+        <li key={contact.id}>
+          <ContactCard
+            contact={contact}
+            onChange={editable ? handleEdit : undefined}
+            onRemove={editable ? () => handleRemove(contact.id) : undefined}
+            className={cn(
+              `!border-0`,
+              !editable &&
+                `hover:m-[-1px] hover:!border-1 focus:m-[-1px]
+                focus:!border-1`,
+            )}
+          />
+        </li>
+      ))}
 
-      <ul className="space-y-1">
-        {/* List */}
-        {contacts.map((contact) => (
-          <li key={contact.id}>
-            <ContactCard
-              contact={contact}
-              onChange={editable ? handleEdit : undefined}
-              onRemove={editable ? () => handleRemove(contact.id) : undefined}
-              className={cn(
-                `!border-0`,
-                !editable &&
-                  `hover:m-[-1px] hover:!border-1 focus:m-[-1px]
-                  focus:!border-1`,
-              )}
-            />
-          </li>
-        ))}
-
-        {/* Add button */}
-        {editable && (
-          <li>
-            <Interactive
-              onClick={() => setContactOpen(true)}
-              className={cn(`grid w-full place-content-center rounded-md
-                bg-primary-container px-3 py-6`)}
-            >
-              <MaterialIcon icon="add" />
-            </Interactive>
-            <ContactDialog
-              open={contactOpen}
-              onClose={() => setContactOpen(false)}
-              onSubmit={handleAdd}
-            />
-          </li>
-        )}
-      </ul>
-    </div>
+      {/* Add button */}
+      {editable && (
+        <li>
+          <Interactive
+            onClick={() => setContactOpen(true)}
+            className={cn(`grid w-full place-content-center rounded-md
+              bg-primary-container px-3 py-6`)}
+          >
+            <MaterialIcon icon="add" />
+          </Interactive>
+          <ContactDialog
+            open={contactOpen}
+            onClose={() => setContactOpen(false)}
+            onSubmit={handleAdd}
+          />
+        </li>
+      )}
+    </LookupDetailsListCard>
   );
 };
 

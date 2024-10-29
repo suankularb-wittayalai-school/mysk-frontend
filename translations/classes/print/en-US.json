@@ -1,0 +1,26 @@
+{
+  "title": "Print student list",
+  "language": "Language",
+  "columns": {
+    "label": "Information to show",
+    "index": "Order",
+    "classNo": "Class №",
+    "studentID": "Student ID",
+    "prefix": "Prefix",
+    "fullName": "Full name",
+    "nickname": "Nickname",
+    "classroom": "Classroom",
+    "allergies": "Allergies (in Thai)",
+    "shirtSize": "Shirt size",
+    "pantsSize": "School pants size",
+    "elective": "Chosen elective"
+  },
+  "filters": {
+    "label": "Filters",
+    "noElective": "Without elective",
+    "hasAllergies": "With allergies"
+  },
+  "numEmpty": "Empty columns",
+  "enableNotes": "Notes column",
+  "enableTimestamp": "Timestamp"
+}

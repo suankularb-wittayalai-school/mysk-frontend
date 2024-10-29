@@ -33,12 +33,17 @@ module.exports = {
     ],
     "/teach": ["home/classroomSubjectDialog", "home/subjectClassesDialog"],
     // Schedule
-    "rgx:/(learn|teach|classes|search/(students|teachers)/results|admin/schedule)$":
+    "rgx:/(learn|teach|(teach|manage)/electives|classes|search/(students|teachers)/results|admin/schedule)$":
       ["schedule/common", "schedule/periodDialog"],
     // Schedule editor
     "rgx:/(teach|admin/schedule)$": [
       "schedule/editor/editDialog",
       "schedule/editor/hoverMenu",
+    ],
+    // Classes
+    "/classes": ["classes/list", "classes/header", "classes/detail"],
+    "rgx:/((classes/\\[classNumber\\]|manage/(classrooms|electives))/print)$": [
+      "classes/print",
     ],
     // Search
     "/search/[view]": [
@@ -50,31 +55,33 @@ module.exports = {
     "rgx:/search/\\w+/results$": ["search/common"],
     // Search Students
     "/search/students/results": ["search/students/list"],
-    "rgx:/(search/students/results|(teach|manage)/electives|classes)$": [
-      "search/students/header",
-      "search/students/detail",
-      "search/students/absenceHistoryDialog",
-    ],
+    "rgx:/(search/students/results|(teach|manage)/electives|classes(/\\[classNumber\\]/attendance/date/\\[date\\])?)$":
+      [
+        "search/students/header",
+        "search/students/detail",
+        "search/students/absenceHistoryDialog",
+      ],
     // Search Teachers
     "/search/teachers/results": ["search/teachers/list"],
-    "rgx:/(search/teachers/results|learn|teach|classes)$": [
-      "search/teachers/header",
-      "search/teachers/detail",
-    ],
+    "rgx:/(search/teachers/results|learn|teach|(teach|manage)/electives|classes)$":
+      ["search/teachers/header", "search/teachers/detail"],
     // Search Documents
     "/search/documents/results": [
       "search/documents/list",
       "search/documents/header",
       "search/documents/detail",
     ],
-    // Account pages
+    // Account
     "rgx:/account(/(about|contacts|certificates))?$": ["account/common"],
     "/account/about": [
       "account/about",
       "account/about/idCardDialog",
       "account/about/nameChangeDialog",
     ],
-    "/account/contacts": ["account/contacts", "account/contacts/contactDialog"],
+    "rgx:/(account/contacts|classes)$": [
+      "account/contacts",
+      "account/contacts/contactDialog",
+    ],
     "/account/certificates": [
       "account/certificates",
       "account/certificates/receivingOrderDialog",

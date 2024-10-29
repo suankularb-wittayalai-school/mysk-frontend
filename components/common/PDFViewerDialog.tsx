@@ -9,7 +9,7 @@ import {
   useBreakpoint,
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { ForwardedRef, forwardRef, useEffect, useRef, useState } from "react";
 
 /**
  * The default size of the PDF viewer.
@@ -85,7 +85,7 @@ const PDFViewerDialog: StylableFC<{
           onClick={onDownload}
           href={url}
           // eslint-disable-next-line react/display-name
-          element={forwardRef((props, ref) => (
+          element={forwardRef((props, ref: ForwardedRef<HTMLAnchorElement>) => (
             <a {...props} ref={ref} target="_blank" />
           ))}
         />

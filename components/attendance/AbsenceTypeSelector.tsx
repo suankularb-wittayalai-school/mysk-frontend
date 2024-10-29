@@ -68,6 +68,19 @@ const AbsenceTypeSelector: StylableFC<{
         {t("covid")}
       </FilterChip>
       <FilterChip
+        selected={value === AbsenceType.activity}
+        onClick={() =>
+          onChange({
+            ...attendance,
+            is_present: false,
+            absence_type: AbsenceType.activity,
+            absence_reason: null,
+          })
+        }
+      >
+        {t("activity")}
+      </FilterChip>
+      <FilterChip
         selected={value === AbsenceType.business}
         onClick={() => handleTypeChange(AbsenceType.business)}
       >

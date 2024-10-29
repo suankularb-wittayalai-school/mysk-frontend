@@ -6,6 +6,7 @@ export type AttendanceEvent = "homeroom" | "assembly";
 export enum AbsenceType {
   late = "late",
   sick = "sick",
+  activity = "activity",
   business = "business",
   absent = "absent",
   dropped = "dropped",

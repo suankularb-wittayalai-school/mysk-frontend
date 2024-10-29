@@ -10,15 +10,21 @@ import {
   Snackbar,
   Text,
 } from "@suankularb-components/react";
-import useTranslation from "next-translate/useTranslation";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import { unique } from "radash";
-import { forwardRef, useContext, useEffect, useState } from "react";
+import {
+  ForwardedRef,
+  forwardRef,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import Balancer from "react-wrap-balancer";
 
 /**
- * A sneaky easter egg for one of our advisors! This card is expected to only
- * be shown for Supannee’s Teacher Details Card.
+ * A sneaky easter egg for the original creator of MySK! This card is expected
+ * to only be shown for Supannee’s Teacher Details Card.
  */
 const StarbucksCard: StylableFC = ({ style, className }) => {
   const locale = useLocale();
@@ -98,12 +104,12 @@ const StarbucksCard: StylableFC = ({ style, className }) => {
       direction="row"
       style={style}
       className={cn(
-        `items-start !border-0 !bg-surface !bg-gradient-to-l
-        from-[#82998760] px-4 py-3 sm:px-5 sm:py-4`,
+        `items-start !border-0 !bg-surface-bright !bg-gradient-to-l
+        from-[#82998760] p-4 pt-3`,
         className,
       )}
     >
-      <div className="flex grow flex-col gap-2">
+      <div className="grow space-y-3">
         <Text
           type="body-large"
           className="max-w-96"
@@ -127,15 +133,20 @@ const StarbucksCard: StylableFC = ({ style, className }) => {
               })
             }
             // eslint-disable-next-line react/display-name
-            element={forwardRef((props, ref) => (
-              <a {...props} ref={ref} target="_blank" rel="noreferrer" />
-            ))}
+            element={forwardRef(
+              (props, ref: ForwardedRef<HTMLAnchorElement>) => (
+                <a {...props} ref={ref} target="_blank" rel="noreferrer" />
+              ),
+            )}
           >
             {t("starbucks.action.openStarbucks")}
           </AssistChip>
         </ChipSet>
       </div>
-      <div className="my-1 hidden rounded-full bg-surface p-2 text-primary sm:block">
+      <div
+        className={cn(`mt-1 hidden rounded-full bg-surface-bright p-2
+          text-primary sm:block`)}
+      >
         <MaterialIcon icon="auto_awesome" />
       </div>
     </Card>
