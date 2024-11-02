@@ -8,6 +8,9 @@ import { toZonedTime } from "date-fns-tz";
  * @returns Whether the date is valid for viewing Attendance.
  */
 export default function isValidAttendanceDate(date: Date | string): boolean {
+  // To-do: Fix this hard code (blame @pixelpxed)
+  if (date == "2024-11-02") return true
+
   if (!(date instanceof Date || YYYYMMDDRegex.test(date))) return false;
   const parsedDate = new Date(date);
   if (isWeekend(parsedDate)) return false;
