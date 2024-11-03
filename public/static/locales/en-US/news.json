@@ -1,7 +1,0 @@
-{
-  "title": "News",
-  "date": "{{date, datetime(day: numeric; month: long; year: numeric;)}}",
-  "action": {
-    "share": "Share"
-  }
-}

@@ -1,0 +1,16 @@
+{
+  "legend": {
+    "present": "มาเรียน",
+    "late": "มาสาย",
+    "onLeave": "ลา",
+    "absent": "ขาด",
+    "empty": "ไม่มีข้อมูล"
+  },
+  "chart": "แผนภูมิ",
+  "summary": {
+    "subtitle": "{{date, month}}"
+  },
+  "item": {
+    "day": "{{date, dateonly}}"
+  }
+}

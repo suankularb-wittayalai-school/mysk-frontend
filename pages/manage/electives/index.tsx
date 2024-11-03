@@ -181,7 +181,6 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
-        "attendance",
         "elective",
       ])),
       electiveSubjects,

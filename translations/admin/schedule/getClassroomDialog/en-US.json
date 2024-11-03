@@ -1,0 +1,11 @@
+{
+  "title": "Get schedule of classroom",
+  "desc": "Enter the 3-digit classroom number.",
+  "form": {
+    "classroom": "Classroom"
+  },
+  "action": {
+    "cancel": "Cancel",
+    "go": "Go"
+  }
+}

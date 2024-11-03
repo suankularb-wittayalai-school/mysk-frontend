@@ -1,6 +1,6 @@
 {
   "title": "ข่าวสาร",
-  "date": "{{date, datetime(day: numeric; month: long; year: numeric;)}}",
+  "date": "{{date, date}}",
   "action": {
     "share": "แชร์"
   }

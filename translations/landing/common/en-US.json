@@ -1,0 +1,29 @@
+{
+  "aside": {
+    "logoAlt": "MySK logo",
+    "title": "Welcome to MySK",
+    "languageSwitcher": {
+      "title": "Language / ภาษา",
+      "th": "ภาษาไทย",
+      "en-US": "English"
+    }
+  },
+  "main": {
+    "title": "Log in",
+    "desc": {
+      "initial": "Use the email ending in sk.ac.th",
+      "chooserShown": "Select the email ending in sk.ac.th in the new window.",
+      "processing": "Verifying…",
+      "redirecting": "Continuing to MySK…"
+    },
+    "action": {
+      "cancel": "Cancel"
+    }
+  },
+  "action": {
+    "help": "Help",
+    "report": "Report issue",
+    "new": "What’s new"
+  },
+  "credits": "MySK is a project by SK IT Solutions • Supervised by Supannee Supeerath and Atipol Sukrisadanon • Design and development by Siravit Phokeed and Smart Wattanapornmongkol • Quality assurance by Tempoom Leelacharoen • Translations to Thai contributed by Suankularb English Club"
+}

@@ -22,7 +22,7 @@ import {
   StudentAttendance,
 } from "@/utils/types/attendance";
 import { Classroom } from "@/utils/types/classroom";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import {
   Button,
@@ -34,9 +34,8 @@ import {
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { isToday } from "date-fns";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { replace } from "radash";
 import { useEffect, useState } from "react";
@@ -60,7 +59,7 @@ const DateAttendancePage: CustomPage<{
   homeroomContent,
   classroom,
 }) => {
-  const { t } = useTranslation("attendance");
+  const { t } = useTranslation("attendance/common");
   const { t: tx } = useTranslation("common");
 
   const plausible = usePlausible();
@@ -152,7 +151,7 @@ const DateAttendancePage: CustomPage<{
                 }}
                 className="!mx-4 !mt-3 sm:!mx-0 md:!hidden"
               >
-                {t("day.action.editHomeroom")}
+                {t("attendance/day:action.editHomeroom")}
               </Button>
             )}
             <HomeroomContentDialog
@@ -217,7 +216,6 @@ const DateAttendancePage: CustomPage<{
 };
 
 export const getServerSideProps: GetServerSideProps = async ({
-  locale,
   params,
   req,
   res,
@@ -247,19 +245,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     date,
   );
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "attendance",
-        "lookup",
-      ])),
-      date,
-      attendances,
-      homeroomContent,
-      classroom,
-    },
-  };
+  return { props: { date, attendances, homeroomContent, classroom } };
 };
 
 export default DateAttendancePage;

@@ -169,17 +169,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       getLocaleString(teacher.subject_group.name, locale as LangCode),
   );
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "classes",
-      ])),
-      filters,
-      subjectGroups,
-      teachers,
-    },
-  };
+  return { props: { filters, subjectGroups, teachers } };
 };
 
 export default SearchTeachersResultsPage;

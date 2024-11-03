@@ -1,10 +1,30 @@
 /** @param {string} lang */
 const formatters = (lang) => ({
   number: new Intl.NumberFormat(lang),
+  ordinal: {
+    /** @param {string} value */
+    format: (value) => {
+      if (lang === "th") return value;
+      const ordinalRules = new Intl.PluralRules(lang, { type: "ordinal" });
+      const suffixes = { one: "st", two: "nd", few: "rd", other: "th" };
+      const suffix = suffixes[ordinalRules.select(Number(value))];
+      return value + suffix;
+    },
+  },
   and: new Intl.ListFormat(lang, { type: "conjunction" }),
   or: new Intl.ListFormat(lang, { type: "disjunction" }),
   day: new Intl.DateTimeFormat(lang, { weekday: "long" }),
   date: new Intl.DateTimeFormat(lang, { dateStyle: "medium" }),
+  dateonly: new Intl.DateTimeFormat(lang, { day: "numeric" }),
+  dateshort: new Intl.DateTimeFormat(lang, {
+    day: "numeric",
+    month: "short",
+  }),
+  month: new Intl.DateTimeFormat(lang, { month: "long", year: "numeric" }),
+  monthshort: new Intl.DateTimeFormat(lang, {
+    month: "short",
+    year: "numeric",
+  }),
   time: new Intl.DateTimeFormat(lang, {
     hour: "2-digit",
     minute: "2-digit",
@@ -25,10 +45,18 @@ module.exports = {
       "common/layout",
       "common/reportIssueDialog",
     ],
+    // Landing
+    "/": [
+      "landing/common",
+      "landing/accountNotFoundDialog",
+      "landing/gsiUnavailableDialog",
+    ],
     // Home pages
     "rgx:/(learn|teach)$": [
+      "home/glance/birthday",
       "home/glance/schedule",
       "home/glance/scheduleInaccurate",
+      "home/sakeCelebrationDialog",
       "home/subjectList",
     ],
     "/teach": ["home/classroomSubjectDialog", "home/subjectClassesDialog"],
@@ -41,10 +69,27 @@ module.exports = {
       "schedule/editor/hoverMenu",
     ],
     // Classes
-    "/classes": ["classes/list", "classes/header", "classes/detail"],
-    "rgx:/((classes/\\[classNumber\\]|manage/(classrooms|electives))/print)$": [
-      "classes/print",
+    "rgx:/(classes|search/(students|teachers)/results)$": [
+      "classes/list",
+      "classes/header",
+      "classes/detail",
+      // FIXME: This is kinda stupid but Current Period Card uses it right now.
+      // Ideally there should be a role of Current Period Card that just pulls
+      // from `classes/detail` but I’m too lazy to do that right now.
+      "search/students/detail",
     ],
+    "rgx:/((classes/\\[classNumber\\]|manage/classrooms|(teach|manage)/electives)/print)$":
+      ["classes/print"],
+    // Attendance
+    "rgx:/(classes/\\[classNumber\\]/attendance/(date|month)|manage/attendance)/\\[date\\]$":
+      ["attendance/common", "attendance/dateDialog"],
+    "/classes/[classNumber]/attendance/date/[date]": [
+      "attendance/day",
+      "attendance/homeroomDialog",
+      "attendance/statisticsDialog",
+    ],
+    "rgx:/(classes(/\\[classNumber\\]/attendance/month/\\[date\\])?|search/(students|teachers)/results)$":
+      ["attendance/month"],
     // Search
     "/search/[view]": [
       "search/landing",
@@ -71,6 +116,8 @@ module.exports = {
       "search/documents/header",
       "search/documents/detail",
     ],
+    // News,
+    "rgx:/news(/\\[id\\])?$": ["news"],
     // Account
     "rgx:/account(/(about|contacts|certificates))?$": ["account/common"],
     "/account/about": [
@@ -88,6 +135,9 @@ module.exports = {
       "account/certificates/seatDialog",
     ],
     "/account/logout": ["account/logOut"],
+    // Admin Panel
+    "/admin": ["admin/landing"],
+    "/admin/schedule": ["admin/schedule", "admin/schedule/getClassroomDialog"],
   },
   logBuild: false,
   interpolation: {

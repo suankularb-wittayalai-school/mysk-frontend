@@ -11,7 +11,7 @@ import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
 import prefixLocale from "@/utils/helpers/prefixLocale";
 import useLocale from "@/utils/helpers/useLocale";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import {
   Actions,
@@ -24,9 +24,8 @@ import {
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -48,7 +47,7 @@ export enum GSIStatus {
  */
 const LandingPage: CustomPage = () => {
   const locale = useLocale();
-  const { t } = useTranslation("landing");
+  const { t } = useTranslation("landing/common");
   const { t: tx } = useTranslation("common");
 
   const plausible = usePlausible();
@@ -254,8 +253,8 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   const { user } = await createMySKClient(req);
 
-  // Redirect to Learn if user is already logged in
-  // (For Teachers, the middleware will redirect them to Teach instead)
+  // Redirect to Learn if user is already logged in.
+  // (For Teachers, the middleware will redirect them to Teach instead.)
   if (user)
     return {
       redirect: {
@@ -264,12 +263,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     };
 
-  return {
-    props: await serverSideTranslations(locale as LangCode, [
-      "common",
-      "landing",
-    ]),
-  };
+  return { props: {} };
 };
 
 LandingPage.navType = "hidden";

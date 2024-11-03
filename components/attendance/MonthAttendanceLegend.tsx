@@ -3,14 +3,14 @@ import cn from "@/utils/helpers/cn";
 import { AbsenceType } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import { Text } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * A legend for the Month Attendance page, explaining the meaning of each
  * symbol in Attendance Figure.
  */
 const MonthAttendanceLegend: StylableFC = ({ style, className }) => {
-  const { t } = useTranslation("attendance", { keyPrefix: "month.legend" });
+  const { t } = useTranslation("attendance/month");
 
   return (
     <ul
@@ -27,31 +27,31 @@ const MonthAttendanceLegend: StylableFC = ({ style, className }) => {
         <AttendanceFigureEvent
           attendance={{ is_present: true, absence_type: null }}
         />
-        <Text type="body-medium">{t("present")}</Text>
+        <Text type="body-medium">{t("legend.present")}</Text>
       </li>
       <li>
         <AttendanceFigureEvent
           attendance={{ is_present: false, absence_type: AbsenceType.late }}
         />
-        <Text type="body-medium">{t("late")}</Text>
+        <Text type="body-medium">{t("legend.late")}</Text>
       </li>
       <li>
         <AttendanceFigureEvent
           attendance={{ is_present: false, absence_type: AbsenceType.business }}
         />
-        <Text type="body-medium">{t("onLeave")}</Text>
+        <Text type="body-medium">{t("legend.onLeave")}</Text>
       </li>
       <li>
         <AttendanceFigureEvent
           attendance={{ is_present: false, absence_type: AbsenceType.absent }}
         />
-        <Text type="body-medium">{t("absent")}</Text>
+        <Text type="body-medium">{t("legend.absent")}</Text>
       </li>
       <li>
         <AttendanceFigureEvent
           attendance={{ is_present: null, absence_type: null }}
         />
-        <Text type="body-medium">{t("empty")}</Text>
+        <Text type="body-medium">{t("legend.empty")}</Text>
       </li>
     </ul>
   );

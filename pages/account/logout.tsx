@@ -1,6 +1,7 @@
 import UserContext from "@/contexts/UserContext";
 import { CustomPage } from "@/utils/types/common";
-import { Progress } from "@suankularb-components/react";
+import { Progress, Text } from "@suankularb-components/react";
+import { GetStaticProps } from "next";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { useContext, useEffect } from "react";
@@ -27,11 +28,15 @@ const LogOutPage: CustomPage = () => {
     <div className="-mb-20 grid min-h-svh place-content-center sm:mb-0">
       <div className="flex flex-col items-center gap-4">
         <Progress appearance="circular" alt={t("loading")} visible />
-        <h1 className="skc-label-large">{t("loading")}</h1>
+        <Text type="label-large" element="h1">
+          {t("loading")}
+        </Text>
       </div>
     </div>
   );
 };
+
+export const getStaticProps: GetStaticProps = () => ({ props: {} });
 
 LogOutPage.navType = "hidden";
 

@@ -1,15 +1,13 @@
-// Imports
 import PageHeader from "@/components/common/PageHeader";
 import LatestArticlesSection from "@/components/news/LatestArticlesSection";
 import NewsArticleItem from "@/components/news/NewsArticleItem";
 import getNewsFeed from "@/utils/backend/news/getNewsFeed";
 import { supabase } from "@/utils/supabase-backend";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage } from "@/utils/types/common";
 import { NewsArticle } from "@/utils/types/news";
 import { Columns, ContentLayout } from "@suankularb-components/react";
 import { GetStaticProps } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 
 /**
@@ -46,15 +44,9 @@ const NewsPage: CustomPage<{ newsFeed: NewsArticle[] }> = ({ newsFeed }) => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getStaticProps: GetStaticProps = async () => {
   const { data: newsFeed } = await getNewsFeed(supabase);
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
-      newsFeed,
-    },
-    revalidate: 300,
-  };
+  return { props: { newsFeed }, revalidate: 300 };
 };
 
 export default NewsPage;
