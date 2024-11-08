@@ -1,0 +1,8 @@
+{
+  "print": "Print",
+  "statistics": "View statistics",
+  "date": {
+    "date": "{{date, datetime(day: numeric; month: short;)}}",
+    "month": "{{date, datetime(month: short; year: numeric;)}}"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "title": "Enrolled students",
+  "searchAlt": "Search enrolled students",
+  "randomized": "Enrolled via randomization",
+  "action": {
+    "print": "Print"
+  }
+}

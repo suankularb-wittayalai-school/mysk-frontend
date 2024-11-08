@@ -1,0 +1,18 @@
+{
+  "searchAlt": "ค้นหาวิชาเลือก",
+  "enrolled": "ที่ลงทะเบียนอยู่",
+  "enrollment": {
+    "alt": "ลงทะเบียนแล้ว {{count}} คน จาก {{max}} คน",
+    "label": "<0>{{count}}</0>/{{max}}",
+    "progressAlt": "จำนวนนักเรียนที่ลงทะเบียนแล้ว"
+  },
+  "action": {
+    "choose_initial": "เลือกวิชานี้",
+    "choose_chosen": "เลือกแล้ว",
+    "choose_change": "เปลี่ยนเป็นวิชานี้"
+  },
+  "snackbar": {
+    "notAllowed": "คุณไม่สามารถเลือกวิชาเลือกนี้ได้",
+    "enrolled": "ลงทะเบียนเรียบร้อย"
+  }
+}

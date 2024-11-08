@@ -1,0 +1,43 @@
+{
+  "title": "Attendance",
+  "desc": "Every morning, teachers take attendance of their students during assembly and homeroom.",
+  "print": {
+    "title": "{{date, datetime(day: numeric; month: short)}} Attendance Summary",
+    "subtitle": "Presented by MySK"
+  },
+  "chart": {
+    "assembly": {
+      "presence": "Assembly presence",
+      "late": "Assembly late",
+      "absence": "Assembly absence"
+    },
+    "homeroom": {
+      "presence": "Homeroom presence",
+      "absence": "Homeroom absence"
+    },
+    "note": "<b>Chart guide:</b> each group is a grade, including data during assembly (top) and homeroom (bottom). Late is pink, presence is blue, and absence is red.",
+    "summary": {
+      "presence": "{{count, number}} present",
+      "onTime": "{{count, number}} on time",
+      "late": "{{count, number}} late",
+      "absence": "{{count, number}} absent"
+    }
+  },
+  "table": {
+    "thead": {
+      "classroom": "Classroom",
+      "summary": {
+        "onTime": "On time",
+        "late": "Late",
+        "covid": "Absent due to COVID-19",
+        "absence": "Absent for other reasons"
+      },
+      "absentStudents": "Absent students",
+      "homeroom": "Homeroom"
+    }
+  },
+  "action": {
+    "showMore": "Show more",
+    "print": "Print"
+  }
+}
