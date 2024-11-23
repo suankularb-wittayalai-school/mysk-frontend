@@ -2,7 +2,7 @@
   "title": "การเช็กชื่อ",
   "desc": "ในเวลาเช้าของทุกวัน ครูที่ปรึกษามีหน้าที่กรอกข้อมูลการเช็กชื่อในห้องของตนผ่านระบบ MySK",
   "print": {
-    "title": "รายงานการเข้าเรียน {{date, datetime(day: numeric; month: short)}}",
+    "title": "รายงานการเข้าเรียน {{date, dateshort}}",
     "subtitle": "นำเสนอโดย MySK"
   },
   "chart": {

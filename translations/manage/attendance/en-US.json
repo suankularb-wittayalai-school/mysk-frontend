@@ -2,7 +2,7 @@
   "title": "Attendance",
   "desc": "Every morning, teachers take attendance of their students during assembly and homeroom.",
   "print": {
-    "title": "{{date, datetime(day: numeric; month: short)}} Attendance Summary",
+    "title": "{{date, dateshort}} Attendance Summary",
     "subtitle": "Presented by MySK"
   },
   "chart": {

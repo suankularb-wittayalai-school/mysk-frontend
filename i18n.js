@@ -1,10 +1,21 @@
 /** @param {string} lang */
 const formatters = (lang) => ({
   number: new Intl.NumberFormat(lang),
+  percent: new Intl.NumberFormat(lang, { style: "percent" }),
   and: new Intl.ListFormat(lang, { type: "conjunction" }),
   or: new Intl.ListFormat(lang, { type: "disjunction" }),
   day: new Intl.DateTimeFormat(lang, { weekday: "long" }),
   date: new Intl.DateTimeFormat(lang, { dateStyle: "medium" }),
+  dateonly: new Intl.DateTimeFormat(lang, { day: "numeric" }),
+  dateshort: new Intl.DateTimeFormat(lang, {
+    day: "numeric",
+    month: "short",
+  }),
+  month: new Intl.DateTimeFormat(lang, { month: "long", year: "numeric" }),
+  monthshort: new Intl.DateTimeFormat(lang, {
+    month: "short",
+    year: "numeric",
+  }),
   time: new Intl.DateTimeFormat(lang, {
     hour: "2-digit",
     minute: "2-digit",
@@ -88,6 +99,27 @@ module.exports = {
       "account/certificates/seatDialog",
     ],
     "/account/logout": ["account/logOut"],
+    // Manage
+    "/manage": [
+      "manage",
+      "manage/attendance",
+      "manage/elective",
+      "manage/classrooms",
+      "manage/participation",
+    ],
+    "/manage/participation": ["manage/participation"],
+    "rgx:/manage/attendance/\\[date\\]$": [
+      "manage/attendance",
+      "attendance/viewSelector/action",
+      "attendance/viewSelector/dialog",
+    ],
+    "/manage/electives": [
+      "elective/title",
+      "elective/list",
+      "elective/detail/information",
+      "elective/detail/students",
+    ],
+    "/manage/electives/print": ["elective/print"],
   },
   logBuild: false,
   interpolation: {
