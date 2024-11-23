@@ -6,11 +6,11 @@ import { LangCode, StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { UserRole } from "@/utils/types/person";
 import { useRouter } from "next/router";
-import { useTranslation } from "react-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * A list of Students enrolled in an Elective Subject.
- * 
+ *
  * @param electiveSubject The Elective Subject to display the Students of.
  * @param query The search query to filter the Students by.
  */
@@ -19,7 +19,7 @@ const ElectiveStudentList: StylableFC<{
   query: string;
 }> = ({ electiveSubject, query, style, className }) => {
   const { locales } = useRouter() as { locales: LangCode[] };
-  const { t } = useTranslation("elective", { keyPrefix: "detail.students" });
+  const { t } = useTranslation("elective/detail/students");
 
   /** Convert `applicable_classrooms` into an indexable format. */
   const classrooms = Object.fromEntries(

@@ -14,7 +14,7 @@ import {
   MaterialIcon,
   Radio,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { sort } from "radash";
 
 /**
@@ -42,7 +42,7 @@ const ElectiveListItem: StylableFC<{
   className,
 }) => {
   const locale = useLocale();
-  const { t } = useTranslation("elective", { keyPrefix: "list" });
+  const { t } = useTranslation("elective/list");
   const { t: tx } = useTranslation("common");
 
   return (

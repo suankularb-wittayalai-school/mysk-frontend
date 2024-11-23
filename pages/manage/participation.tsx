@@ -6,7 +6,7 @@ import { CustomPage, LangCode } from "@/utils/types/common";
 import { ParticipationMetrics } from "@/utils/types/management";
 import { ContentLayout, Section } from "@suankularb-components/react";
 import { GetStaticProps } from "next";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
@@ -18,7 +18,7 @@ import Head from "next/head";
 const ParticipationPage: CustomPage<{
   metrics: ParticipationMetrics;
 }> = ({ metrics }) => {
-  const { t } = useTranslation("manage", { keyPrefix: "participation" });
+  const { t } = useTranslation("manage/participation");
   const { t: tx } = useTranslation("common");
 
   return (

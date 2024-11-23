@@ -6,7 +6,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { Person, Student, Teacher, UserRole } from "@/utils/types/person";
 import { Card, CardHeader } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { sift } from "radash";
 import { ComponentProps, useState } from "react";
 

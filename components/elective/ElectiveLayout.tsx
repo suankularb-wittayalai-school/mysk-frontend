@@ -6,7 +6,7 @@ import { Breakpoint } from "@/utils/helpers/useBreakpoint";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { ContentLayout } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { ReactNode } from "react";
 
@@ -23,15 +23,14 @@ const ElectiveLayout: StylableFC<{
   children: ReactNode;
   role: UserRole;
 }> = ({ children, role, style, className }) => {
-  const { t } = useTranslation("elective");
+  console.log(role);
+  const { t } = useTranslation("elective/title");
   const { t: tx } = useTranslation("common");
 
   return (
     <>
       <Head>
-        <title>
-          {tx("tabName", { tabName: t("title", { context: role }) })}
-        </title>
+        <title>{tx("tabName", { tabName: t(`title_${role}`) })}</title>
       </Head>
 
       {/* Background */}
@@ -44,7 +43,7 @@ const ElectiveLayout: StylableFC<{
 
       {/* Content */}
       <PageHeader parentURL={getHomeURLofRole(role)}>
-        {t("title", { context: role })}
+        {t(`title_${role}`)}
       </PageHeader>
       <ContentLayout
         style={style}

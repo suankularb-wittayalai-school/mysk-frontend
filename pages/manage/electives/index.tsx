@@ -23,8 +23,7 @@ import {
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
 import { GetStaticProps } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import { usePlausible } from "next-plausible";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -42,7 +41,7 @@ const ManageElectivesPage: CustomPage<{
     locale: LangCode;
     locales: LangCode[];
   };
-  const { t } = useTranslation("elective");
+  const { t } = useTranslation("elective/list");
 
   const plausible = usePlausible();
   const mysk = useMySKClient();
@@ -78,7 +77,7 @@ const ManageElectivesPage: CustomPage<{
       <ElectiveLayout role={UserRole.management}>
         <section className="mx-4 -mb-9 flex flex-col">
           <Search
-            alt={t("list.searchAlt")}
+            alt={t("searchAlt")}
             value={query}
             locale={locale}
             onChange={setQuery}
@@ -179,11 +178,6 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "attendance",
-        "elective",
-      ])),
       electiveSubjects,
     },
     revalidate: 10,

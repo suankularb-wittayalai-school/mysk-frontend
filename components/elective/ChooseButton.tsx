@@ -9,7 +9,7 @@ import withLoading from "@/utils/helpers/withLoading";
 import { StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { Button, MaterialIcon, Snackbar } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { usePlausible } from "next-plausible";
 import { useContext, useState } from "react";
 
@@ -34,7 +34,7 @@ const ChooseButton: StylableFC<{
   style,
   className,
 }) => {
-  const { t } = useTranslation("elective", { keyPrefix: "list" });
+  const { t } = useTranslation("elective/list");
   const { t: tx } = useTranslation("common");
 
   const { setSnackbar } = useContext(SnackbarContext);
@@ -118,13 +118,15 @@ const ChooseButton: StylableFC<{
         style={style}
         className={className}
       >
-        {t("action.choose", {
-          context: !enrolledElective
-            ? "initial"
-            : electiveSubject?.id !== enrolledElective.id
-              ? "change"
-              : "chosen",
-        })}
+        {t(
+          `action.choose_${
+            !enrolledElective
+              ? "initial"
+              : electiveSubject?.id !== enrolledElective.id
+                ? "change"
+                : "chosen"
+          }`,
+        )}
       </Button>
 
       {/* Requirements */}
