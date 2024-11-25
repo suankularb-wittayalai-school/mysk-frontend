@@ -12,9 +12,10 @@ export default function lastWeekday(date: Date) {
 
   const getDate = date.getDate();
   const getMonth = date.getMonth() + 1;
+  
   if (
     `${date.getFullYear()}-${getMonth + 1 > 9 ? getMonth : "0" + getMonth}-${getDate + 1 > 9 ? getDate : "0" + getDate}` ==
-    process.env.ATTENDANCE_SPECIAL_DATE
+    process.env.NEXT_PUBLIC_ATTENDANCE_SPECIAL_DATE
   ) return date;
 
   if (day === 0) return setDay(addDays(date, -1), 5);
