@@ -4,19 +4,19 @@
   "awareness": {
     "alt": "แผนภูมิจำนวนผู้ใช้เข้าร่วม",
     "overline": "การเข้าถึง",
-    "title": "{{percentage, number(style: percent;)}} ของผู้ใช้ทั้งหมดเข้าสู่ระบบอย่างน้อยหนึ่งครั้ง",
+    "title": "{{percentage, percent}} ของผู้ใช้ทั้งหมดเข้าสู่ระบบอย่างน้อยหนึ่งครั้ง",
     "subtitle": "{{count, number}} คนจากผู้ใช้ที่ลงทะเบียน {{total, number}} คน"
   },
   "teacherParticipation": {
     "alt": "แผนภูมิจำนวนครูที่กรอกข้อมูลตารางสอนแล้ว",
     "overline": "ความร่วมมือครู",
-    "title": "{{percentage, number(style: percent;)}} ของครูทั้งหมดกรอกข้อมูลตารางสอนแล้ว",
+    "title": "{{percentage, percent}} ของครูทั้งหมดกรอกข้อมูลตารางสอนแล้ว",
     "subtitle": "{{count, number}} คนจากครูทั้งหมด {{total, number}} คน"
   },
   "studentParticipation": {
     "alt": "แผนภูมิจำนวนนักเรียนที่กรอกข้อมูลส่วนตัวแล้ว",
     "overline": "ความร่วมมือนักเรียน",
-    "title": "{{percentage, number(style: percent;)}} ของนักเรียนทั้งหมดกรอกข้อมูลส่วนตัวแล้ว",
+    "title": "{{percentage, percent}} ของนักเรียนทั้งหมดกรอกข้อมูลส่วนตัวแล้ว",
     "subtitle": "{{count, number}} คนจากนักเรียนที่มีห้องเรียน {{total, number}} คน"
   },
   "action": {
