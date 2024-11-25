@@ -1,4 +1,4 @@
-import { addDays, getDate, setDay } from "date-fns";
+import { addDays, setDay } from "date-fns";
 
 /**
  * Returns the nearest past weekday to the given date.
