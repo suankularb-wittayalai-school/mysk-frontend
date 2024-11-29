@@ -5,7 +5,7 @@ import {
   StudentAttendance,
 } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
-import { ChipSet, InputChip } from "@suankularb-components/react";
+import { ChipSet, InputChip, AssistChip, SuggestionChip } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 
 /**
@@ -43,26 +43,34 @@ const AttendanceSelector: StylableFC<{
       >
         <span className="-mx-1">{t("chip.onTime")}</span>
       </InputChip>
-      <InputChip
-        onClick={() => {
-          onChange({
-            ...attendance[shownEvent],
-            is_present: false,
-            absence_type: AbsenceType.late,
-            absence_reason: null,
-          });
-        }}
-        {...(attendance[shownEvent].absence_type === AbsenceType.late
-          ? {
-              selected: true,
-              className: cn(`!bg-tertiary-container
-              !text-on-tertiary-container
-              state-layer:!bg-on-tertiary-container`),
-            }
-          : null)}
-      >
-        <span className="-mx-1">{t("chip.late")}</span>
-      </InputChip>
+      {shownEvent !== "homeroom" ? (
+        // Enabled Chip
+        <InputChip
+          onClick={() => {
+            onChange({
+              ...attendance[shownEvent],
+              is_present: false,
+              absence_type: AbsenceType.late,
+              absence_reason: null,
+            });
+          }}
+          {...(attendance[shownEvent].absence_type === AbsenceType.late
+            ? {
+                selected: true,
+                className: cn(`!bg-tertiary-container
+                !text-on-tertiary-container
+                state-layer:!bg-on-tertiary-container`),
+              }
+            : null)}
+        >
+          <span className="-mx-1">{t("chip.late")}</span>
+        </InputChip>) :
+        // InputChip doesn't support disabled state, but AssistChip does.
+        <AssistChip disabled={shownEvent === "homeroom"}>
+          <span className="-mx-1">{t("chip.late")}</span>
+        </AssistChip>
+      }
+      
       <InputChip
         onClick={() => {
           onChange({
