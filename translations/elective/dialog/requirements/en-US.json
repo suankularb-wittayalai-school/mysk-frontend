@@ -1,0 +1,11 @@
+{
+  "title": "Check if you meet requirements",
+  "desc": "You must read and accept these requirements before you can enroll in this elective.",
+  "form": {
+    "requirements": "Requirements"
+  },
+  "action": {
+    "cancel": "Cancel",
+    "continue": "Continue"
+  }
+}

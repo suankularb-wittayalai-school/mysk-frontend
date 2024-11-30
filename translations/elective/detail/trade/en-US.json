@@ -1,0 +1,20 @@
+{
+  "title": "Trade electives",
+  "incoming": "Incoming requests",
+  "outgoing": "Outgoing requests",
+  "empty": "Didn’t like the elective you chose? Create a trade request and find a friend to trade with.",
+  "unavailable": "Trading electives is not available right now.",
+  "you": "{{name}} <0>(You)</0>",
+  "action": {
+    "create": "Create request",
+    "respond": "Respond with…",
+    "approve": "Approve",
+    "decline": "Decline",
+    "cancel": "Cancel"
+  },
+  "snackbar": {
+    "cancelled": "Request cancelled",
+    "approved": "Request approved",
+    "declined": "Request declined"
+  }
+}

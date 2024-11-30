@@ -1,0 +1,17 @@
+{
+  "title": "Trade with a friend",
+  "desc": "Enter the school email (ends with sk.ac.th) of the friend you want to trade electives with.",
+  "form": {
+    "email": "School email"
+  },
+  "action": {
+    "cancel": "Cancel",
+    "send": "Send request"
+  },
+  "snackbar": {
+    "self": "You can’t trade electives with yourself",
+    "notFound": "Student not found",
+    "notAllowed": "You can’t trade electives with that person",
+    "success": "Request sent"
+  }
+}
