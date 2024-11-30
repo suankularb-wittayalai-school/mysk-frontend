@@ -29,7 +29,7 @@ import {
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
 
@@ -55,7 +55,7 @@ const LearnElectivesPage: CustomPage<{
   incomingTrades,
   outgoingTrades,
 }) => {
-  const { t } = useTranslation("elective");
+  const { t } = useTranslation("elective/detail/empty");
 
   const plausible = usePlausible();
   const mysk = useMySKClient();
@@ -151,7 +151,7 @@ const LearnElectivesPage: CustomPage<{
                   element="p"
                   className="max-w-52 text-center text-on-surface-variant"
                 >
-                  {t("detail.empty")}
+                  {t("empty")}
                 </Text>
               </div>
             )}

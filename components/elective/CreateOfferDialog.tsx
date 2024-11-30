@@ -20,7 +20,7 @@ import {
   TextField,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { usePlausible } from "next-plausible";
 import { useContext } from "react";
 
@@ -34,10 +34,7 @@ const CreateOfferDialog: StylableFC<{
   open?: boolean;
   onClose: () => void;
 }> = ({ open, onClose, style, className }) => {
-  const { t } = useTranslation("elective", {
-    keyPrefix: "dialog.createRequest",
-  });
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("elective/dialog/createRequest");
 
   const plausible = usePlausible();
   const refreshProps = useRefreshProps();
@@ -81,7 +78,7 @@ const CreateOfferDialog: StylableFC<{
       await getStudentIDByEmail(supabase, form.email);
     if (!recipientID) {
       if (recipientIDError)
-        setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+        setSnackbar(<Snackbar>{t("common:snackbar.failure")}</Snackbar>);
       else setSnackbar(<Snackbar>{t("snackbar.notFound")}</Snackbar>);
       return false;
     }
@@ -98,7 +95,7 @@ const CreateOfferDialog: StylableFC<{
     if (error) {
       if (error.code === 400 || error.code === 403)
         setSnackbar(<Snackbar>{t("snackbar.notAllowed")}</Snackbar>);
-      else setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+      else setSnackbar(<Snackbar>{t("common:snackbar.failure")}</Snackbar>);
       logError("handleSubmit", error);
       return false;
     }

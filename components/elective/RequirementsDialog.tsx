@@ -13,9 +13,8 @@ import {
   FormItem,
   MaterialIcon,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { list } from "radash";
-import { useState } from "react";
 
 /**
  * A Dialog that displays the requirements of an Elective Subject and allows the
@@ -33,9 +32,7 @@ const RequirementsDialog: StylableFC<{
   onSubmit: () => void;
 }> = ({ open, requirements, onClose, onSubmit, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("elective", {
-    keyPrefix: "dialog.requirements",
-  });
+  const { t } = useTranslation("elective/dialog/requirements");
 
   const { form, setForm } = useForm<"requirements">([
     {

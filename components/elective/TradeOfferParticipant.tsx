@@ -14,11 +14,12 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
-import { Trans, useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
+import Trans from "next-translate/Trans";
 
 /**
  * A participant (sender or receiver) in a Trade Offer.
- * 
+ *
  * @param participant The Student to display.
  * @param electiveSubject The Elective Subject the Student is offering.
  */
@@ -27,7 +28,6 @@ const TradeOfferParticipant: StylableFC<{
   electiveSubject: ElectiveSubject;
 }> = ({ electiveSubject, participant, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("elective", { keyPrefix: "detail.trade" });
 
   const mysk = useMySKClient();
   const name = getLocaleName(locale, participant, {
@@ -43,9 +43,13 @@ const TradeOfferParticipant: StylableFC<{
       <div className="grid *:truncate">
         <Text type="title-medium">
           {mysk.person?.id === participant.id ? (
-            <Trans i18nKey="you" t={t} values={{ name }}>
-              <span className="text-on-surface-variant" />
-            </Trans>
+            <Trans
+              i18nKey="elective/detail/trade:you"
+              values={{ name }}
+              components={{
+                0: <span className="text-on-surface-variant" />,
+              }}
+            ></Trans>
           ) : (
             name
           )}
