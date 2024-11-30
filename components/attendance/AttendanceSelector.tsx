@@ -43,7 +43,7 @@ const AttendanceSelector: StylableFC<{
       >
         <span className="-mx-1">{t("chip.onTime")}</span>
       </InputChip>
-      {shownEvent !== "homeroom" ? (
+      {shownEvent !== "homeroom" && (
         // Enabled Chip
         <InputChip
           onClick={() => {
@@ -64,13 +64,8 @@ const AttendanceSelector: StylableFC<{
             : null)}
         >
           <span className="-mx-1">{t("chip.late")}</span>
-        </InputChip>) :
-        // InputChip doesn't support disabled state, but AssistChip does.
-        <AssistChip disabled={shownEvent === "homeroom"}>
-          <span className="-mx-1">{t("chip.late")}</span>
-        </AssistChip>
+        </InputChip>)
       }
-      
       <InputChip
         onClick={() => {
           onChange({
