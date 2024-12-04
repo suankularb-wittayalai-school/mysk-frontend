@@ -72,6 +72,7 @@
     "homeroom": {
       "title": "Homeroom",
       "field": "What did you talk about?",
+      "noContent": "There is currently no homeroom content for today. If you believe this is a mistake, contact your homeroom teacher.",
       "action": {
         "add": "Add homeroom",
         "edit": "Edit",
