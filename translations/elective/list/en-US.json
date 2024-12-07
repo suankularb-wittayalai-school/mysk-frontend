@@ -1,0 +1,18 @@
+{
+  "searchAlt": "Search electives",
+  "enrolled": "Currently enrolled",
+  "enrollment": {
+    "alt": "{{count}} enrolled out of {{max}}",
+    "label": "<0>{{count}}</0>/{{max}}",
+    "progressAlt": "Enrollment progress bar"
+  },
+  "action": {
+    "choose_initial": "Choose elective",
+    "choose_chosen": "Chosen",
+    "choose_change": "Change elective"
+  },
+  "snackbar": {
+    "notAllowed": "You can’t enroll in that elective",
+    "enrolled": "Successfully enrolled"
+  }
+}

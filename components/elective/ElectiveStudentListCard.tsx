@@ -16,7 +16,7 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useState } from "react";
 import shortUUID from "short-uuid";
@@ -31,7 +31,7 @@ const ElectiveStudentListCard: StylableFC<{
   electiveSubject: ElectiveSubject;
 }> = ({ electiveSubject, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("elective", { keyPrefix: "detail.students" });
+  const { t } = useTranslation("elective/detail/students");
 
   const { fromUUID } = shortUUID();
 

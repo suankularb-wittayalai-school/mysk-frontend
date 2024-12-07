@@ -1,0 +1,28 @@
+{
+  "date": {
+    "desc": "เลือกวันที่และห้องเรียนที่ต้องการเรียกดู",
+    "form": {
+      "date": "วันที่",
+      "classroom": "ห้องเรียน"
+    },
+    "action": {
+      "cancel": "ยกเลิก",
+      "go": "ไป"
+    },
+    "snackbar": {
+      "classNotFound": "ไม่พบห้องเรียน"
+    }
+  },
+  "statistics": {
+    "desc": "สถิติการเข้าเรียนของโรงเรียนในวันนี้ มีดังนี้",
+    "total": {
+      "presence": "มาเรียน {{count, number}}",
+      "late": "มาสาย {{count, number}}",
+      "absence": "ขาดเรียน {{count, number}}"
+    },
+    "missing": "หมายเหตุ: ยังขาดข้อมูลการเช็กชื่อจากห้องเรียน {{count, number}} ห้อง",
+    "action": {
+      "close": "ปิด"
+    }
+  }
+}

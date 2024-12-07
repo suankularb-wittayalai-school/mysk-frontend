@@ -29,13 +29,13 @@ import {
   Text,
 } from "@suankularb-components/react";
 import { GetStaticPaths, GetStaticProps } from "next";
-import { Trans, useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import Image from "next/image";
 import router from "next/router";
 import { mapValues } from "radash";
 import { useState } from "react";
+import Trans from "next-translate/Trans";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * The Attendance Overview page displays the Attendance of all Classrooms in the
@@ -51,8 +51,8 @@ const AttendanceOverviewPage: CustomPage<{
     classrooms: ClassroomAttendance[];
   };
 }> = ({ date, attendances: { grades, classrooms } }) => {
-  const { t } = useTranslation("manage", { keyPrefix: "attendance" });
-  const { t: ta } = useTranslation("attendance");
+  const { t } = useTranslation("manage/attendance");
+  const { t: ta } = useTranslation("attendance/viewSelector/action");
   const { t: tx } = useTranslation("common");
 
   /**
@@ -117,7 +117,7 @@ const AttendanceOverviewPage: CustomPage<{
                 icon={<MaterialIcon icon="event" />}
                 onClick={() => setDatePickerOpen(true)}
               >
-                {ta("viewSelector.action.date.date", { date: new Date(date) })}
+                {ta("date.date", { date: new Date(date) })}
               </Button>
               <AttendanceDatePickerDialog
                 open={datePickerOpen}
@@ -190,7 +190,7 @@ const AttendanceOverviewPage: CustomPage<{
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { date } = params as { date: string };
   if (!isValidAttendanceDate(date)) return { notFound: true };
 
@@ -198,11 +198,6 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "attendance",
-        "manage",
-      ])),
       date,
       attendances,
     },

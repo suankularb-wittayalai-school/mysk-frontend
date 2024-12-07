@@ -1,0 +1,8 @@
+{
+  "title": "Elective subjects",
+  "desc": "Students take elective classes based on what they’ve chosen. See all of the subjects and students list.",
+  "action": {
+    "showMore": "Show more",
+    "print": "Print"
+  }
+}

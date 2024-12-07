@@ -9,7 +9,7 @@ import { supabase } from "@/utils/supabase-backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { GetStaticProps } from "next";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { objectify, pick } from "radash";
@@ -23,7 +23,7 @@ import { objectify, pick } from "radash";
 const ElectivesBulkPrintPage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
 }> = ({ electiveSubjects }) => {
-  const { t } = useTranslation("elective", { keyPrefix: "print" });
+  const { t } = useTranslation("elective/print");
   const { t: tx } = useTranslation("common");
 
   return (
@@ -104,11 +104,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "classes",
-        "elective",
-      ])),
+      ...(await serverSideTranslations(locale as LangCode, ["common"])),
       electiveSubjects,
     },
     revalidate: 60,

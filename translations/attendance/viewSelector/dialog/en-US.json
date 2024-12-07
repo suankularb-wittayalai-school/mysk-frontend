@@ -1,0 +1,29 @@
+{
+  "date": {
+    "desc": "Enter the date and classroom to go to.",
+    "form": {
+      "date": "Date",
+      "classroom": "Classroom"
+    },
+    "action": {
+      "cancel": "Cancel",
+      "go": "Go"
+    },
+    "snackbar": {
+      "classNotFound": "Class not found"
+    }
+  },
+  "statistics": {
+    "desc": "Here’s a summary of this morning’s attendance from all classrooms.",
+    "total": {
+      "presence": "{{count, number}} present",
+      "late": "{{count, number}} late",
+      "absence": "{{count, number}} absent"
+    },
+    "missing_one": "Note: missing data from the following classroom.",
+    "missing_other": "Note: missing data from these {{count, number}} classrooms.",
+    "action": {
+      "close": "Close"
+    }
+  }
+}

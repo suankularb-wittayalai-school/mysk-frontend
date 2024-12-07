@@ -13,7 +13,7 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { usePlausible } from "next-plausible";
 import { useState } from "react";
 import Balancer from "react-wrap-balancer";
@@ -28,7 +28,7 @@ const ElectiveDetailsHeader: StylableFC<{
   electiveSubject: ElectiveSubject;
 }> = ({ electiveSubject, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("elective", { keyPrefix: "detail.information" });
+  const { t } = useTranslation("elective/detail/information");
 
   const plausible = usePlausible();
   /** Formatted Elective Subject name for trakcking. */
@@ -63,9 +63,9 @@ const ElectiveDetailsHeader: StylableFC<{
         }}
         className="mr-10 md:mr-0"
       >
-        {t("action.seeSyllabus", {
-          context: electiveSubject.syllabus ? "available" : "unavailable",
-        })}
+        {t(
+          `action.seeSyllabus_${electiveSubject.syllabus ? "available" : "unavailable"}`,
+        )}
       </AssistChip>
       {electiveSubject.syllabus && (
         <PDFViewerDialog

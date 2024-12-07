@@ -24,10 +24,10 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useTranslation } from "next-i18next";
 import { list, sum } from "radash";
 import { useState } from "react";
 import Markdown from "react-markdown";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * A table that displays Attendance of all Classrooms in the school.
@@ -38,7 +38,7 @@ const SchoolWideAttendanceTable: StylableFC<{
   attendances: ClassroomAttendance[];
 }> = ({ attendances, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("manage", { keyPrefix: "attendance.table" });
+  const { t } = useTranslation("manage/attendance");
   const { t: tx } = useTranslation("common");
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -52,7 +52,7 @@ const SchoolWideAttendanceTable: StylableFC<{
     columnHelper.accessor("classroom.number", {
       id: "classroom",
       cell: (info) => tx("class", { number: info.getValue() }),
-      header: t("thead.classroom"),
+      header: () => t("table.thead.classroom"),
     }),
 
     // Summary
@@ -135,7 +135,7 @@ const SchoolWideAttendanceTable: StylableFC<{
           ))}
         </ChipSet>
       ),
-      header: t("thead.absentStudents"),
+      header: t("table.thead.absentStudents"),
     }),
 
     // Homeroom Content
@@ -148,7 +148,7 @@ const SchoolWideAttendanceTable: StylableFC<{
           {info.getValue()}
         </Markdown>
       ),
-      header: t("thead.homeroom"),
+      header: t("table.thead.homeroom"),
     }),
   ];
 

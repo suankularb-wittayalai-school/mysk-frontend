@@ -1,0 +1,17 @@
+{
+  "title": "Information",
+  "name": "Subject name",
+  "code": "Subject code",
+  "teachers": "Teachers",
+  "room": "Room",
+  "description": "Description",
+  "students": "Students",
+  "students.searchAlt": "Search students",
+  "action": {
+    "seeSyllabus_available": "See syllabus",
+    "seeSyllabus_unavailable": "Syllabus not available"
+  },
+  "dialog": {
+    "syllabus": "Syllabus"
+  }
+}
