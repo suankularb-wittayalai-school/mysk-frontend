@@ -1,4 +1,5 @@
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
@@ -53,7 +54,13 @@ export async function getTeacherByID(
       {
         query: {
           fetch_level: "compact",
-          filter: { data: { teacher_ids: [teacherID] } },
+          filter: {
+            data: {
+              teacher_ids: [teacherID],
+              year: getCurrentAcademicYear(),
+              semester: getCurrentSemester(),
+            },
+          },
         },
       },
     );
@@ -100,7 +107,7 @@ export async function getTeacherByID(
       : null,
     profile: data!.people?.profile ?? null,
     profile_url: data!.people?.profile ?? null,
-    citizen_id: options?.detailed ? data!.people?.citizen_id ?? null : null,
+    citizen_id: options?.detailed ? (data!.people?.citizen_id ?? null) : null,
     shirt_size:
       options?.detailed && data?.people?.shirt_size
         ? {
@@ -133,7 +140,7 @@ export async function getTeacherByID(
       : [],
     electives_in_charge: electivesInCharge,
     birthdate: data!.people!.birthdate,
-    pants_size: options?.detailed ? data!.people?.pants_size ?? null : null,
+    pants_size: options?.detailed ? (data!.people?.pants_size ?? null) : null,
     role: UserRole.teacher,
     is_admin: null,
   };

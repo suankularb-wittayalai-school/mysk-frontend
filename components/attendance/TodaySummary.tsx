@@ -14,6 +14,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 
 /**
  * The view of the Homeroom Content.
@@ -38,6 +39,8 @@ const TodaySummary: StylableFC<{
   classroomID: string;
 }> = ({ attendances, homeroomContent, classroomID, style, className }) => {
   const { t } = useTranslation("attendance", { keyPrefix: "day" });
+
+  const mysk = useMySKClient();
 
   // Count the number of students who are marked as late at Assembly.
   // Since being ”late” refers to arrving late to Assembly, we only count those
@@ -83,8 +86,7 @@ const TodaySummary: StylableFC<{
       transition={transition(DURATION.medium4, EASING.standard)}
       style={{ ...style, borderRadius: 20 }}
       className={cn(
-        `overflow-hidden rounded-lg border-1 border-outline-variant
-        bg-surface-container-high`,
+        `overflow-hidden rounded-lg border-1 border-outline-variant bg-surface-container-high`,
         className,
       )}
     >
@@ -122,16 +124,29 @@ const TodaySummary: StylableFC<{
             <Text type="title-medium">{t("homeroom.title")}</Text>
             {
               {
-                // If there is no homeroom content, show a button to add content.
+                // If there is no homeroom content and the user is not a
+                // student, show a button to add content.
                 empty: (
-                  <Button
-                    appearance="filled"
-                    icon={<MaterialIcon icon="add" />}
-                    onClick={() => setHomeroomView(HomeroomView.edit)}
-                    className="!justify-self-start"
-                  >
-                    {t("homeroom.action.add")}
-                  </Button>
+                  <>
+                    {mysk.user?.role === "student" && !mysk.user?.is_admin ? (
+                    // mysk.user?.role === "student" && mysk.user?.is_admin ? (
+                      <Text
+                        type="body-medium"
+                        className="text-on-surface-variant"
+                      >
+                        {t("homeroom.noContent")}
+                      </Text>
+                    ) : (
+                      <Button
+                        appearance="filled"
+                        icon={<MaterialIcon icon="add" />}
+                        onClick={() => setHomeroomView(HomeroomView.edit)}
+                        className="!justify-self-start"
+                      >
+                        {t("homeroom.action.add")}
+                      </Button>
+                    )}
+                  </>
                 ),
                 // If there is homeroom content, show the content.
                 view: (
@@ -143,19 +158,22 @@ const TodaySummary: StylableFC<{
                       className="-mt-1"
                     >
                       <Markdown
-                        className={cn(`[&_ol]:list-decimal [&_ol]:pl-6
-                        [&_ul]:list-disc [&_ul]:pl-6`)}
+                        className={cn(
+                          `[&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6`,
+                        )}
                       >
                         {homeroomContent.homeroom_content}
                       </Markdown>
                     </Text>
-                    <Button
-                      appearance="text"
-                      onClick={() => setHomeroomView(HomeroomView.edit)}
-                      className="!-mt-1 !justify-self-end"
-                    >
-                      {t("homeroom.action.edit")}
-                    </Button>
+                    {(mysk.user?.role === "teacher" || mysk.user?.is_admin) && (
+                      <Button
+                        appearance="text"
+                        onClick={() => setHomeroomView(HomeroomView.edit)}
+                        className="!-mt-1 !justify-self-end"
+                      >
+                        {t("homeroom.action.edit")}
+                      </Button>
+                    )}
                   </>
                 ),
                 // If the user is editing the homeroom content, show the editor.
