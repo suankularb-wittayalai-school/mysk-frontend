@@ -37,7 +37,15 @@ const TodaySummary: StylableFC<{
   attendances: StudentAttendance[];
   homeroomContent: HomeroomContent;
   classroomID: string;
-}> = ({ attendances, homeroomContent, classroomID, style, className }) => {
+  editable: boolean;
+}> = ({
+  attendances,
+  homeroomContent,
+  classroomID,
+  editable,
+  style,
+  className,
+}) => {
   const { t } = useTranslation("attendance", { keyPrefix: "day" });
 
   const mysk = useMySKClient();
@@ -128,15 +136,7 @@ const TodaySummary: StylableFC<{
                 // student, show a button to add content.
                 empty: (
                   <>
-                    {mysk.user?.role === "student" && !mysk.user?.is_admin ? (
-                    // mysk.user?.role === "student" && mysk.user?.is_admin ? (
-                      <Text
-                        type="body-medium"
-                        className="text-on-surface-variant"
-                      >
-                        {t("homeroom.noContent")}
-                      </Text>
-                    ) : (
+                    {editable ? (
                       <Button
                         appearance="filled"
                         icon={<MaterialIcon icon="add" />}
@@ -145,6 +145,13 @@ const TodaySummary: StylableFC<{
                       >
                         {t("homeroom.action.add")}
                       </Button>
+                    ) : (
+                      <Text
+                        type="body-medium"
+                        className="text-on-surface-variant"
+                      >
+                        {t("homeroom.noContent")}
+                      </Text>
                     )}
                   </>
                 ),
@@ -165,7 +172,7 @@ const TodaySummary: StylableFC<{
                         {homeroomContent.homeroom_content}
                       </Markdown>
                     </Text>
-                    {(mysk.user?.role === "teacher" || mysk.user?.is_admin) && (
+                    {(editable) && (
                       <Button
                         appearance="text"
                         onClick={() => setHomeroomView(HomeroomView.edit)}
