@@ -134,7 +134,7 @@ const ScheduleEditorPage: CustomPage = () => {
         ) : (
           <Card
             appearance="outlined"
-            className="grid h-[27.75rem] place-content-center"
+            className="grid h-[27.75rem] place-content-center mx-4"
           >
             <Text
               type="body-medium"
