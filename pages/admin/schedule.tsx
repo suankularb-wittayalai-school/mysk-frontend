@@ -82,10 +82,12 @@ const ScheduleEditorPage: CustomPage = () => {
             >
               {t("view.student")}
             </Button>
+            {/* Not supported yet. */}
             <Button
               appearance="outlined"
               selected={view === UserRole.teacher}
               onClick={() => setView(UserRole.teacher)}
+              disabled={true}
             >
               {t("view.teacher")}
             </Button>
