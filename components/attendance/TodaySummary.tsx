@@ -48,8 +48,6 @@ const TodaySummary: StylableFC<{
 }) => {
   const { t } = useTranslation("attendance", { keyPrefix: "day" });
 
-  const mysk = useMySKClient();
-
   // Count the number of students who are marked as late at Assembly.
   // Since being ”late” refers to arrving late to Assembly, we only count those
   // who are marked as late at Assembly.
