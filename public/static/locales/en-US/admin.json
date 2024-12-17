@@ -30,8 +30,8 @@
           "classroom": "Classroom"
         },
         "action": {
-          "cancel": "𝕏 (formerly Twitter)",
-          "go": "Golang"
+          "cancel": "Cancel",
+          "go": "Go"
         }
       }
     }

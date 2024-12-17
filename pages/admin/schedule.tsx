@@ -82,10 +82,12 @@ const ScheduleEditorPage: CustomPage = () => {
             >
               {t("view.student")}
             </Button>
+            {/* Not supported yet. */}
             <Button
               appearance="outlined"
               selected={view === UserRole.teacher}
               onClick={() => setView(UserRole.teacher)}
+              disabled={true}
             >
               {t("view.teacher")}
             </Button>
@@ -132,7 +134,7 @@ const ScheduleEditorPage: CustomPage = () => {
         ) : (
           <Card
             appearance="outlined"
-            className="grid h-[27.75rem] place-content-center"
+            className="grid h-[27.75rem] place-content-center mx-4"
           >
             <Text
               type="body-medium"
