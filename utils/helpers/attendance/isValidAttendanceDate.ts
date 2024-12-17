@@ -8,7 +8,7 @@ import { toZonedTime } from "date-fns-tz";
  * @returns Whether the date is valid for viewing Attendance.
  */
 export default function isValidAttendanceDate(date: Date | string): boolean {
-  if (date == process.env.ATTENDANCE_SPECIAL_DATE) return true;
+  if (date == process.env.NEXT_PUBLIC_ATTENDANCE_SPECIAL_DATE) return true;
   if (!(date instanceof Date || YYYYMMDDRegex.test(date))) return false;
   const parsedDate = new Date(date);
   if (isWeekend(parsedDate)) return false;

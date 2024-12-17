@@ -66,6 +66,15 @@ declare global {
        * access to all pages but the maintenance page.
        */
       CLOSED_FOR_MAINTENANCE: "true" | "false";
+
+
+      /**
+       * The date to open attendnace system in special weekends. Currently 
+       * limited to only one date per time.
+       * 
+       * **To-do**: Deprecate this ASAP and use arrays from a database instead.
+       */
+      NEXT_PUBLIC_ATTENDANCE_SPECIAL_DATE: string
     }
   }
 }

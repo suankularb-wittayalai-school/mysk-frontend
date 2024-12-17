@@ -61,6 +61,8 @@ const AttendanceListItem: StylableFC<{
   const [loading, toggleLoading] = useToggle();
   const [studentOpen, setStudentOpen] = useState(false);
 
+  const [currentTimerID, setCurrentTimerID] = useState<any>();
+
   /**
    * Sets the Attendance of the shown Event. Also sets the Attendance for
    * Homeroom if the shown Event is Assembly.
@@ -102,7 +104,14 @@ const AttendanceListItem: StylableFC<{
     onAttendanceChange(newAttendance);
 
     // Save the Attendance to the database, if not prevented.
-    if (!options?.noSave) handleSave(newAttendance);
+    if (!options?.noSave) {
+      clearTimeout(currentTimerID);
+      setCurrentTimerID(
+        setTimeout(() => {
+          handleSave(newAttendance);
+        }, 300),
+      );
+    }
   }
 
   /**
