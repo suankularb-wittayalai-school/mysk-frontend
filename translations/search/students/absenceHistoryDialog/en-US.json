@@ -2,12 +2,13 @@
   "history": {
     "title": "Absence history",
     "item": {
-      "null": "No data",
       "late": "Late",
+      "activity": "Activity leave",
       "sick": "Sick leave",
       "business": "Business leave",
       "absent": "Absent",
-      "dropped": "Dropped"
+      "dropped": "Dropped",
+      "null": "No data"
     }
   },
   "perfect": {
