@@ -14,7 +14,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
-import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 
 /**
  * The view of the Homeroom Content.
