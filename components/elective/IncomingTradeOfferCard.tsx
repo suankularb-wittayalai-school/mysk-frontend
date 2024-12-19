@@ -15,7 +15,7 @@ import {
   SegmentedButton,
   Snackbar,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { usePlausible } from "next-plausible";
 import { useContext } from "react";
 
@@ -27,8 +27,7 @@ import { useContext } from "react";
 const IncomingTradeOfferCard: StylableFC<{
   tradeOffer: ElectiveTradeOffer;
 }> = ({ tradeOffer, style, className }) => {
-  const { t } = useTranslation("elective", { keyPrefix: "detail.trade" });
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("elective/detail/trade");
 
   const plausible = usePlausible();
   const refreshProps = useRefreshProps();
@@ -69,7 +68,7 @@ const IncomingTradeOfferCard: StylableFC<{
       },
     );
     if (error) {
-      setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+      setSnackbar(<Snackbar>{t("common:snackbar.failure")}</Snackbar>);
       logError("updateStatus", error);
       visuallySwapElectiveSubjects();
       return false;

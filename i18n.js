@@ -120,6 +120,20 @@ module.exports = {
       "elective/detail/students",
     ],
     "/manage/electives/print": ["elective/print"],
+    // Elective
+    "rgx:/(teach|learn)/electives": [
+      "elective/title",
+      "elective/list",
+      "elective/detail/information",
+      "elective/detail/students",
+      "elective/detail/empty",
+    ],
+    "/learn/electives": [
+      "elective/dialog/createRequest",
+      "elective/detail/trade",
+      "elective/dialog/requirements",
+    ],
+    "/teach/electives/[id]/print": ["elective/print", "classes/print"],
   },
   logBuild: false,
   interpolation: {

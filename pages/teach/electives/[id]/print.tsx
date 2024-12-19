@@ -9,7 +9,7 @@ import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { Student, UserRole } from "@/utils/types/person";
 import { GetStaticPaths, GetStaticProps } from "next";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { pick, sift } from "radash";
@@ -24,7 +24,7 @@ import shortUUID from "short-uuid";
 const EnrollmentListPrintPage: CustomPage<{
   electiveSubject: ElectiveSubject;
 }> = ({ electiveSubject }) => {
-  const { t } = useTranslation("elective", { keyPrefix: "print" });
+  const { t } = useTranslation("elective/print");
   const { t: tx } = useTranslation("common");
 
   const mysk = useMySKClient();
