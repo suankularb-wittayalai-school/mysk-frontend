@@ -3,7 +3,7 @@
   "yourClass": "Your class",
   "item": {
     "period": {
-      "upcoming": "Next at {{time, time)}}",
+      "upcoming": "Next at {{time, time}}",
       "finished": "Finished for today"
     },
     "stateAlt": {

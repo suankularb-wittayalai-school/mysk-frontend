@@ -4,7 +4,7 @@ export const YYYYMMRegex = /^\d{4}-(0[1-9]|1[0-2])$/;
 
 export const schoolEmailRegex = /((@sk\.ac\.th)|(@student\.sk\.ac\.th))$/;
 
-export const classRegex = /^[1-6](0[1-9]|1[0-9])$/;
+export const classRegex = /^[1-6](0[1-9]|1[0-9])|911$/;
 export const roomRegex = /^([1-6][1-5]|70)\d{2}(\/\d)?$/;
 
 export const pantsSizeRegex = /^(1[3-9]|20)(x|×)(2[2-9]|3[0-9]|4[0-6])$/;

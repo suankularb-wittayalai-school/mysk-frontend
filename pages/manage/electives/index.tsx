@@ -84,8 +84,9 @@ const ManageElectivesPage: CustomPage<{
             onChange={setQuery}
           />
           <section
-            className={cn(`fade-out-to-t fade-out-4 contents grow overflow-auto
-              md:block`)}
+            className={cn(
+              `fade-out-to-t fade-out-4 contents grow overflow-auto md:block`,
+            )}
           >
             <ul className="space-y-1.5 pt-4 md:h-0">
               {filteredElectiveSubjects.map((electiveSubject) => (
@@ -146,8 +147,9 @@ const ManageElectivesPage: CustomPage<{
       <LookupDetailsDialog open={detailsOpen} onClose={onDetailsClose}>
         <ElectiveDetailsCard
           electiveSubject={selectedDetail}
-          className={cn(`!mx-0 h-full !bg-surface-container-highest
-            *:!rounded-b-none`)}
+          className={cn(
+            `!mx-0 h-full !bg-surface-container-highest *:!rounded-b-none`,
+          )}
         />
       </LookupDetailsDialog>
     </>
