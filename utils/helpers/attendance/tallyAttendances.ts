@@ -29,7 +29,8 @@ export default function tallyAttendances(
     if (attendance.is_present === null) summary.empty++;
     else if (
       attendance.is_present ||
-      attendance.absence_type === AbsenceType.dropped
+      attendance.absence_type === AbsenceType.dropped ||
+      attendance.absence_type === AbsenceType.activity
     )
       summary.present++;
     else if (attendance.absence_type === AbsenceType.late) summary.late++;

@@ -27,11 +27,14 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { log } from "console";
 import { motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
+import { list } from "postcss";
+import { useEffect, useState } from "react";
 
 /**
  * A place where Students can choose and trade their Elective Subjects.
@@ -46,12 +49,14 @@ const LearnElectivesPage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
   enrolledElective: ElectiveSubject | null;
   inEnrollmentPeriod: boolean;
+  previouslyEnrolledIDs: string[];
   incomingTrades: ElectiveTradeOffer[];
   outgoingTrades: ElectiveTradeOffer[];
 }> = ({
   electiveSubjects,
   enrolledElective,
   inEnrollmentPeriod,
+  previouslyEnrolledIDs,
   incomingTrades,
   outgoingTrades,
 }) => {
@@ -92,6 +97,9 @@ const LearnElectivesPage: CustomPage<{
                   electiveSubject={electiveSubject}
                   selected={selectedID === electiveSubject.id}
                   enrolled={enrolledElective?.id === electiveSubject.id}
+                  isPreviouslyEnrolled={
+                    previouslyEnrolledIDs.includes(electiveSubject?.id,)
+                  }
                   onClick={() => {
                     plausible("View Elective", {
                       props: {
@@ -123,7 +131,14 @@ const LearnElectivesPage: CustomPage<{
                 }
                 enrolledElective={enrolledElective}
                 disabled={
-                  !inEnrollmentPeriod || enrolledElective?.id === selectedID
+                  // Check if it's in Enrollment Period.
+                  !inEnrollmentPeriod ||
+                  // Check if it's a previously selected subject.
+                  previouslyEnrolledIDs.includes(selectedID!) ||
+                  // Check if it's a full class subject or not.
+                  (selectedDetail === null
+                    ? false
+                    : selectedDetail!.cap_size <= selectedDetail!.class_size)
                 }
                 className="!pointer-events-auto"
               />
@@ -204,13 +219,20 @@ export const getServerSideProps: GetServerSideProps = async ({
     { data: electiveSubjects },
     { data: enrolledElectiveSubjects },
     { data: inEnrollmentPeriod },
+    { data: previouslyEnrolledIDs },
   ] = await Promise.all([
     // Get the list of Elective Subjects available for this Student to enroll in.
     await mysk.fetch<ElectiveSubject[]>("/v1/subjects/electives", {
       query: {
         fetch_level: "default",
         descendant_fetch_level: "compact",
-        filter: { data: { applicable_classroom_ids: [student.classroom?.id] } },
+        filter: {
+          data: {
+            applicable_classroom_ids: [student.classroom?.id],
+            year: process.env.ELECTIVES_YEAR,
+            semester: process.env.ELECTIVES_SEMESTER,
+          },
+        },
         sort: { by: ["session_code"], ascending: true },
       },
     }),
@@ -232,6 +254,9 @@ export const getServerSideProps: GetServerSideProps = async ({
 
     // Check if the time now is in an Enrollment Period.
     await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"),
+
+    // Get array for history of Enrolled Subjects.
+    await mysk.fetch<string[]>("/v1/subjects/electives/previously-enrolled"),
   ]);
 
   // If there are no Elective Subjects available, return a 404.
@@ -288,6 +313,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       electiveSubjects,
       enrolledElective,
       inEnrollmentPeriod,
+      previouslyEnrolledIDs,
       ...trades,
     },
   };

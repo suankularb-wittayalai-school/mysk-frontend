@@ -24,6 +24,7 @@ import { sort } from "radash";
  * @param electiveSubject The Elective Subject to display.
  * @param selected Whether this Elective Subject is selected.
  * @param enrolled Whether the Student is enrolled in the Elective Subject.
+ * @param previouslyEnrolled Whether the Student has enrolled before.
  * @param onRadioToggle Triggers when the radio button is toggled.
  */
 const ElectiveListItem: StylableFC<{
@@ -31,12 +32,14 @@ const ElectiveListItem: StylableFC<{
   electiveSubject: ElectiveSubject;
   selected?: boolean;
   enrolled?: boolean;
+  isPreviouslyEnrolled?: boolean
   onClick?: () => void;
 }> = ({
   role,
   electiveSubject,
   selected,
   enrolled,
+  isPreviouslyEnrolled,
   onClick,
   style,
   className,
@@ -71,7 +74,7 @@ const ElectiveListItem: StylableFC<{
     >
       {/* Radio */}
       {role === UserRole.student &&
-        (enrolled ? (
+        ((enrolled && (isPreviouslyEnrolled == false)) ? (
           <MaterialIcon
             icon="check"
             fill
@@ -80,7 +83,10 @@ const ElectiveListItem: StylableFC<{
         ) : (
           <Radio
             value={selected}
-            disabled={electiveSubject.class_size >= electiveSubject.cap_size}
+            disabled={
+              electiveSubject.class_size >= electiveSubject.cap_size || 
+              isPreviouslyEnrolled == true
+            }
             inputAttr={{ name: "elective" }}
             className="py-3"
           />
@@ -91,7 +97,10 @@ const ElectiveListItem: StylableFC<{
         className={role === UserRole.teacher ? "grid grow gap-3" : "contents"}
       >
         <ListItemContent
-          overline={enrolled ? t("enrolled") : undefined}
+          overline={
+            isPreviouslyEnrolled ? t("previouslyEnrolled") : 
+            (enrolled ? t("enrolled") : undefined)
+          }
           title={getLocaleString(electiveSubject.name, locale)}
           desc={
             <>

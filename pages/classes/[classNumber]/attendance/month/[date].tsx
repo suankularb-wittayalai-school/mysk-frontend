@@ -19,6 +19,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { group } from "radash";
 
+let invalidDate = false;
+
 /**
  * Month Attendance page displays Attendance of a Classroom of a specific month.
  * 
@@ -49,6 +51,7 @@ const MonthAttendancePage: CustomPage<{
       <PageHeader parentURL="/classes">
         {t("title", { classNumber: classroom.number })}
       </PageHeader>
+      
       <ContentLayout>
         <AttendanceViewSelector
           view={AttendanceView.month}
