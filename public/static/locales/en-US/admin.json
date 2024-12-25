@@ -14,7 +14,7 @@
     "empty": "Load a schedule to get started.",
     "view": {
       "title": "Choose view…",
-      "student": "Clasroom",
+      "student": "Classroom",
       "teacher": "Teacher"
     },
     "mergeOverlapping": "Merge overlapping",
