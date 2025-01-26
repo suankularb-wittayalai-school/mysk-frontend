@@ -1,0 +1,7 @@
+{ "title": "Teaching Report", 
+  "view": "view",
+  "empty": "No report Created",
+  "action": {
+    "add": "Add Data"
+  }
+ }
