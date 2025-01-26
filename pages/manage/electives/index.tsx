@@ -22,7 +22,7 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
-import { GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
@@ -156,7 +156,7 @@ const ManageElectivesPage: CustomPage<{
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const mysk = await createMySKClient();
 
   const { data: electiveSubjects } = await mysk.fetch<ElectiveSubject[]>(
