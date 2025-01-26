@@ -6,7 +6,7 @@ import { supabase } from "@/utils/supabase-backend";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
-import { GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
@@ -56,7 +56,7 @@ const ClassroomsBulkPrintPage: CustomPage<{
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const mysk = await createMySKClient();
   const { data: classrooms } = await getClassroomsForBulkPrint(supabase, mysk);
 
