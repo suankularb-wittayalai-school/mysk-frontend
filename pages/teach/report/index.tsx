@@ -1,39 +1,82 @@
-import { CustomPage } from "@/utils/types/common";
-import { Teacher, UserRole } from "@/utils/types/person";
-import { LangCode } from "@/utils/types/common";
+import { CustomPage, LangCode } from "@/utils/types/common";
+import { Teacher } from "@/utils/types/person";
 import PageHeader from "@/components/common/PageHeader";
-import ReportDetailsCard from "@/components/report/ReportDetailsCard";
-import LookupListSide from "@/components/lookup/LookupListSide";
-import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import {
+  Button,
+  DURATION,
+  EASING,
+  List,
+  MaterialIcon,
+  SplitLayout,
+  Text,
+  transition,
+} from "@suankularb-components/react";
+import { ReportListItem } from "@/components/report/ReportListItem";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import { BackendReturn } from "@/utils/types/backend";
-import getLocalePath from "@/utils/helpers/getLocalePath";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { SplitLayout } from "@suankularb-components/react";
-import { MySKClient } from "@/utils/types/fetch";
-import { SupabaseClient } from "@supabase/supabase-js";
+import { Report } from "@/utils/types/report";
+import AddReportButton from "@/components/report/AddReportButton";
+import Balancer from "react-wrap-balancer";
+import { motion } from "framer-motion";
+import cn from "@/utils/helpers/cn";
+import { useState } from "react";
+import Head from "next/head";
+import useTranslation from "next-translate/useTranslation";
 
-const ReportPage: CustomPage<{
-  teacher: Teacher;
-  mysk: MySKClient;
-}> = ({ teacher }) => {
-  console.log(teacher, "teacher");
+const ReportPage: CustomPage<{ reports: Report[] }> = ({ reports }) => {
+  const [selectedID, setSelectedID] = useState<string>();
+
+  const { t } = useTranslation("report");
+  const { t: tx } = useTranslation("common");
+
+  console.log(reports);
+
   return (
     <>
-      <PageHeader parentURL="/teach">{"Teaching Report"}</PageHeader>
-      <SplitLayout
-        ratio="list-detail"
-        className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
-      >
-        <LookupListSide length={5}>
-          <div>list</div>
-        </LookupListSide>
-        <LookupDetailsSide selectedID={"1"} length={1}>
-          <ReportDetailsCard teacher={teacher} />
-        </LookupDetailsSide>
+      <Head>
+        <title>{tx("tabName", { tabName: t("title") })}</title>
+      </Head>
+      <PageHeader parentURL="/teach">{"Teaching Report"}</PageHeader>;
+      <SplitLayout ratio={"list-detail"}>
+        <div>
+          <AddReportButton />
+          <List className="gap-2">
+            {reports?.map((report) => (
+              <ReportListItem
+                key={report.id}
+                report={report}
+                selected={selectedID === report.id}
+                onClick={() => {
+                  setSelectedID(report.id);
+                }}
+              />
+            )) || (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  ...transition(DURATION.medium2, EASING.standardDecelerate),
+                  delay: DURATION.medium2,
+                }}
+                className={cn(
+                  `skc-card skc-card--outlined mt-4 flex grow flex-col items-center justify-center gap-1 p-4 sm:mb-6`,
+                )}
+              >
+                <Text
+                  type="body-medium"
+                  element="p"
+                  className="text-center text-on-surface-variant"
+                >
+                  <Balancer>{t("empty")}</Balancer>
+                </Text>
+              </motion.div>
+            )}
+          </List>
+        </div>
       </SplitLayout>
     </>
   );
@@ -50,22 +93,34 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: teacher, error } = (await getLoggedInPerson(supabase, mysk, {
-    includeContacts: true,
-    detailed: true,
-  })) as BackendReturn<Teacher>;
-  if (error) return { notFound: true };
+  const { data: teacher } = (await getLoggedInPerson(
+    supabase,
+    mysk,
+  )) as BackendReturn<Teacher>;
+  if (!teacher) return { notFound: true };
 
-  if (teacher.role !== UserRole.teacher)
-    return {
-      redirect: {
-        destination: getLocalePath("/learn", locale as LangCode),
-        permanent: false,
+  const { data: reports } = await mysk.fetch<Report[]>(
+    "/v1/subjects/attendance",
+    {
+      query: {
+        fetch_level: "compact",
+        descendant_fetch_level: "default",
+        filter: {
+          data: {
+            teacher_ids: [teacher.id],
+          },
+        },
       },
-    };
+    },
+  );
+
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, ["report"])),
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "report",
+      ])),
+      reports,
       teacher,
     },
   };

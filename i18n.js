@@ -93,6 +93,8 @@ module.exports = {
       "account/certificates/seatDialog",
     ],
     "/account/logout": ["account/logOut"],
+    // Teach Report
+    "/teach/report": ["report"],
   },
   logBuild: false,
   interpolation: {
