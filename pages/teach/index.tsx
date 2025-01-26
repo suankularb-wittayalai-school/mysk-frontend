@@ -1,5 +1,6 @@
 import HomeLayout from "@/components/home/HomeLayout";
 import TeachElectiveEntryCard from "@/components/home/TeachElectiveEntryCard";
+import TeachReportEntryCard from "@/components/home/TeachReportEntryCard";
 import TeachingSubjectCard from "@/components/home/TeachingSubjectCard";
 import ScheduleGlance from "@/components/home/glance/ScheduleGlance";
 import Schedule from "@/components/schedule/Schedule";
@@ -100,6 +101,7 @@ const TeachPage: CustomPage<{
                 electivesInCharge={teacher.electives_in_charge}
               />
             )}
+            <TeachReportEntryCard />
             {teachingSubjects
               .filter(
                 (subject) =>
