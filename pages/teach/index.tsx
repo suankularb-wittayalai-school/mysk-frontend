@@ -51,6 +51,8 @@ const TeachPage: CustomPage<{
 
   const refreshProps = useRefreshProps();
 
+  console.warn(teacher);
+
   return (
     <HomeLayout>
       <LayoutGroup>
@@ -96,12 +98,16 @@ const TeachPage: CustomPage<{
             />
           </Columns>
           <Columns columns={3} className="!items-stretch">
+            {teacher.subjects_in_charge.length > 0 && (
+              <TeachReportEntryCard
+                teacher={teacher}
+              />
+            )}
             {teacher.electives_in_charge.length > 0 && (
               <TeachElectiveEntryCard
                 electivesInCharge={teacher.electives_in_charge}
               />
             )}
-            <TeachReportEntryCard />
             {teachingSubjects
               .filter(
                 (subject) =>

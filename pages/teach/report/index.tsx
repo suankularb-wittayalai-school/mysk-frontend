@@ -26,14 +26,16 @@ import cn from "@/utils/helpers/cn";
 import { useState } from "react";
 import Head from "next/head";
 import useTranslation from "next-translate/useTranslation";
+import ReportDetailsCard from "@/components/report/ReportDetailsCard";
 
-const ReportPage: CustomPage<{ reports: Report[] }> = ({ reports }) => {
+const ReportPage: CustomPage<{ teacher: Teacher; reports: Report[] }> = ({ reports, teacher }) => {
   const [selectedID, setSelectedID] = useState<string>();
 
   const { t } = useTranslation("report");
   const { t: tx } = useTranslation("common");
 
   console.log(reports);
+  console.warn(teacher)
 
   return (
     <>
@@ -77,6 +79,9 @@ const ReportPage: CustomPage<{ reports: Report[] }> = ({ reports }) => {
             )}
           </List>
         </div>
+        <div>
+          <ReportDetailsCard teacher={teacher} />
+        </div>
       </SplitLayout>
     </>
   );
@@ -96,6 +101,9 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { data: teacher } = (await getLoggedInPerson(
     supabase,
     mysk,
+    {
+      detailed: true,
+    }
   )) as BackendReturn<Teacher>;
   if (!teacher) return { notFound: true };
 
