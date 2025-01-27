@@ -8,7 +8,7 @@ export type Report = {
   teacher: Teacher;
   classroom: Classroom;
   date: Date;
-  teaching_methods: string[];
+  teaching_method: string[];
   teaching_topic: string;
   suggestions: string;
   image_url: string;
