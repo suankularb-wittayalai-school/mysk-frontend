@@ -122,7 +122,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         descendant_fetch_level: "default",
         filter: {
           data: {
-            teacher_ids: [teacher.id],
+            as_teacher_id: teacher.id,
           },
         },
       },
