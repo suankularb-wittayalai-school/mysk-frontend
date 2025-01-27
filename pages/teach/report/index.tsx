@@ -33,8 +33,6 @@ const ReportPage: CustomPage<{ reports: Report[] }> = ({ reports }) => {
   const { t } = useTranslation("report");
   const { t: tx } = useTranslation("common");
 
-  console.log(reports)
-
   return (
     <>
       <Head>
