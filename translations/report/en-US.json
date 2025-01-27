@@ -3,5 +3,6 @@
   "empty": "No report Created",
   "action": {
     "add": "Add Data"
-  }
+  },
+  "period": "Period"
  }

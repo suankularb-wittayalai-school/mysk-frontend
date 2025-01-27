@@ -5,15 +5,16 @@ import React from "react";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { format } from "date-fns";
-import { bg, enUS, th } from "date-fns/locale";
-import cn from "@/utils/helpers/cn";
+import { enUS, th } from "date-fns/locale";
+import useTranslation from "next-translate/useTranslation";
 
 export const ReportListItem: StylableFC<{
   report: Report;
   selected: boolean;
   onClick?: () => void;
-}> = ({ report, selected,onClick }) => {
+}> = ({ report, selected, onClick }) => {
   const locale = useLocale();
+  const { t } = useTranslation("report");
 
   const date = format(report.date, "d MMMM yyyy", {
     locale: locale === "th" ? th : enUS,
@@ -29,7 +30,17 @@ export const ReportListItem: StylableFC<{
     >
       <ListItemContent
         title={getLocaleString(report.subject.name, locale)}
-        desc={"คาบที่ 4" + " • " + date}
+        desc={
+          report.duration > 1
+            ? t("period") + " " + report.start_time + " • " + date
+            : t("period") +
+              " " +
+              report.start_time +
+              "-" +
+              (report.start_time + 1) +
+              " • " +
+              date
+        }
       ></ListItemContent>
     </ListItem>
   );
