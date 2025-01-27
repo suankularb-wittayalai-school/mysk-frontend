@@ -36,6 +36,7 @@ module.exports = {
       "home/subjectClassesDialog",
       "report/teachReportEntryCard",
     ],
+    "/teach/report": ["search/teachers/detail"],
     // Schedule
     "rgx:/(learn|teach|(teach|manage)/electives|classes|search/(students|teachers)/results|admin/schedule)$":
       ["schedule/common", "schedule/periodDialog"],

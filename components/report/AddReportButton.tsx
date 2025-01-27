@@ -1,10 +1,8 @@
 import { Button, MaterialIcon } from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
-import React from "react";
+import React, { FC } from "react";
 
-
-const AddReportButton = () => {
-
+const AddReportButton: FC<{ onAddReport: () => void }> = ({ onAddReport }) => {
   const { t } = useTranslation("report");
 
   return (
@@ -12,6 +10,7 @@ const AddReportButton = () => {
       appearance="filled"
       icon={<MaterialIcon icon="Add" />}
       className="!mb-6 !bg-secondary-container !text-on-secondary-container"
+      onClick={() => onAddReport()}
     >
       {t("action.add")}
     </Button>
