@@ -12,11 +12,17 @@ import {
   FormItem,
   Radio,
   Button,
+  MaterialIcon,
 } from "@suankularb-components/react";
 import { FC, useState } from "react";
 import getLocaleString from "@/utils/helpers/getLocaleString";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
+import { supabase } from "@/utils/supabase-client";
 
-const ReportInputForm: FC<{ teacher: Teacher }> = ({ teacher }) => {
+const ReportInputForm: FC<{
+  teacher: Teacher;
+}> = ({ teacher }) => {
   const [subjectId, setSubjectId] = useState<any>();
   const [date, setDate] = useState<any>();
   const [startPeriod, setStartPeriod] = useState<number>(1);
@@ -26,8 +32,39 @@ const ReportInputForm: FC<{ teacher: Teacher }> = ({ teacher }) => {
   const [absentStudents, setAbsentStudents] = useState<any>();
   const [teachingTopic, setTeachingTopic] = useState<any>();
   const [suggestions, setSuggestions] = useState<any>();
-  const [teachingMethod, setTeachingMethod] = useState<string[]>([]);
+  const [teachingMethod, setTeachingMethod] = useState<String>("Live Course");
   const locale = useLocale();
+  const mysk = useMySKClient();
+
+  async function handleCreate() {
+    let { data: classroomId } = await getClassroomByNumber(
+      supabase,
+      parseInt(classrooms[0]),
+    );
+
+    const { data: report, error } = await mysk.fetch(
+      "/v1/subjects/attendance",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data: {
+            subject_id: subjectId,
+            teacherId: teacher.id,
+            date: date,
+            start_time: startPeriod,
+            duration: duration,
+            absent_students_no: absentStudents,
+            teaching_topic: teachingTopic,
+            suggestions: suggestions,
+            teaching_methods: [teachingMethod],
+            classroom_id: classroomId?.id,
+          },
+        }),
+      },
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <section>
@@ -115,10 +152,8 @@ const ReportInputForm: FC<{ teacher: Teacher }> = ({ teacher }) => {
             label={"Classroom"}
             onChange={setClassroom}
             value={classroom}
-            onNewEntry={(classroom) =>
-              setClassrooms([...classrooms, classroom])
-            }
-            onDeleteLast={() => setClassrooms(classrooms.slice(0, -1))}
+            onNewEntry={(classroom) => setClassrooms([classroom])}
+            // onDeleteLast={() => setClassrooms(classrooms.slice(0, -1))}
           >
             <ChipSet>
               {classrooms.map((classroom) => (
@@ -166,84 +201,41 @@ const ReportInputForm: FC<{ teacher: Teacher }> = ({ teacher }) => {
             <FormGroup label={"Teaching Method"} className="text-title-medium">
               <FormItem label={"Live Course"}>
                 <Radio
-                  value={teachingMethod.includes("Live Course")}
-                  onChange={() => {
-                    teachingMethod.includes("Live Course")
-                      ? setTeachingMethod(
-                          teachingMethod.filter(
-                            (method) => method !== "Live Course",
-                          ),
-                        )
-                      : setTeachingMethod([...teachingMethod, "Live Course"]);
-                  }}
+                  value={teachingMethod == "Live Course"}
+                  onChange={() => setTeachingMethod("Live Course")}
                 />
               </FormItem>
               <FormItem label={"Video"}>
                 <Radio
-                  value={teachingMethod.includes("Video")}
-                  onChange={() => {
-                    teachingMethod.includes("Video")
-                      ? setTeachingMethod(
-                          teachingMethod.filter((method) => method !== "Video"),
-                        )
-                      : setTeachingMethod([...teachingMethod, "Video"]);
-                  }}
+                  value={teachingMethod == "Video"}
+                  onChange={() => setTeachingMethod("Video")}
                 />
               </FormItem>
               <FormItem label={"In Class Work"}>
                 <Radio
-                  value={teachingMethod.includes("In Class Work")}
-                  onChange={() => {
-                    teachingMethod.includes("In Class Work")
-                      ? setTeachingMethod(
-                          teachingMethod.filter(
-                            (method) => method !== "In Class Work",
-                          ),
-                        )
-                      : setTeachingMethod([...teachingMethod, "In Class Work"]);
-                  }}
+                  value={teachingMethod == "In Class Work"}
+                  onChange={() => setTeachingMethod("In Class Work")}
                 />
               </FormItem>
-              <FormItem label={"Live Course"}>
+              <FormItem label={"Combination of the Above"}>
                 <Radio
-                  value={teachingMethod.includes("Combination of the Above")}
-                  onChange={() => {
-                    teachingMethod.includes("Combination of the Above")
-                      ? setTeachingMethod(
-                          teachingMethod.filter(
-                            (method) => method !== "Combination of the Above",
-                          ),
-                        )
-                      : setTeachingMethod([
-                          ...teachingMethod,
-                          "Combination of the Above",
-                        ]);
-                  }}
+                  value={teachingMethod == "Combination of the Above"}
+                  onChange={() => setTeachingMethod("Combination of the Above")}
                 />
               </FormItem>
             </FormGroup>
           </div>
         </Columns>
       </section>
-      <Button
-        appearance="tonal"
-        onClick={() =>
-          console.log(
-            subjectId,
-            date,
-
-            startPeriod,
-            duration,
-            classrooms,
-            absentStudents,
-            teachingTopic,
-            suggestions,
-            teachingMethod,
-          )
-        }
-      >
-        Saveeee
-      </Button>
+      <div className="self-strech flex flex-col items-end gap-2.5">
+        <Button
+          appearance="filled"
+          onClick={() => handleCreate()}
+          icon={<MaterialIcon icon="save" />}
+        >
+          Save
+        </Button>
+      </div>
     </div>
   );
 };

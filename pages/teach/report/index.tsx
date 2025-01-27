@@ -13,8 +13,13 @@ import { BackendReturn } from "@/utils/types/backend";
 import getLocalePath from "@/utils/helpers/getLocalePath";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { SplitLayout } from "@suankularb-components/react";
+import { MySKClient } from "@/utils/types/fetch";
+import { SupabaseClient } from "@supabase/supabase-js";
 
-const ReportPage: CustomPage<{ teacher: Teacher }> = ({ teacher }) => {
+const ReportPage: CustomPage<{
+  teacher: Teacher;
+  mysk: MySKClient;
+}> = ({ teacher }) => {
   console.log(teacher, "teacher");
   return (
     <>
