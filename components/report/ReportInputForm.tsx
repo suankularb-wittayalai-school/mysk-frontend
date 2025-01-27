@@ -51,7 +51,7 @@ const ReportInputForm: FC<{
     report.length > 0 ? report[0].suggestions : null,
   );
   const [teachingMethod, setTeachingMethod] = useState<String>(
-    report.length > 0 ? report[0].teaching_method[0] : "Live Course",
+    report.length > 0 ? report[0].teaching_methods[0] : "Live Course",
   );
   const locale = useLocale();
   const mysk = useMySKClient();
