@@ -17,17 +17,13 @@ import {
   TextField,
 } from "@suankularb-components/react";
 import { FC, useState } from "react";
-import getLocaleString from "@/utils/helpers/getLocaleString";
-import useMySKClient from "@/utils/backend/mysk/useMySKClient";
-import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
-import { supabase } from "@/utils/supabase-client";
 import { Report } from "@/utils/types/report";
 
 const ReportInputForm: FC<{
   teacher: Teacher;
   report: Report[];
 }> = ({ teacher, report }) => {
-  console.log(report.length, "the rerpot");
+  console.log(report, "the rerpot");
   const [subjectId, setSubjectId] = useState<any>(
     report.length > 0 ? report[0].subject.id : null,
   );
@@ -97,7 +93,7 @@ const ReportInputForm: FC<{
         <Columns columns={2} className="flex-start self-strech flex">
           <Select
             appearance="outlined"
-            label={"Subject"}
+            label={"วิชา"}
             value={subjectId}
             onChange={setSubjectId}
           >
@@ -111,7 +107,7 @@ const ReportInputForm: FC<{
           </Select>
           <TextField
             appearance="outlined"
-            label={"Date"}
+            label={"วันที่"}
             value={date}
             onChange={(date) => setDate(date)}
             inputAttr={{ type: "date", placeholder: "YYYY-MM-DD" }}
@@ -122,7 +118,7 @@ const ReportInputForm: FC<{
         <Columns columns={2} className="flex-start self-strech flex">
           <Select
             appearance="outlined"
-            label="Start Period"
+            label="เริ่มคาบที่"
             value={startPeriod}
             onChange={setStartPeriod}
             className="[&>*]:!bg-surface-container"
@@ -151,28 +147,26 @@ const ReportInputForm: FC<{
           </Select>
           <Select
             appearance="outlined"
-            label="End Period"
-            value={endPeriod}
-            onChange={setEndPeriod}
-            className="[&>*]:!bg-surface-container"
+            label="จบคาบที่"
+            value={startPeriod - 1 + duration}
+            onChange={(endPeriod) => setDuration(endPeriod - startPeriod + 1)}
           >
             {[
-              { period: 1, endTime: "09:20" },
-              { period: 2, endTime: "10:10" },
-              { period: 3, endTime: "11:00" },
-              { period: 4, endTime: "11:50" },
-              { period: 5, endTime: "12:40" },
-              { period: 6, endTime: "13:30" },
-              { period: 7, endTime: "14:20" },
-              { period: 8, endTime: "15:10" },
-              { period: 9, endTime: "16:00" },
-              { period: 10, endTime: "16:50" },
+              { period: 1, startTime: "9.20" },
+              { period: 2, startTime: "10.10" },
+              { period: 3, startTime: "11.00" },
+              { period: 4, startTime: "11.50" },
+              { period: 5, startTime: "12.40" },
+              { period: 6, startTime: "13.30" },
+              { period: 7, startTime: "14.20" },
+              { period: 8, startTime: "15.10" },
+              { period: 9, startTime: "16.00" },
+              { period: 10, startTime: "16.50" },
             ].map((option) => (
               <MenuItem
                 key={option.period}
-                metadata={option.endTime}
+                metadata={option.startTime}
                 value={option.period}
-                className="[&>.skc-menu-item\_\_metadata]:!font-mono"
               >
                 Period {option.period}
               </MenuItem>
@@ -183,7 +177,7 @@ const ReportInputForm: FC<{
       <section>
         <Columns columns={2} className="flex-start self-strech flex">
           <ChipField
-            label={"Classroom"}
+            label={"ห้องเรียน"}
             onChange={setClassroom}
             value={classroom}
             onNewEntry={(classroom) =>
@@ -209,7 +203,7 @@ const ReportInputForm: FC<{
           </ChipField>
           <TextField
             appearance="outlined"
-            label={"Absent"}
+            label={"เลขที่ นักเรียนขาด"}
             value={absentStudents}
             onChange={(text) => setAbsentStudents(text)}
             className="[&>*]:!bg-surface-container"
@@ -219,19 +213,19 @@ const ReportInputForm: FC<{
       <section>
         <div className="flex flex-col gap-3">
           <span className="py-2 font-display text-base font-medium">
-            Teaching Information
+            ข้อมูลการสอน
           </span>
           <Columns columns={2} className="flex-start self-strech flex">
             <TextField
               appearance="outlined"
-              label={"Teaching Content"}
+              label={"เนื้อหาการเรียนการสอน"}
               value={teachingTopic}
               onChange={(topic) => setTeachingTopic(topic)}
               className="w-full [&>*]:!bg-surface-container"
             />
             <TextField
               appearance="outlined"
-              label={"Problems and Recommendations"}
+              label={"ปัญหา และ ข้อแนะนำ"}
               value={suggestions}
               onChange={(text) => setSuggestions(text)}
               className="w-full [&>*]:!bg-surface-container"
@@ -242,31 +236,31 @@ const ReportInputForm: FC<{
       <section>
         <div className="flex flex-col gap-3">
           <span className="py-2 font-display text-base font-medium">
-            Teaching Method
+            รูปแบบการสอน
           </span>
           <Columns columns={2} className="flex-start self-strech flex">
             <Select
               appearance="outlined"
-              label="End Period"
+              label="รูปแบบการสอน"
               className="!w-full [&>*]:!bg-surface-container"
               value={teachingMethod}
               onChange={setTeachingMethod}
             >
               {[
                 {
-                  title: "Live lessons",
+                  title: "สอนสด",
                   value: "live",
                 },
                 {
-                  title: "Recorded videos",
+                  title: "วิดีโอ",
                   value: "video",
                 },
                 {
-                  title: "Assignment with due submission",
+                  title: "สั่งงานในคาบ",
                   value: "assignment",
                 },
                 {
-                  title: "Other",
+                  title: "อื่นๆ",
                   value: "other",
                 },
               ].map((option) => (
@@ -275,12 +269,12 @@ const ReportInputForm: FC<{
                 </MenuItem>
               ))}
             </Select>
-            <TextField
+            {/* <TextField
               appearance="outlined"
-              label="Enter reason"
+              label="ระบุ"
               className={"w-full [&>*]:!bg-surface-container"}
               disabled={!teachingMethod.includes("other")}
-            />
+            /> */}
           </Columns>
         </div>
       </section>

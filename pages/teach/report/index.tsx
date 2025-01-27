@@ -47,7 +47,7 @@ const ReportPage: CustomPage<{
       <Head>
         <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
-      <PageHeader parentURL="/teach">{"Teaching Report"}</PageHeader>;
+      <PageHeader parentURL="/teach">{"รายงานการสอน"}</PageHeader>;
       <SplitLayout
         ratio="list-detail"
         className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"

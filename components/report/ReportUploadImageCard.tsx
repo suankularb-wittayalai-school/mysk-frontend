@@ -9,7 +9,7 @@ const ReportUploadImageCard = () => {
   return (
     <div className="flex flex-col gap-3">
       <span className="py-2 font-display text-base font-medium">
-        Upload Teaching Image
+        อัปโหลดภาพการเรียนการสอน
       </span>
       <div
         onClick={handleUploadClick}
@@ -32,12 +32,12 @@ const ReportUploadImageCard = () => {
           appearance="filled"
           icon={<MaterialIcon icon="publish" />}
         >
-          Upload
+          อัปโหลด
         </Button>
         <p className="break-all text-center text-outline">
           {inputHasFile && inputFileName !== undefined
             ? inputFileName
-            : "Click here or drag a file here to upload."}
+            : "กดตรงนี้ หรือ ลากไฟล์มาใส่ เพื่ออัปโหลด"}
         </p>
       </div>
     </div>

@@ -32,7 +32,9 @@ const ReportingTeacherInformationGrid: StylableFC<{
 
   return (
     <div className="flex flex-col gap-3">
-      <span className="font-display pb-2 text-base font-medium">Class Information</span>
+      <span className="pb-2 font-display text-base font-medium">
+        ข้อมูลชั้นเรียน
+      </span>
       <section
         style={style}
         className={cn(`grid grid-cols-2 gap-2 md:grid-cols-4`, className)}
@@ -55,20 +57,21 @@ const ReportingTeacherInformationGrid: StylableFC<{
         </Card>
 
         {/* Nickname */}
-        {teacher.nickname && sift(Object.values(teacher.nickname)).length > 0 && (
-          <Card appearance="filled">
-            <CardHeader title={t("information.nickname")} />
-            <CardContent>
-              <MultilangText
-                text={teacher.nickname}
-                options={{
-                  combineIfAllIdentical: true,
-                  hideIconsIfOnlyLanguage: true,
-                }}
-              />
-            </CardContent>
-          </Card>
-        )}
+        {teacher.nickname &&
+          sift(Object.values(teacher.nickname)).length > 0 && (
+            <Card appearance="filled">
+              <CardHeader title={t("information.nickname")} />
+              <CardContent>
+                <MultilangText
+                  text={teacher.nickname}
+                  options={{
+                    combineIfAllIdentical: true,
+                    hideIconsIfOnlyLanguage: true,
+                  }}
+                />
+              </CardContent>
+            </Card>
+          )}
 
         {/* Subject group */}
         {teacher.subject_group && (

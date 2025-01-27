@@ -5,16 +5,16 @@ import { StylableFC } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
 import { Header } from "@suankularb-components/react";
 import { Report } from "@/utils/types/report";
+import ReportingTeacherInformationGrid from "@/components/report/ReportingTeacherInformationGrid";
 
 const ReportDetailsCard: StylableFC<{
   teacher: Teacher;
   report: Report[];
 }> = ({ teacher, report, style, className }) => {
-  console.log(report, "hello");
   return (
     <LookupDetailsCard>
       <div className="flex flex-col gap-6 p-4">
-        <Header>{"Add Teaching Report"}</Header>
+        <Header>{"รายงานการสอน"}</Header>
       </div>
       <LookupDetailsContent>
         <ReportingTeacherInformationGrid teacher={teacher} />
