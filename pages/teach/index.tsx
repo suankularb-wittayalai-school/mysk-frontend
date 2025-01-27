@@ -99,9 +99,7 @@ const TeachPage: CustomPage<{
           </Columns>
           <Columns columns={3} className="!items-stretch">
             {teacher.subjects_in_charge.length > 0 && (
-              <TeachReportEntryCard
-                teacher={teacher}
-              />
+              <TeachReportEntryCard />
             )}
             {teacher.electives_in_charge.length > 0 && (
               <TeachElectiveEntryCard

@@ -100,26 +100,28 @@ const ReportInputForm: FC<{
         <Columns columns={3} className="flex-start self-strech flex">
           <Select
             appearance="outlined"
-            label="start"
+            label="Start Period"
             value={startPeriod}
             onChange={setStartPeriod}
+            className="[&>*]:!bg-surface-container"
           >
             {[
-              { period: 1, startTime: "8.30" },
-              { period: 2, startTime: "9.20" },
-              { period: 3, startTime: "10.10" },
-              { period: 4, startTime: "11.00" },
-              { period: 5, startTime: "11.50" },
-              { period: 6, startTime: "12.40" },
-              { period: 7, startTime: "13.30" },
-              { period: 8, startTime: "14.20" },
-              { period: 9, startTime: "15.10" },
-              { period: 10, startTime: "16.00" },
+              { period: 1, startTime: "08:30" },
+              { period: 2, startTime: "09:20" },
+              { period: 3, startTime: "10:10" },
+              { period: 4, startTime: "11:00" },
+              { period: 5, startTime: "11:50" },
+              { period: 6, startTime: "12:40" },
+              { period: 7, startTime: "13:30" },
+              { period: 8, startTime: "14:20" },
+              { period: 9, startTime: "15:10" },
+              { period: 10, startTime: "16:00" },
             ].map((option) => (
               <MenuItem
                 key={option.period}
                 metadata={option.startTime}
                 value={option.period}
+                className="[&>.skc-menu-item\_\_metadata]:!font-mono"
               >
                 Period {option.period}
               </MenuItem>
@@ -127,37 +129,46 @@ const ReportInputForm: FC<{
           </Select>
           <Select
             appearance="outlined"
-            label="end"
-            value={startPeriod - 1 + duration}
-            onChange={(endPeriod) => setDuration(endPeriod - startPeriod + 1)}
+            label="End Period"
+            value={endPeriod}
+            onChange={setEndPeriod}
+            className="[&>*]:!bg-surface-container"
           >
             {[
-              { period: 1, startTime: "9.20" },
-              { period: 2, startTime: "10.10" },
-              { period: 3, startTime: "11.00" },
-              { period: 4, startTime: "11.50" },
-              { period: 5, startTime: "12.40" },
-              { period: 6, startTime: "13.30" },
-              { period: 7, startTime: "14.20" },
-              { period: 8, startTime: "15.10" },
-              { period: 9, startTime: "16.00" },
-              { period: 10, startTime: "16.50" },
+              { period: 1, endTime: "09:20" },
+              { period: 2, endTime: "10:10" },
+              { period: 3, endTime: "11:00" },
+              { period: 4, endTime: "11:50" },
+              { period: 5, endTime: "12:40" },
+              { period: 6, endTime: "13:30" },
+              { period: 7, endTime: "14:20" },
+              { period: 8, endTime: "15:10" },
+              { period: 9, endTime: "16:00" },
+              { period: 10, endTime: "16:50" },
             ].map((option) => (
               <MenuItem
                 key={option.period}
-                metadata={option.startTime}
+                metadata={option.endTime}
                 value={option.period}
+                className="[&>.skc-menu-item\_\_metadata]:!font-mono"
               >
                 Period {option.period}
               </MenuItem>
             ))}
           </Select>
+        </Columns>
+      </section>
+      <section>
+        <Columns columns={2} className="flex-start self-strech flex">
           <ChipField
             label={"Classroom"}
             onChange={setClassroom}
             value={classroom}
-            onNewEntry={(classroom) => setClassrooms([classroom])}
-            // onDeleteLast={() => setClassrooms(classrooms.slice(0, -1))}
+            onNewEntry={(classroom) =>
+              setClassrooms([...classrooms, classroom])
+            }
+            onDeleteLast={() => setClassrooms(classrooms.slice(0, -1))}
+            className="[&>*]:!bg-surface-container"
           >
             <ChipSet>
               {classrooms.map((classroom) => (
@@ -169,173 +180,115 @@ const ReportInputForm: FC<{
                     )
                   }
                 >
-                  Period {option.period}
+                  {classroom}
                 </InputChip>
               ))}
             </ChipSet>
-            </ChipField>
+          </ChipField>
+          <TextField
+            appearance="outlined"
+            label={"Absent"}
+            value={absentStudents}
+            onChange={(text) => setAbsentStudents(text)}
+            className="[&>*]:!bg-surface-container"
+          />
+        </Columns>
+      </section>
+      <section>
+        <div className="flex flex-col gap-3">
+          <span className="py-2 font-display text-base font-medium">
+            Teaching Information
+          </span>
+          <Columns columns={2} className="flex-start self-strech flex">
+            <TextField
+              appearance="outlined"
+              label={"Teaching Content"}
+              value={teachingTopic}
+              onChange={(topic) => setTeachingTopic(topic)}
+              className="w-full [&>*]:!bg-surface-container"
+            />
+            <TextField
+              appearance="outlined"
+              label={"Problems and Recommendations"}
+              value={suggestions}
+              onChange={(text) => setSuggestions(text)}
+              className="w-full [&>*]:!bg-surface-container"
+            />
+          </Columns>
+        </div>
+      </section>
+      <section>
+        <div className="flex flex-col gap-3">
+          <span className="py-2 font-display text-base font-medium">
+            Teaching Method
+          </span>
+          <Columns columns={2} className="flex-start self-strech flex">
             <Select
               appearance="outlined"
               label="End Period"
-              value={endPeriod}
-              onChange={setEndPeriod}
-              className="[&>*]:!bg-surface-container"
+              className="!w-full [&>*]:!bg-surface-container"
+              value={teachingMethod}
+              onChange={setTeachingMethod}
             >
               {[
-                { period: 1, endTime: "09:20" },
-                { period: 2, endTime: "10:10" },
-                { period: 3, endTime: "11:00" },
-                { period: 4, endTime: "11:50" },
-                { period: 5, endTime: "12:40" },
-                { period: 6, endTime: "13:30" },
-                { period: 7, endTime: "14:20" },
-                { period: 8, endTime: "15:10" },
-                { period: 9, endTime: "16:00" },
-                { period: 10, endTime: "16:50" },
-              ].map((option) => (
-                <MenuItem
-                  key={option.period}
-                  metadata={option.endTime}
-                  value={option.period}
-                  className="[&>.skc-menu-item\_\_metadata]:!font-mono"
-                >
-                  Period {option.period}
+                {
+                  title: "Live lessons",
+                  value: "live",
+                },
+                {
+                  title: "Recorded videos",
+                  value: "video",
+                },
+                {
+                  title: "Assignment with due submission",
+                  value: "assignemnt",
+                },
+                {
+                  title: "Other",
+                  value: "other",
+                },
+              ].map((option, index) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.title}
                 </MenuItem>
               ))}
             </Select>
-          </Columns>
-        </section>
-        <section>
-          <Columns columns={2} className="flex-start self-strech flex">
-            <ChipField
-              label={"Classroom"}
-              onChange={setClassroom}
-              value={classroom}
-              onNewEntry={(classroom) =>
-                setClassrooms([...classrooms, classroom])
-              }
-              onDeleteLast={() => setClassrooms(classrooms.slice(0, -1))}
-              className="[&>*]:!bg-surface-container"
-            >
-              <ChipSet>
-                {classrooms.map((classroom) => (
-                  <InputChip
-                    key={classroom}
-                    onDelete={() =>
-                      setClassrooms(
-                        classrooms.filter((item) => classroom !== item),
-                      )
-                    }
-                  >
-                    {classroom}
-                  </InputChip>
-                ))}
-              </ChipSet>
-            </ChipField>
             <TextField
               appearance="outlined"
-              label={"Absent"}
-              value={absentStudents}
-              onChange={(text) => setAbsentStudents(text)}
-              className="[&>*]:!bg-surface-container"
+              label="Enter reason"
+              className={"w-full [&>*]:!bg-surface-container"}
+              disabled={!teachingMethod.includes("other")}
             />
           </Columns>
-        </section>
-        <section>
-            <div className="flex flex-col gap-3">
-              <span className="py-2 font-display text-base font-medium">
-                Teaching Information
-              </span>
-              <Columns columns={2} className="flex-start self-strech flex">
-                <TextField
-                  appearance="outlined"
-                  label={"Teaching Content"}
-                  value={teachingTopic}
-                  onChange={(topic) => setTeachingTopic(topic)}
-                  className="[&>*]:!bg-surface-container w-full"
-                />
-                <TextField
-                  appearance="outlined"
-                  label={"Problems and Recommendations"}
-                  value={suggestions}
-                  onChange={(text) => setSuggestions(text)}
-                  className="[&>*]:!bg-surface-container w-full"
-                />
-              </Columns>
-            </div>
-        </section>
-        <section>
-            <div className="flex flex-col gap-3">
-              <span className="py-2 font-display text-base font-medium">
-                Teaching Method
-              </span>
-              <Columns columns={2} className="flex-start self-strech flex">
-                <Select
-                  appearance="outlined"
-                  label="End Period"
-                  className="[&>*]:!bg-surface-container !w-full"
-                  value={teachingMethod}
-                  onChange={setTeachingMethod}
-                >
-                  {[
-                    {
-                      title: "Live lessons",
-                      value: "live",
-                    },
-                    {
-                      title: "Recorded videos",
-                      value: "video",
-                    },
-                    {
-                      title: "Assignment with due submission",
-                      value: "assignemnt",
-                    },
-                    {
-                      title: "Other",
-                      value: "other",
-                    },
-                  ].map((option, index) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.title}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <TextField
-                  appearance="outlined"
-                  label="Enter reason"
-                  className={"[&>*]:!bg-surface-container w-full"}
-                  disabled={!teachingMethod.includes("other")}
-                />
-              </Columns>
-            </div>
-        </section>
-        <section>
-          <ReportUploadImageCard />
-        </section>
-        <section className="m-0 ml-auto">
-          <Button
-            appearance="filled"
-            icon={<MaterialIcon icon="save" />}
-            onClick={() =>
-              console.log(
-                subjectId,
-                date,
-                startPeriod,
-                endPeriod,
+        </div>
+      </section>
+      <section>
+        <ReportUploadImageCard />
+      </section>
+      <section className="m-0 ml-auto">
+        <Button
+          appearance="filled"
+          icon={<MaterialIcon icon="save" />}
+          onClick={() =>
+            console.log(
+              subjectId,
+              date,
+              startPeriod,
+              endPeriod,
 
-                duration,
-                classrooms,
-                absentStudents,
-                teachingTopic,
-                suggestions,
-                teachingMethod,
-              )
-            }
-          >
-            Save
-          </Button>
-        </section>
-      </div>
+              duration,
+              classrooms,
+              absentStudents,
+              teachingTopic,
+              suggestions,
+              teachingMethod,
+            )
+          }
+        >
+          Save
+        </Button>
+      </section>
+    </div>
   );
 };
 
