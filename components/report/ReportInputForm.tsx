@@ -1,18 +1,20 @@
+import ReportUploadImageCard from "@/components/report/ReportUploadImageCard";
+import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
+import { supabase } from "@/utils/supabase-client";
 import { Teacher } from "@/utils/types/person";
 import {
-  TextField,
-  Columns,
-  Select,
-  MenuItem,
+  Button,
   ChipField,
   ChipSet,
+  Columns,
   InputChip,
-  FormGroup,
-  FormItem,
-  Radio,
-  Button,
   MaterialIcon,
+  MenuItem,
+  Select,
+  TextField,
 } from "@suankularb-components/react";
 import { FC, useState } from "react";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -117,29 +119,31 @@ const ReportInputForm: FC<{
         </Columns>
       </section>
       <section>
-        <Columns columns={3} className="flex-start self-strech flex">
+        <Columns columns={2} className="flex-start self-strech flex">
           <Select
             appearance="outlined"
-            label="start"
+            label="Start Period"
             value={startPeriod}
             onChange={setStartPeriod}
+            className="[&>*]:!bg-surface-container"
           >
             {[
-              { period: 1, startTime: "8.30" },
-              { period: 2, startTime: "9.20" },
-              { period: 3, startTime: "10.10" },
-              { period: 4, startTime: "11.00" },
-              { period: 5, startTime: "11.50" },
-              { period: 6, startTime: "12.40" },
-              { period: 7, startTime: "13.30" },
-              { period: 8, startTime: "14.20" },
-              { period: 9, startTime: "15.10" },
-              { period: 10, startTime: "16.00" },
+              { period: 1, startTime: "08:30" },
+              { period: 2, startTime: "09:20" },
+              { period: 3, startTime: "10:10" },
+              { period: 4, startTime: "11:00" },
+              { period: 5, startTime: "11:50" },
+              { period: 6, startTime: "12:40" },
+              { period: 7, startTime: "13:30" },
+              { period: 8, startTime: "14:20" },
+              { period: 9, startTime: "15:10" },
+              { period: 10, startTime: "16:00" },
             ].map((option) => (
               <MenuItem
                 key={option.period}
                 metadata={option.startTime}
                 value={option.period}
+                className="[&>.skc-menu-item\_\_metadata]:!font-mono"
               >
                 Period {option.period}
               </MenuItem>
@@ -147,37 +151,46 @@ const ReportInputForm: FC<{
           </Select>
           <Select
             appearance="outlined"
-            label="end"
-            value={startPeriod - 1 + duration}
-            onChange={(endPeriod) => setDuration(endPeriod - startPeriod + 1)}
+            label="End Period"
+            value={endPeriod}
+            onChange={setEndPeriod}
+            className="[&>*]:!bg-surface-container"
           >
             {[
-              { period: 1, startTime: "9.20" },
-              { period: 2, startTime: "10.10" },
-              { period: 3, startTime: "11.00" },
-              { period: 4, startTime: "11.50" },
-              { period: 5, startTime: "12.40" },
-              { period: 6, startTime: "13.30" },
-              { period: 7, startTime: "14.20" },
-              { period: 8, startTime: "15.10" },
-              { period: 9, startTime: "16.00" },
-              { period: 10, startTime: "16.50" },
+              { period: 1, endTime: "09:20" },
+              { period: 2, endTime: "10:10" },
+              { period: 3, endTime: "11:00" },
+              { period: 4, endTime: "11:50" },
+              { period: 5, endTime: "12:40" },
+              { period: 6, endTime: "13:30" },
+              { period: 7, endTime: "14:20" },
+              { period: 8, endTime: "15:10" },
+              { period: 9, endTime: "16:00" },
+              { period: 10, endTime: "16:50" },
             ].map((option) => (
               <MenuItem
                 key={option.period}
-                metadata={option.startTime}
+                metadata={option.endTime}
                 value={option.period}
+                className="[&>.skc-menu-item\_\_metadata]:!font-mono"
               >
                 Period {option.period}
               </MenuItem>
             ))}
           </Select>
+        </Columns>
+      </section>
+      <section>
+        <Columns columns={2} className="flex-start self-strech flex">
           <ChipField
             label={"Classroom"}
             onChange={setClassroom}
             value={classroom}
-            onNewEntry={(classroom) => setClassrooms([classroom])}
-            // onDeleteLast={() => setClassrooms(classrooms.slice(0, -1))}
+            onNewEntry={(classroom) =>
+              setClassrooms([...classrooms, classroom])
+            }
+            onDeleteLast={() => setClassrooms(classrooms.slice(0, -1))}
+            className="[&>*]:!bg-surface-container"
           >
             <ChipSet>
               {classrooms.map((classroom) => (
@@ -194,62 +207,85 @@ const ReportInputForm: FC<{
               ))}
             </ChipSet>
           </ChipField>
+          <TextField
+            appearance="outlined"
+            label={"Absent"}
+            value={absentStudents}
+            onChange={(text) => setAbsentStudents(text)}
+            className="[&>*]:!bg-surface-container"
+          />
         </Columns>
       </section>
       <section>
-        <TextField
-          appearance="outlined"
-          label={"Absent Students"}
-          value={absentStudents}
-          onChange={(text) => setAbsentStudents(text)}
-        />
-      </section>
-      <section>
-        <Columns columns={2} className="flex-start self-strech flex">
-          <div className="flex flex-col gap-6">
-            <span className="text-title-medium">Teaching Information</span>
+        <div className="flex flex-col gap-3">
+          <span className="py-2 font-display text-base font-medium">
+            Teaching Information
+          </span>
+          <Columns columns={2} className="flex-start self-strech flex">
             <TextField
               appearance="outlined"
               label={"Teaching Content"}
               value={teachingTopic}
               onChange={(topic) => setTeachingTopic(topic)}
+              className="w-full [&>*]:!bg-surface-container"
             />
             <TextField
               appearance="outlined"
               label={"Problems and Recommendations"}
               value={suggestions}
               onChange={(text) => setSuggestions(text)}
+              className="w-full [&>*]:!bg-surface-container"
             />
-          </div>
-          <div>
-            <FormGroup label={"Teaching Method"} className="text-title-medium">
-              <FormItem label={"Live Course"}>
-                <Radio
-                  value={teachingMethod == "Live Course"}
-                  onChange={() => setTeachingMethod("Live Course")}
-                />
-              </FormItem>
-              <FormItem label={"Video"}>
-                <Radio
-                  value={teachingMethod == "Video"}
-                  onChange={() => setTeachingMethod("Video")}
-                />
-              </FormItem>
-              <FormItem label={"In Class Work"}>
-                <Radio
-                  value={teachingMethod == "In Class Work"}
-                  onChange={() => setTeachingMethod("In Class Work")}
-                />
-              </FormItem>
-              <FormItem label={"Combination of the Above"}>
-                <Radio
-                  value={teachingMethod == "Combination of the Above"}
-                  onChange={() => setTeachingMethod("Combination of the Above")}
-                />
-              </FormItem>
-            </FormGroup>
-          </div>
-        </Columns>
+          </Columns>
+        </div>
+      </section>
+      <section>
+        <div className="flex flex-col gap-3">
+          <span className="py-2 font-display text-base font-medium">
+            Teaching Method
+          </span>
+          <Columns columns={2} className="flex-start self-strech flex">
+            <Select
+              appearance="outlined"
+              label="End Period"
+              className="!w-full [&>*]:!bg-surface-container"
+              value={teachingMethod}
+              onChange={setTeachingMethod}
+            >
+              {[
+                {
+                  title: "Live lessons",
+                  value: "live",
+                },
+                {
+                  title: "Recorded videos",
+                  value: "video",
+                },
+                {
+                  title: "Assignment with due submission",
+                  value: "assignment",
+                },
+                {
+                  title: "Other",
+                  value: "other",
+                },
+              ].map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.title}
+                </MenuItem>
+              ))}
+            </Select>
+            <TextField
+              appearance="outlined"
+              label="Enter reason"
+              className={"w-full [&>*]:!bg-surface-container"}
+              disabled={!teachingMethod.includes("other")}
+            />
+          </Columns>
+        </div>
+      </section>
+      <section>
+        <ReportUploadImageCard />
       </section>
       <div className="self-strech flex flex-col items-end gap-2.5">
         {report.length == 0 ? (

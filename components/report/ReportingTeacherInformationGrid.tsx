@@ -31,34 +31,21 @@ const ReportingTeacherInformationGrid: StylableFC<{
   const { t } = useTranslation("search/teachers/detail");
 
   return (
-    <section
-      style={style}
-      className={cn(`grid grid-cols-2 gap-2 md:grid-cols-4`, className)}
-    >
-      {/* Full name */}
-      <Card appearance="filled" className="col-span-2">
-        <CardHeader title={t("information.fullName")} />
-        <CardContent>
-          <MultilangText
-            text={{
-              th: getLocaleName("th", teacher, { prefix: true }),
-              "en-US": getLocaleName("en-US", teacher, { prefix: true }),
-            }}
-            options={{
-              combineIfAllIdentical: true,
-              hideIconsIfOnlyLanguage: true,
-            }}
-          />
-        </CardContent>
-      </Card>
-
-      {/* Nickname */}
-      {teacher.nickname && sift(Object.values(teacher.nickname)).length > 0 && (
-        <Card appearance="filled">
-          <CardHeader title={t("information.nickname")} />
+    <div className="flex flex-col gap-3">
+      <span className="font-display pb-2 text-base font-medium">Class Information</span>
+      <section
+        style={style}
+        className={cn(`grid grid-cols-2 gap-2 md:grid-cols-4`, className)}
+      >
+        {/* Full name */}
+        <Card appearance="filled" className="col-span-2">
+          <CardHeader title={t("information.fullName")} />
           <CardContent>
             <MultilangText
-              text={teacher.nickname}
+              text={{
+                th: getLocaleName("th", teacher, { prefix: true }),
+                "en-US": getLocaleName("en-US", teacher, { prefix: true }),
+              }}
               options={{
                 combineIfAllIdentical: true,
                 hideIconsIfOnlyLanguage: true,
@@ -66,18 +53,34 @@ const ReportingTeacherInformationGrid: StylableFC<{
             />
           </CardContent>
         </Card>
-      )}
 
-      {/* Subject group */}
-      {teacher.subject_group && (
-        <Card appearance="filled">
-          <CardHeader title={t("information.subjectGroup")} />
-          <CardContent>
-            {getLocaleString(teacher.subject_group.name, locale)}
-          </CardContent>
-        </Card>
-      )}
-    </section>
+        {/* Nickname */}
+        {teacher.nickname && sift(Object.values(teacher.nickname)).length > 0 && (
+          <Card appearance="filled">
+            <CardHeader title={t("information.nickname")} />
+            <CardContent>
+              <MultilangText
+                text={teacher.nickname}
+                options={{
+                  combineIfAllIdentical: true,
+                  hideIconsIfOnlyLanguage: true,
+                }}
+              />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Subject group */}
+        {teacher.subject_group && (
+          <Card appearance="filled">
+            <CardHeader title={t("information.subjectGroup")} />
+            <CardContent>
+              {getLocaleString(teacher.subject_group.name, locale)}
+            </CardContent>
+          </Card>
+        )}
+      </section>
+    </div>
   );
 };
 
