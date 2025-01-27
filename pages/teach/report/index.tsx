@@ -29,6 +29,7 @@ import useTranslation from "next-translate/useTranslation";
 import LookupListSide from "@/components/lookup/LookupListSide";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import ReportDetailsCard from "@/components/report/ReportDetailsCard";
+import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 
 const ReportPage: CustomPage<{
   teacher: Teacher;
@@ -39,8 +40,7 @@ const ReportPage: CustomPage<{
   const { t } = useTranslation("report");
   const { t: tx } = useTranslation("common");
   function handleAddReport() {
-    setSelectedID("1");
-    console.log("activated");
+    setSelectedID("2");
   }
   return (
     <>
@@ -94,6 +94,17 @@ const ReportPage: CustomPage<{
           />
         </LookupDetailsSide>
       </SplitLayout>
+      <div className="md:!hidden">
+        <LookupDetailsDialog
+          open={selectedID == "2"}
+          onClose={() => setSelectedID("1")}
+        >
+          <ReportDetailsCard
+            teacher={teacher}
+            report={reports.filter((report) => report.id == selectedID)}
+          />
+        </LookupDetailsDialog>
+      </div>
     </>
   );
 };

@@ -51,7 +51,15 @@ const ReportInputForm: FC<{
     report.length > 0 ? report[0].suggestions : null,
   );
   const [teachingMethod, setTeachingMethod] = useState<String>(
-    report.length > 0 ? report[0].teaching_methods[0] : "Live Course",
+    report.length > 0
+      ? report[0].teaching_methods[0] !== "live" && "video" && "assignment"
+        ? "other"
+        : report[0].teaching_methods[0]
+      : "Live Course",
+  );
+
+  const [otherTeachingMethod, setOtherTeachingMethod] = useState<any>(
+    teachingMethod == "other" && report[0].teaching_methods[0],
   );
   const locale = useLocale();
   const mysk = useMySKClient();
@@ -62,7 +70,7 @@ const ReportInputForm: FC<{
       supabase,
       parseInt(classrooms[0]),
     );
-    console.log(absentStudents);
+
     const { data: report, error } = await mysk.fetch(
       "/v1/subjects/attendance",
       {
@@ -78,7 +86,40 @@ const ReportInputForm: FC<{
             absent_student_no: absentStudents,
             teaching_topic: teachingTopic,
             suggestions: suggestions,
-            teaching_methods: [teachingMethod],
+            teaching_methods: [
+              teachingMethod == "other" ? otherTeachingMethod : teachingMethod,
+            ],
+            classroom_id: classroomId?.id,
+          },
+        }),
+      },
+    );
+    window.location.reload();
+  }
+
+  async function handleEdit() {
+    let { data: classroomId } = await getClassroomByNumber(
+      supabase,
+      parseInt(classrooms[0]),
+    );
+    const { data, error } = await mysk.fetch(
+      `/v1/subjects/attendance/${report[0].id}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data: {
+            subject_id: subjectId,
+            teacherId: teacher.id,
+            date: date,
+            start_time: startPeriod,
+            duration: duration,
+            absent_student_no: absentStudents,
+            teaching_topic: teachingTopic,
+            suggestions: suggestions,
+            teaching_methods: [
+              teachingMethod == "other" ? otherTeachingMethod : teachingMethod,
+            ],
             classroom_id: classroomId?.id,
           },
         }),
@@ -269,12 +310,15 @@ const ReportInputForm: FC<{
                 </MenuItem>
               ))}
             </Select>
-            {/* <TextField
-              appearance="outlined"
-              label="ระบุ"
-              className={"w-full [&>*]:!bg-surface-container"}
-              disabled={!teachingMethod.includes("other")}
-            /> */}
+            {teachingMethod == "other" && (
+              <TextField
+                appearance="outlined"
+                label="ระบุ"
+                className={"w-full [&>*]:!bg-surface-container"}
+                value={otherTeachingMethod}
+                onChange={setOtherTeachingMethod}
+              />
+            )}
           </Columns>
         </div>
       </section>
@@ -288,9 +332,17 @@ const ReportInputForm: FC<{
             onClick={() => handleCreate()}
             icon={<MaterialIcon icon="save" />}
           >
-            Save
+            บันทึก
           </Button>
-        ) : null}
+        ) : (
+          <Button
+            appearance="filled"
+            onClick={() => handleCreate()}
+            icon={<MaterialIcon icon="save" />}
+          >
+            แก้ไข
+          </Button>
+        )}
       </div>
     </div>
   );
