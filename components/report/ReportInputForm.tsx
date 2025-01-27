@@ -1,27 +1,22 @@
 import ReportUploadImageCard from "@/components/report/ReportUploadImageCard";
+import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
+import { supabase } from "@/utils/supabase-client";
 import { Teacher } from "@/utils/types/person";
 import {
   Button,
-  Checkbox,
   ChipField,
   ChipSet,
   Columns,
-  FormGroup,
-  FormItem,
-  Radio,
-  MaterialIcon,
   InputChip,
+  MaterialIcon,
   MenuItem,
   Select,
-  TextField,
+  TextField
 } from "@suankularb-components/react";
-import useMySKClient from "@/utils/backend/mysk/useMySKClient";
-import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
-import { supabase } from "@/utils/supabase-client";
 import { FC, useState } from "react";
-import ReportingTeacherInformationGrid from "./ReportingTeacherInformationGrid";
 
 const ReportInputForm: FC<{
   teacher: Teacher;
@@ -97,7 +92,7 @@ const ReportInputForm: FC<{
         </Columns>
       </section>
       <section>
-        <Columns columns={3} className="flex-start self-strech flex">
+        <Columns columns={2} className="flex-start self-strech flex">
           <Select
             appearance="outlined"
             label="Start Period"
@@ -241,13 +236,13 @@ const ReportInputForm: FC<{
                 },
                 {
                   title: "Assignment with due submission",
-                  value: "assignemnt",
+                  value: "assignment",
                 },
                 {
                   title: "Other",
                   value: "other",
                 },
-              ].map((option, index) => (
+              ].map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.title}
                 </MenuItem>

@@ -1,8 +1,6 @@
-import { FC, useState } from "react";
-import { Teacher } from "@/utils/types/person";
-import { Button, MaterialIcon } from "@suankularb-components/react";
 import cn from "@/utils/helpers/cn";
-import { useEffect } from "react";
+import { Button, MaterialIcon } from "@suankularb-components/react";
+import { useState } from "react";
 
 const ReportUploadImageCard = () => {
   const [inputHasFile, setInputHasFile] = useState<boolean>(false);
