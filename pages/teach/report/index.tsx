@@ -96,7 +96,7 @@ const ReportPage: CustomPage<{
       </SplitLayout>
       <div className="md:!hidden">
         <LookupDetailsDialog
-          open={selectedID == "2"}
+          open={selectedID !== "1"}
           onClose={() => setSelectedID("1")}
         >
           <ReportDetailsCard

@@ -59,7 +59,9 @@ const ReportInputForm: FC<{
   );
 
   const [otherTeachingMethod, setOtherTeachingMethod] = useState<any>(
-    teachingMethod == "other" && report[0].teaching_methods[0],
+    report.length > 0 &&
+      teachingMethod == "other" &&
+      report[0].teaching_methods[0],
   );
   const locale = useLocale();
   const mysk = useMySKClient();
@@ -337,7 +339,7 @@ const ReportInputForm: FC<{
         ) : (
           <Button
             appearance="filled"
-            onClick={() => handleCreate()}
+            onClick={() => handleEdit()}
             icon={<MaterialIcon icon="save" />}
           >
             แก้ไข
