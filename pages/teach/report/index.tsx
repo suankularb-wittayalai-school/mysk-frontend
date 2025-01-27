@@ -26,24 +26,34 @@ import cn from "@/utils/helpers/cn";
 import { useState } from "react";
 import Head from "next/head";
 import useTranslation from "next-translate/useTranslation";
+import LookupListSide from "@/components/lookup/LookupListSide";
+import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
+import ReportDetailsCard from "@/components/report/ReportDetailsCard";
 
-const ReportPage: CustomPage<{ reports: Report[] }> = ({ reports }) => {
-  const [selectedID, setSelectedID] = useState<string>();
+const ReportPage: CustomPage<{
+  teacher: Teacher;
+  reports: Report[];
+}> = ({ teacher, reports }) => {
+  const [selectedID, setSelectedID] = useState<string>("1");
 
   const { t } = useTranslation("report");
   const { t: tx } = useTranslation("common");
-
-  console.log(reports);
-
+  function handleAddReport() {
+    setSelectedID("1");
+    console.log("activated");
+  }
   return (
     <>
       <Head>
         <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
       <PageHeader parentURL="/teach">{"Teaching Report"}</PageHeader>;
-      <SplitLayout ratio={"list-detail"}>
-        <div>
-          <AddReportButton />
+      <SplitLayout
+        ratio="list-detail"
+        className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
+      >
+        <LookupListSide length={reports.length}>
+          <AddReportButton onAddReport={handleAddReport} />
           <List className="gap-2">
             {reports?.map((report) => (
               <ReportListItem
@@ -76,7 +86,13 @@ const ReportPage: CustomPage<{ reports: Report[] }> = ({ reports }) => {
               </motion.div>
             )}
           </List>
-        </div>
+        </LookupListSide>
+        <LookupDetailsSide length={reports.length} selectedID={selectedID}>
+          <ReportDetailsCard
+            teacher={teacher}
+            report={reports.filter((report) => report.id == selectedID)}
+          />
+        </LookupDetailsSide>
       </SplitLayout>
     </>
   );
@@ -93,10 +109,9 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: teacher } = (await getLoggedInPerson(
-    supabase,
-    mysk,
-  )) as BackendReturn<Teacher>;
+  const { data: teacher } = (await getLoggedInPerson(supabase, mysk, {
+    detailed: true,
+  })) as BackendReturn<Teacher>;
   if (!teacher) return { notFound: true };
 
   const { data: reports } = await mysk.fetch<Report[]>(
@@ -113,15 +128,14 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     },
   );
-
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "report",
       ])),
-      reports,
       teacher,
+      reports,
     },
   };
 };

@@ -19,29 +19,52 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import { supabase } from "@/utils/supabase-client";
+import { Report } from "@/utils/types/report";
 
 const ReportInputForm: FC<{
   teacher: Teacher;
-}> = ({ teacher }) => {
-  const [subjectId, setSubjectId] = useState<any>();
-  const [date, setDate] = useState<any>();
-  const [startPeriod, setStartPeriod] = useState<number>(1);
-  const [duration, setDuration] = useState<number>(1);
+  report: Report[];
+}> = ({ teacher, report }) => {
+  console.log(report.length, "the rerpot");
+  const [subjectId, setSubjectId] = useState<any>(
+    report.length > 0 ? report[0].subject.id : null,
+  );
+  const [date, setDate] = useState<any>(
+    report.length > 0 ? report[0].date : null,
+  );
+  const [startPeriod, setStartPeriod] = useState<number>(
+    report.length > 0 ? report[0].start_time : 1,
+  );
+  const [duration, setDuration] = useState<number>(
+    report.length > 0 ? report[0].duration : 1,
+  );
   const [classroom, setClassroom] = useState<string>();
-  const [classrooms, setClassrooms] = useState<string[]>([]);
-  const [absentStudents, setAbsentStudents] = useState<any>();
-  const [teachingTopic, setTeachingTopic] = useState<any>();
-  const [suggestions, setSuggestions] = useState<any>();
-  const [teachingMethod, setTeachingMethod] = useState<String>("Live Course");
+  // report.length > 0 ? report[0].classroom.number.toString() : "",
+  const [classrooms, setClassrooms] = useState<string[]>(
+    report.length > 0 ? [report[0].classroom.number.toString()] : [],
+  );
+  const [absentStudents, setAbsentStudents] = useState<any>(
+    report.length > 0 ? report[0].absent_student_no : null,
+  );
+  const [teachingTopic, setTeachingTopic] = useState<any>(
+    report.length > 0 ? report[0].teaching_topic : null,
+  );
+  const [suggestions, setSuggestions] = useState<any>(
+    report.length > 0 ? report[0].suggestions : null,
+  );
+  const [teachingMethod, setTeachingMethod] = useState<String>(
+    report.length > 0 ? report[0].teaching_methods[0] : "Live Course",
+  );
   const locale = useLocale();
   const mysk = useMySKClient();
+  console.log(date, "where is it");
 
   async function handleCreate() {
     let { data: classroomId } = await getClassroomByNumber(
       supabase,
       parseInt(classrooms[0]),
     );
-
+    console.log(absentStudents);
     const { data: report, error } = await mysk.fetch(
       "/v1/subjects/attendance",
       {
@@ -54,7 +77,7 @@ const ReportInputForm: FC<{
             date: date,
             start_time: startPeriod,
             duration: duration,
-            absent_students_no: absentStudents,
+            absent_student_no: absentStudents,
             teaching_topic: teachingTopic,
             suggestions: suggestions,
             teaching_methods: [teachingMethod],
@@ -63,6 +86,7 @@ const ReportInputForm: FC<{
         }),
       },
     );
+    window.location.reload();
   }
 
   return (
@@ -228,13 +252,15 @@ const ReportInputForm: FC<{
         </Columns>
       </section>
       <div className="self-strech flex flex-col items-end gap-2.5">
-        <Button
-          appearance="filled"
-          onClick={() => handleCreate()}
-          icon={<MaterialIcon icon="save" />}
-        >
-          Save
-        </Button>
+        {report.length == 0 ? (
+          <Button
+            appearance="filled"
+            onClick={() => handleCreate()}
+            icon={<MaterialIcon icon="save" />}
+          >
+            Save
+          </Button>
+        ) : null}
       </div>
     </div>
   );

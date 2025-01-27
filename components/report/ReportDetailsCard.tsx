@@ -5,13 +5,13 @@ import ReportInputForm from "@/components/report/ReportInputForm";
 import { StylableFC } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
 import { Header } from "@suankularb-components/react";
-import { MySKClient } from "@/utils/types/fetch";
-import { SupabaseClient } from "@supabase/supabase-js";
+import { Report } from "@/utils/types/report";
 
 const ReportDetailsCard: StylableFC<{
   teacher: Teacher;
-}> = ({ teacher, style, className }) => {
-  console.log(teacher.subjects_in_charge[0].name, "where are you");
+  report: Report[];
+}> = ({ teacher, report, style, className }) => {
+  console.log(report, "hello");
   return (
     <LookupDetailsCard>
       <div className="flex flex-col gap-6 p-4">
@@ -19,7 +19,7 @@ const ReportDetailsCard: StylableFC<{
       </div>
       <LookupDetailsContent>
         <ReportingTeacherInformationGrid teacher={teacher} />
-        <ReportInputForm teacher={teacher} />
+        <ReportInputForm teacher={teacher} report={report} />
       </LookupDetailsContent>
     </LookupDetailsCard>
   );
