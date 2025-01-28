@@ -18,26 +18,22 @@ import {
   TextField,
 } from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
-import { FC, useEffect, useState } from "react";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import { FC, useContext, useEffect, useState } from "react";
+import logError from "@/utils/helpers/logError";
+import { Snackbar } from "@suankularb-components/react";
+import useRefreshProps from "@/utils/helpers/useRefreshProps";
 
 const ReportInputForm: FC<{
   teacher: Teacher;
   report: Report[];
-}> = ({ teacher, report }) => {
-  useEffect(() => {
-    const handleWheel = (event: WheelEvent) => {
-      const target = event.target as HTMLElement;
+  newId: any;
+}> = ({ teacher, report, newId }) => {
+  const locale = useLocale();
+  const mysk = useMySKClient();
 
-      if (target instanceof HTMLInputElement && target.type === "number") {
-        event.preventDefault();
-      }
-    };
-    document.addEventListener("wheel", handleWheel, { passive: false });
-
-    return () => {
-      document.removeEventListener("wheel", handleWheel);
-    };
-  }, []);
+  const refreshProps = useRefreshProps();
+  const { setSnackbar } = useContext(SnackbarContext);
 
   const hasImage = report.length > 0 ? Boolean(report[0].has_image) : false;
   const [enableEditing, setEnableEditing] = useState<boolean>(
@@ -82,6 +78,21 @@ const ReportInputForm: FC<{
   const [imageData, setImageData] = useState<ArrayBuffer>();
   const [imageType, setImageType] = useState<string>();
 
+  useEffect(() => {
+    const handleWheel = (event: WheelEvent) => {
+      const target = event.target as HTMLElement;
+
+      if (target instanceof HTMLInputElement && target.type === "number") {
+        event.preventDefault();
+      }
+    };
+    document.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      document.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
+
   function validateInputs() {
     if (
       date == null ||
@@ -102,9 +113,6 @@ const ReportInputForm: FC<{
       report[0].teaching_methods[0],
   );
 
-  const locale = useLocale();
-  const mysk = useMySKClient();
-
   async function handleCreate() {
     setIsSaving(true)
 
@@ -113,43 +121,53 @@ const ReportInputForm: FC<{
       parseInt(classrooms[0]),
     );
 
-    const response = await mysk.fetch("/v1/subjects/attendance", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        data: {
-          subject_id: subjectId,
-          teacherId: teacher.id,
-          date: date,
-          start_time: startPeriod,
-          duration: duration,
-          absent_student_no: absentStudents,
-          teaching_topic: teachingTopic,
-          suggestions: suggestions,
-          teaching_methods: [
-            teachingMethod == "other" ? otherTeachingMethod : teachingMethod,
-          ],
-          classroom_id: classroomId?.id,
-        },
-      }),
-    });
+    const { data, error } = await mysk.fetch<{ id: string }>(
+      "/v1/subjects/attendance",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data: {
+            subject_id: subjectId,
+            teacherId: teacher.id,
+            date,
+            start_time: startPeriod,
+            duration: duration,
+            absent_student_no: absentStudents,
+            teaching_topic: teachingTopic,
+            suggestions: suggestions,
+            teaching_methods: [
+              teachingMethod == "other" ? otherTeachingMethod : teachingMethod,
+            ],
+            classroom_id: classroomId?.id,
+          },
+        }),
+      },
+    );
 
-    if (response) {
-      const responseData = response.data as { id: string };
-
-      const imageResponse = await mysk.fetch(
-        `/v1/subjects/attendance/image/${responseData.id}?data[file_extension]=${imageType}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/octet-stream" },
-          body: imageData,
-        },
-      );
-
-      if (imageResponse) {
-        window.location.reload();
-      }
+    if (error) {
+      setIsSaving(false)
+      return logError("handleCreate (form)", error);
     }
+
+    const { error: imageResponseError } = await mysk.fetch(
+      `/v1/subjects/attendance/image/${data.id}?data[file_extension]=${imageType}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/octet-stream" },
+        body: imageData,
+      },
+    );
+
+    if (imageResponseError !== null) {
+    setIsSaving(false)
+      return logError("handleCreate (image)", imageResponseError);
+    }
+
+    setSnackbar(<Snackbar>{t("snackbar.success")}</Snackbar>);
+    refreshProps();
+    setIsSaving(false)
+    newId("2")
   }
 
   async function handleEdit() {

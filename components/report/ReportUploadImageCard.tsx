@@ -4,6 +4,7 @@ import { Button, MaterialIcon } from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
 import { useState } from "react";
+import { useRef } from "react";
 
 interface ReportUploadImageCardProps {
   data: (result: string | ArrayBuffer | null) => void;
@@ -21,8 +22,10 @@ const ReportUploadImageCard = ({
   const [inputHasFile, setInputHasFile] = useState<boolean>(false);
   const [inputFileName, setInputFileName] = useState<string>();
   const [inputURL, setInputURL] = useState<string>();
-
   const [alreadyHaveImageURL, setAlreadyHaveImageURL] = useState<string>();
+  const [fileTooLarge, setFileTooLarge] = useState<boolean>(false);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { t } = useTranslation("report");
 
@@ -57,7 +60,7 @@ const ReportUploadImageCard = ({
                 alt={alreadyHaveImageURL}
                 width={1280}
                 height={720}
-                className="h-full w-auto"
+                className="m-auto block h-full w-auto"
               />
             )}
           </div>
@@ -68,12 +71,14 @@ const ReportUploadImageCard = ({
           onDragOver={handleUploadDragOver}
           onDrop={handleUploadDrop}
           className={cn(
-            `flex min-h-32 flex-col items-center justify-center gap-2 rounded-xs border border-outline p-4 hover:cursor-pointer`,
+            `flex min-h-32 flex-col items-center justify-center gap-2 rounded-xs 
+            border p-4 hover:cursor-pointer` +
+              (fileTooLarge ? " border-error" : " border-outline"),
           )}
         >
           <input
             type="file"
-            name=""
+            ref={fileInputRef}
             accept="image/png, image/jpeg, image/heif, image/webp"
             className="page-fileUpload hidden"
             onChange={handleUploadElement}
@@ -101,14 +106,28 @@ const ReportUploadImageCard = ({
           ) : (
             <>
               <Button
-                className="!w-max"
                 appearance="filled"
                 icon={<MaterialIcon icon="publish" />}
                 onClick={handleUploadClick}
+                className={
+                  "!w-max" + (fileTooLarge ? " !bg-error !text-on-error" : "")
+                }
               >
                 {t("forms.upload.field.title")}
               </Button>
-              <div className="break-all text-center text-outline">
+              <div
+                className={
+                  "text-center " +
+                  (fileTooLarge ? "text-error" : "text-outline")
+                }
+              >
+                {fileTooLarge ? (
+                  <p className="font-bold">
+                    {t("forms.upload.size.tooLarge")}
+                  </p>
+                ) : (
+                  <p>{t("forms.upload.size.ok")}</p>
+                )}
                 <p>{t("forms.upload.field.subtitle")}</p>
               </div>
             </>
@@ -119,9 +138,9 @@ const ReportUploadImageCard = ({
   );
 
   function handleUploadClick() {
-    return (
-      document.querySelector(".page-fileUpload") as HTMLInputElement
-    )?.click();
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   }
 
   function handleUploadDragOver(event: React.DragEvent<HTMLDivElement>) {
@@ -135,9 +154,10 @@ const ReportUploadImageCard = ({
   }
 
   function handleUploadElement() {
-    const fileInput = document.querySelector(
-      ".page-fileUpload",
-    ) as HTMLInputElement;
+    const fileInput = fileInputRef.current;
+    if (!fileInput) {
+      return;
+    }
 
     let fileReaderModule = new FileReader();
 
@@ -145,8 +165,20 @@ const ReportUploadImageCard = ({
       data(fileReaderModule.result);
       console.warn(fileReaderModule.result);
     });
+    
     if (fileInput.files != null) {
       if (fileInput.files[0] != undefined) {
+        if (fileInput.files[0].size > 4500000) {
+          setInputHasFile(false);
+          setFileTooLarge(true);
+          console.warn("this nigga is so large");
+          (
+            document.querySelector(".page-fileUpload") as HTMLInputElement
+          ).value = "";
+          return;
+        }
+        setFileTooLarge(false);
+
         fileReaderModule.readAsArrayBuffer(fileInput.files[0]);
         type(fileInput.files[0].type.split(/(?<=\/)([^\/]+)/)[1]);
 

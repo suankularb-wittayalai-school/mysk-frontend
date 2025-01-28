@@ -10,7 +10,8 @@ import { Header } from "@suankularb-components/react";
 const ReportDetailsCard: StylableFC<{
   teacher: Teacher;
   report: Report[];
-}> = ({ teacher, report }) => {
+  newId: any;
+}> = ({ teacher, report, newId}) => {
   return (
     <LookupDetailsCard>
       <div className="flex flex-col gap-6 p-4">
@@ -18,7 +19,7 @@ const ReportDetailsCard: StylableFC<{
       </div>
       <LookupDetailsContent>
         <ReportingTeacherInformationGrid teacher={teacher} />
-        <ReportInputForm teacher={teacher} report={report} />
+        <ReportInputForm teacher={teacher} report={report} newId={newId} />
       </LookupDetailsContent>
     </LookupDetailsCard>
   );

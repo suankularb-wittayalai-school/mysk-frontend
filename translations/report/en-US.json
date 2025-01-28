@@ -44,7 +44,11 @@
       "field": {
         "title": "Upload",
         "change": "Change image",
-        "subtitle": "Click or drag a file to upload. Image will not be editable after submission."
+        "subtitle": "Click or drag a file to upload. Image will not be editable after submission.",
+        "size": {
+          "ok": "Max file size: 4.5 MB",
+          "tooLarge": "This file is too large. Maximum size allowed: 4.5 MB"
+        }
       }
     }
   },
