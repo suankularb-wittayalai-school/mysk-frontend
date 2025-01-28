@@ -43,12 +43,16 @@
       "title": "Upload teaching image",
       "field": {
         "title": "Upload",
-        "subtitle": "Click or drag a file to upload"
+        "change": "Change image",
+        "subtitle": "Click or drag a file to upload. Image will not be editable after submission."
       }
     }
   },
   "action": {
-    "add": "Add data"
+    "add": "Add data",
+    "edit": "Edit",
+    "save": "Save",
+    "submit": "Submit"
   },
   "period": "Period"
 }

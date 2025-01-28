@@ -10,7 +10,7 @@ import { Header } from "@suankularb-components/react";
 const ReportDetailsCard: StylableFC<{
   teacher: Teacher;
   report: Report[];
-}> = ({ teacher, report, style, className }) => {
+}> = ({ teacher, report }) => {
   return (
     <LookupDetailsCard>
       <div className="flex flex-col gap-6 p-4">

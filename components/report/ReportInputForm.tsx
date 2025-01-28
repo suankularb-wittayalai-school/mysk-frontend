@@ -23,8 +23,6 @@ import { FC, useEffect, useState } from "react";
 const ReportInputForm: FC<{
   teacher: Teacher;
   report: Report[];
-
-  // imageType: "png" | "jpg" | "jpeg" | "webp"
 }> = ({ teacher, report }) => {
   useEffect(() => {
     const handleWheel = (event: WheelEvent) => {
@@ -40,6 +38,13 @@ const ReportInputForm: FC<{
       document.removeEventListener("wheel", handleWheel);
     };
   }, []);
+
+  const hasImage = report.length > 0 ? Boolean(report[0].has_image) : false;
+  const [enableEditing, setEnableEditing] = useState<boolean>(
+    report.length == 0,
+  );
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+
   const [subjectId, setSubjectId] = useState<any>(
     report.length > 0 ? report[0].subject.id : null,
   );
@@ -82,7 +87,8 @@ const ReportInputForm: FC<{
       date == null ||
       date.length === 0 ||
       classrooms.length == 0 ||
-      teachingTopic == null
+      teachingTopic == null ||
+      !imageData
     ) {
       return false;
     } else {
@@ -100,6 +106,8 @@ const ReportInputForm: FC<{
   const mysk = useMySKClient();
 
   async function handleCreate() {
+    setIsSaving(true)
+
     let { data: classroomId } = await getClassroomByNumber(
       supabase,
       parseInt(classrooms[0]),
@@ -126,15 +134,8 @@ const ReportInputForm: FC<{
       }),
     });
 
-    console.warn(response);
-
     if (response) {
       const responseData = response.data as { id: string };
-      console.warn(responseData.id);
-
-      console.warn(
-        `/v1/subjects/attendance/image/${responseData.id}?data[file_extension]=${imageType}`,
-      );
 
       const imageResponse = await mysk.fetch(
         `/v1/subjects/attendance/image/${responseData.id}?data[file_extension]=${imageType}`,
@@ -146,16 +147,14 @@ const ReportInputForm: FC<{
       );
 
       if (imageResponse) {
-        // window.location.reload()
+        window.location.reload();
       }
-
-      console.warn(imageResponse);
     }
-
-    // window.location.reload();
   }
 
   async function handleEdit() {
+    setIsSaving(true)
+
     let { data: classroomId } = await getClassroomByNumber(
       supabase,
       parseInt(classrooms[0]),
@@ -183,7 +182,8 @@ const ReportInputForm: FC<{
         }),
       },
     );
-    // window.location.reload();
+
+    window.location.reload();
   }
 
   const { t } = useTranslation("report");
@@ -198,6 +198,12 @@ const ReportInputForm: FC<{
             value={subjectId}
             onChange={setSubjectId}
             className="[&>*]:!bg-surface-container"
+            className={
+              "[&>*]:!bg-surface-container" +
+              (!enableEditing
+                ? " pointer-events-none select-none !opacity-35"
+                : "")
+            }
           >
             {teacher.subjects_in_charge.map((subject) => {
               return (
@@ -214,6 +220,7 @@ const ReportInputForm: FC<{
             onChange={(date) => setDate(date)}
             inputAttr={{ type: "date", placeholder: "YYYY-MM-DD" }}
             className="[&>*]:!bg-surface-container"
+            disabled={!enableEditing}
           />
         </Columns>
       </section>
@@ -224,7 +231,12 @@ const ReportInputForm: FC<{
             label={t("forms.classInfo.period.start")}
             value={startPeriod}
             onChange={setStartPeriod}
-            className="[&>*]:!bg-surface-container"
+            className={
+              "[&>*]:!bg-surface-container" +
+              (!enableEditing
+                ? " pointer-events-none select-none !opacity-35"
+                : "")
+            }
           >
             {[
               { period: 1, startTime: "08:30" },
@@ -253,7 +265,12 @@ const ReportInputForm: FC<{
             label={t("forms.classInfo.period.end")}
             value={startPeriod - 1 + duration}
             onChange={(endPeriod) => setDuration(endPeriod - startPeriod + 1)}
-            className="[&>*]:!bg-surface-container"
+            className={
+              "[&>*]:!bg-surface-container" +
+              (!enableEditing
+                ? " pointer-events-none select-none !opacity-35"
+                : "")
+            }
           >
             {[
               { period: 1, startTime: "9.20" },
@@ -286,9 +303,15 @@ const ReportInputForm: FC<{
             value={classroom}
             onNewEntry={(classroom) => setClassrooms([classroom])}
             onDeleteLast={() => setClassrooms(classrooms.slice(0, -1))}
-            className="[&>*]:!bg-surface-container"
             inputAttr={{ type: "number", id: "classroom" }}
             helperMsg={t("forms.classInfo.classroom.helper")}
+            disabled={!enableEditing}
+            className={
+              "[&>*]:!bg-surface-container" +
+              (!enableEditing
+                ? " pointer-events-none select-none !opacity-35"
+                : "")
+            }
           >
             <ChipSet>
               {classrooms.map((classroom) => (
@@ -311,6 +334,7 @@ const ReportInputForm: FC<{
             value={absentStudents}
             onChange={(text) => setAbsentStudents(text)}
             className="[&>*]:!bg-surface-container"
+            disabled={!enableEditing}
           />
         </Columns>
       </section>
@@ -326,6 +350,7 @@ const ReportInputForm: FC<{
               value={teachingTopic}
               onChange={(topic) => setTeachingTopic(topic)}
               className="w-full [&>*]:!bg-surface-container"
+              disabled={!enableEditing}
             />
             <TextField
               appearance="outlined"
@@ -333,6 +358,7 @@ const ReportInputForm: FC<{
               value={suggestions}
               onChange={(text) => setSuggestions(text)}
               className="w-full [&>*]:!bg-surface-container"
+              disabled={!enableEditing}
             />
           </Columns>
         </div>
@@ -346,9 +372,14 @@ const ReportInputForm: FC<{
             <Select
               appearance="outlined"
               label={t("forms.method.options.title")}
-              className="!w-full [&>*]:!bg-surface-container"
               value={teachingMethod}
               onChange={setTeachingMethod}
+              className={
+                "!w-full [&>*]:!bg-surface-container" +
+                (!enableEditing
+                  ? " pointer-events-none select-none !opacity-35"
+                  : "")
+              }
             >
               {[
                 {
@@ -380,6 +411,7 @@ const ReportInputForm: FC<{
                 className={"w-full [&>*]:!bg-surface-container"}
                 value={otherTeachingMethod}
                 onChange={setOtherTeachingMethod}
+                disabled={!enableEditing}
               />
             )}
           </Columns>
@@ -393,6 +425,8 @@ const ReportInputForm: FC<{
             }
           }}
           type={setImageType}
+          alreadyHaveImage={hasImage}
+          reportId={report.length > 0 ? report[0].id : undefined}
         />
       </section>
       <div className="self-strech flex flex-col items-end gap-2.5">
@@ -402,16 +436,27 @@ const ReportInputForm: FC<{
             onClick={() => handleCreate()}
             icon={<MaterialIcon icon="save" />}
             disabled={!validateInputs()}
+            loading={isSaving}
           >
-            บันทึก
+            {t("action.submit")}
+          </Button>
+        ) : !enableEditing ? (
+          <Button
+            appearance="filled"
+            onClick={() => setEnableEditing(true)}
+            icon={<MaterialIcon icon="edit" />}
+            loading={isSaving}
+          >
+            {t("action.edit")}
           </Button>
         ) : (
           <Button
             appearance="filled"
             onClick={() => handleEdit()}
             icon={<MaterialIcon icon="save" />}
+            loading={isSaving}
           >
-            แก้ไข
+            {t("action.save")}
           </Button>
         )}
       </div>
