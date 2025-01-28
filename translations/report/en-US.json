@@ -54,5 +54,8 @@
     "save": "Save",
     "submit": "Submit"
   },
-  "period": "Period"
+  "period": "Period",
+  "snackbar": {
+    "success": "Uploaded teaching report successfully"
+  }
 }

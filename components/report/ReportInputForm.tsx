@@ -197,7 +197,6 @@ const ReportInputForm: FC<{
             label={t("forms.classInfo.subject")}
             value={subjectId}
             onChange={setSubjectId}
-            className="[&>*]:!bg-surface-container"
             className={
               "[&>*]:!bg-surface-container" +
               (!enableEditing
