@@ -1,9 +1,8 @@
-import { StylableFC } from "@/utils/types/common";
-import { ListItem, ListItemContent } from "@suankularb-components/react";
-import { Report } from "@/utils/types/report";
-import React from "react";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
+import { StylableFC } from "@/utils/types/common";
+import { Report } from "@/utils/types/report";
+import { ListItem, ListItemContent } from "@suankularb-components/react";
 import { format } from "date-fns";
 import { enUS, th } from "date-fns/locale";
 import useTranslation from "next-translate/useTranslation";
@@ -32,14 +31,14 @@ export const ReportListItem: StylableFC<{
         title={getLocaleString(report.subject.name, locale)}
         desc={
           report.duration > 1
-            ? t("period") + " " + report.start_time + " • " + date
-            : t("period") +
+            ? t("period") +
               " " +
               report.start_time +
               "-" +
-              (report.start_time + 1) +
+              (report.start_time + report.duration - 1) +
               " • " +
               date
+            : t("period") + " " + report.start_time + " • " + date
         }
       ></ListItemContent>
     </ListItem>

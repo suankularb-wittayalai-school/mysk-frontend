@@ -1,6 +1,6 @@
 import { Button, MaterialIcon } from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
-import React, { FC } from "react";
+import { FC } from "react";
 
 const AddReportButton: FC<{ onAddReport: () => void }> = ({ onAddReport }) => {
   const { t } = useTranslation("report");
