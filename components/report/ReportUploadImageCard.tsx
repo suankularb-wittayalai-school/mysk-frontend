@@ -1,9 +1,6 @@
-import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
 import { Button, MaterialIcon } from "@suankularb-components/react";
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
 import { useState } from "react";
@@ -32,7 +29,7 @@ const ReportUploadImageCard = ({
   const mysk = useMySKClient();
 
   async function getImageURLFunction(id: string) {
-    const getImageURL = await mysk.fetch(
+    const getImageURL: any = await mysk.fetch(
       `/v1/subjects/attendance/image/${id}`,
       {
         method: "GET",
