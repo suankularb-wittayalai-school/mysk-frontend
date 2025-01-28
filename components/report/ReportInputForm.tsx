@@ -23,6 +23,8 @@ import { FC, useEffect, useState } from "react";
 const ReportInputForm: FC<{
   teacher: Teacher;
   report: Report[];
+
+  // imageType: "png" | "jpg" | "jpeg" | "webp"
 }> = ({ teacher, report }) => {
   useEffect(() => {
     const handleWheel = (event: WheelEvent) => {
@@ -72,6 +74,9 @@ const ReportInputForm: FC<{
       : "live",
   );
 
+  const [imageData, setImageData] = useState<ArrayBuffer>();
+  const [imageType, setImageType] = useState<string>();
+
   function validateInputs() {
     if (
       date == null ||
@@ -100,7 +105,7 @@ const ReportInputForm: FC<{
       parseInt(classrooms[0]),
     );
 
-    const { data: report, error } = await mysk.fetch(
+    const response = await mysk.fetch(
       "/v1/subjects/attendance",
       {
         method: "POST",
@@ -123,7 +128,34 @@ const ReportInputForm: FC<{
         }),
       },
     );
-    window.location.reload();
+
+    console.warn(response);
+
+    if (response) {
+      const responseData = response.data as { id: string };
+      console.warn(responseData.id);
+      
+      console.warn(`/v1/subjects/attendance/image/${responseData.id}?data[file_extension]=${imageType}`)
+
+      console.warn(imageData);
+      
+      const imageResponse = await mysk.fetch(
+        `/v1/subjects/attendance/image/${responseData.id}?data[file_extension]=${imageType}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/octet-stream" },
+          body: imageData
+        }
+      )
+
+      if (imageResponse) {
+        // window.location.reload()
+      }
+
+      console.warn(imageResponse);
+    }
+
+    // window.location.reload();
   }
 
   async function handleEdit() {
@@ -357,7 +389,14 @@ const ReportInputForm: FC<{
         </div>
       </section>
       <section>
-        <ReportUploadImageCard />
+        <ReportUploadImageCard
+          data={(result) => {
+            if (result instanceof ArrayBuffer || result === null) {
+              setImageData(result);
+            }
+          }}
+          type={setImageType}
+        />
       </section>
       <div className="self-strech flex flex-col items-end gap-2.5">
         {report.length == 0 ? (

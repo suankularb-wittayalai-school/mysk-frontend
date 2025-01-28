@@ -1,11 +1,18 @@
 import cn from "@/utils/helpers/cn";
 import { Button, MaterialIcon } from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
+import Image from "next/image";
 import { useState } from "react";
 
-const ReportUploadImageCard = () => {
+interface ReportUploadImageCardProps {
+  data: (result: string | ArrayBuffer | null) => void;
+  type: (fileType: string) => void;
+}
+
+const ReportUploadImageCard = ({ data, type }: ReportUploadImageCardProps) => {
   const [inputHasFile, setInputHasFile] = useState<boolean>(false);
   const [inputFileName, setInputFileName] = useState<string>();
+  const [inputURL, setInputURL] = useState<string>();
 
   const { t } = useTranslation("report");
 
@@ -26,22 +33,37 @@ const ReportUploadImageCard = () => {
           type="file"
           name=""
           id="fileUpload"
-          accept="image/png, image/jpeg, image/heif"
+          accept="image/png, image/jpeg, image/heif, image/webp"
           className="hidden"
           onChange={handleUploadElement}
         />
-        <Button
-          className="!w-max"
-          appearance="filled"
-          icon={<MaterialIcon icon="publish" />}
-        >
-          {t("forms.upload.field.title")}
-        </Button>
-        <p className="break-all text-center text-outline">
-          {inputHasFile && inputFileName !== undefined
-            ? inputFileName
-            : t("forms.upload.field.subtitle")}
-        </p>
+
+        {inputHasFile && inputURL !== undefined ? (
+          <>
+            <Image
+              src={inputURL}
+              alt={inputURL}
+              width={1280}
+              height={720}
+
+              className="max-h-32 w-auto"
+            />
+            <p>{inputFileName}</p>
+          </>
+        ) : (
+          <>
+            <Button
+              className="!w-max"
+              appearance="filled"
+              icon={<MaterialIcon icon="publish" />}
+            >
+              {t("forms.upload.field.title")}
+            </Button>
+            <div className="break-all text-center text-outline">
+              <p>{t("forms.upload.field.subtitle")}</p>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
@@ -58,26 +80,31 @@ const ReportUploadImageCard = () => {
     event.preventDefault();
 
     return handleUploadElement();
-
-    if (event.dataTransfer.items) {
-      setInputHasFile(true);
-    }
   }
 
   function handleUploadElement() {
     const fileInput = document.querySelector("#fileUpload") as HTMLInputElement;
 
-    console.warn(fileInput?.files);
+    let fileReaderModule = new FileReader();
 
-    setInputHasFile(true);
-    return setInputFileName(
-      fileInput?.files
-        ? fileInput.files[0].name +
-            " • " +
-            Math.round((fileInput.files[0].size / 1000000) * 100) / 100 +
-            " MB"
-        : undefined,
-    );
+    fileReaderModule.addEventListener("load", () => {
+      data(fileReaderModule.result)
+      console.warn(fileReaderModule.result);
+    });
+    if (fileInput.files != null) { 
+      if (fileInput.files[0] != undefined) {
+        fileReaderModule.readAsArrayBuffer(fileInput.files[0]);
+        type(fileInput.files[0].type.split(/(?<=\/)([^\/]+)/)[1])
+  
+        setInputHasFile(true);
+        setInputFileName(fileInput.files[0].name)
+        setInputURL(
+          fileInput?.files && fileInput.files[0]
+            ? URL.createObjectURL(fileInput.files[0])
+            : undefined,
+        );
+      }
+    }
   }
 };
 
