@@ -1,34 +1,33 @@
+import PageHeader from "@/components/common/PageHeader";
+import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
+import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
+import LookupListSide from "@/components/lookup/LookupListSide";
+import LookupResultsList from "@/components/lookup/LookupResultsList";
+import AddReportButton from "@/components/report/AddReportButton";
+import ReportDetailsCard from "@/components/report/ReportDetailsCard";
+import { ReportListItem } from "@/components/report/ReportListItem";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import cn from "@/utils/helpers/cn";
+import { BackendReturn } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
-import PageHeader from "@/components/common/PageHeader";
+import { Report } from "@/utils/types/report";
 import {
-  Button,
   DURATION,
   EASING,
-  List,
-  MaterialIcon,
   SplitLayout,
   Text,
-  transition,
+  transition
 } from "@suankularb-components/react";
-import { ReportListItem } from "@/components/report/ReportListItem";
-import createMySKClient from "@/utils/backend/mysk/createMySKClient";
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
-import { BackendReturn } from "@/utils/types/backend";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { Report } from "@/utils/types/report";
-import AddReportButton from "@/components/report/AddReportButton";
-import Balancer from "react-wrap-balancer";
 import { motion } from "framer-motion";
-import cn from "@/utils/helpers/cn";
-import { useState } from "react";
-import Head from "next/head";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import useTranslation from "next-translate/useTranslation";
-import LookupListSide from "@/components/lookup/LookupListSide";
-import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
-import ReportDetailsCard from "@/components/report/ReportDetailsCard";
+import Head from "next/head";
+import { useState } from "react";
+import Balancer from "react-wrap-balancer";
 
 const ReportPage: CustomPage<{
   teacher: Teacher;
@@ -39,53 +38,53 @@ const ReportPage: CustomPage<{
   const { t } = useTranslation("report");
   const { t: tx } = useTranslation("common");
   function handleAddReport() {
-    setSelectedID("1");
-    console.log("activated");
+    setSelectedID("2");
   }
+
   return (
     <>
       <Head>
         <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
-      <PageHeader parentURL="/teach">{"รายงานการสอน"}</PageHeader>;
+      <PageHeader parentURL="/teach">{"รายงานการสอน"}</PageHeader>
       <SplitLayout
         ratio="list-detail"
         className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
       >
         <LookupListSide length={reports.length}>
           <AddReportButton onAddReport={handleAddReport} />
-          <List className="gap-2">
-            {reports?.map((report) => (
-              <ReportListItem
-                key={report.id}
-                report={report}
-                selected={selectedID === report.id}
-                onClick={() => {
-                  setSelectedID(report.id);
-                }}
-              />
-            )) || (
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  ...transition(DURATION.medium2, EASING.standardDecelerate),
-                  delay: DURATION.medium2,
-                }}
-                className={cn(
-                  `skc-card skc-card--outlined mt-4 flex grow flex-col items-center justify-center gap-1 p-4 sm:mb-6`,
-                )}
-              >
-                <Text
-                  type="body-medium"
-                  element="p"
-                  className="text-center text-on-surface-variant"
+          <LookupResultsList length={reports.length}>
+              {reports?.map((report) => (
+                <ReportListItem
+                  key={report.id}
+                  report={report}
+                  selected={selectedID === report.id}
+                  onClick={() => {
+                    setSelectedID(report.id);
+                  }}
+                />
+              )) || (
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    ...transition(DURATION.medium2, EASING.standardDecelerate),
+                    delay: DURATION.medium2,
+                  }}
+                  className={cn(
+                    `skc-card skc-card--outlined mt-4 flex grow flex-col items-center justify-center gap-1 p-4 sm:mb-6`,
+                  )}
                 >
-                  <Balancer>{t("empty")}</Balancer>
-                </Text>
-              </motion.div>
-            )}
-          </List>
+                  <Text
+                    type="body-medium"
+                    element="p"
+                    className="text-center text-on-surface-variant"
+                  >
+                    <Balancer>{t("empty")}</Balancer>
+                  </Text>
+                </motion.div>
+              )}
+          </LookupResultsList>
         </LookupListSide>
         <LookupDetailsSide length={reports.length} selectedID={selectedID}>
           <ReportDetailsCard
@@ -94,6 +93,17 @@ const ReportPage: CustomPage<{
           />
         </LookupDetailsSide>
       </SplitLayout>
+      <div className="md:!hidden">
+        <LookupDetailsDialog
+          open={selectedID !== "1"}
+          onClose={() => setSelectedID("1")}
+        >
+          <ReportDetailsCard
+            teacher={teacher}
+            report={reports.filter((report) => report.id == selectedID)}
+          />
+        </LookupDetailsDialog>
+      </div>
     </>
   );
 };

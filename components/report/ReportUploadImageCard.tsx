@@ -1,15 +1,18 @@
 import cn from "@/utils/helpers/cn";
 import { Button, MaterialIcon } from "@suankularb-components/react";
+import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
 
 const ReportUploadImageCard = () => {
   const [inputHasFile, setInputHasFile] = useState<boolean>(false);
   const [inputFileName, setInputFileName] = useState<string>();
 
+  const { t } = useTranslation("report");
+
   return (
     <div className="flex flex-col gap-3">
       <span className="py-2 font-display text-base font-medium">
-        อัปโหลดภาพการเรียนการสอน
+        {t("forms.upload.title")}
       </span>
       <div
         onClick={handleUploadClick}
@@ -32,12 +35,12 @@ const ReportUploadImageCard = () => {
           appearance="filled"
           icon={<MaterialIcon icon="publish" />}
         >
-          อัปโหลด
+          {t("forms.upload.field.title")}
         </Button>
         <p className="break-all text-center text-outline">
           {inputHasFile && inputFileName !== undefined
             ? inputFileName
-            : "กดตรงนี้ หรือ ลากไฟล์มาใส่ เพื่ออัปโหลด"}
+            : t("forms.upload.field.subtitle")}
         </p>
       </div>
     </div>

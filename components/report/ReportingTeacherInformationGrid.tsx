@@ -1,20 +1,11 @@
 import MultilangText from "@/components/common/MultilingualText";
-import AgeCircle from "@/components/lookup/people/AgeCircle";
-import useMySKClient from "@/utils/backend/mysk/useMySKClient";
-import classroomOfPerson from "@/utils/helpers/classroom/classroomOfPerson";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
-import { Student, Teacher, UserRole } from "@/utils/types/person";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  MaterialIcon,
-} from "@suankularb-components/react";
+import { Teacher } from "@/utils/types/person";
+import { Card, CardContent, CardHeader } from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
 import { sift } from "radash";
 
@@ -28,12 +19,12 @@ const ReportingTeacherInformationGrid: StylableFC<{
   teacher: Teacher;
 }> = ({ teacher, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("search/teachers/detail");
+  const { t } = useTranslation("report");
 
   return (
     <div className="flex flex-col gap-3">
       <span className="pb-2 font-display text-base font-medium">
-        ข้อมูลชั้นเรียน
+        {t("forms.classInfo.title")}
       </span>
       <section
         style={style}
@@ -41,7 +32,7 @@ const ReportingTeacherInformationGrid: StylableFC<{
       >
         {/* Full name */}
         <Card appearance="filled" className="col-span-2">
-          <CardHeader title={t("information.fullName")} />
+          <CardHeader title={t("forms.classInfo.information.fullName")} />
           <CardContent>
             <MultilangText
               text={{
@@ -60,7 +51,7 @@ const ReportingTeacherInformationGrid: StylableFC<{
         {teacher.nickname &&
           sift(Object.values(teacher.nickname)).length > 0 && (
             <Card appearance="filled">
-              <CardHeader title={t("information.nickname")} />
+              <CardHeader title={t("forms.classInfo.information.nickname")} />
               <CardContent>
                 <MultilangText
                   text={teacher.nickname}
@@ -76,7 +67,7 @@ const ReportingTeacherInformationGrid: StylableFC<{
         {/* Subject group */}
         {teacher.subject_group && (
           <Card appearance="filled">
-            <CardHeader title={t("information.subjectGroup")} />
+            <CardHeader title={t("forms.classInfo.information.subjectGroup")} />
             <CardContent>
               {getLocaleString(teacher.subject_group.name, locale)}
             </CardContent>

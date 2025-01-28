@@ -2,6 +2,51 @@
   "title": "รายงานการสอน",
   "view": "ดูเพิ่มเติม",
   "empty": "ยังไม่ได้สร้างรายงานการสอน",
+  "forms": {
+    "classInfo": {
+      "title": "ข้อมูลห้องเรียน",
+      "information": {
+        "fullName": "ชื่อ-สกุล",
+        "nickname": "ชื่อเล่น",
+        "subjectGroup": "กลุ่มสาระฯ"
+      },
+      "subject": "วิชา",
+      "date": "วันที่",
+      "period": {
+        "start": "คาบที่เริ่ม",
+        "end": "คาบที่จบ",
+        "option": "คาบที่ {{count, number}}"
+      },
+      "classroom": {
+        "title": "ห้องเรียน",
+        "helper": "กรอกหมายเลขชั้นเรียนแล้วกด Enter"
+      },
+      "absent": "ขาดเรียน"
+    },
+    "teachInfo": {
+      "title": "ข้อมูลการสอน",
+      "content": "เนื้อหาที่สอน",
+      "suggestions": "ปัญหาและข้อเสนอแนะ"
+    },
+    "method": {
+      "title": "รูปแบบการสอน",
+      "options": {
+        "title": "รูปแบบ",
+        "live": "สอนสด",
+        "video": "วิดีโอ",
+        "assignment": "สั่งงานในคาบ",
+        "other": "อื่น ๆ"
+      },
+      "enterMethod": "ใส่วิธีการสอน"
+    },
+    "upload": {
+      "title": "อัพโหลดรูปภาพการสอน",
+      "field": {
+        "title": "อัพโหลด",
+        "subtitle": "คลิกหรือลากไฟล์มาวางเพื่ออัปโหลด"
+      }
+    }
+  },
   "action": {
     "add": "เพิ่มข้อมูล"
   },
