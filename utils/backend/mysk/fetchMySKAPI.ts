@@ -1,6 +1,7 @@
 import { FetchReturn, Query } from "@/utils/types/fetch";
 import qs from "qs";
 import { sift } from "radash";
+import { Readable } from "stream";
 
 /**
  * Fetches data from the MySK API.
@@ -28,7 +29,7 @@ export default async function fetchMySKAPI<Data extends {} | unknown = unknown>(
   ]).join("");
 
   /**
-   * The original reponse from the API.
+   * The original response from the API.
    */
   const response = await fetch(process.env.NEXT_PUBLIC_MYSK_API_URL + source, {
     ...options,
@@ -37,6 +38,8 @@ export default async function fetchMySKAPI<Data extends {} | unknown = unknown>(
       ...options?.headers,
       ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
     },
+    // @ts-ignore: see https://github.com/nodejs/node/issues/46221 for context
+    duplex: typeof options?.body === "object" ? "half" : undefined,
   });
 
   // Log the fetch request while in development mode

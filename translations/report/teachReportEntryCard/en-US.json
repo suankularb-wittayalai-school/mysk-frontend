@@ -1,6 +1,4 @@
 { 
   "title": "Online teaching report", 
-  "subtitle_one": "{{count, number}} session reported",
-  "subtitle_other": "{{count, number}} sessions reported",
   "view": "Add report"
 }

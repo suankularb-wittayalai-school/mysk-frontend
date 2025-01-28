@@ -15,4 +15,5 @@ export type Report = {
   absent_student_no: string[];
   start_time: number;
   duration: number;
+  has_image: Boolean
 };

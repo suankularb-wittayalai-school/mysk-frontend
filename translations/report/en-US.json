@@ -1,8 +1,65 @@
-{ "title": "Teaching Report", 
-  "view": "view",
-  "empty": "No report Created",
-  "action": {
-    "add": "Add Data"
+{
+  "title": "Teaching report",
+  "view": "View",
+  "empty": "No reports created.",
+  "forms": {
+    "classInfo": {
+      "title": "Class information",
+      "information": {
+        "fullName": "Full name",
+        "nickname": "Nickname",
+        "subjectGroup": "Subject group"
+      },
+      "subject": "Subject",
+      "date": "Deat",
+      "period": {
+        "start": "Start period",
+        "end": "End period",
+        "option": "Period {{count, number}}"
+      },
+      "classroom": {
+        "title": "Class",
+        "helper": "Enter the class number and press Enter."
+      },
+      "absent": "Absent"
+    },
+    "teachInfo": {
+      "title": "Teaching information",
+      "content": "Topic",
+      "suggestions": "Problems and suggestions"
+    },
+    "method": {
+      "title": "Teaching method",
+      "options": {
+        "title": "Method",
+        "live": "Live teaching",
+        "video": "Video teaching",
+        "assignment": "In-class assignment",
+        "other": "Other"
+      },
+      "enterMethod": "Enter method"
+    },
+    "upload": {
+      "title": "Upload teaching image",
+      "field": {
+        "title": "Upload",
+        "change": "Change image",
+        "subtitle": "Click or drag a file to upload. Image will not be editable after submission.",
+        "size": {
+          "ok": "Max file size: 4.5 MB",
+          "tooLarge": "This file is too large. Maximum size allowed: 4.5 MB"
+        }
+      }
+    }
   },
-  "period": "Period"
- }
+  "action": {
+    "add": "Add data",
+    "edit": "Edit",
+    "save": "Save",
+    "submit": "Submit"
+  },
+  "period": "Period",
+  "snackbar": {
+    "success": "Uploaded teaching report successfully"
+  }
+}

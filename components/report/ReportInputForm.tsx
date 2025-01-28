@@ -5,6 +5,7 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { supabase } from "@/utils/supabase-client";
 import { Teacher } from "@/utils/types/person";
+import { Report } from "@/utils/types/report";
 import {
   Button,
   ChipField,
@@ -16,14 +17,30 @@ import {
   Select,
   TextField,
 } from "@suankularb-components/react";
-import { FC, useState } from "react";
-import { Report } from "@/utils/types/report";
+import useTranslation from "next-translate/useTranslation";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import { FC, useContext, useEffect, useState } from "react";
+import logError from "@/utils/helpers/logError";
+import { Snackbar } from "@suankularb-components/react";
+import useRefreshProps from "@/utils/helpers/useRefreshProps";
 
 const ReportInputForm: FC<{
   teacher: Teacher;
   report: Report[];
-}> = ({ teacher, report }) => {
-  console.log(report, "the rerpot");
+  newId: any;
+}> = ({ teacher, report, newId }) => {
+  const locale = useLocale();
+  const mysk = useMySKClient();
+
+  const refreshProps = useRefreshProps();
+  const { setSnackbar } = useContext(SnackbarContext);
+
+  const hasImage = report.length > 0 ? Boolean(report[0].has_image) : false;
+  const [enableEditing, setEnableEditing] = useState<boolean>(
+    report.length == 0,
+  );
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+
   const [subjectId, setSubjectId] = useState<any>(
     report.length > 0 ? report[0].subject.id : null,
   );
@@ -51,22 +68,119 @@ const ReportInputForm: FC<{
     report.length > 0 ? report[0].suggestions : null,
   );
   const [teachingMethod, setTeachingMethod] = useState<String>(
-    report.length > 0 ? report[0].teaching_methods[0] : "Live Course",
+    report.length > 0
+      ? report[0].teaching_methods[0] !== "live" && "video" && "assignment"
+        ? "other"
+        : report[0].teaching_methods[0]
+      : "live",
   );
-  const locale = useLocale();
-  const mysk = useMySKClient();
-  console.log(date, "where is it");
+
+  const [imageData, setImageData] = useState<ArrayBuffer>();
+  const [imageType, setImageType] = useState<string>();
+
+  useEffect(() => {
+    const handleWheel = (event: WheelEvent) => {
+      const target = event.target as HTMLElement;
+
+      if (target instanceof HTMLInputElement && target.type === "number") {
+        event.preventDefault();
+      }
+    };
+    document.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      document.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
+
+  function validateInputs() {
+    if (
+      date == null ||
+      date.length === 0 ||
+      classrooms.length == 0 ||
+      teachingTopic == null ||
+      !imageData
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  const [otherTeachingMethod, setOtherTeachingMethod] = useState<any>(
+    report.length > 0 &&
+      teachingMethod == "other" &&
+      report[0].teaching_methods[0],
+  );
 
   async function handleCreate() {
+    setIsSaving(true)
+
     let { data: classroomId } = await getClassroomByNumber(
       supabase,
       parseInt(classrooms[0]),
     );
-    console.log(absentStudents);
-    const { data: report, error } = await mysk.fetch(
+
+    const { data, error } = await mysk.fetch<{ id: string }>(
       "/v1/subjects/attendance",
       {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data: {
+            subject_id: subjectId,
+            teacherId: teacher.id,
+            date,
+            start_time: startPeriod,
+            duration: duration,
+            absent_student_no: absentStudents,
+            teaching_topic: teachingTopic,
+            suggestions: suggestions,
+            teaching_methods: [
+              teachingMethod == "other" ? otherTeachingMethod : teachingMethod,
+            ],
+            classroom_id: classroomId?.id,
+          },
+        }),
+      },
+    );
+
+    if (error) {
+      setIsSaving(false)
+      return logError("handleCreate (form)", error);
+    }
+
+    const { error: imageResponseError } = await mysk.fetch(
+      `/v1/subjects/attendance/image/${data.id}?data[file_extension]=${imageType}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/octet-stream" },
+        body: imageData,
+      },
+    );
+
+    if (imageResponseError !== null) {
+    setIsSaving(false)
+      return logError("handleCreate (image)", imageResponseError);
+    }
+
+    setSnackbar(<Snackbar>{t("snackbar.success")}</Snackbar>);
+    refreshProps();
+    setIsSaving(false)
+    newId("2")
+  }
+
+  async function handleEdit() {
+    setIsSaving(true)
+
+    let { data: classroomId } = await getClassroomByNumber(
+      supabase,
+      parseInt(classrooms[0]),
+    );
+    const { data, error } = await mysk.fetch(
+      `/v1/subjects/attendance/${report[0].id}`,
+      {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           data: {
@@ -78,14 +192,19 @@ const ReportInputForm: FC<{
             absent_student_no: absentStudents,
             teaching_topic: teachingTopic,
             suggestions: suggestions,
-            teaching_methods: [teachingMethod],
+            teaching_methods: [
+              teachingMethod == "other" ? otherTeachingMethod : teachingMethod,
+            ],
             classroom_id: classroomId?.id,
           },
         }),
       },
     );
+
     window.location.reload();
   }
+
+  const { t } = useTranslation("report");
 
   return (
     <div className="flex flex-col gap-6">
@@ -93,9 +212,15 @@ const ReportInputForm: FC<{
         <Columns columns={2} className="flex-start self-strech flex">
           <Select
             appearance="outlined"
-            label={"วิชา"}
+            label={t("forms.classInfo.subject")}
             value={subjectId}
             onChange={setSubjectId}
+            className={
+              "[&>*]:!bg-surface-container" +
+              (!enableEditing
+                ? " pointer-events-none select-none !opacity-35"
+                : "")
+            }
           >
             {teacher.subjects_in_charge.map((subject) => {
               return (
@@ -107,10 +232,12 @@ const ReportInputForm: FC<{
           </Select>
           <TextField
             appearance="outlined"
-            label={"วันที่"}
+            label={t("forms.classInfo.date")}
             value={date}
             onChange={(date) => setDate(date)}
             inputAttr={{ type: "date", placeholder: "YYYY-MM-DD" }}
+            className="[&>*]:!bg-surface-container"
+            disabled={!enableEditing}
           />
         </Columns>
       </section>
@@ -118,10 +245,15 @@ const ReportInputForm: FC<{
         <Columns columns={2} className="flex-start self-strech flex">
           <Select
             appearance="outlined"
-            label="เริ่มคาบที่"
+            label={t("forms.classInfo.period.start")}
             value={startPeriod}
             onChange={setStartPeriod}
-            className="[&>*]:!bg-surface-container"
+            className={
+              "[&>*]:!bg-surface-container" +
+              (!enableEditing
+                ? " pointer-events-none select-none !opacity-35"
+                : "")
+            }
           >
             {[
               { period: 1, startTime: "08:30" },
@@ -141,15 +273,21 @@ const ReportInputForm: FC<{
                 value={option.period}
                 className="[&>.skc-menu-item\_\_metadata]:!font-mono"
               >
-                Period {option.period}
+                {t("forms.classInfo.period.option", { count: option.period })}
               </MenuItem>
             ))}
           </Select>
           <Select
             appearance="outlined"
-            label="จบคาบที่"
+            label={t("forms.classInfo.period.end")}
             value={startPeriod - 1 + duration}
             onChange={(endPeriod) => setDuration(endPeriod - startPeriod + 1)}
+            className={
+              "[&>*]:!bg-surface-container" +
+              (!enableEditing
+                ? " pointer-events-none select-none !opacity-35"
+                : "")
+            }
           >
             {[
               { period: 1, startTime: "9.20" },
@@ -168,7 +306,7 @@ const ReportInputForm: FC<{
                 metadata={option.startTime}
                 value={option.period}
               >
-                Period {option.period}
+                {t("forms.classInfo.period.option", { count: option.period })}
               </MenuItem>
             ))}
           </Select>
@@ -177,14 +315,20 @@ const ReportInputForm: FC<{
       <section>
         <Columns columns={2} className="flex-start self-strech flex">
           <ChipField
-            label={"ห้องเรียน"}
+            label={t("forms.classInfo.classroom.title")}
             onChange={setClassroom}
             value={classroom}
-            onNewEntry={(classroom) =>
-              setClassrooms([...classrooms, classroom])
-            }
+            onNewEntry={(classroom) => setClassrooms([classroom])}
             onDeleteLast={() => setClassrooms(classrooms.slice(0, -1))}
-            className="[&>*]:!bg-surface-container"
+            inputAttr={{ type: "number", id: "classroom" }}
+            helperMsg={t("forms.classInfo.classroom.helper")}
+            disabled={!enableEditing}
+            className={
+              "[&>*]:!bg-surface-container" +
+              (!enableEditing
+                ? " pointer-events-none select-none !opacity-35"
+                : "")
+            }
           >
             <ChipSet>
               {classrooms.map((classroom) => (
@@ -203,32 +347,35 @@ const ReportInputForm: FC<{
           </ChipField>
           <TextField
             appearance="outlined"
-            label={"เลขที่ นักเรียนขาด"}
+            label={t("forms.classInfo.absent")}
             value={absentStudents}
             onChange={(text) => setAbsentStudents(text)}
             className="[&>*]:!bg-surface-container"
+            disabled={!enableEditing}
           />
         </Columns>
       </section>
       <section>
         <div className="flex flex-col gap-3">
           <span className="py-2 font-display text-base font-medium">
-            ข้อมูลการสอน
+            {t("forms.teachInfo.title")}
           </span>
           <Columns columns={2} className="flex-start self-strech flex">
             <TextField
               appearance="outlined"
-              label={"เนื้อหาการเรียนการสอน"}
+              label={t("forms.teachInfo.content")}
               value={teachingTopic}
               onChange={(topic) => setTeachingTopic(topic)}
               className="w-full [&>*]:!bg-surface-container"
+              disabled={!enableEditing}
             />
             <TextField
               appearance="outlined"
-              label={"ปัญหา และ ข้อแนะนำ"}
+              label={t("forms.teachInfo.suggestions")}
               value={suggestions}
               onChange={(text) => setSuggestions(text)}
               className="w-full [&>*]:!bg-surface-container"
+              disabled={!enableEditing}
             />
           </Columns>
         </div>
@@ -236,31 +383,36 @@ const ReportInputForm: FC<{
       <section>
         <div className="flex flex-col gap-3">
           <span className="py-2 font-display text-base font-medium">
-            รูปแบบการสอน
+            {t("forms.method.title")}
           </span>
           <Columns columns={2} className="flex-start self-strech flex">
             <Select
               appearance="outlined"
-              label="รูปแบบการสอน"
-              className="!w-full [&>*]:!bg-surface-container"
+              label={t("forms.method.options.title")}
               value={teachingMethod}
               onChange={setTeachingMethod}
+              className={
+                "!w-full [&>*]:!bg-surface-container" +
+                (!enableEditing
+                  ? " pointer-events-none select-none !opacity-35"
+                  : "")
+              }
             >
               {[
                 {
-                  title: "สอนสด",
+                  title: t("forms.method.options.live"),
                   value: "live",
                 },
                 {
-                  title: "วิดีโอ",
+                  title: t("forms.method.options.video"),
                   value: "video",
                 },
                 {
-                  title: "สั่งงานในคาบ",
+                  title: t("forms.method.options.assignment"),
                   value: "assignment",
                 },
                 {
-                  title: "อื่นๆ",
+                  title: t("forms.method.options.other"),
                   value: "other",
                 },
               ].map((option) => (
@@ -269,17 +421,30 @@ const ReportInputForm: FC<{
                 </MenuItem>
               ))}
             </Select>
-            {/* <TextField
-              appearance="outlined"
-              label="ระบุ"
-              className={"w-full [&>*]:!bg-surface-container"}
-              disabled={!teachingMethod.includes("other")}
-            /> */}
+            {teachingMethod == "other" && (
+              <TextField
+                appearance="outlined"
+                label="ระบุ"
+                className={"w-full [&>*]:!bg-surface-container"}
+                value={otherTeachingMethod}
+                onChange={setOtherTeachingMethod}
+                disabled={!enableEditing}
+              />
+            )}
           </Columns>
         </div>
       </section>
       <section>
-        <ReportUploadImageCard />
+        <ReportUploadImageCard
+          data={(result) => {
+            if (result instanceof ArrayBuffer) {
+              setImageData(result);
+            }
+          }}
+          type={setImageType}
+          alreadyHaveImage={hasImage}
+          reportId={report.length > 0 ? report[0].id : undefined}
+        />
       </section>
       <div className="self-strech flex flex-col items-end gap-2.5">
         {report.length == 0 ? (
@@ -287,10 +452,30 @@ const ReportInputForm: FC<{
             appearance="filled"
             onClick={() => handleCreate()}
             icon={<MaterialIcon icon="save" />}
+            disabled={!validateInputs()}
+            loading={isSaving}
           >
-            Save
+            {t("action.submit")}
           </Button>
-        ) : null}
+        ) : !enableEditing ? (
+          <Button
+            appearance="filled"
+            onClick={() => setEnableEditing(true)}
+            icon={<MaterialIcon icon="edit" />}
+            loading={isSaving}
+          >
+            {t("action.edit")}
+          </Button>
+        ) : (
+          <Button
+            appearance="filled"
+            onClick={() => handleEdit()}
+            icon={<MaterialIcon icon="save" />}
+            loading={isSaving}
+          >
+            {t("action.save")}
+          </Button>
+        )}
       </div>
     </div>
   );
