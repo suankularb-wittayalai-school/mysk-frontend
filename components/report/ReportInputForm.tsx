@@ -16,14 +16,27 @@ import {
   Select,
   TextField,
 } from "@suankularb-components/react";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { Report } from "@/utils/types/report";
 
 const ReportInputForm: FC<{
   teacher: Teacher;
   report: Report[];
 }> = ({ teacher, report }) => {
-  console.log(report, "the rerpot");
+  useEffect(() => {
+    const handleWheel = (event: WheelEvent) => {
+      const target = event.target as HTMLElement;
+
+      if (target instanceof HTMLInputElement && target.type === "number") {
+        event.preventDefault();
+      }
+    };
+    document.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      document.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
   const [subjectId, setSubjectId] = useState<any>(
     report.length > 0 ? report[0].subject.id : null,
   );
@@ -57,7 +70,18 @@ const ReportInputForm: FC<{
         : report[0].teaching_methods[0]
       : "Live Course",
   );
-
+  function validateInputs() {
+    if (
+      date == null ||
+      date.length === 0 ||
+      classrooms.length == 0 ||
+      teachingTopic == null
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
   const [otherTeachingMethod, setOtherTeachingMethod] = useState<any>(
     report.length > 0 &&
       teachingMethod == "other" &&
@@ -65,7 +89,6 @@ const ReportInputForm: FC<{
   );
   const locale = useLocale();
   const mysk = useMySKClient();
-  console.log(date, "where is it");
 
   async function handleCreate() {
     let { data: classroomId } = await getClassroomByNumber(
@@ -226,11 +249,10 @@ const ReportInputForm: FC<{
             label={"ห้องเรียน"}
             onChange={setClassroom}
             value={classroom}
-            onNewEntry={(classroom) =>
-              setClassrooms([...classrooms, classroom])
-            }
+            onNewEntry={(classroom) => setClassrooms([classroom])}
             onDeleteLast={() => setClassrooms(classrooms.slice(0, -1))}
             className="[&>*]:!bg-surface-container"
+            inputAttr={{ type: "number", id: "classroom" }}
           >
             <ChipSet>
               {classrooms.map((classroom) => (
@@ -331,23 +353,24 @@ const ReportInputForm: FC<{
         <ReportUploadImageCard />
       </section>
       <div className="self-strech flex flex-col items-end gap-2.5">
-        {report.length == 0 ? (
-          <Button
-            appearance="filled"
-            onClick={() => handleCreate()}
-            icon={<MaterialIcon icon="save" />}
-          >
-            บันทึก
-          </Button>
-        ) : (
-          <Button
-            appearance="filled"
-            onClick={() => handleEdit()}
-            icon={<MaterialIcon icon="save" />}
-          >
-            แก้ไข
-          </Button>
-        )}
+        {validateInputs() &&
+          (report.length == 0 ? (
+            <Button
+              appearance="filled"
+              onClick={() => handleCreate()}
+              icon={<MaterialIcon icon="save" />}
+            >
+              บันทึก
+            </Button>
+          ) : (
+            <Button
+              appearance="filled"
+              onClick={() => handleEdit()}
+              icon={<MaterialIcon icon="save" />}
+            >
+              แก้ไข
+            </Button>
+          ))}
       </div>
     </div>
   );
