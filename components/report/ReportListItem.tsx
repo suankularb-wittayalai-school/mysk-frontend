@@ -1,9 +1,8 @@
-import { StylableFC } from "@/utils/types/common";
-import { ListItem, ListItemContent } from "@suankularb-components/react";
-import { Report } from "@/utils/types/report";
-import React from "react";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
+import { StylableFC } from "@/utils/types/common";
+import { Report } from "@/utils/types/report";
+import { ListItem, ListItemContent } from "@suankularb-components/react";
 import { format } from "date-fns";
 import { enUS, th } from "date-fns/locale";
 import useTranslation from "next-translate/useTranslation";

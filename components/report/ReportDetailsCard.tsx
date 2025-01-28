@@ -1,11 +1,11 @@
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
+import ReportingTeacherInformationGrid from "@/components/report/ReportingTeacherInformationGrid";
 import ReportInputForm from "@/components/report/ReportInputForm";
 import { StylableFC } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
-import { Header } from "@suankularb-components/react";
 import { Report } from "@/utils/types/report";
-import ReportingTeacherInformationGrid from "@/components/report/ReportingTeacherInformationGrid";
+import { Header } from "@suankularb-components/react";
 
 const ReportDetailsCard: StylableFC<{
   teacher: Teacher;

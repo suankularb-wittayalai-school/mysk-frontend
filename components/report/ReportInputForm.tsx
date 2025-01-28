@@ -5,6 +5,7 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { supabase } from "@/utils/supabase-client";
 import { Teacher } from "@/utils/types/person";
+import { Report } from "@/utils/types/report";
 import {
   Button,
   ChipField,
@@ -16,8 +17,8 @@ import {
   Select,
   TextField,
 } from "@suankularb-components/react";
-import { FC, useState, useEffect } from "react";
-import { Report } from "@/utils/types/report";
+import useTranslation from "next-translate/useTranslation";
+import { FC, useEffect, useState } from "react";
 
 const ReportInputForm: FC<{
   teacher: Teacher;
@@ -70,6 +71,7 @@ const ReportInputForm: FC<{
         : report[0].teaching_methods[0]
       : "Live Course",
   );
+
   function validateInputs() {
     if (
       date == null ||
@@ -82,11 +84,13 @@ const ReportInputForm: FC<{
       return true;
     }
   }
+
   const [otherTeachingMethod, setOtherTeachingMethod] = useState<any>(
     report.length > 0 &&
       teachingMethod == "other" &&
       report[0].teaching_methods[0],
   );
+
   const locale = useLocale();
   const mysk = useMySKClient();
 
@@ -153,13 +157,15 @@ const ReportInputForm: FC<{
     window.location.reload();
   }
 
+  const { t } = useTranslation("report");
+
   return (
     <div className="flex flex-col gap-6">
       <section>
         <Columns columns={2} className="flex-start self-strech flex">
           <Select
             appearance="outlined"
-            label={"วิชา"}
+            label={t("forms.classInfo.subject")}
             value={subjectId}
             onChange={setSubjectId}
             className="[&>*]:!bg-surface-container"
@@ -174,7 +180,7 @@ const ReportInputForm: FC<{
           </Select>
           <TextField
             appearance="outlined"
-            label={"วันที่"}
+            label={t("forms.classInfo.date")}
             value={date}
             onChange={(date) => setDate(date)}
             inputAttr={{ type: "date", placeholder: "YYYY-MM-DD" }}
@@ -186,7 +192,7 @@ const ReportInputForm: FC<{
         <Columns columns={2} className="flex-start self-strech flex">
           <Select
             appearance="outlined"
-            label="เริ่มคาบที่"
+            label={t("forms.classInfo.period.start")}
             value={startPeriod}
             onChange={setStartPeriod}
             className="[&>*]:!bg-surface-container"
@@ -209,13 +215,13 @@ const ReportInputForm: FC<{
                 value={option.period}
                 className="[&>.skc-menu-item\_\_metadata]:!font-mono"
               >
-                Period {option.period}
+                {t("forms.classInfo.period.option", { count: option.period })}
               </MenuItem>
             ))}
           </Select>
           <Select
             appearance="outlined"
-            label="จบคาบที่"
+            label={t("forms.classInfo.period.end")}
             value={startPeriod - 1 + duration}
             onChange={(endPeriod) => setDuration(endPeriod - startPeriod + 1)}
             className="[&>*]:!bg-surface-container"
@@ -237,7 +243,7 @@ const ReportInputForm: FC<{
                 metadata={option.startTime}
                 value={option.period}
               >
-                Period {option.period}
+                {t("forms.classInfo.period.option", { count: option.period })}
               </MenuItem>
             ))}
           </Select>
@@ -246,14 +252,14 @@ const ReportInputForm: FC<{
       <section>
         <Columns columns={2} className="flex-start self-strech flex">
           <ChipField
-            label={"ห้องเรียน"}
+            label={t("forms.classInfo.classroom.title")}
             onChange={setClassroom}
             value={classroom}
             onNewEntry={(classroom) => setClassrooms([classroom])}
             onDeleteLast={() => setClassrooms(classrooms.slice(0, -1))}
             className="[&>*]:!bg-surface-container"
             inputAttr={{ type: "number", id: "classroom" }}
-            helperMsg={"กด enter หลังจากพิมพ์เลขห้อง"}
+            helperMsg={t("forms.classInfo.classroom.helper")}
           >
             <ChipSet>
               {classrooms.map((classroom) => (
@@ -272,7 +278,7 @@ const ReportInputForm: FC<{
           </ChipField>
           <TextField
             appearance="outlined"
-            label={"เลขที่ นักเรียนขาด"}
+            label={t("forms.classInfo.absent")}
             value={absentStudents}
             onChange={(text) => setAbsentStudents(text)}
             className="[&>*]:!bg-surface-container"
@@ -282,19 +288,19 @@ const ReportInputForm: FC<{
       <section>
         <div className="flex flex-col gap-3">
           <span className="py-2 font-display text-base font-medium">
-            ข้อมูลการสอน
+            {t("forms.teachInfo.title")}
           </span>
           <Columns columns={2} className="flex-start self-strech flex">
             <TextField
               appearance="outlined"
-              label={"เนื้อหาการเรียนการสอน"}
+              label={t("forms.teachInfo.content")}
               value={teachingTopic}
               onChange={(topic) => setTeachingTopic(topic)}
               className="w-full [&>*]:!bg-surface-container"
             />
             <TextField
               appearance="outlined"
-              label={"ปัญหา และ ข้อแนะนำ"}
+              label={t("forms.teachInfo.suggestions")}
               value={suggestions}
               onChange={(text) => setSuggestions(text)}
               className="w-full [&>*]:!bg-surface-container"
@@ -305,31 +311,31 @@ const ReportInputForm: FC<{
       <section>
         <div className="flex flex-col gap-3">
           <span className="py-2 font-display text-base font-medium">
-            รูปแบบการสอน
+            {t("forms.method.title")}
           </span>
           <Columns columns={2} className="flex-start self-strech flex">
             <Select
               appearance="outlined"
-              label="รูปแบบการสอน"
+              label={t("forms.method.options.title")}
               className="!w-full [&>*]:!bg-surface-container"
               value={teachingMethod}
               onChange={setTeachingMethod}
             >
               {[
                 {
-                  title: "สอนสด",
+                  title: t("forms.method.options.live"),
                   value: "live",
                 },
                 {
-                  title: "วิดีโอ",
+                  title: t("forms.method.options.video"),
                   value: "video",
                 },
                 {
-                  title: "สั่งงานในคาบ",
+                  title: t("forms.method.options.assignment"),
                   value: "assignment",
                 },
                 {
-                  title: "อื่นๆ",
+                  title: t("forms.method.options.other"),
                   value: "other",
                 },
               ].map((option) => (
@@ -354,24 +360,24 @@ const ReportInputForm: FC<{
         <ReportUploadImageCard />
       </section>
       <div className="self-strech flex flex-col items-end gap-2.5">
-        {validateInputs() &&
-          (report.length == 0 ? (
-            <Button
-              appearance="filled"
-              onClick={() => handleCreate()}
-              icon={<MaterialIcon icon="save" />}
-            >
-              บันทึก
-            </Button>
-          ) : (
-            <Button
-              appearance="filled"
-              onClick={() => handleEdit()}
-              icon={<MaterialIcon icon="save" />}
-            >
-              แก้ไข
-            </Button>
-          ))}
+        {report.length == 0 ? (
+          <Button
+            appearance="filled"
+            onClick={() => handleCreate()}
+            icon={<MaterialIcon icon="save" />}
+            disabled={!validateInputs()}
+          >
+            บันทึก
+          </Button>
+        ) : (
+          <Button
+            appearance="filled"
+            onClick={() => handleEdit()}
+            icon={<MaterialIcon icon="save" />}
+          >
+            แก้ไข
+          </Button>
+        )}
       </div>
     </div>
   );
