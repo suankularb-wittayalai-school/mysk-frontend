@@ -253,6 +253,7 @@ const ReportInputForm: FC<{
             onDeleteLast={() => setClassrooms(classrooms.slice(0, -1))}
             className="[&>*]:!bg-surface-container"
             inputAttr={{ type: "number", id: "classroom" }}
+            helperMsg={"กด enter หลังจากพิมพ์เลขห้อง"}
           >
             <ChipSet>
               {classrooms.map((classroom) => (
