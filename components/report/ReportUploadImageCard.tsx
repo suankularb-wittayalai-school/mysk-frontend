@@ -39,8 +39,6 @@ const ReportUploadImageCard = ({
       },
     );
 
-    console.warn(getImageURL);
-
     return setAlreadyHaveImageURL(getImageURL.image_url);
   }
 
