@@ -50,5 +50,8 @@
   "action": {
     "add": "Add data"
   },
-  "period": "Period"
+  "period": "Period",
+  "snackbar": {
+    "success": "Uploaded teaching report successfully"
+  }
 }

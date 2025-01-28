@@ -1,7 +1,9 @@
 import ReportUploadImageCard from "@/components/report/ReportUploadImageCard";
+import SnackbarContext from "@/contexts/SnackbarContext";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getLocaleString from "@/utils/helpers/getLocaleString";
+import logError from "@/utils/helpers/logError";
 import useLocale from "@/utils/helpers/useLocale";
 import { supabase } from "@/utils/supabase-client";
 import { Teacher } from "@/utils/types/person";
@@ -15,10 +17,11 @@ import {
   MaterialIcon,
   MenuItem,
   Select,
+  Snackbar,
   TextField,
 } from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 
 const ReportInputForm: FC<{
   teacher: Teacher;
@@ -26,20 +29,9 @@ const ReportInputForm: FC<{
 
   // imageType: "png" | "jpg" | "jpeg" | "webp"
 }> = ({ teacher, report }) => {
-  useEffect(() => {
-    const handleWheel = (event: WheelEvent) => {
-      const target = event.target as HTMLElement;
-
-      if (target instanceof HTMLInputElement && target.type === "number") {
-        event.preventDefault();
-      }
-    };
-    document.addEventListener("wheel", handleWheel, { passive: false });
-
-    return () => {
-      document.removeEventListener("wheel", handleWheel);
-    };
-  }, []);
+  const locale = useLocale();
+  const mysk = useMySKClient();
+  const { setSnackbar } = useContext(SnackbarContext);
   const [subjectId, setSubjectId] = useState<any>(
     report.length > 0 ? report[0].subject.id : null,
   );
@@ -73,9 +65,23 @@ const ReportInputForm: FC<{
         : report[0].teaching_methods[0]
       : "live",
   );
-
   const [imageData, setImageData] = useState<ArrayBuffer>();
   const [imageType, setImageType] = useState<string>();
+
+  useEffect(() => {
+    const handleWheel = (event: WheelEvent) => {
+      const target = event.target as HTMLElement;
+
+      if (target instanceof HTMLInputElement && target.type === "number") {
+        event.preventDefault();
+      }
+    };
+    document.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      document.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
 
   function validateInputs() {
     if (
@@ -96,63 +102,54 @@ const ReportInputForm: FC<{
       report[0].teaching_methods[0],
   );
 
-  const locale = useLocale();
-  const mysk = useMySKClient();
-
   async function handleCreate() {
     let { data: classroomId } = await getClassroomByNumber(
       supabase,
       parseInt(classrooms[0]),
     );
 
-    const response = await mysk.fetch("/v1/subjects/attendance", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        data: {
-          subject_id: subjectId,
-          teacherId: teacher.id,
-          date: date,
-          start_time: startPeriod,
-          duration: duration,
-          absent_student_no: absentStudents,
-          teaching_topic: teachingTopic,
-          suggestions: suggestions,
-          teaching_methods: [
-            teachingMethod == "other" ? otherTeachingMethod : teachingMethod,
-          ],
-          classroom_id: classroomId?.id,
-        },
-      }),
-    });
+    const { data, error } = await mysk.fetch<{ id: string }>(
+      "/v1/subjects/attendance",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data: {
+            subject_id: subjectId,
+            teacherId: teacher.id,
+            date,
+            start_time: startPeriod,
+            duration: duration,
+            absent_student_no: absentStudents,
+            teaching_topic: teachingTopic,
+            suggestions: suggestions,
+            teaching_methods: [
+              teachingMethod == "other" ? otherTeachingMethod : teachingMethod,
+            ],
+            classroom_id: classroomId?.id,
+          },
+        }),
+      },
+    );
 
-    console.warn(response);
-
-    if (response) {
-      const responseData = response.data as { id: string };
-      console.warn(responseData.id);
-
-      console.warn(
-        `/v1/subjects/attendance/image/${responseData.id}?data[file_extension]=${imageType}`,
-      );
-
-      const imageResponse = await mysk.fetch(
-        `/v1/subjects/attendance/image/${responseData.id}?data[file_extension]=${imageType}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/octet-stream" },
-          body: imageData,
-        },
-      );
-
-      if (imageResponse) {
-        // window.location.reload()
-      }
-
-      console.warn(imageResponse);
+    if (error) {
+      return logError("handleCreate (form)", error);
     }
 
-    // window.location.reload();
+    const { error: imageResponseError } = await mysk.fetch(
+      `/v1/subjects/attendance/image/${data.id}?data[file_extension]=${imageType}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/octet-stream" },
+        body: imageData,
+      },
+    );
+
+    if (imageResponseError !== null) {
+      return logError("handleCreate (image)", imageResponseError);
+    }
+
+    setSnackbar(<Snackbar>{t("snackbar.success")}</Snackbar>);
   }
 
   async function handleEdit() {
@@ -183,7 +180,12 @@ const ReportInputForm: FC<{
         }),
       },
     );
-    // window.location.reload();
+
+    if (error) {
+      return logError("handleEdit (form)", error);
+    }
+
+    setSnackbar(<Snackbar>{t("snackbar.success")}</Snackbar>);
   }
 
   const { t } = useTranslation("report");
