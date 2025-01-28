@@ -32,14 +32,14 @@ export const ReportListItem: StylableFC<{
         title={getLocaleString(report.subject.name, locale)}
         desc={
           report.duration > 1
-            ? t("period") + " " + report.start_time + " • " + date
-            : t("period") +
+            ? t("period") +
               " " +
               report.start_time +
               "-" +
-              (report.start_time + 1) +
+              (report.start_time + report.duration - 1) +
               " • " +
               date
+            : t("period") + " " + report.start_time + " • " + date
         }
       ></ListItemContent>
     </ListItem>

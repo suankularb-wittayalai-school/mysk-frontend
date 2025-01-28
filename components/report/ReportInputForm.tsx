@@ -139,6 +139,7 @@ const ReportInputForm: FC<{
             label={"วิชา"}
             value={subjectId}
             onChange={setSubjectId}
+            className="[&>*]:!bg-surface-container"
           >
             {teacher.subjects_in_charge.map((subject) => {
               return (
@@ -154,6 +155,7 @@ const ReportInputForm: FC<{
             value={date}
             onChange={(date) => setDate(date)}
             inputAttr={{ type: "date", placeholder: "YYYY-MM-DD" }}
+            className="[&>*]:!bg-surface-container"
           />
         </Columns>
       </section>
@@ -193,6 +195,7 @@ const ReportInputForm: FC<{
             label="จบคาบที่"
             value={startPeriod - 1 + duration}
             onChange={(endPeriod) => setDuration(endPeriod - startPeriod + 1)}
+            className="[&>*]:!bg-surface-container"
           >
             {[
               { period: 1, startTime: "9.20" },
