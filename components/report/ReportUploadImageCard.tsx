@@ -171,7 +171,6 @@ const ReportUploadImageCard = ({
         if (fileInput.files[0].size > 4500000) {
           setInputHasFile(false);
           setFileTooLarge(true);
-          console.warn("this nigga is so large");
           (
             document.querySelector(".page-fileUpload") as HTMLInputElement
           ).value = "";
