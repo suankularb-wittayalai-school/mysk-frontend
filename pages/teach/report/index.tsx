@@ -2,6 +2,7 @@ import PageHeader from "@/components/common/PageHeader";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupResultsList from "@/components/lookup/LookupResultsList";
+import LookupListSide from "@/components/lookup/LookupListSide";
 import AddReportButton from "@/components/report/AddReportButton";
 import ReportDetailsCard from "@/components/report/ReportDetailsCard";
 import { ReportListItem } from "@/components/report/ReportListItem";
