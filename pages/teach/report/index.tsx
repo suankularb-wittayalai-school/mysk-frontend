@@ -37,9 +37,12 @@ const ReportPage: CustomPage<{
 
   const { t } = useTranslation("report");
   const { t: tx } = useTranslation("common");
+
   function handleAddReport() {
     setSelectedID("2");
   }
+
+  console.warn(reports);
 
   return (
     <>
@@ -90,10 +93,11 @@ const ReportPage: CustomPage<{
           <ReportDetailsCard
             teacher={teacher}
             report={reports.filter((report) => report.id == selectedID)}
+            newId={setSelectedID}
           />
         </LookupDetailsSide>
       </SplitLayout>
-      <div className="md:!hidden">
+      <div className="sm:!hidden">
         <LookupDetailsDialog
           open={selectedID !== "1"}
           onClose={() => setSelectedID("1")}
@@ -101,6 +105,7 @@ const ReportPage: CustomPage<{
           <ReportDetailsCard
             teacher={teacher}
             report={reports.filter((report) => report.id == selectedID)}
+            newId={setSelectedID}
           />
         </LookupDetailsDialog>
       </div>
