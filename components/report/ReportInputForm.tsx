@@ -105,48 +105,45 @@ const ReportInputForm: FC<{
       parseInt(classrooms[0]),
     );
 
-    const response = await mysk.fetch(
-      "/v1/subjects/attendance",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          data: {
-            subject_id: subjectId,
-            teacherId: teacher.id,
-            date: date,
-            start_time: startPeriod,
-            duration: duration,
-            absent_student_no: absentStudents,
-            teaching_topic: teachingTopic,
-            suggestions: suggestions,
-            teaching_methods: [
-              teachingMethod == "other" ? otherTeachingMethod : teachingMethod,
-            ],
-            classroom_id: classroomId?.id,
-          },
-        }),
-      },
-    );
+    const response = await mysk.fetch("/v1/subjects/attendance", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        data: {
+          subject_id: subjectId,
+          teacherId: teacher.id,
+          date: date,
+          start_time: startPeriod,
+          duration: duration,
+          absent_student_no: absentStudents,
+          teaching_topic: teachingTopic,
+          suggestions: suggestions,
+          teaching_methods: [
+            teachingMethod == "other" ? otherTeachingMethod : teachingMethod,
+          ],
+          classroom_id: classroomId?.id,
+        },
+      }),
+    });
 
     console.warn(response);
 
     if (response) {
       const responseData = response.data as { id: string };
       console.warn(responseData.id);
-      
-      console.warn(`/v1/subjects/attendance/image/${responseData.id}?data[file_extension]=${imageType}`)
 
-      console.warn(imageData);
-      
+      console.warn(
+        `/v1/subjects/attendance/image/${responseData.id}?data[file_extension]=${imageType}`,
+      );
+
       const imageResponse = await mysk.fetch(
         `/v1/subjects/attendance/image/${responseData.id}?data[file_extension]=${imageType}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/octet-stream" },
-          body: imageData
-        }
-      )
+          body: imageData,
+        },
+      );
 
       if (imageResponse) {
         // window.location.reload()
@@ -186,7 +183,7 @@ const ReportInputForm: FC<{
         }),
       },
     );
-    window.location.reload();
+    // window.location.reload();
   }
 
   const { t } = useTranslation("report");
@@ -391,7 +388,7 @@ const ReportInputForm: FC<{
       <section>
         <ReportUploadImageCard
           data={(result) => {
-            if (result instanceof ArrayBuffer || result === null) {
+            if (result instanceof ArrayBuffer) {
               setImageData(result);
             }
           }}
