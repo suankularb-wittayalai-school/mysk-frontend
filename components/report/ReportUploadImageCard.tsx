@@ -122,9 +122,7 @@ const ReportUploadImageCard = ({
                 }
               >
                 {fileTooLarge ? (
-                  <p className="font-bold">
-                    {t("forms.upload.size.tooLarge")}
-                  </p>
+                  <p className="font-bold">{t("forms.upload.size.tooLarge")}</p>
                 ) : (
                   <p>{t("forms.upload.size.ok")}</p>
                 )}
@@ -165,7 +163,7 @@ const ReportUploadImageCard = ({
       data(fileReaderModule.result);
       console.warn(fileReaderModule.result);
     });
-    
+
     if (fileInput.files != null) {
       if (fileInput.files[0] != undefined) {
         if (fileInput.files[0].size > 4500000) {
