@@ -50,6 +50,8 @@
         "ok": "Max file size: 4.5 MB",
         "tooLarge": "This file is too large. Maximum size allowed: 4.5 MB"
       },
+      "noImage": "This report has no image.",
+      "notEditable": "Image is not editable after submission."
     }
   },
   "action": {
