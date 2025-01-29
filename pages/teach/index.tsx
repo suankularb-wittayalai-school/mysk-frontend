@@ -51,8 +51,6 @@ const TeachPage: CustomPage<{
 
   const refreshProps = useRefreshProps();
 
-  console.warn(teacher);
-
   return (
     <HomeLayout>
       <LayoutGroup>

@@ -444,6 +444,7 @@ const ReportInputForm: FC<{
           type={setImageType}
           alreadyHaveImage={hasImage}
           reportId={report.length > 0 ? report[0].id : undefined}
+          enableEditing={enableEditing}
         />
       </section>
       <div className="self-strech flex flex-col items-end gap-2.5">

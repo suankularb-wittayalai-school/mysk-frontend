@@ -11,6 +11,7 @@ interface ReportUploadImageCardProps {
   type: (fileType: string) => void;
   alreadyHaveImage: boolean;
   reportId: string | undefined;
+  enableEditing: boolean;
 }
 
 const ReportUploadImageCard = ({
@@ -18,6 +19,7 @@ const ReportUploadImageCard = ({
   type,
   alreadyHaveImage,
   reportId,
+  enableEditing,
 }: ReportUploadImageCardProps) => {
   const [inputHasFile, setInputHasFile] = useState<boolean>(false);
   const [inputFileName, setInputFileName] = useState<string>();
@@ -51,28 +53,12 @@ const ReportUploadImageCard = ({
       <span className="py-2 font-display text-base font-medium">
         {t("forms.upload.title")}
       </span>
-      {alreadyHaveImage ? (
-        <>
-          <div className="h-32">
-            {alreadyHaveImageURL && (
-              <Image
-                src={alreadyHaveImageURL}
-                alt={alreadyHaveImageURL}
-                width={1280}
-                height={720}
-                className="m-auto block h-full w-auto"
-              />
-            )}
-          </div>
-          <p>{inputFileName}</p>
-        </>
-      ) : (
+      {!alreadyHaveImage && enableEditing ? (
         <div
           onDragOver={handleUploadDragOver}
           onDrop={handleUploadDrop}
           className={cn(
-            `flex min-h-32 flex-col items-center justify-center gap-2 rounded-xs 
-            border p-4 hover:cursor-pointer` +
+            `flex min-h-32 flex-col items-center justify-center gap-2 rounded-xs border p-4 hover:cursor-pointer` +
               (fileTooLarge ? " border-error" : " border-outline"),
           )}
         >
@@ -122,9 +108,7 @@ const ReportUploadImageCard = ({
                 }
               >
                 {fileTooLarge ? (
-                  <p className="font-bold">
-                    {t("forms.upload.size.tooLarge")}
-                  </p>
+                  <p className="font-bold">{t("forms.upload.size.tooLarge")}</p>
                 ) : (
                   <p>{t("forms.upload.size.ok")}</p>
                 )}
@@ -133,6 +117,30 @@ const ReportUploadImageCard = ({
             </>
           )}
         </div>
+      ) : (
+        <>
+          <div className={!alreadyHaveImage ? "" : " h-64"}>
+            {alreadyHaveImageURL && (
+              <>
+                <Image
+                  src={alreadyHaveImageURL}
+                  alt={alreadyHaveImageURL}
+                  width={1280}
+                  height={720}
+                  className="m-auto block w-auto h-full object-contain object-center"
+                />
+                {enableEditing && (
+                  <p className="text-outline pt-2 text-center">
+                    {t("forms.upload.notEditable")}
+                  </p>
+                )}
+              </>
+            )}
+            {!alreadyHaveImage && (
+              <p className="text-outline">{t("forms.upload.noImage")}</p>
+            )}
+          </div>
+        </>
       )}
     </div>
   );
@@ -163,9 +171,8 @@ const ReportUploadImageCard = ({
 
     fileReaderModule.addEventListener("load", () => {
       data(fileReaderModule.result);
-      console.warn(fileReaderModule.result);
     });
-    
+
     if (fileInput.files != null) {
       if (fileInput.files[0] != undefined) {
         if (fileInput.files[0].size > 4500000) {
