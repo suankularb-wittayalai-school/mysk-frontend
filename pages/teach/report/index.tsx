@@ -42,8 +42,6 @@ const ReportPage: CustomPage<{
     setSelectedID("2");
   }
 
-  console.log("ghost commit boo~~~")
-
   return (
     <>
       <Head>
