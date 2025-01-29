@@ -163,7 +163,6 @@ const ReportUploadImageCard = ({
 
     fileReaderModule.addEventListener("load", () => {
       data(fileReaderModule.result);
-      console.warn(fileReaderModule.result);
     });
     
     if (fileInput.files != null) {
