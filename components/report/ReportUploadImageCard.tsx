@@ -92,7 +92,7 @@ const ReportUploadImageCard = ({
                 height={720}
                 className="max-h-32 w-auto"
               />
-              <p>{inputFileName}</p>
+              <p className="text-center">{inputFileName}</p>
 
               <Button
                 className="!w-max"
