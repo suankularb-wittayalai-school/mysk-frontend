@@ -67,6 +67,7 @@ const ElectiveStudentList: StylableFC<{
                 </span>
               ) : undefined,
             }}
+            isElectives={true}
             className="w-full"
           />
         </li>

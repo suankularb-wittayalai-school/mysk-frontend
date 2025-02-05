@@ -27,7 +27,6 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { log } from "console";
 import { motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";

@@ -18,22 +18,24 @@ import { ComponentProps, useState } from "react";
  */
 const PersonCard: StylableFC<
   Partial<Omit<ComponentProps<typeof Card>, "children">> & {
-    person: // Fetching and Avatar
-    Pick<Student | Teacher, "id" | "role" | "profile"> &
-      // Name fields
-      Partial<
-        Pick<Person, "first_name" | "middle_name" | "last_name" | "nickname">
-      > &
-      // Role-specific fields
-      (Pick<Student, "classroom"> | Pick<Teacher, "subject_group">);
+    person: any;
+    // person: // Fetching and Avatar
+    // Pick<Student | Teacher, "id" | "role" | "profile"> &
+    //   // Name fields
+    //   Partial<
+    //     Pick<Person, "first_name" | "middle_name" | "last_name" | "nickname">
+    //   > &
+    //   // Role-specific fields
+    //   (Pick<Student, "classroom"> | Pick<Teacher, "subject_group">);
     options?: Partial<{
       suffix: string | JSX.Element;
       hideClassroomInSubtitle: boolean;
       showNicknameInSubtitle: boolean;
     }> &
       ComponentProps<typeof WithPersonDetails>["options"];
+    isElectives?: boolean;
   }
-> = ({ person, options, ...props }) => {
+> = ({ person, options, isElectives, ...props }) => {
   const locale = useLocale();
   const { t } = useTranslation("common");
 
@@ -56,7 +58,7 @@ const PersonCard: StylableFC<
           avatar={<PersonAvatar {...person} />}
           title={
             <>
-              {getLocaleName(locale, person)}
+              {getLocaleName(locale, isElectives ? person.person : person)}
               {options?.suffix}
             </>
           }
@@ -73,7 +75,7 @@ const PersonCard: StylableFC<
               person.nickname?.th &&
               getLocaleString(person.nickname, locale),
           ]).join(" • ")}
-          className="[&_h3]:!leading-none [&_h3]:my-1"
+          className="[&_h3]:my-1 [&_h3]:!leading-none"
         />
       </Card>
     </WithPersonDetails>
