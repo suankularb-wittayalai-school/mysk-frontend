@@ -37,12 +37,11 @@ const CertificateCeremonyCard: StylableFC<{
     <Card
       appearance="filled"
       className={cn(
-        `relative isolate !grid grid-cols-[3.375rem,1fr] !gap-4 overflow-hidden 
-        !rounded-xl !bg-primary-container p-4`,
+        `gap-2 overflow-hidden !rounded-xl !bg-primary-container p-4 md:!flex-row md:!gap-[18px]`,
       )}
     >
       {/* Icon */}
-      <div className="relative aspect-square px-[3px]">
+      <div className="md:p-[3px]">
         <MaterialIcon
           icon="mark_email_unread"
           size={48}
@@ -69,20 +68,23 @@ const CertificateCeremonyCard: StylableFC<{
         </div>
         <div
           className={cn(
-            `flex items-center justify-between self-stretch rounded-full 
-            bg-primary p-2 pl-5`,
+            `flex flex-col items-end justify-between gap-4 self-stretch rounded-lg bg-primary p-4 md:flex-row md:items-center md:rounded-full md:p-2 md:pl-5`,
           )}
         >
           {confirmationStatus == CeremonyConfirmationStatus["pending"] ||
           confirmationStatus == null ? (
             <>
-              <Text type="body-medium" element="p" className="text-on-primary">
+              <Text
+                type="body-medium"
+                element="p"
+                className="w-full text-on-primary"
+              >
                 {t("response.pending.text")}
               </Text>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 <Button
                   appearance="filled"
-                  className="!bg-surface !text-on-surface"
+                  className="!whitespace-nowrap !bg-surface !text-on-surface"
                   onClick={() =>
                     handleConfirmation(CeremonyConfirmationStatus["approved"])
                   }
@@ -91,7 +93,7 @@ const CertificateCeremonyCard: StylableFC<{
                 </Button>
                 <Button
                   appearance="filled"
-                  className="!bg-surface !text-on-surface"
+                  className="!whitespace-nowrap !bg-surface !text-on-surface"
                   onClick={() =>
                     handleConfirmation(CeremonyConfirmationStatus["declined"])
                   }
@@ -107,16 +109,19 @@ const CertificateCeremonyCard: StylableFC<{
                   <Text
                     type="body-medium"
                     element="p"
-                    className="text-on-primary"
+                    className="w-full text-on-primary"
                   >
                     <Trans
                       i18nKey="account/certificates/ceremonyConfirmationCard:response.accept.text"
-                      components={[<b />, <span className="opacity-50" />]}
+                      components={[
+                        <b />,
+                        <span className="whitespace-nowrap opacity-50" />,
+                      ]}
                     />
                   </Text>
                   <Button
                     appearance="filled"
-                    className="!bg-surface !text-on-surface"
+                    className="!whitespace-nowrap !bg-surface !text-on-surface"
                     onClick={() =>
                       handleConfirmation(CeremonyConfirmationStatus["declined"])
                     }
@@ -135,14 +140,14 @@ const CertificateCeremonyCard: StylableFC<{
                     <Trans
                       i18nKey="account/certificates/ceremonyConfirmationCard:response.decline.text"
                       components={[
-                        <b key={0} />,
-                        <span className="opacity-50" key={1} />,
+                        <b />,
+                        <span className="whitespace-nowrap opacity-50" />,
                       ]}
                     />
                   </Text>
                   <Button
                     appearance="filled"
-                    className="!bg-surface !text-on-surface"
+                    className="!whitespace-nowrap !bg-surface !text-on-surface"
                     onClick={() =>
                       handleConfirmation(CeremonyConfirmationStatus["approved"])
                     }
