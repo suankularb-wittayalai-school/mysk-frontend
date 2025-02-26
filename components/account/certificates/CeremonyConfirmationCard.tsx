@@ -66,7 +66,7 @@ const CertificateCeremonyCard: StylableFC<{
         </Text>
         <div
           className={cn(
-            `flex flex-col items-end justify-between gap-4 self-stretch rounded-lg bg-primary p-4 mt-2 md:flex-row md:items-center md:rounded-full md:p-2 md:pl-5`,
+            `mt-2 flex flex-col items-end justify-between gap-4 self-stretch rounded-lg bg-primary p-4 md:flex-row md:items-center md:rounded-full md:p-2 md:pl-5`,
           )}
         >
           {confirmationStatus == CeremonyConfirmationStatus["pending"] ||
@@ -112,8 +112,11 @@ const CertificateCeremonyCard: StylableFC<{
                     <Trans
                       i18nKey="account/certificates/ceremonyConfirmationCard:response.accept.text"
                       components={[
-                        <b />,
-                        <span className="whitespace-nowrap opacity-70" />,
+                        <b key={0} />,
+                        <span
+                          key={1}
+                          className="whitespace-nowrap opacity-70"
+                        />,
                       ]}
                     />
                   </Text>
@@ -138,8 +141,11 @@ const CertificateCeremonyCard: StylableFC<{
                     <Trans
                       i18nKey="account/certificates/ceremonyConfirmationCard:response.decline.text"
                       components={[
-                        <b />,
-                        <span className="whitespace-nowrap opacity-70" />,
+                        <b key={0} />,
+                        <span
+                          key={1}
+                          className="whitespace-nowrap opacity-70"
+                        />,
                       ]}
                     />
                   </Text>
