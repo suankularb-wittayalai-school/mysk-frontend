@@ -8,6 +8,7 @@ import {
   CeremonyConfirmationStatus,
   StudentCertificate,
 } from "@/utils/types/certificate";
+import ReportIssueButton from "@/components/common/ReportIssueButton";
 
 const CertificateCeremonyCard: StylableFC<{
   personID: string;
@@ -22,10 +23,10 @@ const CertificateCeremonyCard: StylableFC<{
       currentAcademicYear,
       confirmationStatus,
     );
-    location.reload();
   }
   const currentAcademicYear = getCurrentAcademicYear();
   const confirmationStatus = certificates[0].rsvp_status;
+
   return (
     <Card
       appearance="filled"
@@ -34,7 +35,7 @@ const CertificateCeremonyCard: StylableFC<{
       )}
     >
       {/* Icon */}
-      <div className="relative aspect-square">
+      <div className="relative aspect-square px-[3px]">
         <MaterialIcon
           icon="mark_email_unread"
           size={48}
@@ -45,20 +46,23 @@ const CertificateCeremonyCard: StylableFC<{
       {/* Text */}
       <div className="flex flex-col items-start gap-3">
         <Text type="title-medium" element="h3">
-          You’ve been invited to attend the ceremony.
+          You’re eligible for the ceremony!
         </Text>
-        <Text type="body-medium" element="p">
-          By confirming your attendance, you agree to attend a ceremony
-          rehearsal on March 3, 2025. Failure to attend will result in
-          disqualification from the ceremony on March 11, 2025.Students who are
-          not eligible for the ceremony may still receive your certificates at
-          the library.
-        </Text>
+        <div className="flex flex-col gap-2">
+          <Text type="body-medium" element="p">
+            By confirming your attendance, you agree to attend a ceremony
+            rehearsal on March 3, 2025. Failure to attend will result in
+            disqualification from the ceremony on March 11, 2025.
+          </Text>
+          <Text type="body-medium" element="p">
+            Students who are not eligible for the ceremony may still receive
+            your certificates at the library.
+          </Text>
+        </div>
         <div className="flex items-center justify-between self-stretch rounded-full bg-primary p-2 pl-5">
-          {confirmationStatus == CeremonyConfirmationStatus["pending"] ? (
             <>
               <Text type="body-medium" element="p" className="text-on-primary">
-                Accept this invitation?
+                Are you attending this ceremony?
               </Text>
               <div className="flex items-center gap-2">
                 <Button
@@ -68,7 +72,7 @@ const CertificateCeremonyCard: StylableFC<{
                     handleConfirmation(CeremonyConfirmationStatus["approved"])
                   }
                 >
-                  Accept
+                  Yes
                 </Button>
                 <Button
                   appearance="filled"
@@ -77,7 +81,7 @@ const CertificateCeremonyCard: StylableFC<{
                     handleConfirmation(CeremonyConfirmationStatus["declined"])
                   }
                 >
-                  Decline
+                  No
                 </Button>
               </div>
             </>
@@ -90,7 +94,8 @@ const CertificateCeremonyCard: StylableFC<{
                     element="p"
                     className="text-on-primary"
                   >
-                    You’ve accepted to attend the ceremony, change of plans?
+                    You’ve <b>accepted</b> to attend the ceremony,
+                    <span className="opacity-50"> change of plans?</span>
                   </Text>
                   <Button
                     appearance="filled"
@@ -110,7 +115,8 @@ const CertificateCeremonyCard: StylableFC<{
                     element="p"
                     className="text-on-primary"
                   >
-                    You’ve declined to attend the ceremony, change of plans?
+                    You’ve <b>declined</b> to attend the ceremony,
+                    <span className="opacity-50"> change of plans?</span>
                   </Text>
                   <Button
                     appearance="filled"
