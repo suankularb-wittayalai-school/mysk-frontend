@@ -1452,6 +1452,7 @@ export type Database = {
           seat_code: string | null;
           student_id: string;
           year: number;
+          rsvp_status: Database["public"]["Enums"]["submission_status"];
         };
         Insert: {
           certificate_detail: string;
@@ -1462,6 +1463,7 @@ export type Database = {
           seat_code?: string | null;
           student_id: string;
           year: number;
+          rsvp_status: Database["public"]["Enums"]["submission_status"];
         };
         Update: {
           certificate_detail?: string;
@@ -1472,6 +1474,7 @@ export type Database = {
           seat_code?: string | null;
           student_id?: string;
           year?: number;
+          rsvp_status: Database["public"]["Enums"]["submission_status"];
         };
         Relationships: [
           {

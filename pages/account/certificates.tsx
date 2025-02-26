@@ -21,7 +21,8 @@ import Balancer from "react-wrap-balancer";
  */
 const CertificatesPage: CustomPage<{
   certificates: StudentCertificate[];
-}> = ({ certificates }) => {
+  personID: string;
+}> = ({ certificates, personID }) => {
   const { t } = useTranslation("account/certificates");
 
   return (
@@ -46,6 +47,7 @@ const CertificatesPage: CustomPage<{
               key={year}
               year={Number(year)}
               certificates={certificates!}
+              personID={personID}
             />
           ))
         ) : (
@@ -92,7 +94,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     personID!,
   );
 
-  return { props: { certificates } };
+  return { props: { certificates, personID } };
 };
 
 export default CertificatesPage;

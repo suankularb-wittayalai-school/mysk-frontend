@@ -2,6 +2,7 @@ import CertificateCard from "@/components/account/certificates/CertificateCard";
 import ReceivingOrderDialog from "@/components/account/certificates/ReceivingOrderDialog";
 import SeatDialog from "@/components/account/certificates/SeatDialog";
 import cn from "@/utils/helpers/cn";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getLocaleYear from "@/utils/helpers/getLocaleYear";
 import useLocale from "@/utils/helpers/useLocale";
 import { StudentCertificate } from "@/utils/types/certificate";
@@ -14,6 +15,7 @@ import {
   Section,
   Text,
 } from "@suankularb-components/react";
+import CertificateCeremonyCard from "@/components/account/certificates/CertificateCeremonyCard";
 import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
 
@@ -27,9 +29,11 @@ import { useState } from "react";
 const CertificatesYearSection: StylableFC<{
   year: number;
   certificates: StudentCertificate[];
-}> = ({ year, certificates, style, className }) => {
+  personID: string;
+}> = ({ year, certificates, personID, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("account/certificates");
+  const currentAcademicYear = getCurrentAcademicYear();
 
   const [orderOpen, setOrderOpen] = useState(false);
   const [seatOpen, setSeatOpen] = useState(false);
@@ -80,6 +84,12 @@ const CertificatesYearSection: StylableFC<{
 
       {/* List */}
       <ul role="list" className="contents">
+        {currentAcademicYear == year && (
+          <CertificateCeremonyCard
+            personID={personID}
+            certificates={certificates}
+          />
+        )}
         {certificates?.map((certificate) => (
           <li key={certificate.id}>
             <CertificateCard certificate={certificate} />
