@@ -43,7 +43,7 @@ const CertificateCeremonyCard: StylableFC<{
       {/* Icon */}
       <div className="md:p-[3px]">
         <MaterialIcon
-          icon="mark_email_unread"
+          icon="local_activity"
           size={48}
           className="text-primary"
         />
@@ -52,23 +52,21 @@ const CertificateCeremonyCard: StylableFC<{
       {/* Text */}
       <div
         className={cn(
-          `flex flex-col items-start gap-3 [&>*]:text-on-primary-container`,
+          `flex flex-col items-start gap-2 [&>*]:text-on-primary-container`,
         )}
       >
         <Text type="title-medium" element="h3">
           {t("title")}
         </Text>
-        <div className="flex flex-col gap-2">
-          <Text type="body-medium" element="p">
-            {t("desc.eventDetails")}
-          </Text>
-          <Text type="body-medium" element="p">
-            {t("desc.ifIneligible")}
-          </Text>
-        </div>
+        <Text type="body-medium" element="p">
+          {t("desc.eventDetails")}
+        </Text>
+        <Text type="body-medium" element="p">
+          {t("desc.ifIneligible")}
+        </Text>
         <div
           className={cn(
-            `flex flex-col items-end justify-between gap-4 self-stretch rounded-lg bg-primary p-4 md:flex-row md:items-center md:rounded-full md:p-2 md:pl-5`,
+            `flex flex-col items-end justify-between gap-4 self-stretch rounded-lg bg-primary p-4 mt-2 md:flex-row md:items-center md:rounded-full md:p-2 md:pl-5`,
           )}
         >
           {confirmationStatus == CeremonyConfirmationStatus["pending"] ||
@@ -115,7 +113,7 @@ const CertificateCeremonyCard: StylableFC<{
                       i18nKey="account/certificates/ceremonyConfirmationCard:response.accept.text"
                       components={[
                         <b />,
-                        <span className="whitespace-nowrap opacity-50" />,
+                        <span className="whitespace-nowrap opacity-70" />,
                       ]}
                     />
                   </Text>
@@ -141,7 +139,7 @@ const CertificateCeremonyCard: StylableFC<{
                       i18nKey="account/certificates/ceremonyConfirmationCard:response.decline.text"
                       components={[
                         <b />,
-                        <span className="whitespace-nowrap opacity-50" />,
+                        <span className="whitespace-nowrap opacity-70" />,
                       ]}
                     />
                   </Text>
