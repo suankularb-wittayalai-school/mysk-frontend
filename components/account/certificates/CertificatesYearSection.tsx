@@ -15,7 +15,7 @@ import {
   Section,
   Text,
 } from "@suankularb-components/react";
-import CertificateCeremonyCard from "@/components/account/certificates/CertificateCeremonyCard";
+import CertificateCeremonyCard from "@/components/account/certificates/CeremonyConfirmationCard";
 import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
 
@@ -84,6 +84,7 @@ const CertificatesYearSection: StylableFC<{
 
       {/* List */}
       <ul role="list" className="contents">
+        {/* @pixelpxed: @sun052 smart choice */}
         {currentAcademicYear == year && (
           <CertificateCeremonyCard
             personID={personID}

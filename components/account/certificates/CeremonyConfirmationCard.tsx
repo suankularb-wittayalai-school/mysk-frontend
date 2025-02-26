@@ -1,21 +1,23 @@
-import { Button, Card, MaterialIcon, Text } from "@suankularb-components/react";
-import cn from "@/utils/helpers/cn";
-import { StylableFC } from "@/utils/types/common";
-import { supabase } from "@/utils/supabase-client";
 import updateCeremonyConfirmation from "@/utils/backend/certificate/updateCeremonyConfirmation";
+import cn from "@/utils/helpers/cn";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import useRefreshProps from "@/utils/helpers/useRefreshProps";
+import { supabase } from "@/utils/supabase-client";
 import {
   CeremonyConfirmationStatus,
   StudentCertificate,
 } from "@/utils/types/certificate";
-import useRefreshProps from "@/utils/helpers/useRefreshProps";
-import ReportIssueButton from "@/components/common/ReportIssueButton";
+import { StylableFC } from "@/utils/types/common";
+import { Button, Card, MaterialIcon, Text } from "@suankularb-components/react";
+import Trans from "next-translate/Trans";
+import useTranslation from "next-translate/useTranslation";
 
 const CertificateCeremonyCard: StylableFC<{
   personID: string;
   certificates: StudentCertificate[];
 }> = ({ personID, certificates }) => {
   const refreshProps = useRefreshProps();
+  const { t } = useTranslation("account/certificates/ceremonyConfirmationCard");
 
   async function handleConfirmation(
     confirmationStatus: CeremonyConfirmationStatus,
@@ -35,7 +37,8 @@ const CertificateCeremonyCard: StylableFC<{
     <Card
       appearance="filled"
       className={cn(
-        `relative isolate !grid grid-cols-[3.375rem,1fr] !gap-4 overflow-hidden !rounded-xl !bg-primary-container p-4`,
+        `relative isolate !grid grid-cols-[3.375rem,1fr] !gap-4 overflow-hidden 
+        !rounded-xl !bg-primary-container p-4`,
       )}
     >
       {/* Icon */}
@@ -48,27 +51,33 @@ const CertificateCeremonyCard: StylableFC<{
       </div>
 
       {/* Text */}
-      <div className="flex flex-col items-start gap-3">
+      <div
+        className={cn(
+          `flex flex-col items-start gap-3 [&>*]:text-on-primary-container`,
+        )}
+      >
         <Text type="title-medium" element="h3">
-          You’re eligible for the ceremony!
+          {t("title")}
         </Text>
         <div className="flex flex-col gap-2">
           <Text type="body-medium" element="p">
-            By confirming your attendance, you agree to attend a ceremony
-            rehearsal on March 3, 2025. Failure to attend will result in
-            disqualification from the ceremony on March 11, 2025.
+            {t("desc.eventDetails")}
           </Text>
           <Text type="body-medium" element="p">
-            Students who are not eligible for the ceremony may still receive
-            your certificates at the library.
+            {t("desc.ifIneligible")}
           </Text>
         </div>
-        <div className="flex items-center justify-between self-stretch rounded-full bg-primary p-2 pl-5">
+        <div
+          className={cn(
+            `flex items-center justify-between self-stretch rounded-full 
+            bg-primary p-2 pl-5`,
+          )}
+        >
           {confirmationStatus == CeremonyConfirmationStatus["pending"] ||
           confirmationStatus == null ? (
             <>
               <Text type="body-medium" element="p" className="text-on-primary">
-                Are you attending this ceremony?
+                {t("response.pending.text")}
               </Text>
               <div className="flex items-center gap-2">
                 <Button
@@ -78,7 +87,7 @@ const CertificateCeremonyCard: StylableFC<{
                     handleConfirmation(CeremonyConfirmationStatus["approved"])
                   }
                 >
-                  Yes
+                  {t("response.pending.action.yes")}
                 </Button>
                 <Button
                   appearance="filled"
@@ -87,7 +96,7 @@ const CertificateCeremonyCard: StylableFC<{
                     handleConfirmation(CeremonyConfirmationStatus["declined"])
                   }
                 >
-                  No
+                  {t("response.pending.action.no")}
                 </Button>
               </div>
             </>
@@ -100,8 +109,10 @@ const CertificateCeremonyCard: StylableFC<{
                     element="p"
                     className="text-on-primary"
                   >
-                    You’ve <b>accepted</b> to attend the ceremony,
-                    <span className="opacity-50"> change of plans?</span>
+                    <Trans
+                      i18nKey="account/certificates/ceremonyConfirmationCard:response.accept.text"
+                      components={[<b />, <span className="opacity-50" />]}
+                    />
                   </Text>
                   <Button
                     appearance="filled"
@@ -110,7 +121,7 @@ const CertificateCeremonyCard: StylableFC<{
                       handleConfirmation(CeremonyConfirmationStatus["declined"])
                     }
                   >
-                    Decline
+                    {t("response.accept.action.change")}
                   </Button>
                 </>
               )}
@@ -121,8 +132,13 @@ const CertificateCeremonyCard: StylableFC<{
                     element="p"
                     className="text-on-primary"
                   >
-                    You’ve <b>declined</b> to attend the ceremony,
-                    <span className="opacity-50"> change of plans?</span>
+                    <Trans
+                      i18nKey="account/certificates/ceremonyConfirmationCard:response.decline.text"
+                      components={[
+                        <b key={0} />,
+                        <span className="opacity-50" key={1} />,
+                      ]}
+                    />
                   </Text>
                   <Button
                     appearance="filled"
@@ -131,7 +147,7 @@ const CertificateCeremonyCard: StylableFC<{
                       handleConfirmation(CeremonyConfirmationStatus["approved"])
                     }
                   >
-                    Accept
+                    {t("response.decline.action.change")}
                   </Button>
                 </>
               )}
