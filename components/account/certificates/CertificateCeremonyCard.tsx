@@ -8,12 +8,15 @@ import {
   CeremonyConfirmationStatus,
   StudentCertificate,
 } from "@/utils/types/certificate";
+import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import ReportIssueButton from "@/components/common/ReportIssueButton";
 
 const CertificateCeremonyCard: StylableFC<{
   personID: string;
   certificates: StudentCertificate[];
 }> = ({ personID, certificates }) => {
+  const refreshProps = useRefreshProps();
+
   async function handleConfirmation(
     confirmationStatus: CeremonyConfirmationStatus,
   ) {
@@ -23,6 +26,7 @@ const CertificateCeremonyCard: StylableFC<{
       currentAcademicYear,
       confirmationStatus,
     );
+    refreshProps();
   }
   const currentAcademicYear = getCurrentAcademicYear();
   const confirmationStatus = certificates[0].rsvp_status;
