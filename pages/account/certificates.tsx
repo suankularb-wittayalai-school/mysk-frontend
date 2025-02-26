@@ -37,8 +37,9 @@ const CertificatesPage: CustomPage<{
             Object.entries(
               group(certificates, (certificate) => certificate.year),
             ),
-            // Sort by academic year, descending.
+            // Sort by academic year, ascending.
             ([year]) => Number(year),
+            true,
           ).map(([year, certificates]) => (
             // Each year is a Section.
             <CertificatesYearSection
