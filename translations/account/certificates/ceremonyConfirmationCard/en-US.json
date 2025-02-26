@@ -1,25 +1,25 @@
 {
-  "title": "You’re eligible for the ceremony!",
+  "title": "You're eligible to participate in the certificate ceremony!",
   "desc": {
-    "eventDetails": "By confirming your attendance, you agree to attend a ceremony rehearsal on March 3, 2025. Failure to attend will result in disqualification from attending the ceremony on March 11, 2025.",
+    "eventDetails": "By confirming your attendance, you agree to participate in the ceremony rehearsal on March 3, 2025. Failure to attend the rehearsal will disqualify you from the ceremony on March 11, 2025.",
     "ifIneligible": "If you declined to join or did not attend the ceremony, you may still receive your certificates at the library later."
   },
   "response": {
     "pending": {
-      "text": "Are you attending this ceremony?",
+      "text": "Are you attending this certificate ceremony?",
       "action": {
         "yes": "Yes",
         "no": "No"
       }
     },
     "accept": {
-      "text": "You’ve <0>accepted</0> to attend the ceremony, <1>change of plans?</1>",
+      "text": "You’ve confirmed to <0>attend</0> the ceremony, <1>change of plans?</1>",
       "action": {
         "change": "Change to No"
       }
     },
     "decline": {
-      "text": "You’ve <0>declined</0> to attend the ceremony, <1>change of plans?</1>",
+      "text": "You’ve confirmed to <0>not attend</0> the ceremony, <1>change of plans?</1>",
       "action": {
         "change": "Change to Yes"
       }
