@@ -64,6 +64,8 @@ const CertificateCeremonyCard: StylableFC<{
           </Text>
         </div>
         <div className="flex items-center justify-between self-stretch rounded-full bg-primary p-2 pl-5">
+          {confirmationStatus == CeremonyConfirmationStatus["pending"] ||
+          confirmationStatus == null ? (
             <>
               <Text type="body-medium" element="p" className="text-on-primary">
                 Are you attending this ceremony?
