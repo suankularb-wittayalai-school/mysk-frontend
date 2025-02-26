@@ -18,6 +18,7 @@ import {
 import CertificateCeremonyCard from "@/components/account/certificates/CeremonyConfirmationCard";
 import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
+import { getMonth } from "date-fns";
 
 /**
  * A section that shows the user’s Student Certificates in a specific academic
@@ -47,50 +48,62 @@ const CertificatesYearSection: StylableFC<{
       {(() => {
         if (!certificates?.length) return null;
         const { receiving_order_number, seat_code } = certificates[0];
-        if (!(receiving_order_number && seat_code))
-          return (
-            <Text type="body-medium" className="mb-1">
-              {t("ineligibleForCeremony")}
-            </Text>
-          );
-        return (
-          <ChipSet className="pb-2">
-            <AssistChip
-              icon={<MaterialIcon icon="group" />}
-              onClick={() => setOrderOpen(true)}
-            >
-              {t("action.order", { order: receiving_order_number })}
-            </AssistChip>
-            <ReceivingOrderDialog
-              open={orderOpen}
-              receivingOrder={receiving_order_number}
-              onClose={() => setOrderOpen(false)}
-            />
 
-            <AssistChip
-              icon={<MaterialIcon icon="event_seat" />}
-              onClick={() => setSeatOpen(true)}
-            >
-              {t("action.seat", { seat: seat_code })}
-            </AssistChip>
-            <SeatDialog
-              open={seatOpen}
-              seat={seat_code}
-              onClose={() => setSeatOpen(false)}
-            />
-          </ChipSet>
-        );
+        // If inEnrollmentPeriod is implemented, use that instead.
+        if (
+          (currentAcademicYear != year &&
+            process.env.NEXT_PUBLIC_CERTIFICATES_CEREMONY_ENROLLMENT_PERIOD ==
+              "false") ||
+          process.env.NEXT_PUBLIC_CERTIFICATES_CEREMONY_SHOW_SEATING != "false"
+        ) {
+          if (!(receiving_order_number && seat_code))
+            return (
+              <Text type="body-medium" className="mb-1">
+                {t("ineligibleForCeremony")}
+              </Text>
+            );
+          return (
+            <ChipSet className="pb-2">
+              <AssistChip
+                icon={<MaterialIcon icon="group" />}
+                onClick={() => setOrderOpen(true)}
+              >
+                {t("action.order", { order: receiving_order_number })}
+              </AssistChip>
+              <ReceivingOrderDialog
+                open={orderOpen}
+                receivingOrder={receiving_order_number}
+                onClose={() => setOrderOpen(false)}
+              />
+
+              <AssistChip
+                icon={<MaterialIcon icon="event_seat" />}
+                onClick={() => setSeatOpen(true)}
+              >
+                {t("action.seat", { seat: seat_code })}
+              </AssistChip>
+              <SeatDialog
+                open={seatOpen}
+                seat={seat_code}
+                onClose={() => setSeatOpen(false)}
+              />
+            </ChipSet>
+          );
+        }
       })()}
 
-      {/* List */}
-      <ul role="list" className="contents">
-        {/* @pixelpxed: @sun052 smart choice */}
-        {currentAcademicYear == year && (
+      {/* If inEnrollmentPeriod is implemented, use that instead. */}
+      {currentAcademicYear == year &&
+        process.env.NEXT_PUBLIC_CERTIFICATES_CEREMONY_ENROLLMENT_PERIOD ==
+          "true" && (
           <CertificateCeremonyCard
             personID={personID}
             certificates={certificates}
           />
         )}
+
+      {/* List */}
+      <ul role="list" className="contents">
         {certificates?.map((certificate) => (
           <li key={certificate.id}>
             <CertificateCard certificate={certificate} />
