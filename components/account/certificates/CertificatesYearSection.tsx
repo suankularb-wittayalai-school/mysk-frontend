@@ -32,7 +32,16 @@ const CertificatesYearSection: StylableFC<{
   certificates: StudentCertificate[];
   person: Student[];
   personID: string;
-}> = ({ year, certificates, person, personID, style, className }) => {
+  rsvpStatus: Boolean;
+}> = ({
+  year,
+  certificates,
+  person,
+  personID,
+  rsvpStatus,
+  style,
+  className,
+}) => {
   const locale = useLocale();
   const { t } = useTranslation("account/certificates");
   const currentAcademicYear = getCurrentAcademicYear();
@@ -50,12 +59,11 @@ const CertificatesYearSection: StylableFC<{
         if (!certificates?.length) return null;
         const { receiving_order_number, seat_code } = certificates[0];
 
-        // If inEnrollmentPeriod is implemented, use that instead.
         if (
-          (currentAcademicYear != year &&
-            process.env.NEXT_PUBLIC_CERTIFICATES_CEREMONY_ENROLLMENT_PERIOD ==
-              "false") ||
-          process.env.NEXT_PUBLIC_CERTIFICATES_CEREMONY_SHOW_SEATING != "false"
+          (rsvpStatus == false &&
+            process.env.NEXT_PUBLIC_CERTIFICATES_CEREMONY_SHOW_SEATING ==
+              "true") ||
+          currentAcademicYear != year
         ) {
           if (!(receiving_order_number && seat_code))
             return (
@@ -93,16 +101,13 @@ const CertificatesYearSection: StylableFC<{
         }
       })()}
 
-      {/* If inEnrollmentPeriod is implemented, use that instead. */}
-      {currentAcademicYear == year &&
-        process.env.NEXT_PUBLIC_CERTIFICATES_CEREMONY_ENROLLMENT_PERIOD ==
-          "true" && (
-          <CertificateCeremonyCard
-            personID={personID}
-            person={person}
-            certificates={certificates}
-          />
-        )}
+      {currentAcademicYear == year && rsvpStatus == true && (
+        <CertificateCeremonyCard
+          personID={personID}
+          person={person}
+          certificates={certificates}
+        />
+      )}
 
       {/* List */}
       <ul role="list" className="contents">

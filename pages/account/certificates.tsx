@@ -1,12 +1,14 @@
 import ProfileLayout from "@/components/account/ProfileLayout";
 import CertificatesYearSection from "@/components/account/certificates/CertificatesYearSection";
 import ReportIssueButton from "@/components/common/ReportIssueButton";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getCertificatesOfPerson from "@/utils/backend/certificate/getCertificatesOfPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
-import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import fetchMySKAPI from "@/utils/backend/mysk/fetchMySKAPI";
 import getPersonIDFromUser from "@/utils/backend/person/getPersonIDFromUser";
 import { StudentCertificate } from "@/utils/types/certificate";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage } from "@/utils/types/common";
+import { Student } from "@/utils/types/person";
 import { Actions, Card, Section, Text } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
@@ -14,8 +16,6 @@ import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { group, sort } from "radash";
 import Balancer from "react-wrap-balancer";
-import getLocaleName from "@/utils/helpers/getLocaleName";
-import { Student } from "@/utils/types/person";
 
 /**
  * The Certificates page displays all Student Certificates of the current user.
@@ -26,7 +26,8 @@ const CertificatesPage: CustomPage<{
   certificates: StudentCertificate[];
   personID: string;
   person: Student[];
-}> = ({ certificates, personID, person }) => {
+  inRSVPPeriod: Boolean;
+}> = ({ certificates, personID, person, inRSVPPeriod }) => {
   const { t } = useTranslation("account/certificates");
 
   return (
@@ -53,6 +54,7 @@ const CertificatesPage: CustomPage<{
               certificates={certificates!}
               personID={personID}
               person={person}
+              rsvpStatus={inRSVPPeriod}
             />
           ))
         ) : (
@@ -103,7 +105,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     detailed: true,
   });
 
-  return { props: { certificates, personID, person } };
+  const { data: inRSVPPeriod } = await mysk.fetch(
+    "/v1/certificates/rsvp/in-rsvp-period",
+  );
+
+  console.log(JSON.stringify(inRSVPPeriod));
+
+  return { props: { certificates, personID, person, inRSVPPeriod } };
 };
 
 export default CertificatesPage;
