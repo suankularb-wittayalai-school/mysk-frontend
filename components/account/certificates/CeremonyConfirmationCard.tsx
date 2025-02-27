@@ -8,14 +8,19 @@ import {
   StudentCertificate,
 } from "@/utils/types/certificate";
 import { StylableFC } from "@/utils/types/common";
+import { Student } from "@/utils/types/person";
 import { Button, Card, MaterialIcon, Text } from "@suankularb-components/react";
 import Trans from "next-translate/Trans";
 import useTranslation from "next-translate/useTranslation";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import useLocale from "@/utils/helpers/useLocale";
 
 const CertificateCeremonyCard: StylableFC<{
   personID: string;
+  person: Student[];
   certificates: StudentCertificate[];
-}> = ({ personID, certificates }) => {
+}> = ({ personID, person, certificates }) => {
+  const locale = useLocale();
   const refreshProps = useRefreshProps();
   const { t } = useTranslation("account/certificates/ceremonyConfirmationCard");
 
@@ -52,18 +57,30 @@ const CertificateCeremonyCard: StylableFC<{
       {/* Text */}
       <div
         className={cn(
-          `flex flex-col items-start gap-2 [&>*]:text-on-primary-container`,
+          `flex flex-col items-start gap-3 [&>*]:text-on-primary-container`,
         )}
       >
         <Text type="title-medium" element="h3">
-          {t("title")}
+          <Trans
+            i18nKey="account/certificates/ceremonyConfirmationCard:title"
+            values={{
+              name: getLocaleName(locale, person, {
+                middleName: false,
+                lastName: false,
+              })
+            }}
+          />
         </Text>
         <Text type="body-medium" element="p">
           {t("desc.eventDetails")}
         </Text>
         <Text type="body-medium" element="p">
+          {t("desc.ifDecline")}
+        </Text>
+        <Text type="body-medium" element="p">
           {t("desc.ifIneligible")}
         </Text>
+
         <div
           className={cn(
             `mt-2 flex flex-col items-end justify-between gap-4 self-stretch rounded-lg bg-primary p-4 md:flex-row md:items-center md:rounded-full md:p-2 md:pl-5`,

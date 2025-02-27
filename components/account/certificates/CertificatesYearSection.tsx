@@ -1,3 +1,4 @@
+import CertificateCeremonyCard from "@/components/account/certificates/CeremonyConfirmationCard";
 import CertificateCard from "@/components/account/certificates/CertificateCard";
 import ReceivingOrderDialog from "@/components/account/certificates/ReceivingOrderDialog";
 import SeatDialog from "@/components/account/certificates/SeatDialog";
@@ -15,10 +16,9 @@ import {
   Section,
   Text,
 } from "@suankularb-components/react";
-import CertificateCeremonyCard from "@/components/account/certificates/CeremonyConfirmationCard";
 import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
-import { getMonth } from "date-fns";
+import { Student } from "@/utils/types/person";
 
 /**
  * A section that shows the user’s Student Certificates in a specific academic
@@ -30,8 +30,9 @@ import { getMonth } from "date-fns";
 const CertificatesYearSection: StylableFC<{
   year: number;
   certificates: StudentCertificate[];
+  person: Student[];
   personID: string;
-}> = ({ year, certificates, personID, style, className }) => {
+}> = ({ year, certificates, person, personID, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("account/certificates");
   const currentAcademicYear = getCurrentAcademicYear();
@@ -98,6 +99,7 @@ const CertificatesYearSection: StylableFC<{
           "true" && (
           <CertificateCeremonyCard
             personID={personID}
+            person={person}
             certificates={certificates}
           />
         )}

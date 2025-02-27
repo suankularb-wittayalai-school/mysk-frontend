@@ -3,6 +3,7 @@ import CertificatesYearSection from "@/components/account/certificates/Certifica
 import ReportIssueButton from "@/components/common/ReportIssueButton";
 import getCertificatesOfPerson from "@/utils/backend/certificate/getCertificatesOfPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getPersonIDFromUser from "@/utils/backend/person/getPersonIDFromUser";
 import { StudentCertificate } from "@/utils/types/certificate";
 import { CustomPage, LangCode } from "@/utils/types/common";
@@ -13,6 +14,8 @@ import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { group, sort } from "radash";
 import Balancer from "react-wrap-balancer";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import { Student } from "@/utils/types/person";
 
 /**
  * The Certificates page displays all Student Certificates of the current user.
@@ -22,7 +25,8 @@ import Balancer from "react-wrap-balancer";
 const CertificatesPage: CustomPage<{
   certificates: StudentCertificate[];
   personID: string;
-}> = ({ certificates, personID }) => {
+  person: Student[];
+}> = ({ certificates, personID, person }) => {
   const { t } = useTranslation("account/certificates");
 
   return (
@@ -48,6 +52,7 @@ const CertificatesPage: CustomPage<{
               year={Number(year)}
               certificates={certificates!}
               personID={personID}
+              person={person}
             />
           ))
         ) : (
@@ -94,7 +99,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     personID!,
   );
 
-  return { props: { certificates, personID } };
+  const { data: person } = await getLoggedInPerson(supabase, mysk, {
+    detailed: true,
+  });
+
+  return { props: { certificates, personID, person } };
 };
 
 export default CertificatesPage;
