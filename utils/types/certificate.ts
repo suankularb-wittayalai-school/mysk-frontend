@@ -13,6 +13,12 @@ export enum StudentCertificateType {
   activity = "activity",
 }
 
+export enum CeremonyConfirmationStatus {
+  approved = "approved",
+  pending = "pending",
+  declined = "declined",
+}
+
 /**
  * A Student Certificate.
  *
@@ -30,4 +36,5 @@ export type StudentCertificate = {
   certificate_detail: string;
   receiving_order_number: number | null;
   seat_code: string | null;
+  rsvp_status: CeremonyConfirmationStatus;
 };

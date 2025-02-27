@@ -3,7 +3,10 @@ import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { StudentCertificateType } from "@/utils/types/certificate";
+import {
+  CeremonyConfirmationStatus,
+  StudentCertificateType,
+} from "@/utils/types/certificate";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { MySKClient } from "@/utils/types/fetch";
 import { ShirtSize, Student, UserRole } from "@/utils/types/person";
@@ -38,7 +41,8 @@ export async function getStudentsByIDs(
         certificate_type,
         certificate_detail,
         receiving_order_number,
-        seat_code
+        seat_code,
+        rsvp_status
       ),
       people(
         *,
@@ -134,6 +138,7 @@ export async function getStudentsByIDs(
             certificate_type: <StudentCertificateType>(
               certicate.certificate_type
             ),
+            rsvp_status: <CeremonyConfirmationStatus>certicate.rsvp_status,
           })),
           allergies: student!.people.person_allergies.map(
             ({ allergy_name }) => allergy_name,
