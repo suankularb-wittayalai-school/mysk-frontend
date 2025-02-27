@@ -91,6 +91,7 @@ module.exports = {
       "account/certificates",
       "account/certificates/receivingOrderDialog",
       "account/certificates/seatDialog",
+      "account/certificates/ceremonyConfirmationCard",
     ],
     "/account/logout": ["account/logOut"],
     // Teach Report
