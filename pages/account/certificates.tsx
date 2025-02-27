@@ -16,6 +16,7 @@ import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { group, sort } from "radash";
 import Balancer from "react-wrap-balancer";
+import { CeremonyConfirmationStatus } from "@/utils/types/certificate";
 
 /**
  * The Certificates page displays all Student Certificates of the current user.
@@ -24,10 +25,10 @@ import Balancer from "react-wrap-balancer";
  */
 const CertificatesPage: CustomPage<{
   certificates: StudentCertificate[];
-  personID: string;
-  person: Student[];
-  inRSVPPeriod: Boolean;
-}> = ({ certificates, personID, person, inRSVPPeriod }) => {
+  person: Student;
+  rsvpStatus: Boolean;
+  enrollmentStatus: CeremonyConfirmationStatus;
+}> = ({ certificates, person, rsvpStatus, enrollmentStatus }) => {
   const { t } = useTranslation("account/certificates");
 
   return (
@@ -52,9 +53,9 @@ const CertificatesPage: CustomPage<{
               key={year}
               year={Number(year)}
               certificates={certificates!}
-              personID={personID}
               person={person}
-              rsvpStatus={inRSVPPeriod}
+              rsvpStatus={rsvpStatus}
+              enrollmentStatus={enrollmentStatus}
             />
           ))
         ) : (
@@ -94,6 +95,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
+  
   const { data: personID } = await getPersonIDFromUser(supabase, mysk.user!);
 
   const { data: certificates } = await getCertificatesOfPerson(
@@ -105,13 +107,17 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     detailed: true,
   });
 
-  const { data: inRSVPPeriod } = await mysk.fetch(
+  const { data: rsvpStatus } = await mysk.fetch(
     "/v1/certificates/rsvp/in-rsvp-period",
   );
 
-  console.log(JSON.stringify(inRSVPPeriod));
+  const { data: enrollmentStatus } = await mysk.fetch(
+    `/v1/certificates/rsvp/${person?.id}`,
+  );
 
-  return { props: { certificates, personID, person, inRSVPPeriod } };
+  return {
+    props: { certificates, personID, person, rsvpStatus, enrollmentStatus },
+  };
 };
 
 export default CertificatesPage;

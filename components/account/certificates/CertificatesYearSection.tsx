@@ -19,6 +19,7 @@ import {
 import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
 import { Student } from "@/utils/types/person";
+import { CeremonyConfirmationStatus } from "@/utils/types/certificate";
 
 /**
  * A section that shows the user’s Student Certificates in a specific academic
@@ -30,15 +31,15 @@ import { Student } from "@/utils/types/person";
 const CertificatesYearSection: StylableFC<{
   year: number;
   certificates: StudentCertificate[];
-  person: Student[];
-  personID: string;
+  person: Student;
   rsvpStatus: Boolean;
+  enrollmentStatus: CeremonyConfirmationStatus;
 }> = ({
   year,
   certificates,
   person,
-  personID,
   rsvpStatus,
+  enrollmentStatus,
   style,
   className,
 }) => {
@@ -103,9 +104,8 @@ const CertificatesYearSection: StylableFC<{
 
       {currentAcademicYear == year && rsvpStatus == true && (
         <CertificateCeremonyCard
-          personID={personID}
           person={person}
-          certificates={certificates}
+          enrollmentStatus={enrollmentStatus}
         />
       )}
 

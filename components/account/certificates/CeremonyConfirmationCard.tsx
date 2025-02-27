@@ -14,29 +14,34 @@ import Trans from "next-translate/Trans";
 import useTranslation from "next-translate/useTranslation";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import useLocale from "@/utils/helpers/useLocale";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import logError from "@/utils/helpers/logError";
 
 const CertificateCeremonyCard: StylableFC<{
-  personID: string;
-  person: Student[];
-  certificates: StudentCertificate[];
-}> = ({ personID, person, certificates }) => {
+  person: Student;
+  enrollmentStatus: CeremonyConfirmationStatus,
+}> = ({ person, enrollmentStatus }) => {
+  const mysk = useMySKClient();
   const locale = useLocale();
   const refreshProps = useRefreshProps();
+
   const { t } = useTranslation("account/certificates/ceremonyConfirmationCard");
 
   async function handleConfirmation(
     confirmationStatus: CeremonyConfirmationStatus,
   ) {
-    await updateCeremonyConfirmation(
-      supabase,
-      personID,
-      currentAcademicYear,
-      confirmationStatus,
-    );
+    const { error } = await mysk.fetch(`/v1/certificates/rsvp`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data: { rsvp_status: confirmationStatus } }),
+    });
+    if (error) {
+      return logError("updateCeremonyConfirmation", error);
+    }
+
     refreshProps();
   }
-  const currentAcademicYear = getCurrentAcademicYear();
-  const confirmationStatus = certificates[0].rsvp_status;
+  const confirmationStatus = enrollmentStatus;
 
   return (
     <Card
@@ -67,7 +72,7 @@ const CertificateCeremonyCard: StylableFC<{
               name: getLocaleName(locale, person, {
                 middleName: false,
                 lastName: false,
-              })
+              }),
             }}
           />
         </Text>
