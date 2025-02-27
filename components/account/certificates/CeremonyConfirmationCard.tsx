@@ -136,7 +136,7 @@ const CertificateCeremonyCard: StylableFC<{
                   <Text
                     type="body-medium"
                     element="p"
-                    className="text-on-primary"
+                    className="w-full text-on-primary"
                   >
                     <Trans
                       i18nKey="account/certificates/ceremonyConfirmationCard:response.decline.text"
