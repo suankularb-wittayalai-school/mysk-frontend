@@ -19,7 +19,7 @@ import logError from "@/utils/helpers/logError";
 
 const CertificateCeremonyCard: StylableFC<{
   person: Student;
-  enrollmentStatus: CeremonyConfirmationStatus,
+  enrollmentStatus: CeremonyConfirmationStatus;
 }> = ({ person, enrollmentStatus }) => {
   const mysk = useMySKClient();
   const locale = useLocale();
@@ -133,13 +133,7 @@ const CertificateCeremonyCard: StylableFC<{
                   >
                     <Trans
                       i18nKey="account/certificates/ceremonyConfirmationCard:response.accept.text"
-                      components={[
-                        <b key={0} />,
-                        <span
-                          key={1}
-                          className="whitespace-nowrap opacity-70"
-                        />,
-                      ]}
+                      components={[<b key={0} />]}
                     />
                   </Text>
                   <Button
@@ -162,13 +156,7 @@ const CertificateCeremonyCard: StylableFC<{
                   >
                     <Trans
                       i18nKey="account/certificates/ceremonyConfirmationCard:response.decline.text"
-                      components={[
-                        <b key={0} />,
-                        <span
-                          key={1}
-                          className="whitespace-nowrap opacity-70"
-                        />,
-                      ]}
+                      components={[<b key={0} />]}
                     />
                   </Text>
                   <Button
