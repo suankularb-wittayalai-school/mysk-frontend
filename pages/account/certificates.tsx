@@ -17,6 +17,7 @@ import Head from "next/head";
 import { group, sort } from "radash";
 import Balancer from "react-wrap-balancer";
 import { CeremonyConfirmationStatus } from "@/utils/types/certificate";
+import Trans from "next-translate/Trans";
 
 /**
  * The Certificates page displays all Student Certificates of the current user.
@@ -37,6 +38,20 @@ const CertificatesPage: CustomPage<{
         <title>{t("common:tabName", { tabName: t("title") })}</title>
       </Head>
       <ProfileLayout title={t("title")} className="space-y-6">
+        <div>
+          <Text type="label-large" className="w-full text-on-background">
+            <Trans
+              i18nKey="account/certificates:help"
+              components={[
+                <a
+                  href={process.env.NEXT_PUBLIC_HELP_FORM_URL}
+                  className="text-primary"
+                  key={0}
+                />,
+              ]}
+            />
+          </Text>
+        </div>
         {/* {false ? ( */}
         {certificates.length > 0 ? (
           // Group Certificates by academic year.
@@ -95,7 +110,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
-  
+
   const { data: personID } = await getPersonIDFromUser(supabase, mysk.user!);
 
   const { data: certificates } = await getCertificatesOfPerson(

@@ -14,15 +14,15 @@
       }
     },
     "accept": {
-      "text": "You’ve confirmed to <0>attend</0> the ceremony, <1>change of plans?</1>",
+      "text": "You’ve confirmed <0>to attend</0> the ceremony. If you change your mind, click the button on the right.",
       "action": {
-        "change": "Change to No"
+        "change": "Change to 'not attending'"
       }
     },
     "decline": {
-      "text": "You’ve confirmed to <0>not attend</0> the ceremony, <1>change of plans?</1>",
+      "text": "You’ve confirmed <0>not to attend</0> the ceremony. If you change your mind, click the button on the right.",
       "action": {
-        "change": "Change to Yes"
+        "change": "Change to 'attending'"
       }
     }
   }
