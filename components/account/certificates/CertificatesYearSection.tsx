@@ -66,7 +66,7 @@ const CertificatesYearSection: StylableFC<{
               "true") ||
           currentAcademicYear != year
         ) {
-          if (!(receiving_order_number && seat_code))
+          if (!receiving_order_number && !seat_code)
             return (
               <Text type="body-medium" className="mb-1">
                 {t("ineligibleForCeremony")}
@@ -74,29 +74,36 @@ const CertificatesYearSection: StylableFC<{
             );
           return (
             <ChipSet className="pb-2">
-              <AssistChip
-                icon={<MaterialIcon icon="group" />}
-                onClick={() => setOrderOpen(true)}
-              >
-                {t("action.order", { order: receiving_order_number })}
-              </AssistChip>
-              <ReceivingOrderDialog
-                open={orderOpen}
-                receivingOrder={receiving_order_number}
-                onClose={() => setOrderOpen(false)}
-              />
-
-              <AssistChip
-                icon={<MaterialIcon icon="event_seat" />}
-                onClick={() => setSeatOpen(true)}
-              >
-                {t("action.seat", { seat: seat_code })}
-              </AssistChip>
-              <SeatDialog
-                open={seatOpen}
-                seat={seat_code}
-                onClose={() => setSeatOpen(false)}
-              />
+              {receiving_order_number && (
+                <>
+                  <AssistChip
+                    icon={<MaterialIcon icon="group" />}
+                    onClick={() => setOrderOpen(true)}
+                  >
+                    {t("action.order", { order: receiving_order_number })}
+                  </AssistChip>
+                  <ReceivingOrderDialog
+                    open={orderOpen}
+                    receivingOrder={receiving_order_number}
+                    onClose={() => setOrderOpen(false)}
+                  />
+                </>
+              )}
+              {seat_code && (
+                <>
+                  <AssistChip
+                    icon={<MaterialIcon icon="event_seat" />}
+                    onClick={() => setSeatOpen(true)}
+                  >
+                    {t("action.seat", { seat: seat_code })}
+                  </AssistChip>
+                  <SeatDialog
+                    open={seatOpen}
+                    seat={seat_code}
+                    onClose={() => setSeatOpen(false)}
+                  />
+                </>
+              )}
             </ChipSet>
           );
         }
