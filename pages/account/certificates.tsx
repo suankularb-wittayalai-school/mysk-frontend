@@ -45,6 +45,7 @@ const CertificatesPage: CustomPage<{
               components={[
                 <a
                   href={process.env.NEXT_PUBLIC_HELP_FORM_URL}
+                  target="_blank"
                   className="text-primary"
                   key={0}
                 />,
@@ -94,11 +95,11 @@ const CertificatesPage: CustomPage<{
         )}
 
         {/* Link for reporting Certificate mistakes */}
-        {certificates.length > 0 && (
+        {/* {certificates.length > 0 && (
           <Actions align="center">
             <ReportIssueButton appearance="text" location="Certificates" />
           </Actions>
-        )}
+        )} */}
       </ProfileLayout>
     </>
   );
