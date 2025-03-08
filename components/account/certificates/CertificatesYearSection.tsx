@@ -20,6 +20,7 @@ import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
 import { Student } from "@/utils/types/person";
 import { CeremonyConfirmationStatus } from "@/utils/types/certificate";
+import Trans from "next-translate/Trans";
 
 /**
  * A section that shows the user’s Student Certificates in a specific academic
@@ -73,38 +74,45 @@ const CertificatesYearSection: StylableFC<{
               </Text>
             );
           return (
-            <ChipSet className="pb-2">
-              {receiving_order_number && (
-                <>
-                  <AssistChip
-                    icon={<MaterialIcon icon="group" />}
-                    onClick={() => setOrderOpen(true)}
-                  >
-                    {t("action.order", { order: receiving_order_number })}
-                  </AssistChip>
-                  <ReceivingOrderDialog
-                    open={orderOpen}
-                    receivingOrder={receiving_order_number}
-                    onClose={() => setOrderOpen(false)}
-                  />
-                </>
+            <>
+              <ChipSet className="pb-2">
+                {receiving_order_number && (
+                  <>
+                    <AssistChip
+                      icon={<MaterialIcon icon="group" />}
+                      onClick={() => setOrderOpen(true)}
+                    >
+                      {t("action.order", { order: receiving_order_number })}
+                    </AssistChip>
+                    <ReceivingOrderDialog
+                      open={orderOpen}
+                      receivingOrder={receiving_order_number}
+                      onClose={() => setOrderOpen(false)}
+                    />
+                  </>
+                )}
+                {seat_code && (
+                  <>
+                    <AssistChip
+                      icon={<MaterialIcon icon="event_seat" />}
+                      onClick={() => setSeatOpen(true)}
+                    >
+                      {t("action.seat", { seat: seat_code })}
+                    </AssistChip>
+                    <SeatDialog
+                      open={seatOpen}
+                      seat={seat_code}
+                      onClose={() => setSeatOpen(false)}
+                    />
+                  </>
+                )}
+              </ChipSet>
+              {year == currentAcademicYear && (
+                <Text type="label-large" className="pb-2 text-on-background">
+                  <Trans i18nKey="account/certificates:prepare" />
+                </Text>
               )}
-              {seat_code && (
-                <>
-                  <AssistChip
-                    icon={<MaterialIcon icon="event_seat" />}
-                    onClick={() => setSeatOpen(true)}
-                  >
-                    {t("action.seat", { seat: seat_code })}
-                  </AssistChip>
-                  <SeatDialog
-                    open={seatOpen}
-                    seat={seat_code}
-                    onClose={() => setSeatOpen(false)}
-                  />
-                </>
-              )}
-            </ChipSet>
+            </>
           );
         }
       })()}
