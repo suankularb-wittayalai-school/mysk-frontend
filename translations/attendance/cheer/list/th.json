@@ -1,0 +1,13 @@
+{
+  "chip": {
+    "start": {
+      "present": "มา",
+      "late": "สาย",
+      "absent": "ลา"
+    },
+    "end": {
+      "present": "อยู่",
+      "absent": "ไม่อยู่"
+    }
+  }
+}

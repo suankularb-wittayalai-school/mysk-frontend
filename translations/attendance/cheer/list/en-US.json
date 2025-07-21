@@ -1,0 +1,13 @@
+{
+  "chip": {
+    "start": {
+      "present": "P",
+      "late": "L",
+      "absent": "A"
+    },
+    "end": {
+      "present": "P",
+      "absent": "A"
+    }
+  }
+}
