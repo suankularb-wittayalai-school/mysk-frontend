@@ -1,14 +1,17 @@
+import CheerAttendanceEntrycard from "@/components/cheer/CheerAttendanceEntryCard";
 import HomeLayout from "@/components/home/HomeLayout";
 import SubjectList from "@/components/home/SubjectList";
 import BirthdayGlance from "@/components/home/glance/BirthdayGlance";
 import ScheduleGlance from "@/components/home/glance/ScheduleGlance";
 import Schedule from "@/components/schedule/Schedule";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import getCheerStaffs from "@/utils/backend/attendance/cheer/getCheerStaffs";
 import getBirthdayBoysOfClassroom from "@/utils/backend/classroom/getBirthdayBoysOfClassroom";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
 import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSubjectsOfClass";
+import isPracticingCheer from "@/utils/helpers/attendance/cheer/isPracticingCheer";
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
 import useLocale from "@/utils/helpers/useLocale";
 import { BackendReturn } from "@/utils/types/backend";
@@ -48,12 +51,16 @@ const LearnPage: CustomPage<{
   subjectList: ClassroomSubject[];
   inEnrollmentPeriod: boolean;
   isElectiveEligible: boolean;
+  isCheerStaff: boolean;
+  isParticipatingCheer: boolean;
 }> = ({
   birthdayBoys,
   schedule,
   subjectList,
   inEnrollmentPeriod,
   isElectiveEligible,
+  isCheerStaff,
+  isParticipatingCheer,
 }) => {
   const locale = useLocale();
   const { t } = useTranslation();
@@ -116,6 +123,18 @@ const LearnPage: CustomPage<{
             isElectiveEligible={isElectiveEligible}
           />
         </motion.section>
+        <motion.section
+          className="skc-section"
+          layout="position"
+          transition={transition(DURATION.medium4, EASING.standard)}
+        >
+          <Header className="md:col-span-2">{"Activities"}</Header>
+          <Columns columns={3} element="ul">
+            {isParticipatingCheer && (
+              <CheerAttendanceEntrycard isCheerStaff={isCheerStaff} />
+            )}
+          </Columns>
+        </motion.section>
       </LayoutGroup>
     </HomeLayout>
   );
@@ -143,12 +162,14 @@ export const getServerSideProps: GetServerSideProps = async ({
     { data: birthdayBoys },
     { data: schedule },
     { data: subjectList },
+    { data: cheerStaffs },
     { data: inEnrollmentPeriod },
     { data: availableElectives },
   ] = await Promise.all([
     await getBirthdayBoysOfClassroom(supabase, classroom.id),
     await getClassSchedule(supabase, classroom.id),
     await getClassroomSubjectsOfClass(supabase, classroom.id),
+    await getCheerStaffs(supabase),
     await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"),
     await mysk.fetch<IDOnly[]>("/v1/subjects/electives", {
       query: {
@@ -163,6 +184,11 @@ export const getServerSideProps: GetServerSideProps = async ({
   const isElectiveEligible =
     availableElectives !== null && availableElectives.length > 0;
 
+  const isCheerStaff = cheerStaffs?.some(
+    (staff) => staff.student_id == student.id,
+  );
+  const isParticipatingCheer = isCheerStaff || isPracticingCheer(student);
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
@@ -176,6 +202,8 @@ export const getServerSideProps: GetServerSideProps = async ({
       subjectList,
       inEnrollmentPeriod,
       isElectiveEligible,
+      isCheerStaff,
+      isParticipatingCheer,
     },
   };
 };
