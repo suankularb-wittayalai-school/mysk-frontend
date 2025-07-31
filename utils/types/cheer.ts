@@ -4,9 +4,9 @@ import { Classroom } from "@/utils/types/classroom";
 export enum CheerAttendanceType {
   present = "present",
   late = "late",
-  absentWithRemedial = "absent_with_remedial",
-  absentNoRemedial = "absent_no_remedial",
-  missing = "missing",
+  absentWithRemedial = "absent_without_leave",
+  absentNoRemedial = "absent_with_leave",
+  missing = "deserted",
 }
 
 export type CheerAttendanceEvent = "start" | "end";
@@ -26,13 +26,21 @@ export type CheerAttendanceRecord = {
     "id" | "first_name" | "last_name" | "nickname" | "profile" | "class_no"
   >;
   presence: CheerAttendanceType | null;
-  presence_on_end: boolean | null;
+  absence_reason: string | null;
+  presence_at_end:
+    | CheerAttendanceType.present
+    | CheerAttendanceType.missing
+    | null;
 };
 
-export type ClassroomcheerAttendance = Pick<
-  Classroom,
-  "id" | "number" | "main_room" | "class_advisors" | "students"
-> & { cheer_attendance: CheerAttendanceRecord[]; count: number | null };
+export type ClassroomcheerAttendance = {
+  classroom: Pick<
+    Classroom,
+    "id" | "number" | "main_room" | "class_advisors" | "students"
+  >;
+  attendances: CheerAttendanceRecord[];
+  count: number;
+};
 
 export type CheerPracticeSession = CheerPracticePeriod & {
   classrooms: ClassroomcheerAttendance[];
