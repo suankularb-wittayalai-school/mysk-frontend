@@ -1442,6 +1442,9 @@ export type Database = {
           },
         ];
       };
+      cheer_practice_staffs: {
+        Row: { id: string; created_at: string; student_id: string };
+      };
       student_certificates: {
         Row: {
           certificate_detail: string;
