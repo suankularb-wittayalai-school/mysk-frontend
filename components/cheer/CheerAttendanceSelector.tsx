@@ -18,6 +18,7 @@ const CheerAttendanceSelector: StylableFC<{
   ) => void;
 }> = ({ attendance, shownEvent, editable, onChange, style, className }) => {
   const { t } = useTranslation("attendance/cheer/list");
+  
   return (
     <ChipSet style={style} className={className}>
       {shownEvent == "start" && (
@@ -29,7 +30,7 @@ const CheerAttendanceSelector: StylableFC<{
                 {
                   ...attendance,
                   presence: CheerAttendanceType.present,
-                  presence_on_end: true,
+                  presence_at_end: CheerAttendanceType.present,
                 },
                 shownEvent,
               );
@@ -52,7 +53,7 @@ const CheerAttendanceSelector: StylableFC<{
                 {
                   ...attendance,
                   presence: CheerAttendanceType.late,
-                  presence_on_end: true,
+                  presence_at_end: CheerAttendanceType.present,
                 },
                 shownEvent,
               );
@@ -75,7 +76,7 @@ const CheerAttendanceSelector: StylableFC<{
                 {
                   ...attendance,
                   presence: CheerAttendanceType.absentNoRemedial,
-                  presence_on_end: false,
+                  presence_at_end: CheerAttendanceType.missing,
                 },
                 shownEvent,
               );
@@ -105,12 +106,12 @@ const CheerAttendanceSelector: StylableFC<{
                 onChange(
                   {
                     ...attendance,
-                    presence_on_end: true,
+                    presence_at_end: CheerAttendanceType.present,
                   },
                   shownEvent,
                 );
               }}
-              {...(attendance.presence_on_end == true
+              {...(attendance.presence_at_end == CheerAttendanceType.present
                 ? {
                     selected: true,
                     className: cn(`!bg-primary-container
@@ -128,12 +129,12 @@ const CheerAttendanceSelector: StylableFC<{
               onChange(
                 {
                   ...attendance,
-                  presence_on_end: false,
+                  presence_at_end: CheerAttendanceType.missing,
                 },
                 shownEvent,
               );
             }}
-            {...(attendance.presence_on_end == false
+            {...(attendance.presence_at_end == CheerAttendanceType.missing
               ? {
                   selected: true,
                   className: cn(`!bg-secondary-container

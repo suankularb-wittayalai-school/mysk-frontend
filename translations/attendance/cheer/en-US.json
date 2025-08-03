@@ -1,0 +1,12 @@
+{
+  "title": {
+    "student": "Your Cheer Practice Attendance",
+    "staff": "Cheer Practice Attendance"
+  },
+  "header": {
+    "student": "Cheer Practice Attendance",
+    "staff": "Cheer Practice Attendance"
+  },
+  "empty": "No Class Selected",
+  "date": "{{date, date}}"
+}

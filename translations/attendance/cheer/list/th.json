@@ -8,6 +8,21 @@
     "end": {
       "present": "อยู่",
       "absent": "ไม่อยู่"
+    },
+    "absenceType": {
+      "noRemedial": "ลาไม่ต้องชดเชย",
+      "withRemedial": "ลาต้องชดเชย",
+      "missing": "ขาดซ้อม"
     }
-  }
+  },
+  "event": {
+    "start": "เริ่ม",
+    "end": "เลิก"
+  },
+  "enrollment": {
+    "alt": "ลงทะเบียนแล้ว {{count}} คน จาก {{max}} คน",
+    "label": "<0>{{count}}</0>/{{max}}",
+    "progressAlt": "จำนวนนักเรียนที่ลงทะเบียนแล้ว"
+  },
+  "period": "คาบ"
 }
