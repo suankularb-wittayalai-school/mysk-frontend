@@ -25,7 +25,7 @@ import { LayoutGroup, motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { group, sort } from "radash";
+import { group, pick, sort } from "radash";
 import useTranslation from "next-translate/useTranslation";
 import { useEffect, useRef, useState } from "react";
 import CheerGradeSection from "@/components/cheer/CheerGradeSection";
@@ -89,11 +89,16 @@ const DateCheerAttendancePage: CustomPage<{
 
     const fetchData = async () => {
       setLoading(true);
+      let [selectedSession] = cheerSession.filter(
+        (session) => session.id === selectedSessionID,
+      );
+      let [selectedClassroom] = selectedSession.classrooms.filter(
+        (classroom) => classroom.classroom.id === selectedID,
+      );
       try {
         const { data, error } = await getCheerAttendanceOfClass(
-          selectedSessionID,
-          selectedID,
-          mysk,
+          selectedClassroom,
+          pick(selectedSession, ["id", "date", "start_time", "duration"]),
           supabase,
         );
 
