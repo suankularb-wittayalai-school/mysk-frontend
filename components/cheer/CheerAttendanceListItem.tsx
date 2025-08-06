@@ -1,9 +1,6 @@
-import AbsenceTypeSelector from "@/components/attendance/AbsenceTypeSelector";
-import AttendanceSelector from "@/components/attendance/AttendanceSelector";
 import PersonAvatar from "@/components/common/PersonAvatar";
 import WithPersonDetails from "@/components/person/WithPersonDetails";
 import SnackbarContext from "@/contexts/SnackbarContext";
-import upsertAttendance from "@/utils/backend/attendance/upsertAttendance";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
@@ -28,13 +25,12 @@ import {
   TextField,
   transition,
 } from "@suankularb-components/react";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
 import { sift } from "radash";
 import { useContext, useState } from "react";
 import CheerAttendanceSelector from "./CheerAttendanceSelector";
 import CheerAbsenceTypeSelector from "./CheerAbsenceTypeSelector";
+import useTranslation from "next-translate/useTranslation";
 
 /**
  * A List Item for the Attendance page.
@@ -51,12 +47,11 @@ const CheerAttendanceListItem: StylableFC<{
   date: string;
   editable?: boolean;
   onAttendanceChange: (attendance: CheerAttendanceRecord) => void;
-}> = ({ attendance, shownEvent, date, editable, onAttendanceChange }) => {
+}> = ({ attendance, shownEvent, editable, onAttendanceChange }) => {
   const locale = useLocale();
-  const { t } = useTranslation("attendance", { keyPrefix: "item" });
+  const { t } = useTranslation("attendance/cheer/list");
   const { t: tx } = useTranslation("common");
 
-  const supabase = useSupabaseClient();
   const mysk = useMySKClient();
   const { setSnackbar } = useContext(SnackbarContext);
 
@@ -71,17 +66,12 @@ const CheerAttendanceListItem: StylableFC<{
     );
 
   /**
-   * Sets the Attendance of the shown Event. Also sets the Attendance for
-   * Homeroom if the shown Event is Assembly.
-   *
    * @param eventAttendance The Attendance of the shown Event.
    * @param options Options.
    * @param options.noSave Prevents saving the Attendance to the database.
    */
 
   function setAttendanceOfShownEvent(eventAttendance: CheerAttendanceRecord) {
-
-    // Saving to Assembly also saves to Homeroom, as per Sake’s request.
     const newAttendance = eventAttendance;
 
     // Update the Attendance data locally.
@@ -98,21 +88,45 @@ const CheerAttendanceListItem: StylableFC<{
    */
 
   async function handleSave(attendance: CheerAttendanceRecord) {
-    /*  if (!(editable && mysk.person?.role === UserRole.teacher)) return;
+    if (!editable || loading) return;
+
     withLoading(
       async () => {
-        const { error } = await upsertAttendance(
-          supabase,
-          attendance,
-          date,
-          mysk.person!.id,
+        const { error } = await mysk.fetch(
+          `/v1/attendance/cheer/periods/${attendance.practice_period.id}/check`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              data: {
+                is_start: shownEvent === "start" ? true : false,
+                student_id: attendance.student.id,
+                presence:
+                  shownEvent === "start"
+                    ? attendance.presence
+                    : attendance.presence_at_end,
+                ...(shownEvent === "start" &&
+                (attendance.presence == CheerAttendanceType.absentNoRemedial ||
+                  attendance.presence ==
+                    CheerAttendanceType.absentWithRemedial) &&
+                attendance.absence_reason
+                  ? { absence_reason: attendance.absence_reason }
+                  : {}),
+              },
+            }),
+          },
         );
-        if (error) setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
-        return error === null;
+
+        if (error) {
+          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+          return false;
+        }
+
+        return true;
       },
       toggleLoading,
       { hasEndToggle: true },
-    ); */
+    );
   }
 
   return (

@@ -41,7 +41,7 @@ const AttendanceDatePickerDialog: StylableFC<{
   onClose: () => void;
   onSubmit: ({ date }: { date: string }) => void;
 }> = ({ open, view, onClose, onSubmit, style, className }) => {
-  const { t } = useTranslation("attendance/viewSelector/dialog");
+  const { t } = useTranslation("attendance/cheer");
 
   const router = useRouter();
 
@@ -49,15 +49,6 @@ const AttendanceDatePickerDialog: StylableFC<{
     {
       key: "date",
       defaultValue: router.query.date as string,
-      validate: (value: string) =>
-        ({
-          date:
-            YYYYMMDDRegex.test(value) &&
-            !isWeekend(new Date(value)) &&
-            // Converting to UTC here means using the client’s midnight time.
-            !isFuture(toZonedTime(new Date(value), "Etc/UTC")),
-          month: YYYYMMRegex.test(value) && isPast(new Date(value)),
-        })[view],
       required: true,
     },
   ]);
@@ -70,11 +61,11 @@ const AttendanceDatePickerDialog: StylableFC<{
       style={style}
       className={className}
     >
-      <DialogHeader desc={t("date.desc")} />
+      <DialogHeader desc={t("dateDialog.desc")} />
       <DialogContent className="grid gap-6 px-6">
         <TextField
           appearance="outlined"
-          label={t("date.form.date")}
+          label={t("dateDialog.form.date")}
           {...formProps.date}
           inputAttr={
             {
@@ -94,7 +85,7 @@ const AttendanceDatePickerDialog: StylableFC<{
       </DialogContent>
       <Actions>
         <Button appearance="text" onClick={onClose}>
-          {t("date.action.cancel")}
+          {t("dateDialog.action.cancel")}
         </Button>
         <Button
           appearance="text"
@@ -104,7 +95,7 @@ const AttendanceDatePickerDialog: StylableFC<{
             onSubmit(form);
           }}
         >
-          {t("date.action.go")}
+          {t("dateDialog.action.go")}
         </Button>
       </Actions>
     </Dialog>

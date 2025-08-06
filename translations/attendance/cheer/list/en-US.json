@@ -24,5 +24,7 @@
     "label": "<0>{{count}}</0>/{{max}}",
     "progressAlt": "Enrollment progress bar"
   },
-  "period": "Period"
+  "period": "Period",
+  "classNo": "No. {{classNo}}",
+  "enterReason": "Enter reason"
 }

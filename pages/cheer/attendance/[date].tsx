@@ -12,7 +12,7 @@ import {
   CheerPracticeSession,
 } from "@/utils/types/cheer";
 import { Classroom } from "@/utils/types/classroom";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage } from "@/utils/types/common";
 import {
   DURATION,
   EASING,
@@ -23,7 +23,6 @@ import {
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { LayoutGroup, motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { group, pick, sort } from "radash";
 import useTranslation from "next-translate/useTranslation";
@@ -31,7 +30,6 @@ import { useEffect, useRef, useState } from "react";
 import CheerGradeSection from "@/components/cheer/CheerGradeSection";
 import React from "react";
 import getCheerAttendanceOfClass from "@/utils/backend/attendance/getCheerAttendanceOfClass";
-import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import { Breakpoint } from "@/utils/helpers/useBreakpoint";
@@ -42,15 +40,15 @@ const DateCheerAttendancePage: CustomPage<{
 }> = ({ cheerSession, date }) => {
   const { t } = useTranslation("attendance/cheer");
 
-  const mysk = useMySKClient();
   const supabase = useSupabaseClient();
-
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedSessionID, setSelectedSessionID] = useState<string>("");
-
   const cacheRef = useRef<Record<string, CheerAttendanceRecord[]>>({});
   const [attendances, setAttendances] = useState<CheerAttendanceRecord[]>([]);
-  //useEffect(() => setAttendances(initialAttendances), [initialAttendances]);
+  useEffect(() => {
+    setAttendances([]);
+    onSelectedChange(null!);
+  }, [date]);
 
   const allSessionClassrooms = cheerSession.flatMap((s) =>
     s.classrooms.map((r) => r.classroom),
@@ -60,7 +58,6 @@ const DateCheerAttendancePage: CustomPage<{
     selectedID,
     selectedDetail,
     onSelectedChange,
-    refreshDetail,
     detailsOpen,
     onDetailsClose,
   } = useListDetail<Pick<Classroom, "id" | "number" | "main_room">>(
@@ -79,13 +76,14 @@ const DateCheerAttendancePage: CustomPage<{
       return;
     }
 
+    const thisFetchId = ++fetchIdRef.current;
+
     const key = `${selectedSessionID}__${selectedID}`;
     if (cacheRef.current[key]) {
       setAttendances(cacheRef.current[key]!);
+      setLoading(false);
       return;
     }
-
-    const thisFetchId = ++fetchIdRef.current;
 
     const fetchData = async () => {
       setLoading(true);
@@ -118,6 +116,11 @@ const DateCheerAttendancePage: CustomPage<{
 
     fetchData();
   }, [selectedID, selectedSessionID]);
+
+  useEffect(() => {
+    if (!selectedID || !selectedSessionID) return;
+    cacheRef.current[`${selectedSessionID}__${selectedID}`] = attendances;
+  }, [attendances, selectedID, selectedSessionID]);
 
   return (
     <>
@@ -219,7 +222,6 @@ const DateCheerAttendancePage: CustomPage<{
 };
 
 export const getServerSideProps: GetServerSideProps = async ({
-  locale,
   params,
   req,
   res,

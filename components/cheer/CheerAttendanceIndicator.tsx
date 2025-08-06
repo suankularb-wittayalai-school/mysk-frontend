@@ -51,7 +51,7 @@ const CheerAttendanceIndicator: StylableFC<{
         value={(classSize / capSize) * 100}
         visible
         className={cn(
-          `w-10 ![--_remainder-color:transparent] *:!gap-0 *:overflow-hidden [&>*>*:first-child]:z-10 [&>*>*:last-child]:hidden ![--_indicator-color:var(--error)]`,
+          `w-10 ![--_remainder-color:transparent] *:!gap-0 *:overflow-hidden [&>*>*:first-child]:z-10 [&>*>*:last-child]:hidden`,
         )}
       />
     </div>

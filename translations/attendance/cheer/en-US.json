@@ -8,5 +8,15 @@
     "staff": "Cheer Practice Attendance"
   },
   "empty": "No Class Selected",
-  "date": "{{date, date}}"
+  "date": "{{date, date}}",
+  "dateDialog": {
+    "desc": "Enter the date and classroom to go to.",
+    "form": {
+      "date": "Date"
+    },
+    "action": {
+      "cancel": "Cancel",
+      "go": "Go"
+    }
+  }
 }
