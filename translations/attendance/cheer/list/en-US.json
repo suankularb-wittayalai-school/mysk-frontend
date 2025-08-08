@@ -1,4 +1,6 @@
 {
+  "date": "{{date, dateshort}}",
+  "period": "Period {{start}} - {{end}}",
   "chip": {
     "start": {
       "present": "P",
@@ -14,5 +16,10 @@
       "withRemedial": "Remedial Practice",
       "missing": "Missing"
     }
+  },
+  "enterReason": "Enter Reason",
+  "event": {
+    "start": "Start",
+    "end": "End"
   }
 }

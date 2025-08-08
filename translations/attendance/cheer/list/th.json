@@ -1,4 +1,6 @@
 {
+  "date": "{{date, dateshort}}",
+  "period": "คาบ {{start}} - {{end}}",
   "chip": {
     "start": {
       "present": "มา",
@@ -14,5 +16,10 @@
       "withRemedial": "ลาต้องชดเชย",
       "missing": "ขาดซ้อม"
     }
+  },
+  "enterReason": "ระบุเหตุผล",
+  "event": {
+    "start": "เรื่ม",
+    "end": "เลิก"
   }
 }
