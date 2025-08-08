@@ -1,4 +1,5 @@
 import cn from "@/utils/helpers/cn";
+import useLocale from "@/utils/helpers/useLocale";
 import {
   CheerAttendanceEvent,
   CheerAttendanceRecord,
@@ -18,7 +19,19 @@ const CheerAttendanceSelector: StylableFC<{
   ) => void;
 }> = ({ attendance, shownEvent, editable, onChange, style, className }) => {
   const { t } = useTranslation("attendance/cheer/list");
-  
+  const locale = useLocale();
+  function isAbsent(attendance: CheerAttendanceType | null): boolean {
+    if (
+      attendance == CheerAttendanceType.absentNoRemedial ||
+      attendance == CheerAttendanceType.absentWithRemedial ||
+      attendance == CheerAttendanceType.missing
+    ) {
+      return true;
+    }
+    // null is counted as not bsent
+    return false;
+  }
+
   return (
     <ChipSet style={style} className={className}>
       {shownEvent == "start" && (
@@ -26,14 +39,6 @@ const CheerAttendanceSelector: StylableFC<{
           <InputChip
             onClick={() => {
               if (!editable) return;
-              onChange(
-                {
-                  ...attendance,
-                  presence: CheerAttendanceType.present,
-                  presence_at_end: CheerAttendanceType.present,
-                },
-                shownEvent,
-              );
             }}
             {...(attendance.presence === CheerAttendanceType.present
               ? {
@@ -49,14 +54,6 @@ const CheerAttendanceSelector: StylableFC<{
           <InputChip
             onClick={() => {
               if (!editable) return;
-              onChange(
-                {
-                  ...attendance,
-                  presence: CheerAttendanceType.late,
-                  presence_at_end: CheerAttendanceType.present,
-                },
-                shownEvent,
-              );
             }}
             {...(attendance.presence == CheerAttendanceType.late
               ? {
@@ -72,18 +69,8 @@ const CheerAttendanceSelector: StylableFC<{
           <InputChip
             onClick={() => {
               if (!editable) return;
-              onChange(
-                {
-                  ...attendance,
-                  presence: CheerAttendanceType.absentNoRemedial,
-                  presence_at_end: CheerAttendanceType.missing,
-                },
-                shownEvent,
-              );
             }}
-            {...(attendance.presence == CheerAttendanceType.absentNoRemedial ||
-            attendance.presence == CheerAttendanceType.absentWithRemedial ||
-            attendance.presence == CheerAttendanceType.missing
+            {...(isAbsent(attendance.presence)
               ? {
                   selected: true,
                   className: cn(`!bg-secondary-container
@@ -98,18 +85,10 @@ const CheerAttendanceSelector: StylableFC<{
       )}
       {shownEvent == "end" && (
         <>
-          {(attendance.presence == CheerAttendanceType.present ||
-            attendance.presence == CheerAttendanceType.late) && (
+          {!isAbsent(attendance.presence) && (
             <InputChip
               onClick={() => {
                 if (!editable) return;
-                onChange(
-                  {
-                    ...attendance,
-                    presence_at_end: CheerAttendanceType.present,
-                  },
-                  shownEvent,
-                );
               }}
               {...(attendance.presence_at_end == CheerAttendanceType.present
                 ? {
@@ -126,20 +105,18 @@ const CheerAttendanceSelector: StylableFC<{
           <InputChip
             onClick={() => {
               if (!editable) return;
-              onChange(
-                {
-                  ...attendance,
-                  presence_at_end: CheerAttendanceType.missing,
-                },
-                shownEvent,
-              );
             }}
-            {...(attendance.presence_at_end == CheerAttendanceType.missing
+            {...(isAbsent(attendance.presence_at_end)
               ? {
                   selected: true,
                   className: cn(`!bg-secondary-container
                   !text-on-secondary-container
                   state-layer:!bg-on-secondary-container`),
+                }
+              : null)}
+            {...(isAbsent(attendance.presence)
+              ? {
+                  className: locale == "en-US" ? "w-[73px]" : "w-[101px]",
                 }
               : null)}
           >

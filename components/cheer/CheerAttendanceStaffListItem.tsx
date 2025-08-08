@@ -41,7 +41,7 @@ import useTranslation from "next-translate/useTranslation";
  * @param editable Whether the Attendance is editable.
  * @param onAttendanceChange Callback when the Attendance is changed.
  */
-const CheerAttendanceListItem: StylableFC<{
+const CheerAttendanceStaffListItem: StylableFC<{
   attendance: CheerAttendanceRecord;
   shownEvent: CheerAttendanceEvent;
   editable?: boolean;
@@ -227,4 +227,4 @@ const CheerAttendanceListItem: StylableFC<{
   );
 };
 
-export default CheerAttendanceListItem;
+export default CheerAttendanceStaffListItem;

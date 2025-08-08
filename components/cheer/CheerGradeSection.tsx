@@ -25,7 +25,7 @@ import CheerLookupClassCard from "./CheerLookupClassCard";
  * @param expandedByDefault Whether this section should be expanded by default.
  * @param titleOverride The title to show instead of the grade.
  */
-const GradeSection: StylableFC<{
+const CheerGradeSection: StylableFC<{
   grade?: string;
   classrooms: Pick<Classroom, "id" | "number" | "main_room" | "class_advisors" | "students">[];
   period: string;
@@ -129,4 +129,4 @@ const GradeSection: StylableFC<{
   );
 };
 
-export default GradeSection;
+export default CheerGradeSection;

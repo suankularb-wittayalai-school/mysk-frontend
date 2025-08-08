@@ -15,7 +15,7 @@ import {
 import cn from "@/utils/helpers/cn";
 import { replace } from "radash";
 import useTranslation from "next-translate/useTranslation";
-import CheerAttendanceListItem from "./CheerAttendanceListItem";
+import CheerAttendanceListItem from "./CheerAttendanceStaffListItem";
 
 const CheerAttendanceCard: StylableFC<{
   classroom: Pick<Classroom, "id" | "number" | "main_room"> | null;

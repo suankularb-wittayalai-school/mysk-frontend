@@ -24,7 +24,7 @@ import CheerAttendenceIndicator from "./CheerAttendanceIndicator";
  * @param selected If this Classroom is currently selected.
  * @param onClick The function to call when the card is clicked. Should select this Classroom.
  */
-const LookupClassCard: StylableFC<{
+const CheerLookupClassCard: StylableFC<{
   classroom: Pick<
     Classroom,
     "id" | "number" | "main_room" | "class_advisors" | "students"
@@ -100,4 +100,4 @@ const LookupClassCard: StylableFC<{
   );
 };
 
-export default LookupClassCard;
+export default CheerLookupClassCard;
