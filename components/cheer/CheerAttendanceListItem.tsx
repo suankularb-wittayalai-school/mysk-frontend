@@ -44,10 +44,18 @@ import useTranslation from "next-translate/useTranslation";
 const CheerAttendanceListItem: StylableFC<{
   attendance: CheerAttendanceRecord;
   shownEvent: CheerAttendanceEvent;
-  date: string;
   editable?: boolean;
+  saving: boolean;
+  setSaving: React.Dispatch<React.SetStateAction<boolean>>;
   onAttendanceChange: (attendance: CheerAttendanceRecord) => void;
-}> = ({ attendance, shownEvent, editable, onAttendanceChange }) => {
+}> = ({
+  attendance,
+  shownEvent,
+  editable,
+  saving,
+  setSaving,
+  onAttendanceChange,
+}) => {
   const locale = useLocale();
   const { t } = useTranslation("attendance/cheer/list");
   const { t: tx } = useTranslation("common");
@@ -55,7 +63,7 @@ const CheerAttendanceListItem: StylableFC<{
   const mysk = useMySKClient();
   const { setSnackbar } = useContext(SnackbarContext);
 
-  const [loading, toggleLoading] = useToggle();
+  const [loading, setLoading] = useState(false);
   const [studentOpen, setStudentOpen] = useState(false);
 
   const ShowAbsenceTypeSelector =
@@ -71,14 +79,20 @@ const CheerAttendanceListItem: StylableFC<{
    * @param options.noSave Prevents saving the Attendance to the database.
    */
 
-  function setAttendanceOfShownEvent(eventAttendance: CheerAttendanceRecord) {
-    const newAttendance = eventAttendance;
+  async function setAttendanceOfShownEvent(
+    eventAttendance: CheerAttendanceRecord,
+  ) {
+    if (saving || !editable) return;
 
-    // Update the Attendance data locally.
-    onAttendanceChange(newAttendance);
+    setLoading(true);
+    setSaving(true);
+    const success = await handleSave(eventAttendance);
+    setLoading(false);
+    setSaving(false);
 
-    // Save the Attendance to the database
-    handleSave(newAttendance);
+    if (success) {
+      onAttendanceChange(eventAttendance); // only update after server OK
+    }
   }
 
   /**
@@ -87,46 +101,41 @@ const CheerAttendanceListItem: StylableFC<{
    * @param attendance The Attendance to save.
    */
 
-  async function handleSave(attendance: CheerAttendanceRecord) {
-    if (!editable || loading) return;
+  async function handleSave(
+    attendance: CheerAttendanceRecord,
+  ): Promise<boolean> {
+    if (!editable) return false;
 
-    withLoading(
-      async () => {
-        const { error } = await mysk.fetch(
-          `/v1/attendance/cheer/periods/${attendance.practice_period.id}/check`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              data: {
-                is_start: shownEvent === "start" ? true : false,
-                student_id: attendance.student.id,
-                presence:
-                  shownEvent === "start"
-                    ? attendance.presence
-                    : attendance.presence_at_end,
-                ...(shownEvent === "start" &&
-                (attendance.presence == CheerAttendanceType.absentNoRemedial ||
-                  attendance.presence ==
-                    CheerAttendanceType.absentWithRemedial) &&
-                attendance.absence_reason
-                  ? { absence_reason: attendance.absence_reason }
-                  : {}),
-              },
-            }),
+    const { error } = await mysk.fetch(
+      `/v1/attendance/cheer/periods/${attendance.practice_period.id}/check`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data: {
+            is_start: shownEvent === "start",
+            student_id: attendance.student.id,
+            presence:
+              shownEvent === "start"
+                ? attendance.presence
+                : attendance.presence_at_end,
+            ...(shownEvent === "start" &&
+            (attendance.presence == CheerAttendanceType.absentNoRemedial ||
+              attendance.presence == CheerAttendanceType.absentWithRemedial) &&
+            attendance.absence_reason
+              ? { absence_reason: attendance.absence_reason }
+              : {}),
           },
-        );
-
-        if (error) {
-          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
-          return false;
-        }
-
-        return true;
+        }),
       },
-      toggleLoading,
-      { hasEndToggle: true },
     );
+
+    if (error) {
+      setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+      return false;
+    }
+
+    return true;
   }
 
   return (

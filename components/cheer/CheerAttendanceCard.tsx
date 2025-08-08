@@ -23,13 +23,10 @@ const CheerAttendanceCard: StylableFC<{
   date: string;
   onAttendancesChange: (attendances: CheerAttendanceRecord[]) => void;
   loading: boolean;
-}> = ({ classroom, attendances, date, onAttendancesChange, loading }) => {
+}> = ({ classroom, attendances, onAttendancesChange, loading }) => {
   const { t: tx } = useTranslation("common");
-
   const [event, setEvent] = useState<CheerAttendanceEvent>("start");
-
-  const editable = true;
-
+  const [saving,setSaving] = useState<boolean>(false)
   return (
     <LookupDetailsCard>
       {classroom && (
@@ -68,8 +65,9 @@ const CheerAttendanceCard: StylableFC<{
             key={attendance.student.id}
             attendance={attendance}
             shownEvent={event}
-            date={date}
-            editable={editable && !loading}
+            editable={!loading}
+            saving={saving}
+            setSaving={setSaving}
             onAttendanceChange={(attendance) =>
               onAttendancesChange(
                 replace(
