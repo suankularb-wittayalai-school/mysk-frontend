@@ -75,15 +75,13 @@ const DateCheerAttendancePage: CustomPage<{
       setAttendances([]);
       return;
     }
-
-    const thisFetchId = ++fetchIdRef.current;
-
     const key = `${selectedSessionID}__${selectedID}`;
     if (cacheRef.current[key]) {
       setAttendances(cacheRef.current[key]!);
       setLoading(false);
       return;
     }
+    const thisFetchId = ++fetchIdRef.current;
 
     const fetchData = async () => {
       setLoading(true);
