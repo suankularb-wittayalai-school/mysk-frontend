@@ -11,7 +11,6 @@ import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
 import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSubjectsOfClass";
-import isPracticingCheer from "@/utils/helpers/attendance/cheer/isPracticingCheer";
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
 import useLocale from "@/utils/helpers/useLocale";
 import { BackendReturn } from "@/utils/types/backend";
@@ -52,7 +51,6 @@ const LearnPage: CustomPage<{
   inEnrollmentPeriod: boolean;
   isElectiveEligible: boolean;
   isCheerStaff: boolean;
-  isParticipatingCheer: boolean;
 }> = ({
   birthdayBoys,
   schedule,
@@ -60,7 +58,6 @@ const LearnPage: CustomPage<{
   inEnrollmentPeriod,
   isElectiveEligible,
   isCheerStaff,
-  isParticipatingCheer,
 }) => {
   const locale = useLocale();
   const { t } = useTranslation();
@@ -130,9 +127,7 @@ const LearnPage: CustomPage<{
         >
           <Header className="md:col-span-2">{"Activities"}</Header>
           <Columns columns={3} element="ul">
-            {isParticipatingCheer && (
-              <CheerAttendanceEntrycard isCheerStaff={isCheerStaff} />
-            )}
+            <CheerAttendanceEntrycard isCheerStaff={isCheerStaff} />
           </Columns>
         </motion.section>
       </LayoutGroup>
@@ -187,7 +182,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   const isCheerStaff = cheerStaffs?.some(
     (staff) => staff.student_id == student.id,
   );
-  const isParticipatingCheer = isCheerStaff || isPracticingCheer(student);
 
   return {
     props: {
@@ -203,7 +197,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       inEnrollmentPeriod,
       isElectiveEligible,
       isCheerStaff,
-      isParticipatingCheer,
     },
   };
 };

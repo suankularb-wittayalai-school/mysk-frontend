@@ -9,7 +9,6 @@ import { MySKClient } from "@/utils/types/fetch";
 import { Student, User, UserPermissionKey } from "@/utils/types/person";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
-import isPracticingCheer from "@/utils/helpers/attendance/cheer/isPracticingCheer";
 
 /**
  * The middleware is run before a request is completed.
@@ -43,10 +42,10 @@ export async function middleware(req: NextRequest) {
   const pageRole = (() => {
     if (route === "/") return "public";
     else if (route.startsWith("/admin")) return "admin";
-    else if (route.startsWith("/learn")) return "student";
+    // Every student can access /cheer
+    else if (route.startsWith("/learn") || route === "/cheer") return "student";
     else if (route.startsWith("/teach")) return "teacher";
     else if (route.startsWith("/manage")) return "management";
-    else if (route.startsWith("/cheer")) return "cheer";
     else return "user";
   })();
 
@@ -107,10 +106,7 @@ export async function middleware(req: NextRequest) {
         // Allow all users to visit user pages
         pageRole === "user" ||
         // Allow users with the correct roles
-        pageRole === user?.role ||
-        // Allow Students who practice cheer to visit 
-        // cheer praactice attendance view page
-        (route === "/cheer" && isPracticingCheer(student))
+        pageRole === user?.role
       )
     ) 
       return user?.role ? getHomeURLofRole(user.role) : "/";
