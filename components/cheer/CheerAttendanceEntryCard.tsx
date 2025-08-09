@@ -9,6 +9,7 @@ import {
 import cn from "@/utils/helpers/cn";
 import Link from "next/link";
 import useTranslation from "next-translate/useTranslation";
+import getISODateString from "@/utils/helpers/getISODateString";
 
 const CheerAttendanceEntrycard: StylableFC<{ isCheerStaff: boolean }> = ({
   isCheerStaff,
@@ -28,7 +29,11 @@ const CheerAttendanceEntrycard: StylableFC<{ isCheerStaff: boolean }> = ({
         <Actions className="!-mt-2.5">
           <Button
             appearance="filled"
-            href={isCheerStaff ? "/cheer/attendance" : "/cheer"}
+            href={
+              isCheerStaff
+                ? `/cheer/aacdeennt/${getISODateString(new Date())}`
+                : "/cheer"
+            }
             element={Link}
           >
             {isCheerStaff ? t("action.edit") : t("action.view")}
