@@ -31,12 +31,7 @@ const CheerPage: CustomPage<{
       </Head>
       <PageHeader parentURL="/learn">{t("header.student")}</PageHeader>
       <ContentLayout className="*:lg:!items-center">
-        <Columns
-          columns={2}
-          className={cn(
-            `!grid-cols-1 md:!grid-cols-2 lg:w-[calc((10/12*100%)-3rem)]`,
-          )} // 10 out of 12 columns; 2 gutters
-        >
+        <div className={cn(`lg:w-[calc((10/12*100%)-3rem)]`)}>
           <div
             className={cn(
               `md:h-[calc(100dvh-12rem-2px)] md:overflow-auto md:rounded-lg md:border-1 md:border-outline-variant md:bg-surface-container-high [&>:first-child]:top-0 [&>:first-child]:z-10 [&>:first-child]:sm:sticky [&>:first-child]:sm:bg-surface`,
@@ -45,7 +40,7 @@ const CheerPage: CustomPage<{
             <CheerAttendanceEventTabs
               event={event}
               onEventChange={setEvent}
-              className="!h-fit"
+              className="!h-fit !max-w-none"
             />
             <List
               className={cn(
@@ -61,7 +56,7 @@ const CheerPage: CustomPage<{
               ))}
             </List>
           </div>
-        </Columns>
+        </div>
       </ContentLayout>
     </>
   );
