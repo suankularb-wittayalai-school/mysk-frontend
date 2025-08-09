@@ -7,6 +7,9 @@ export enum CheerAttendanceType {
   absentWithRemedial = "absent_without_leave",
   absentNoRemedial = "absent_with_leave",
   missing = "deserted",
+  absentWithRemedial = "absent_without_leave",
+  absentNoRemedial = "absent_with_leave",
+  missing = "deserted",
 }
 
 export type CheerAttendanceEvent = "start" | "end";
@@ -26,6 +29,11 @@ export type CheerAttendanceRecord = {
     "id" | "first_name" | "last_name" | "nickname" | "profile" | "class_no"
   >;
   presence: CheerAttendanceType | null;
+  absence_reason: string | null;
+  presence_at_end:
+    | CheerAttendanceType.present
+    | CheerAttendanceType.missing
+    | null;
   absence_reason: string | null;
   presence_at_end:
     | CheerAttendanceType.present

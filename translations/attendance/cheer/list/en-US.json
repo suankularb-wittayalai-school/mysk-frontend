@@ -1,4 +1,6 @@
 {
+  "date": "{{date, dateshort}}",
+  "period": "Period {{start}} - {{end}}",
   "chip": {
     "start": {
       "present": "P",
@@ -8,6 +10,11 @@
     "end": {
       "present": "P",
       "absent": "A"
+    },
+    "absenceType": {
+      "noRemedial": "No Remedial Practice",
+      "withRemedial": "Remedial Practice",
+      "missing": "Missing"
     },
     "absenceType": {
       "noRemedial": "No Remedial Practice",

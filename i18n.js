@@ -41,6 +41,7 @@ module.exports = {
       "home/glance/schedule",
       "home/glance/scheduleInaccurate",
       "home/subjectList",
+      "home/activityList",
     ],
     "/teach": ["home/classroomSubjectDialog", "home/subjectClassesDialog"],
     // Schedule

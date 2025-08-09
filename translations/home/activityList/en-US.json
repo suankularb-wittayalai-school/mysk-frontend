@@ -1,0 +1,4 @@
+{
+  "title": "Cheer Practice Attendance",
+  "action": { "view": "View attendance", "edit": "Take Attendance" }
+}

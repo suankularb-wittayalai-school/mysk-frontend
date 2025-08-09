@@ -1,4 +1,6 @@
 {
+  "date": "{{date, dateshort}}",
+  "period": "คาบ {{start}} - {{end}}",
   "chip": {
     "start": {
       "present": "มา",
@@ -8,6 +10,11 @@
     "end": {
       "present": "อยู่",
       "absent": "ไม่อยู่"
+    },
+    "absenceType": {
+      "noRemedial": "ลาไม่ต้องชดเชย",
+      "withRemedial": "ลาต้องชดเชย",
+      "missing": "ขาดซ้อม"
     },
     "absenceType": {
       "noRemedial": "ลาไม่ต้องชดเชย",

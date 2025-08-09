@@ -42,7 +42,8 @@ export async function middleware(req: NextRequest) {
   const pageRole = (() => {
     if (route === "/") return "public";
     else if (route.startsWith("/admin")) return "admin";
-    else if (route.startsWith("/learn")) return "student";
+    // Every student can access /cheer
+    else if (route.startsWith("/learn") || route === "/cheer") return "student";
     else if (route.startsWith("/teach")) return "teacher";
     else if (route.startsWith("/manage")) return "management";
     else return "user";
@@ -109,7 +110,6 @@ export async function middleware(req: NextRequest) {
       )
     ) 
       return user?.role ? getHomeURLofRole(user.role) : "/";
-
     // Disallow Students from visiting pages of other Classrooms
     const ownClassroomURL = student?.classroom
       ? `/classes/${student.classroom.number}`
@@ -153,5 +153,6 @@ export const config = {
     "/news",
     "/admin/:path*",
     "/maintenance",
+    "/cheer/:path*",
   ],
 };
