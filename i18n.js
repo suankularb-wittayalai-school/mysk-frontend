@@ -136,6 +136,7 @@ module.exports = {
     ],
     "/teach/electives/[id]/print": ["elective/print", "classes/print"],
     // Cheer
+    "/cheer": ["attendance/cheer", "attendance/cheer/list"],
     "/cheer/attendance/[date]": [
       "attendance/cheer",
       "attendance/cheer/list",

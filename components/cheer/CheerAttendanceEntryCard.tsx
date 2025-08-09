@@ -31,7 +31,7 @@ const CheerAttendanceEntryCard: StylableFC<{ isCheerStaff: boolean }> = ({
             appearance="filled"
             href={
               isCheerStaff
-                ? `/cheer/aacdeennt/${getISODateString(new Date())}`
+                ? `/cheer/attendance/${getISODateString(new Date())}`
                 : "/cheer"
             }
             element={Link}

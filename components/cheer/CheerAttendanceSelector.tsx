@@ -1,6 +1,5 @@
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
-import useLocale from "@/utils/helpers/useLocale";
 import {
   CheerAttendanceEvent,
   CheerAttendanceRecord,
@@ -20,19 +19,6 @@ const CheerAttendanceSelector: StylableFC<{
   ) => void;
 }> = ({ attendance, shownEvent, editable, onChange, style, className }) => {
   const { t } = useTranslation("attendance/cheer/list");
-  const locale = useLocale();
-  function isAbsent(attendance: CheerAttendanceType | null): boolean {
-    if (
-      attendance == CheerAttendanceType.absentNoRemedial ||
-      attendance == CheerAttendanceType.absentWithRemedial ||
-      attendance == CheerAttendanceType.missing
-    ) {
-      return true;
-    }
-    // null is counted as not bsent
-    return false;
-  }
-
   const locale = useLocale();
   function isAbsent(attendance: CheerAttendanceType | null): boolean {
     if (
@@ -106,7 +92,6 @@ const CheerAttendanceSelector: StylableFC<{
               );
             }}
             {...(isAbsent(attendance.presence)
-            {...(isAbsent(attendance.presence)
               ? {
                   selected: true,
                   className: cn(`!bg-secondary-container
@@ -122,7 +107,6 @@ const CheerAttendanceSelector: StylableFC<{
       {shownEvent == "end" && (
         <>
           {!isAbsent(attendance.presence) && (
-          {!isAbsent(attendance.presence) && (
             <InputChip
               onClick={() => {
                 if (!editable) return;
@@ -134,7 +118,6 @@ const CheerAttendanceSelector: StylableFC<{
                   shownEvent,
                 );
               }}
-              {...(attendance.presence_at_end == CheerAttendanceType.present
               {...(attendance.presence_at_end == CheerAttendanceType.present
                 ? {
                     selected: true,
@@ -150,7 +133,7 @@ const CheerAttendanceSelector: StylableFC<{
           <InputChip
             onClick={() => {
               if (!editable) return;
-                            onChange(
+              onChange(
                 {
                   ...attendance,
                   presence_at_end: CheerAttendanceType.missing,
@@ -159,17 +142,11 @@ const CheerAttendanceSelector: StylableFC<{
               );
             }}
             {...(isAbsent(attendance.presence_at_end)
-            {...(isAbsent(attendance.presence_at_end)
               ? {
                   selected: true,
                   className: cn(`!bg-secondary-container
                   !text-on-secondary-container
                   state-layer:!bg-on-secondary-container`),
-                }
-              : null)}
-            {...(isAbsent(attendance.presence)
-              ? {
-                  className: locale == "en-US" ? "w-[73px]" : "w-[101px]",
                 }
               : null)}
             {...(isAbsent(attendance.presence)
