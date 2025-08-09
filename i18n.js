@@ -41,6 +41,7 @@ module.exports = {
       "home/glance/schedule",
       "home/glance/scheduleInaccurate",
       "home/subjectList",
+      "home/activityList",
     ],
     "/teach": ["home/classroomSubjectDialog", "home/subjectClassesDialog"],
     // Schedule
@@ -134,6 +135,7 @@ module.exports = {
       "elective/dialog/requirements",
     ],
     "/teach/electives/[id]/print": ["elective/print", "classes/print"],
+    "/cheer": ["attendance/cheer", "attendance/cheer/list"],
   },
   logBuild: false,
   interpolation: {
