@@ -1,4 +1,4 @@
-import CheerAttendanceEntrycard from "@/components/cheer/CheerAttendanceEntryCard";
+import CheerAttendanceEntryCard from "@/components/cheer/CheerAttendanceEntryCard";
 import HomeLayout from "@/components/home/HomeLayout";
 import SubjectList from "@/components/home/SubjectList";
 import BirthdayGlance from "@/components/home/glance/BirthdayGlance";
@@ -127,7 +127,7 @@ const LearnPage: CustomPage<{
         >
           <Header className="md:col-span-2">{"Activities"}</Header>
           <Columns columns={3} element="ul">
-            <CheerAttendanceEntrycard isCheerStaff={isCheerStaff} />
+            <CheerAttendanceEntryCard isCheerStaff={isCheerStaff} />
           </Columns>
         </motion.section>
       </LayoutGroup>

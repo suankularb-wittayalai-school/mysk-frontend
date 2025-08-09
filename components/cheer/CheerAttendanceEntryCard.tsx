@@ -11,7 +11,7 @@ import Link from "next/link";
 import useTranslation from "next-translate/useTranslation";
 import getISODateString from "@/utils/helpers/getISODateString";
 
-const CheerAttendanceEntrycard: StylableFC<{ isCheerStaff: boolean }> = ({
+const CheerAttendanceEntryCard: StylableFC<{ isCheerStaff: boolean }> = ({
   isCheerStaff,
   style,
   className,
@@ -44,4 +44,4 @@ const CheerAttendanceEntrycard: StylableFC<{ isCheerStaff: boolean }> = ({
   );
 };
 
-export default CheerAttendanceEntrycard;
+export default CheerAttendanceEntryCard;
