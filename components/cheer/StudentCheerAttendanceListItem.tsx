@@ -1,8 +1,11 @@
 import { FC } from "react";
 import {
+  DURATION,
+  EASING,
   ListItem,
   ListItemContent,
   TextField,
+  transition,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
 import {
@@ -20,7 +23,10 @@ const StudentCheerAttendanceListItem: FC<{
 }> = ({ attendance, event }) => {
   const { t } = useTranslation("attendance/cheer/list");
   return (
-    <motion.li layoutId={attendance.id}>
+    <motion.li
+      layoutId={attendance.id}
+      transition={transition(DURATION.medium2, EASING.standard)}
+    >
       <motion.ul layout="position" className={"grid w-full py-1"}>
         <ListItem
           align="center"
