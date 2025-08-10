@@ -200,7 +200,7 @@ const DateCheerAttendancePage: CustomPage<{
                 element="p"
                 className="text-center text-on-surface-variant"
               >
-                {t("empty")}
+                {t("empty.staff")}
               </Text>
             </div>
           )}

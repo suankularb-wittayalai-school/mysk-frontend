@@ -7,7 +7,10 @@
     "student": "Cheer Practice Attendance",
     "staff": "Cheer Practice Attendance"
   },
-  "empty": "No Class Selected",
+  "empty": {
+    "student": "No Attendance Record Found",
+    "staff": "No Class Selected"
+  },
   "date": "{{date, date}}",
   "dateDialog": {
     "desc": "Enter the date and classroom to go to.",

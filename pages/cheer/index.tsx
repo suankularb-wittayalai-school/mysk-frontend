@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { CustomPage } from "@/utils/types/common";
 import PageHeader from "@/components/common/PageHeader";
-import { ContentLayout, List } from "@suankularb-components/react";
+import { ContentLayout, List, Text } from "@suankularb-components/react";
 import CheerAttendanceEventTabs from "@/components/cheer/CheerAttendanceEventTabs";
 import StudentCheerAttendanceListItem from "@/components/cheer/StudentCheerAttendanceListItem";
 import cn from "@/utils/helpers/cn";
@@ -34,7 +34,8 @@ const CheerPage: CustomPage<{
         <div className={cn(`lg:w-[calc((10/12*100%)-3rem)]`)}>
           <div
             className={cn(
-              `md:h-[calc(100dvh-12rem-2px)] md:overflow-auto md:rounded-lg md:border-1 md:border-outline-variant md:bg-surface-container-high [&>:first-child]:top-0 [&>:first-child]:z-10 [&>:first-child]:sm:sticky [&>:first-child]:sm:bg-surface`,
+              `flex flex-col md:h-[calc(100dvh-12rem-2px)] md:overflow-auto md:rounded-lg md:border-1 md:border-outline-variant md:bg-surface-container-high [&>:first-child]:top-0 [&>:first-child]:z-10 [&>:first-child]:sm:sticky [&>:first-child]:sm:bg-surface`,
+              attendances.length == 0 && "h-screen",
             )}
           >
             <CheerAttendanceEventTabs
@@ -42,19 +43,32 @@ const CheerPage: CustomPage<{
               onEventChange={setEvent}
               className="!h-fit !max-w-none"
             />
-            <List
-              className={cn(
-                `!mt-1 *:bg-surface sm:!-mx-4 md:!m-0 md:space-y-1 md:!p-2 *:md:rounded-md`,
-              )}
-            >
-              {attendances?.map((attendance) => (
-                <StudentCheerAttendanceListItem
-                  key={attendance.id}
-                  attendance={attendance}
-                  event={event}
-                />
-              ))}
-            </List>
+            {attendances.length == 0 && (
+              <div className="m-auto grid place-content-center">
+                <Text
+                  type="body-medium"
+                  element="p"
+                  className="text-center text-on-surface-variant"
+                >
+                  {t("empty.student")}
+                </Text>
+              </div>
+            )}
+            {attendances.length > 0 && (
+              <List
+                className={cn(
+                  `!mt-1 *:bg-surface sm:!-mx-4 md:!m-0 md:space-y-1 md:!p-2 *:md:rounded-md`,
+                )}
+              >
+                {attendances.map((attendance) => (
+                  <StudentCheerAttendanceListItem
+                    key={attendance.id}
+                    attendance={attendance}
+                    event={event}
+                  />
+                ))}
+              </List>
+            )}
           </div>
         </div>
       </ContentLayout>

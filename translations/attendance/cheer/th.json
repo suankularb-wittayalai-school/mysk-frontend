@@ -7,7 +7,10 @@
     "student": "การเช็กชื่อซ้อมเชียร์",
     "staff": "การเช็กชื่อซ้อมเชียร์"
   },
-  "empty": "ไม่ได้เลือกชั้นเรียน",
+  "empty": {
+    "student": "ไม่พบข้อมูลการเช็กชื่อ",
+    "staff": "ไม่ได้เลือกชั้นเรียน"
+  },
   "date": "{{date, date}}",
   "dateDialog": {
     "desc": "Enter the date and classroom to go to.",
