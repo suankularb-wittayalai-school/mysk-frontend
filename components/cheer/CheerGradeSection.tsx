@@ -13,7 +13,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import useTranslation from "next-translate/useTranslation";
 import { usePlausible } from "next-plausible";
 import { useEffect, useState } from "react";
-import CheerLookupClassCard from "./CheerLookupClassCard";
+import CheerLookupClassCard from "@/components/cheer/CheerLookupClassCard";
 
 /**
  * A section of the Lookup Classes list that shows all Classrooms in a grade.
@@ -27,7 +27,10 @@ import CheerLookupClassCard from "./CheerLookupClassCard";
  */
 const CheerGradeSection: StylableFC<{
   grade?: string;
-  classrooms: Pick<Classroom, "id" | "number" | "main_room" | "class_advisors" | "students">[];
+  classrooms: Pick<
+    Classroom,
+    "id" | "number" | "main_room" | "class_advisors" | "students"
+  >[];
   period: string;
   count: number[];
   selectedID: string | null;
@@ -94,7 +97,7 @@ const CheerGradeSection: StylableFC<{
         </Text>
         <Text
           type="body-medium"
-          className="!col-start-2 !flex !flex-grow !-mt-1 !text-on-surface"
+          className="!col-start-2 !-mt-1 !flex !flex-grow !text-on-surface"
         >
           {t("period") + " " + period}
         </Text>

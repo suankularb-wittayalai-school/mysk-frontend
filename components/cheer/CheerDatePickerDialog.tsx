@@ -2,12 +2,9 @@ import {
   AttendanceView,
   SelectorType,
 } from "@/components/attendance/AttendanceViewSelector";
-import SnackbarContext from "@/contexts/SnackbarContext";
-import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import getISODateString from "@/utils/helpers/getISODateString";
 import lastWeekday from "@/utils/helpers/lastWeekday";
 import useForm from "@/utils/helpers/useForm";
-import { YYYYMMDDRegex, YYYYMMRegex, classRegex } from "@/utils/patterns";
 import { StylableFC } from "@/utils/types/common";
 import {
   Actions,
@@ -15,15 +12,10 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
-  Snackbar,
   TextField,
 } from "@suankularb-components/react";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { isFuture, isPast, isWeekend } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import { useContext, useState } from "react";
 
 /**
  * A Dialog for selecting a date to jump to in the Attendance pages.

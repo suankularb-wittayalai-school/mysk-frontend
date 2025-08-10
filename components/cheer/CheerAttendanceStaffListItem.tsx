@@ -6,8 +6,6 @@ import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
-import useToggle from "@/utils/helpers/useToggle";
-import withLoading from "@/utils/helpers/withLoading";
 import {
   CheerAttendanceEvent,
   CheerAttendanceRecord,
@@ -28,8 +26,8 @@ import {
 import { motion } from "framer-motion";
 import { sift } from "radash";
 import { useContext, useState } from "react";
-import CheerAttendanceSelector from "./CheerAttendanceSelector";
-import CheerAbsenceTypeSelector from "./CheerAbsenceTypeSelector";
+import CheerAttendanceSelector from "@/components/cheer/CheerAttendanceSelector";
+import CheerAbsenceTypeSelector from "@/components/cheer/CheerAbsenceTypeSelector";
 import useTranslation from "next-translate/useTranslation";
 
 /**

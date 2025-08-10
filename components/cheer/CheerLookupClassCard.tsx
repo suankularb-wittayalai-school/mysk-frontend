@@ -14,7 +14,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
-import CheerAttendenceIndicator from "./CheerAttendanceIndicator";
+import CheerAttendenceIndicator from "@/components/cheer/CheerAttendanceIndicator";
 
 /**
  * Cheer Lookup Class Card is a card that displays a Classroom in the Cheer attendance

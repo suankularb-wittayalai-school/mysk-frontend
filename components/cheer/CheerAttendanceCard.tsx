@@ -1,4 +1,4 @@
-import LookupDetailsCard from "../lookup/LookupDetailsCard";
+import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import { useState } from "react";
 import { StylableFC } from "@/utils/types/common";
 import { Classroom } from "@/utils/types/classroom";
@@ -6,16 +6,12 @@ import {
   CheerAttendanceEvent,
   CheerAttendanceRecord,
 } from "@/utils/types/cheer";
-import CheerAttendanceEventTabs from "./CheerAttendanceEventTabs";
-import {
-  List,
-  Progress,
-  Text,
-} from "@suankularb-components/react";
+import CheerAttendanceEventTabs from "@/components/cheer/CheerAttendanceEventTabs";
+import { List, Progress, Text } from "@suankularb-components/react";
 import cn from "@/utils/helpers/cn";
 import { replace } from "radash";
 import useTranslation from "next-translate/useTranslation";
-import CheerAttendanceListItem from "./CheerAttendanceStaffListItem";
+import CheerAttendanceListItem from "@/components/cheer/CheerAttendanceStaffListItem";
 
 const CheerAttendanceCard: StylableFC<{
   classroom: Pick<Classroom, "id" | "number" | "main_room"> | null;
@@ -26,7 +22,7 @@ const CheerAttendanceCard: StylableFC<{
 }> = ({ classroom, attendances, onAttendancesChange, loading }) => {
   const { t: tx } = useTranslation("common");
   const [event, setEvent] = useState<CheerAttendanceEvent>("start");
-  const [saving,setSaving] = useState<boolean>(false)
+  const [saving, setSaving] = useState<boolean>(false);
   return (
     <LookupDetailsCard>
       {classroom && (
