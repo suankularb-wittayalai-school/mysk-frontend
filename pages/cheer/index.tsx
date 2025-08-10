@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { CustomPage } from "@/utils/types/common";
 import PageHeader from "@/components/common/PageHeader";
-import { ContentLayout, Columns, List } from "@suankularb-components/react";
+import { ContentLayout, List } from "@suankularb-components/react";
 import CheerAttendanceEventTabs from "@/components/cheer/CheerAttendanceEventTabs";
 import StudentCheerAttendanceListItem from "@/components/cheer/StudentCheerAttendanceListItem";
 import cn from "@/utils/helpers/cn";
