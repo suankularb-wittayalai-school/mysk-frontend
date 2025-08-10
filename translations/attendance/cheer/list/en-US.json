@@ -15,11 +15,6 @@
       "noRemedial": "No Remedial Practice",
       "withRemedial": "Remedial Practice",
       "missing": "Missing"
-    },
-    "absenceType": {
-      "noRemedial": "No Remedial Practice",
-      "withRemedial": "Remedial Practice",
-      "missing": "Missing"
     }
   },
   "event": {
@@ -31,7 +26,6 @@
     "label": "<0>{{count}}</0>/{{max}}",
     "progressAlt": "Enrollment progress bar"
   },
-  "period": "Period",
   "classNo": "No. {{classNo}}",
   "enterReason": "Enter reason"
 }
