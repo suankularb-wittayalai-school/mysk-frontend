@@ -122,8 +122,6 @@ const DateCheerAttendancePage: CustomPage<{
     cacheRef.current[`${selectedSessionID}__${selectedID}`] = attendances;
   }, [attendances, selectedID, selectedSessionID]);
 
-  console.log(cacheRef)
-
   return (
     <>
       <Head>
@@ -278,12 +276,14 @@ export const getServerSideProps: GetServerSideProps = async ({
   const cheerSession: CheerPracticeSession[] = rawCheerSession.map(
     (session) => ({
       ...session,
-      classrooms: session.classrooms.map((cc) => ({
-        ...cc,
-        classroom: DetailClassrooms.find((c) => c.id === cc.classroom.id)!,
-        attendances: cc.attendances,
-        count: cc.count,
-      })),
+      classrooms: session.classrooms
+        .map((cc) => ({
+          ...cc,
+          classroom: DetailClassrooms.find((c) => c.id === cc.classroom.id)!,
+          attendances: cc.attendances,
+          count: cc.count,
+        }))
+        .sort((a, b) => a.classroom.number - b.classroom.number),
     }),
   );
 
