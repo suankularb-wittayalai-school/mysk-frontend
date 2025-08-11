@@ -9,6 +9,7 @@ import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useListDetail from "@/utils/helpers/search/useListDetail";
 import {
   CheerAttendanceRecord,
+  CheerPracticePeriod,
   CheerPracticeSession,
 } from "@/utils/types/cheer";
 import { Classroom } from "@/utils/types/classroom";
@@ -137,7 +138,17 @@ const DateCheerAttendancePage: CustomPage<{
               {/* Classrooms grouped by grade */}
               {cheerSession.map((session) => {
                 // Period
-                const period = session.start_time + " - " + session.duration;
+                const period: CheerPracticePeriod = (({
+                  id,
+                  date,
+                  start_time,
+                  duration,
+                }) => ({
+                  id,
+                  date,
+                  start_time,
+                  duration,
+                }))(session);
                 const byGrade = group(session.classrooms, (item) =>
                   Math.floor(item.classroom.number / 100).toString(),
                 ) as Record<string, typeof session.classrooms>;

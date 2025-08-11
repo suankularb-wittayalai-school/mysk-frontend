@@ -14,6 +14,7 @@ import useTranslation from "next-translate/useTranslation";
 import { usePlausible } from "next-plausible";
 import { useEffect, useState } from "react";
 import CheerLookupClassCard from "@/components/cheer/CheerLookupClassCard";
+import { CheerPracticePeriod } from "@/utils/types/cheer";
 
 /**
  * A section of the Lookup Classes list that shows all Classrooms in a grade.
@@ -31,7 +32,7 @@ const CheerGradeSection: StylableFC<{
     Classroom,
     "id" | "number" | "main_room" | "class_advisors" | "students"
   >[];
-  period: string;
+  period: CheerPracticePeriod;
   count: number[];
   selectedID: string | null;
   onSelectedChange: (value: string) => void;
@@ -99,7 +100,10 @@ const CheerGradeSection: StylableFC<{
           type="body-medium"
           className="!col-start-2 !-mt-1 !flex !flex-grow !text-on-surface"
         >
-          {t("period") + " " + period}
+          {t("period", {
+            start: period.start_time,
+            end: period.start_time + period.duration - 1,
+          })}
         </Text>
       </div>
 
