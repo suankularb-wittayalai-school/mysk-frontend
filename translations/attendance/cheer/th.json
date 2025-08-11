@@ -13,13 +13,13 @@
   },
   "date": "{{date, date}}",
   "dateDialog": {
-    "desc": "Enter the date and classroom to go to.",
+    "desc": "เลือกวันที่ที่ต้องการเรียกดู",
     "form": {
       "date": "วันที่"
     },
     "action": {
-      "cancel": "Cancel",
-      "go": "Go"
+      "cancel": "ยกเลิก",
+      "go": "ไป"
     }
   }
 }
