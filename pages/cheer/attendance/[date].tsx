@@ -194,7 +194,7 @@ const DateCheerAttendancePage: CustomPage<{
           transition={transition(DURATION.medium2, EASING.standardDecelerate)}
           className="relative hidden grow *:absolute *:inset-0 md:block"
         >
-          {selectedID != null ? (
+          {selectedID ? (
             <LookupDetailsSide
               selectedID={selectedDetail?.id || selectedID}
               length={allSessionClassrooms.length}

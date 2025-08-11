@@ -5,7 +5,7 @@ import { useState } from "react";
 import {
   AttendanceView,
   SelectorType,
-} from "../attendance/AttendanceViewSelector";
+} from "@/components/attendance/AttendanceViewSelector";
 import router from "next/router";
 import CheerDatePickerDialog from "@/components/cheer/CheerDatePickerDialog";
 import useTranslation from "next-translate/useTranslation";
