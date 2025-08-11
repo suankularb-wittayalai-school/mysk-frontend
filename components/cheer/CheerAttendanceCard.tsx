@@ -64,7 +64,7 @@ const CheerAttendanceCard: StylableFC<{
             editable={!loading}
             saving={saving}
             setSaving={setSaving}
-            onAttendanceChange={(attendance) =>
+            onAttendancesChange={(attendance) =>
               onAttendancesChange(
                 replace(
                   attendances,

@@ -45,14 +45,14 @@ const CheerAttendanceStaffListItem: StylableFC<{
   editable?: boolean;
   saving: boolean;
   setSaving: React.Dispatch<React.SetStateAction<boolean>>;
-  onAttendanceChange: (attendance: CheerAttendanceRecord) => void;
+  onAttendancesChange: (attendance: CheerAttendanceRecord) => void;
 }> = ({
   attendance,
   shownEvent,
   editable,
   saving,
   setSaving,
-  onAttendanceChange,
+  onAttendancesChange,
 }) => {
   const locale = useLocale();
   const { t } = useTranslation("attendance/cheer/list");
@@ -89,7 +89,7 @@ const CheerAttendanceStaffListItem: StylableFC<{
     setSaving(false);
 
     if (success) {
-      onAttendanceChange(eventAttendance); // only update after server OK
+      onAttendancesChange(eventAttendance); // only update after server OK
     }
   }
 
