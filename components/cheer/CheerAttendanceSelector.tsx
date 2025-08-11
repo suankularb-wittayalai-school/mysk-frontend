@@ -39,6 +39,13 @@ const CheerAttendanceSelector: StylableFC<{
           <InputChip
             onClick={() => {
               if (!editable) return;
+              onChange(
+                {
+                  ...attendance,
+                  presence: CheerAttendanceType.present,
+                },
+                shownEvent,
+              );
             }}
             {...(attendance.presence === CheerAttendanceType.present
               ? {
@@ -54,6 +61,13 @@ const CheerAttendanceSelector: StylableFC<{
           <InputChip
             onClick={() => {
               if (!editable) return;
+              onChange(
+                {
+                  ...attendance,
+                  presence: CheerAttendanceType.late,
+                },
+                shownEvent,
+              );
             }}
             {...(attendance.presence == CheerAttendanceType.late
               ? {
@@ -69,6 +83,13 @@ const CheerAttendanceSelector: StylableFC<{
           <InputChip
             onClick={() => {
               if (!editable) return;
+              onChange(
+                {
+                  ...attendance,
+                  presence: CheerAttendanceType.absentNoRemedial,
+                },
+                shownEvent,
+              );
             }}
             {...(isAbsent(attendance.presence)
               ? {
@@ -89,6 +110,13 @@ const CheerAttendanceSelector: StylableFC<{
             <InputChip
               onClick={() => {
                 if (!editable) return;
+                onChange(
+                  {
+                    ...attendance,
+                    presence_at_end: CheerAttendanceType.present,
+                  },
+                  shownEvent,
+                );
               }}
               {...(attendance.presence_at_end == CheerAttendanceType.present
                 ? {
@@ -105,6 +133,13 @@ const CheerAttendanceSelector: StylableFC<{
           <InputChip
             onClick={() => {
               if (!editable) return;
+              onChange(
+                {
+                  ...attendance,
+                  presence_at_end: CheerAttendanceType.missing,
+                },
+                shownEvent,
+              );
             }}
             {...(isAbsent(attendance.presence_at_end)
               ? {

@@ -17,9 +17,15 @@
       "missing": "ขาดซ้อม"
     }
   },
-  "enterReason": "ระบุเหตุผล",
   "event": {
-    "start": "เรื่ม",
+    "start": "เริ่ม",
     "end": "เลิก"
-  }
+  },
+  "enrollment": {
+    "alt": "ลงทะเบียนแล้ว {{count}} คน จาก {{max}} คน",
+    "label": "<0>{{count}}</0>/{{max}}",
+    "progressAlt": "จำนวนนักเรียนที่ลงทะเบียนแล้ว"
+  },
+  "classNo": "เลขที่ {{classNo}}",
+  "enterReason": "ระบุเหตุผล"
 }

@@ -1,4 +1,25 @@
 {
-  "title": { "student": "Your Cheer Practice Attendance" },
-  "header": { "student": "Cheer Practice Attendance" }
+  "title": {
+    "student": "Your Cheer Practice Attendance",
+    "staff": "Cheer Practice Attendance"
+  },
+  "header": {
+    "student": "Cheer Practice Attendance",
+    "staff": "Cheer Practice Attendance"
+  },
+  "empty": {
+    "student": "No Attendance Record Found",
+    "staff": "No Class Selected"
+  },
+  "date": "{{date, date}}",
+  "dateDialog": {
+    "desc": "Enter the date and classroom to go to.",
+    "form": {
+      "date": "Date"
+    },
+    "action": {
+      "cancel": "Cancel",
+      "go": "Go"
+    }
+  }
 }

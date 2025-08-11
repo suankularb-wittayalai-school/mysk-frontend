@@ -42,7 +42,8 @@ const StudentCheerAttendanceListItem: FC<{
               start: attendance.practice_period.start_time,
               end:
                 attendance.practice_period.start_time +
-                attendance.practice_period.duration,
+                attendance.practice_period.duration -
+                1,
             })}
             className="w-0 [&>span]:!truncate"
           />
