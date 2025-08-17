@@ -19,7 +19,7 @@ export type CheerPracticePeriod = {
 };
 
 export type CheerAttendanceRecord = {
-  id: string;
+  id?: string;
   practice_period: CheerPracticePeriod;
   student: Pick<
     Student,
@@ -33,7 +33,7 @@ export type CheerAttendanceRecord = {
     | null;
 };
 
-export type ClassroomcheerAttendance = {
+export type ClassroomCheerAttendance = {
   classroom: Pick<
     Classroom,
     "id" | "number" | "main_room" | "class_advisors" | "students"
@@ -43,5 +43,5 @@ export type ClassroomcheerAttendance = {
 };
 
 export type CheerPracticeSession = CheerPracticePeriod & {
-  classrooms: ClassroomcheerAttendance[];
+  classrooms: ClassroomCheerAttendance[];
 };

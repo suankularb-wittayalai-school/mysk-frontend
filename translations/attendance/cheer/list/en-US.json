@@ -17,9 +17,15 @@
       "missing": "Missing"
     }
   },
-  "enterReason": "Enter Reason",
   "event": {
     "start": "Start",
     "end": "End"
-  }
+  },
+  "enrollment": {
+    "alt": "{{count}} enrolled out of {{max}}",
+    "label": "<0>{{count}}</0>/{{max}}",
+    "progressAlt": "Enrollment progress bar"
+  },
+  "classNo": "No. {{classNo}}",
+  "enterReason": "Enter reason"
 }

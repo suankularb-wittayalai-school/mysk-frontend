@@ -2067,6 +2067,22 @@ export type Database = {
           },
         ];
       };
+      cheer_practice_attendances: {
+        Row: {
+          id: string;
+          created_at: string | null;
+          practice_period_id: string | null;
+          student_id: string | null;
+          checher_id: string | null;
+          presence:
+            | Database["public"]["Enums"]["cheer_practice_attendance_types"]
+            | null;
+          presence_at_end:
+            | Database["public"]["Enums"]["cheer_practice_attendance_types"]
+            | null;
+          absence_reason: string | null;
+        };
+      };
     };
     Functions: {
       diesel_manage_updated_at: {
@@ -2126,6 +2142,12 @@ export type Database = {
         | "website"
         | "discord"
         | "other";
+      cheer_practice_attendance_types:
+        | "present"
+        | "late"
+        | "absent_with_leave"
+        | "absent_without_leave"
+        | "deserted";
       school_document_type:
         | "order"
         | "announcement"
