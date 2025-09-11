@@ -13,7 +13,7 @@
   },
   "date": "{{date, date}}",
   "dateDialog": {
-    "desc": "Enter the date and classroom to go to.",
+    "desc": "Enter the date to go to.",
     "form": {
       "date": "Date"
     },
