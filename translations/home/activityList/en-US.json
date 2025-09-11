@@ -1,4 +1,7 @@
 {
-  "title": "Cheer Practice Attendance",
-  "action": { "view": "View attendance", "edit": "Take Attendance" }
+  "title": "Activity list",
+  "card": {
+    "title": "Cheer Practice Attendance",
+    "action": { "view": "View attendance", "edit": "Take Attendance" }
+  }
 }

@@ -25,7 +25,7 @@ const CheerAttendanceEntryCard: StylableFC<{ isCheerStaff: boolean }> = ({
       className={cn(`!bg-primary-container`, className)}
     >
       <CardHeader
-        title={t("title")}
+        title={t("card.title")}
         subtitle={"\u200B"}
         className="grow items-start"
       />
@@ -40,7 +40,7 @@ const CheerAttendanceEntryCard: StylableFC<{ isCheerStaff: boolean }> = ({
             }
             element={Link}
           >
-            {isCheerStaff ? t("action.edit") : t("action.view")}
+            {isCheerStaff ? t("card.action.edit") : t("card.action.view")}
           </Button>
         </Actions>
       </CardContent>

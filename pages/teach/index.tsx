@@ -29,6 +29,7 @@ import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
+import CheerAttendanceEntryCard from "@/components/cheer/CheerAttendanceEntryCard";
 
 /**
  * The Teacher’s counterpart to Learn, where the user can see their Schedule
@@ -44,7 +45,7 @@ const TeachPage: CustomPage<{
   teachingSubjects: SubjectClassrooms[];
 }> = ({ schedule, teacher, teachingSubjects }) => {
   const locale = useLocale();
-  const { t } = useTranslation();
+  const { t } = useTranslation("home/activityList");
 
   const [query, setQuery] = useState("");
 
@@ -111,6 +112,16 @@ const TeachPage: CustomPage<{
               .map((subject) => (
                 <TeachingSubjectCard key={subject.id} subject={subject} />
               ))}
+          </Columns>
+        </motion.section>
+        <motion.section
+          className="skc-section"
+          layout="position"
+          transition={transition(DURATION.medium4, EASING.standard)}
+        >
+          <Header className="md:col-span-2">{t("title")}</Header>
+          <Columns columns={3} element="ul">
+            <CheerAttendanceEntryCard isCheerStaff={true} />
           </Columns>
         </motion.section>
       </LayoutGroup>

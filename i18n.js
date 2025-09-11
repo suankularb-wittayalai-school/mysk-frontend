@@ -43,7 +43,11 @@ module.exports = {
       "home/subjectList",
       "home/activityList",
     ],
-    "/teach": ["home/classroomSubjectDialog", "home/subjectClassesDialog"],
+    "/teach": [
+      "home/classroomSubjectDialog",
+      "home/subjectClassesDialog",
+      "home/activityList",
+    ],
     // Schedule
     "rgx:/(learn|teach|(teach|manage)/electives|classes|search/(students|teachers)/results|admin/schedule)$":
       ["schedule/common", "schedule/periodDialog"],

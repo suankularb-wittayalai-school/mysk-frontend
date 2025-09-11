@@ -60,7 +60,7 @@ const LearnPage: CustomPage<{
   isCheerStaff,
 }) => {
   const locale = useLocale();
-  const { t } = useTranslation();
+  const { t } = useTranslation("home/activityList");
 
   const [query, setQuery] = useState("");
 
@@ -125,7 +125,7 @@ const LearnPage: CustomPage<{
           layout="position"
           transition={transition(DURATION.medium4, EASING.standard)}
         >
-          <Header className="md:col-span-2">{"Activities"}</Header>
+          <Header className="md:col-span-2">{t("title")}</Header>
           <Columns columns={3} element="ul">
             <CheerAttendanceEntryCard isCheerStaff={isCheerStaff} />
           </Columns>

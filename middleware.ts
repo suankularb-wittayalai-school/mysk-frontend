@@ -116,7 +116,7 @@ export async function middleware(req: NextRequest) {
         (pageRole === "management" &&
           permitted(user, UserPermissionKey.can_see_management)) ||
         // Allow cheer staffs to take cheer attendance
-        (pageRole === "cheer" && isCheerStaff) ||
+        (pageRole === "cheer" && (isCheerStaff || user?.role == "teacher")) ||
         // Allow all users to visit user pages
         pageRole === "user" ||
         // Allow users with the correct roles
