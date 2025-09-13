@@ -1,7 +1,8 @@
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { Progress, Text } from "@suankularb-components/react";
-import { Trans, useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
+import Trans from "next-translate/Trans";
 
 /**
  * An indicator showing the enrollment status of an Elective Subject.
@@ -13,14 +14,14 @@ const EnrollmentIndicator: StylableFC<{
   classSize: number;
   capSize: number;
 }> = ({ classSize, capSize, style, className }) => {
-  const { t } = useTranslation("elective", { keyPrefix: "list.enrollment" });
+  const { t } = useTranslation("elective/list");
   const translationValues = { count: classSize, max: capSize };
 
   const isFull = classSize >= capSize;
 
   return (
     <div
-      aria-label={t("alt", translationValues)}
+      aria-label={t("enrollment.alt", translationValues)}
       className={cn(`space-y-1`, className)}
       style={style}
     >
@@ -28,22 +29,28 @@ const EnrollmentIndicator: StylableFC<{
         type="body-small"
         className="block text-center text-on-surface-variant"
       >
-        <Trans i18nKey="label" values={translationValues} t={t}>
-          <Text
-            type="body-medium"
-            className={cn(
-              `!font-medium`,
-              isFull ? `text-error` : `text-primary`,
-            )}
-          >
-            {null}
-          </Text>
-        </Trans>
+        <Trans
+          i18nKey="elective/list:enrollment.label"
+          values={translationValues}
+          components={{
+            0: (
+              <Text
+                type="body-medium"
+                className={cn(
+                  `!font-medium`,
+                  isFull ? `text-error` : `text-primary`,
+                )}
+              >
+                {null}
+              </Text>
+            ),
+          }}
+        />
       </Text>
 
       <Progress
         appearance="linear"
-        alt={t("progressAlt")}
+        alt={t("enrollment.progressAlt")}
         value={(classSize / capSize) * 100}
         visible
         className={cn(

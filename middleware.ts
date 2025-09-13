@@ -9,6 +9,8 @@ import { MySKClient } from "@/utils/types/fetch";
 import { Student, User, UserPermissionKey } from "@/utils/types/person";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
+import getCheerStaffs from "@/utils/backend/attendance/cheer/getCheerStaffs";
+import getISODateString from "@/utils/helpers/getISODateString";
 
 /**
  * The middleware is run before a request is completed.
@@ -42,9 +44,11 @@ export async function middleware(req: NextRequest) {
   const pageRole = (() => {
     if (route === "/") return "public";
     else if (route.startsWith("/admin")) return "admin";
-    else if (route.startsWith("/learn")) return "student";
+    // Every student can access /cheer
+    else if (route.startsWith("/learn") || route === "/cheer") return "student";
     else if (route.startsWith("/teach")) return "teacher";
     else if (route.startsWith("/manage")) return "management";
+    else if (route.startsWith("/cheer/attendance")) return "cheer";
     else return "user";
   })();
 
@@ -55,6 +59,7 @@ export async function middleware(req: NextRequest) {
   const accessToken = req.cookies.get("access_token")?.value;
   let user: User | null = null;
   let student: Student | null = null;
+  let isCheerStaff: boolean | undefined;
   if (accessToken) {
     // Declare MySK client
     const mysk = {
@@ -79,6 +84,11 @@ export async function middleware(req: NextRequest) {
       if (error) logError("middleware (student)", error);
       student = data;
     }
+    if (student) {
+      const { data, error } = await getCheerStaffs(supabase);
+      if (error) logError("middleware (cheer staffs)", error);
+      isCheerStaff = data?.some((staff) => staff.student_id == student?.id);
+    }
   }
 
   // Decide on destination based on user and page protection type
@@ -86,6 +96,9 @@ export async function middleware(req: NextRequest) {
     // Default page redirects
     if (route === "/search") return "/search/students";
     if (route === "/manage/classrooms") return "/manage/classrooms/print";
+
+    if (route === "/cheer" && isCheerStaff)
+      return `/cheer/attendance/${getISODateString(new Date())}`;
 
     // Disallow public users from visiting private pages
     if (pageRole !== "public" && !user) return "/";
@@ -102,6 +115,8 @@ export async function middleware(req: NextRequest) {
         // pages
         (pageRole === "management" &&
           permitted(user, UserPermissionKey.can_see_management)) ||
+        // Allow cheer staffs to take cheer attendance
+        (pageRole === "cheer" && (isCheerStaff || user?.role == "teacher")) ||
         // Allow all users to visit user pages
         pageRole === "user" ||
         // Allow users with the correct roles
@@ -109,7 +124,6 @@ export async function middleware(req: NextRequest) {
       )
     ) 
       return user?.role ? getHomeURLofRole(user.role) : "/";
-
     // Disallow Students from visiting pages of other Classrooms
     const ownClassroomURL = student?.classroom
       ? `/classes/${student.classroom.number}`
@@ -153,5 +167,6 @@ export const config = {
     "/news",
     "/admin/:path*",
     "/maintenance",
+    "/cheer/:path*",
   ],
 };

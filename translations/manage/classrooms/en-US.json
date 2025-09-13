@@ -1,0 +1,7 @@
+{
+  "title": "Classrooms",
+  "desc": "Students are grouped into classrooms. Bulk create student list printous here.",
+  "action": {
+    "print": "Print"
+  }
+}

@@ -7,14 +7,14 @@ import {
   MaterialIcon,
   Text,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
 
 /**
  * The header of Trades Card.
  */
 const TradesCardHeader: StylableFC = ({ style, className }) => {
-  const { t } = useTranslation("elective", { keyPrefix: "detail.trade" });
+  const { t } = useTranslation("elective/detail/trade");
 
   const [createOpen, setCreateOpen] = useState(false);
 

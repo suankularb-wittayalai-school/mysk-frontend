@@ -1,0 +1,25 @@
+{
+  "title": "Participation",
+  "desc": "Metrics on students and teachers participation in using the MySK infrastructure.",
+  "awareness": {
+    "alt": "Users who have logged in at least once",
+    "overline": "Awareness",
+    "title": "{{percentage, percent}} of all users have logged in at least once",
+    "subtitle": "{{count, number}} out of {{total, number}} registered users"
+  },
+  "teacherParticipation": {
+    "alt": "Teachers with schedule",
+    "overline": "Teacher participation",
+    "title": "{{percentage, percent}} of all teachers have filled in their schedule",
+    "subtitle": "{{count, number}} out of {{total, number}} registered teachers"
+  },
+  "studentParticipation": {
+    "alt": "Student with additional account data",
+    "overline": "Student participation",
+    "title": "{{percentage, percent}} of all students have filled in additional account information",
+    "subtitle": "{{count, number}} out of {{total, number}} student with an assigned classrooms"
+  },
+  "action": {
+    "showMore": "Show more"
+  }
+}

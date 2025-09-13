@@ -21,7 +21,7 @@ import {
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { isFuture, isPast, isWeekend } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 
@@ -41,9 +41,7 @@ const AttendanceDatePickerDialog: StylableFC<{
   onClose: () => void;
   onSubmit: ({ date, classroom }: { date: string; classroom: string }) => void;
 }> = ({ open, view, type, onClose, onSubmit, style, className }) => {
-  const { t } = useTranslation("attendance", {
-    keyPrefix: "viewSelector.dialog.date",
-  });
+  const { t } = useTranslation("attendance/viewSelector/dialog");
 
   const router = useRouter();
   const supabase = useSupabaseClient();
@@ -87,11 +85,11 @@ const AttendanceDatePickerDialog: StylableFC<{
       style={style}
       className={className}
     >
-      <DialogHeader desc={t("desc")} />
+      <DialogHeader desc={t("date.desc")} />
       <DialogContent className="grid gap-6 px-6">
         <TextField
           appearance="outlined"
-          label={t("form.date")}
+          label={t("date.form.date")}
           {...formProps.date}
           inputAttr={
             {
@@ -111,14 +109,14 @@ const AttendanceDatePickerDialog: StylableFC<{
         {type === SelectorType.classroom && (
           <TextField
             appearance="outlined"
-            label={t("form.classroom")}
+            label={t("date.form.classroom")}
             {...formProps.classroom}
           />
         )}
       </DialogContent>
       <Actions>
         <Button appearance="text" onClick={onClose}>
-          {t("action.cancel")}
+          {t("date.action.cancel")}
         </Button>
         <Button
           appearance="text"
@@ -142,11 +140,13 @@ const AttendanceDatePickerDialog: StylableFC<{
             setLoading(false);
 
             if (error)
-              setSnackbar(<Snackbar>{t("snackbar.classNotFound")}</Snackbar>);
+              setSnackbar(
+                <Snackbar>{t("date.snackbar.classNotFound")}</Snackbar>,
+              );
             else onSubmit(form);
           }}
         >
-          {t("action.go")}
+          {t("date.action.go")}
         </Button>
       </Actions>
     </Dialog>

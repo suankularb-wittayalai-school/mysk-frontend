@@ -1,7 +1,7 @@
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { Progress, Text } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { dash } from "radash";
 
 /**
@@ -16,7 +16,7 @@ const ParticipationMetric: StylableFC<{
   count: number;
   total: number;
 }> = ({ id, count, total, style, className }) => {
-  const { t } = useTranslation("manage", { keyPrefix: "participation" });
+  const { t } = useTranslation("manage/participation");
 
   const labelID = "metric-" + dash(id);
 

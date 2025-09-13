@@ -1,0 +1,85 @@
+import { FC } from "react";
+import {
+  DURATION,
+  EASING,
+  ListItem,
+  ListItemContent,
+  TextField,
+  transition,
+} from "@suankularb-components/react";
+import { motion } from "framer-motion";
+import {
+  CheerAttendanceEvent,
+  CheerAttendanceRecord,
+  CheerAttendanceType,
+} from "@/utils/types/cheer";
+import CheerAttendanceSelector from "@/components/cheer/CheerAttendanceSelector";
+import useTranslation from "next-translate/useTranslation";
+import CheerAbsenceTypeSelector from "@/components/cheer/CheerAbsenceTypeSelector";
+
+const StudentCheerAttendanceListItem: FC<{
+  attendance: CheerAttendanceRecord;
+  event: CheerAttendanceEvent;
+}> = ({ attendance, event }) => {
+  const { t } = useTranslation("attendance/cheer/list");
+  return (
+    <motion.li
+      layoutId={attendance.id}
+      transition={transition(DURATION.medium2, EASING.standard)}
+    >
+      <motion.ul layout="position" className={"grid w-full py-1"}>
+        <ListItem
+          align="center"
+          lines={2}
+          element="div"
+          className="!items-center !overflow-visible"
+        >
+          <ListItemContent
+            title={t("date", {
+              date: new Date(attendance.practice_period.date),
+            })}
+            desc={t("period", {
+              start: attendance.practice_period.start_time,
+              end:
+                attendance.practice_period.start_time +
+                attendance.practice_period.duration -
+                1,
+            })}
+            className="w-0 [&>span]:!truncate"
+          />
+          <CheerAttendanceSelector
+            attendance={attendance}
+            shownEvent={event}
+            editable={false}
+            onChange={() => {}}
+            className="-mr-4 -space-x-1"
+          />
+        </ListItem>
+        {event == "start" &&
+          (attendance.presence == CheerAttendanceType.absentNoRemedial ||
+            attendance.presence == CheerAttendanceType.absentWithRemedial ||
+            attendance.presence == CheerAttendanceType.missing) && (
+            <CheerAbsenceTypeSelector
+              attendance={attendance}
+              editable={false}
+              onChange={() => {}}
+              className="mb-2 *:px-4"
+            />
+          )}
+        {event == "start" &&
+          (attendance.presence == CheerAttendanceType.absentNoRemedial ||
+            attendance.presence == CheerAttendanceType.absentWithRemedial) && (
+            <div className="mt-1 px-4 sm:pb-2">
+              <TextField<string>
+                appearance="outlined"
+                label={t("enterReason")}
+                value={attendance.absence_reason || ""}
+              />
+            </div>
+          )}
+      </motion.ul>
+    </motion.li>
+  );
+};
+
+export default StudentCheerAttendanceListItem;

@@ -3,7 +3,7 @@ import ManagePageCard from "@/components/manage/ManagePageCard";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getISODateString from "@/utils/helpers/getISODateString";
 import lastWeekday from "@/utils/helpers/lastWeekday";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import {
   Button,
@@ -13,8 +13,7 @@ import {
 } from "@suankularb-components/react";
 import { toZonedTime } from "date-fns-tz";
 import { GetStaticProps } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -29,6 +28,10 @@ import { useRouter } from "next/router";
  */
 const ManagePage: CustomPage = () => {
   const { t } = useTranslation("manage");
+  const { t: ta } = useTranslation("manage/attendance");
+  const { t: te } = useTranslation("manage/elective");
+  const { t: tc } = useTranslation("manage/classrooms");
+  const { t: tp } = useTranslation("manage/participation");
   const { t: tx } = useTranslation("common");
 
   const router = useRouter();
@@ -52,11 +55,11 @@ const ManagePage: CustomPage = () => {
         <Columns columns={2} className="mx-4 !items-stretch sm:mx-0 sm:!gap-6">
           <ManagePageCard
             icon={<MaterialIcon icon="assignment_turned_in" size={48} />}
-            title={t("attendance.title")}
-            desc={t("attendance.desc")}
+            title={ta("title")}
+            desc={ta("desc")}
           >
             <Button appearance="filled" href={attendanceURL} element={Link}>
-              {t("attendance.action.showMore")}
+              {ta("action.showMore")}
             </Button>
             <Button
               appearance="outlined"
@@ -65,49 +68,49 @@ const ManagePage: CustomPage = () => {
                 setTimeout(() => window.print(), 1000);
               }}
             >
-              {t("attendance.action.print")}
+              {ta("action.print")}
             </Button>
           </ManagePageCard>
           <ManagePageCard
             icon={<MaterialIcon icon="collections_bookmark" size={48} />}
-            title={t("electives.title")}
-            desc={t("electives.desc")}
+            title={te("title")}
+            desc={te("desc")}
           >
             <Button appearance="filled" href="/manage/electives" element={Link}>
-              {t("electives.action.showMore")}
+              {te("action.showMore")}
             </Button>
             <Button
               appearance="outlined"
               href="/manage/electives/print"
               element={Link}
             >
-              {t("electives.action.print")}
+              {te("action.print")}
             </Button>
           </ManagePageCard>
           <ManagePageCard
             icon={<MaterialIcon icon="groups" size={48} />}
-            title={t("classrooms.title")}
-            desc={t("classrooms.desc")}
+            title={tc("title")}
+            desc={tc("desc")}
           >
             <Button
               appearance="filled"
               href="/manage/classrooms/print"
               element={Link}
             >
-              {t("classrooms.action.print")}
+              {tc("action.print")}
             </Button>
           </ManagePageCard>
           <ManagePageCard
             icon={<MaterialIcon icon="person_check" size={48} />}
-            title={t("participation.title")}
-            desc={t("participation.desc")}
+            title={tp("title")}
+            desc={tp("desc")}
           >
             <Button
               appearance="filled"
               href="/manage/participation"
               element={Link}
             >
-              {t("participation.action.showMore")}
+              {tp("action.showMore")}
             </Button>
           </ManagePageCard>
         </Columns>
@@ -116,10 +119,6 @@ const ManagePage: CustomPage = () => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale as LangCode, ["common", "manage"])),
-  },
-});
+export const getStaticProps: GetStaticProps = () => ({ props: {} });
 
 export default ManagePage;

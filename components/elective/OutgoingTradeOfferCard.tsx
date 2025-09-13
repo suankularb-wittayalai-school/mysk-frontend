@@ -8,7 +8,7 @@ import withLoading from "@/utils/helpers/withLoading";
 import { StylableFC } from "@/utils/types/common";
 import { ElectiveSubject, ElectiveTradeOffer } from "@/utils/types/elective";
 import { Actions, Button, Snackbar } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { useContext } from "react";
 import logError from "@/utils/helpers/logError";
 import { usePlausible } from "next-plausible";
@@ -22,8 +22,7 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
 const OutgoingTradeOfferCard: StylableFC<{
   tradeOffer: ElectiveTradeOffer;
 }> = ({ tradeOffer, style, className }) => {
-  const { t } = useTranslation("elective", { keyPrefix: "detail.trade" });
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("elective/detail/trade");
 
   const plausible = usePlausible();
   const refreshProps = useRefreshProps();
@@ -55,7 +54,7 @@ const OutgoingTradeOfferCard: StylableFC<{
       },
     );
     if (error) {
-      setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+      setSnackbar(<Snackbar>{t("common:snackbar.failure")}</Snackbar>);
       logError("handleCancel", error);
       return false;
     }

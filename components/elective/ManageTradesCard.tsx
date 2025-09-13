@@ -6,7 +6,7 @@ import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { ElectiveTradeOffer } from "@/utils/types/elective";
 import { MaterialIcon, Text } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import Balancer from "react-wrap-balancer";
 
 /**
@@ -28,7 +28,7 @@ const ManageTradesCard: StylableFC<{
   style,
   className,
 }) => {
-  const { t } = useTranslation("elective", { keyPrefix: "detail.trade" });
+  const { t } = useTranslation("elective/detail/trade");
 
   // Unavailable state
   if (!inEnrollmentPeriod)

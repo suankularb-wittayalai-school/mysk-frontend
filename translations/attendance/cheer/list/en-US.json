@@ -1,0 +1,31 @@
+{
+  "date": "{{date, dateshort}}",
+  "period": "Period {{start}} - {{end}}",
+  "chip": {
+    "start": {
+      "present": "P",
+      "late": "L",
+      "absent": "A"
+    },
+    "end": {
+      "present": "P",
+      "absent": "A"
+    },
+    "absenceType": {
+      "noRemedial": "No Remedial Practice",
+      "withRemedial": "Remedial Practice",
+      "missing": "Missing"
+    }
+  },
+  "event": {
+    "start": "Start",
+    "end": "End"
+  },
+  "enrollment": {
+    "alt": "{{count}} enrolled out of {{max}}",
+    "label": "<0>{{count}}</0>/{{max}}",
+    "progressAlt": "Enrollment progress bar"
+  },
+  "classNo": "No. {{classNo}}",
+  "enterReason": "Enter reason"
+}

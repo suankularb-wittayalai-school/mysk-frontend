@@ -22,7 +22,7 @@ import {
   Search,
   Text,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useState } from "react";
 import shortUUID from "short-uuid";
@@ -50,7 +50,8 @@ const ElectiveDetailsCard: StylableFC<{
   className,
 }) => {
   const locale = useLocale();
-  const { t } = useTranslation("elective", { keyPrefix: "detail" });
+  const { t } = useTranslation("elective/detail/information");
+  const { t: ts } = useTranslation("elective/detail/students");
 
   const { fromUUID } = shortUUID();
 
@@ -66,7 +67,7 @@ const ElectiveDetailsCard: StylableFC<{
             <div className="grid grid-cols-2 gap-2">
               {/* Subject name */}
               <Card appearance="filled" className="col-span-2 sm:col-span-1">
-                <CardHeader title={t("information.name")} />
+                <CardHeader title={t("name")} />
                 <CardContent>
                   <MultilangText text={electiveSubject.name} />
                 </CardContent>
@@ -74,7 +75,7 @@ const ElectiveDetailsCard: StylableFC<{
 
               {/* Subject code */}
               <Card appearance="filled">
-                <CardHeader title={t("information.code")} />
+                <CardHeader title={t("code")} />
                 <CardContent>
                   <MultilangText text={electiveSubject.code} />
                 </CardContent>
@@ -82,7 +83,7 @@ const ElectiveDetailsCard: StylableFC<{
 
               {/* Teachers */}
               <Card appearance="filled">
-                <CardHeader title={t("information.teachers")} />
+                <CardHeader title={t("teachers")} />
                 <CardContent>
                   <PeopleChipSet
                     people={electiveSubject.teachers.map((teacher) => ({
@@ -98,7 +99,7 @@ const ElectiveDetailsCard: StylableFC<{
               {/* Room */}
               {electiveSubject.room && (
                 <Card appearance="filled">
-                  <CardHeader title={t("information.room")} />
+                  <CardHeader title={t("room")} />
                   <CardContent>
                     <ChipSet
                       scrollable
@@ -116,7 +117,7 @@ const ElectiveDetailsCard: StylableFC<{
             {electiveSubject.description?.th && (
               <section className="space-y-1">
                 <Text type="title-medium" element="h3">
-                  {t("information.description")}
+                  {t("description")}
                 </Text>
                 <Text
                   type="body-medium"
@@ -131,7 +132,7 @@ const ElectiveDetailsCard: StylableFC<{
             <section className="space-y-2 md:hidden">
               <div className="flex h-4 flex-row items-center">
                 <Text type="title-medium" element="h3" className="grow">
-                  {t("students.title")}
+                  {ts("title")}
                 </Text>
                 <Button
                   appearance="text"
@@ -139,12 +140,12 @@ const ElectiveDetailsCard: StylableFC<{
                   href={`/teach/electives/${fromUUID(electiveSubject.id)}/print`}
                   element={Link}
                 >
-                  {t("students.action.print")}
+                  {ts("action.print")}
                 </Button>
               </div>
               <Search
                 value={query}
-                alt={t("students.searchAlt")}
+                alt={ts("searchAlt")}
                 onChange={setQuery}
                 locale={locale}
               />

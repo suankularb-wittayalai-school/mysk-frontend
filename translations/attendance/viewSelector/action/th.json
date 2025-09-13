@@ -1,0 +1,8 @@
+{
+  "print": "พิมพ์",
+  "statistics": "ดูสถิติโรงเรียน",
+  "date": {
+    "date": "{{date, dateshort}}",
+    "month": "{{date, monthshort}}"
+  }
+}

@@ -12,7 +12,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { list } from "radash";
 import { useEffect } from "react";
 import { Bar } from "react-chartjs-2";
@@ -27,7 +27,7 @@ Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip);
 const GradesBreakdownChart: StylableFC<{
   grades: { [key in AttendanceEvent]: ManagementAttendanceSummary }[];
 }> = ({ grades, style, className }) => {
-  const { t } = useTranslation("manage", { keyPrefix: "attendance.chart" });
+  const { t } = useTranslation("manage/attendance");
   const { t: tx } = useTranslation("common");
 
   const { preferences } = usePreferences();
@@ -61,27 +61,27 @@ const GradesBreakdownChart: StylableFC<{
     labels,
     datasets: [
       {
-        label: t("assembly.late"),
+        label: t("chart.assembly.late"),
         data: grades.map((grade) => grade.assembly.late * -1),
         backgroundColor: { light: "#FEB0D2", dark: "#A2607F" }[chartScheme],
       },
       {
-        label: t("assembly.presence"),
+        label: t("chart.assembly.presence"),
         data: grades.map((grade) => grade.assembly.presence),
         backgroundColor: { light: "#236488", dark: "#97D2FA" }[chartScheme],
       },
       {
-        label: t("homeroom.presence"),
+        label: t("chart.homeroom.presence"),
         data: grades.map((grade) => grade.homeroom.presence),
         backgroundColor: { light: "#23648888", dark: "#97D2FA88" }[chartScheme],
       },
       {
-        label: t("assembly.absence"),
+        label: t("chart.assembly.absence"),
         data: grades.map((grade) => grade.assembly.absence * -1),
         backgroundColor: { light: "#B3261E", dark: "#FFBAB1" }[chartScheme],
       },
       {
-        label: t("homeroom.absence"),
+        label: t("chart.homeroom.absence"),
         data: grades.map((grade) => grade.homeroom.absence * -1),
         backgroundColor: { light: "#B3261E88", dark: "#FFBAB188" }[chartScheme],
       },
