@@ -86,7 +86,7 @@ const CheerAttendanceSelector: StylableFC<{
               onChange(
                 {
                   ...attendance,
-                  presence: CheerAttendanceType.absentNoRemedial,
+                  presence: CheerAttendanceType.missing,
                 },
                 shownEvent,
               );

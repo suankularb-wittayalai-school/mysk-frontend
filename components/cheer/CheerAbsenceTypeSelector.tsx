@@ -17,6 +17,18 @@ const CheerAbsenceTypeSelector: StylableFC<{
   return (
     <ChipSet scrollable style={style} className={className}>
       <FilterChip
+        selected={value == CheerAttendanceType.missing}
+        onClick={() => {
+          if (!editable) return;
+          onChange({
+            ...attendance,
+            presence: CheerAttendanceType.missing,
+          });
+        }}
+      >
+        {t("chip.absenceType.missing")}
+      </FilterChip>
+      <FilterChip
         selected={value == CheerAttendanceType.absentNoRemedial}
         onClick={() => {
           if (!editable) return;
@@ -39,18 +51,6 @@ const CheerAbsenceTypeSelector: StylableFC<{
         }}
       >
         {t("chip.absenceType.withRemedial")}
-      </FilterChip>
-      <FilterChip
-        selected={value == CheerAttendanceType.missing}
-        onClick={() => {
-          if (!editable) return;
-          onChange({
-            ...attendance,
-            presence: CheerAttendanceType.missing,
-          });
-        }}
-      >
-        {t("chip.absenceType.missing")}
       </FilterChip>
     </ChipSet>
   );

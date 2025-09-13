@@ -5,7 +5,7 @@
     "start": {
       "present": "มา",
       "late": "สาย",
-      "absent": "ลา"
+      "absent": "ขาด"
     },
     "end": {
       "present": "อยู่",
