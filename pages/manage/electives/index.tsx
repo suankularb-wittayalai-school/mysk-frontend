@@ -22,8 +22,9 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
-import { GetStaticProps } from "next";
 import useTranslation from "next-translate/useTranslation";
+import { GetServerSideProps } from "next";
+
 import { usePlausible } from "next-plausible";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -83,8 +84,9 @@ const ManageElectivesPage: CustomPage<{
             onChange={setQuery}
           />
           <section
-            className={cn(`fade-out-to-t fade-out-4 contents grow overflow-auto
-              md:block`)}
+            className={cn(
+              `fade-out-to-t fade-out-4 contents grow overflow-auto md:block`,
+            )}
           >
             <ul className="space-y-1.5 pt-4 md:h-0">
               {filteredElectiveSubjects.map((electiveSubject) => (
@@ -145,15 +147,16 @@ const ManageElectivesPage: CustomPage<{
       <LookupDetailsDialog open={detailsOpen} onClose={onDetailsClose}>
         <ElectiveDetailsCard
           electiveSubject={selectedDetail}
-          className={cn(`!mx-0 h-full !bg-surface-container-highest
-            *:!rounded-b-none`)}
+          className={cn(
+            `!mx-0 h-full !bg-surface-container-highest *:!rounded-b-none`,
+          )}
         />
       </LookupDetailsDialog>
     </>
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const mysk = await createMySKClient();
 
   const { data: electiveSubjects } = await mysk.fetch<ElectiveSubject[]>(

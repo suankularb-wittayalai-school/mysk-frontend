@@ -30,6 +30,7 @@ import {
   ContentLayout,
   List,
   MaterialIcon,
+  Text,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { isToday } from "date-fns";
@@ -40,6 +41,7 @@ import { usePlausible } from "next-plausible";
 import Head from "next/head";
 import { replace } from "radash";
 import { useEffect, useState } from "react";
+import Markdown from "react-markdown";
 
 /**
  * Date Attendance page displays Attendance of a Classroom at specific date.
@@ -122,15 +124,14 @@ const DateAttendancePage: CustomPage<{
         </AttendanceViewSelector>
         <Columns
           columns={2}
-          className={cn(`!grid-cols-1 md:!grid-cols-2
-            lg:w-[calc((10/12*100%)-3rem)]`)} // 10 out of 12 columns; 2 gutters
+          className={cn(
+            `!grid-cols-1 md:!grid-cols-2 lg:w-[calc((10/12*100%)-3rem)]`,
+          )} // 10 out of 12 columns; 2 gutters
         >
           <div
-            className={cn(`grid md:h-[calc(100dvh-12rem-2px)] md:overflow-auto
-              md:rounded-lg md:border-1 md:border-outline-variant
-              md:bg-surface-container-high [&>:first-child]:top-0
-              [&>:first-child]:z-10 [&>:first-child]:sm:sticky
-              [&>:first-child]:sm:bg-surface`)}
+            className={cn(
+              `grid md:h-[calc(100dvh-12rem-2px)] md:overflow-auto md:rounded-lg md:border-1 md:border-outline-variant md:bg-surface-container-high [&>:first-child]:top-0 [&>:first-child]:z-10 [&>:first-child]:sm:sticky [&>:first-child]:sm:bg-surface`,
+            )}
           >
             <AttendanceEventTabs
               event={event}
@@ -138,22 +139,52 @@ const DateAttendancePage: CustomPage<{
               className="!-mt-2 sm:!mt-0"
             />
             {event === "homeroom" && (
-              <Button
-                appearance="filled"
-                icon={<MaterialIcon icon="edit" />}
-                onClick={() => {
-                  setHomeroomOpen(true);
-                  plausible("Open Homeroom Content", {
-                    props: {
-                      isToday: isToday(new Date(date)),
-                      classroom: `M.${classroom.number}`,
-                    },
-                  });
-                }}
-                className="!mx-4 !mt-3 sm:!mx-0 md:!hidden"
-              >
-                {t("day.action.editHomeroom")}
-              </Button>
+              <div className="mx-4 my-4 mb-2 flex flex-col rounded-lg border border-outline-variant bg-surface-container p-4 sm:!mx-0 md:!hidden">
+                <div className="flex flex-col gap-2">
+                  <Text type="title-medium">{t("day.homeroom.title")}</Text>
+                  {homeroomContent !== null ? (
+                    <Markdown
+                      className={cn(
+                        `[&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6`,
+                      )}
+                    >
+                      {homeroomContent?.homeroom_content}
+                    </Markdown>
+                  ) : (
+                    !editable && t("day.homeroom.noContent")
+                  )}
+                </div>
+                {editable && (
+                  <Button
+                    appearance="filled"
+                    icon={
+                      homeroomContent !== null ? (
+                        <MaterialIcon icon="edit" />
+                      ) : (
+                        <MaterialIcon icon="add" />
+                      )
+                    }
+                    onClick={() => {
+                      setHomeroomOpen(true);
+                      plausible("Open Homeroom Content", {
+                        props: {
+                          isToday: isToday(new Date(date)),
+                          classroom: `M.${classroom.number}`,
+                        },
+                      });
+                    }}
+                    className="!mt-3 w-full sm:!mx-0 md:!hidden"
+                  >
+                    {/* 
+                        If there's homeroom content, show edit button, else show
+                        add button. Hide button is user is not teacher or admin 
+                      */}
+                    {homeroomContent !== null
+                      ? t("day.homeroom.action.edit")
+                      : t("day.homeroom.action.add")}
+                  </Button>
+                )}
+              </div>
             )}
             <HomeroomContentDialog
               open={homeroomOpen}
@@ -166,8 +197,7 @@ const DateAttendancePage: CustomPage<{
             <List
               className={cn(
                 loading && `*:*:animate-pulse`,
-                `!mt-1 *:bg-surface sm:!-mx-4 md:!m-0 md:space-y-1 md:!p-2
-                *:md:rounded-md`,
+                `!mt-1 *:bg-surface sm:!-mx-4 md:!m-0 md:space-y-1 md:!p-2 *:md:rounded-md`,
               )}
             >
               {attendances.map((attendance) => (
@@ -208,6 +238,7 @@ const DateAttendancePage: CustomPage<{
               homeroomContent || { id: null, date, homeroom_content: "" }
             }
             classroomID={classroom.id}
+            editable={editable}
             className="hidden md:block"
           />
         </Columns>

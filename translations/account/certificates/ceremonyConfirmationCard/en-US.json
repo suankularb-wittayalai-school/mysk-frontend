@@ -1,0 +1,29 @@
+{
+  "title": "Congratulations, {{name}}! You’re eligible to attend the certificate ceremony this year.",
+  "desc": {
+    "eventDetails": "By confirming your attendance, you agree to participate in the ceremony rehearsal on March 3, 2025. Failure to attend the rehearsal will disqualify you from the ceremony on March 11, 2025.",
+    "ifDecline": "If you decline to participate in the ceremony, you are not required to attend the rehearsal on March 3, 2025, and will not be eligible to participate in the ceremony on March 11, 2025.",
+    "ifIneligible": "If you did not attend the ceremony, you may still receive your certificates at the library later."
+  },
+  "response": {
+    "pending": {
+      "text": "Are you attending this certificate ceremony?",
+      "action": {
+        "yes": "Yes",
+        "no": "No"
+      }
+    },
+    "accept": {
+      "text": "You’ve confirmed <0>to attend</0> the ceremony. If you change your mind, click the button on the right.",
+      "action": {
+        "change": "Change to 'not attending'"
+      }
+    },
+    "decline": {
+      "text": "You’ve confirmed <0>not to attend</0> the ceremony. If you change your mind, click the button on the right.",
+      "action": {
+        "change": "Change to 'attending'"
+      }
+    }
+  }
+}

@@ -66,9 +66,13 @@ export default async function getTeachingSubject(
   const { data, error } = await supabase
     .from("subjects")
     .select(
-      "id, name_en, name_th, code_en, code_th, short_name_en, short_name_th, classroom_subjects(classrooms(id, number)), subject_teachers!inner(teacher_id)",
+      "id, name_en, name_th, code_en, code_th, short_name_en, short_name_th, classroom_subjects(classrooms(id, number)), subject_teachers!inner(teacher_id, year)",
     )
     .eq("subject_teachers.teacher_id", teacherID)
+    .eq(
+      "subject_teachers.year",
+      options?.academicYear || getCurrentAcademicYear(),
+    )
     .eq(
       "classroom_subjects.year",
       options?.academicYear || getCurrentAcademicYear(),

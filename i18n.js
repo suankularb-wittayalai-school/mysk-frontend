@@ -48,6 +48,13 @@ module.exports = {
       "home/subjectClassesDialog",
       "home/activityList",
     ],
+
+    "/teach": [
+      "home/classroomSubjectDialog",
+      "home/subjectClassesDialog",
+      "report/teachReportEntryCard",
+    ],
+    "/teach/report": ["report", "search/teachers/detail"],
     // Schedule
     "rgx:/(learn|teach|(teach|manage)/electives|classes|search/(students|teachers)/results|admin/schedule)$":
       ["schedule/common", "schedule/periodDialog"],
@@ -102,6 +109,7 @@ module.exports = {
       "account/certificates",
       "account/certificates/receivingOrderDialog",
       "account/certificates/seatDialog",
+      "account/certificates/ceremonyConfirmationCard",
     ],
     "/account/logout": ["account/logOut"],
     // Manage

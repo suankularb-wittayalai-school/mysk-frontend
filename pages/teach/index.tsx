@@ -1,5 +1,6 @@
 import HomeLayout from "@/components/home/HomeLayout";
 import TeachElectiveEntryCard from "@/components/home/TeachElectiveEntryCard";
+import TeachReportEntryCard from "@/components/home/TeachReportEntryCard";
 import TeachingSubjectCard from "@/components/home/TeachingSubjectCard";
 import ScheduleGlance from "@/components/home/glance/ScheduleGlance";
 import Schedule from "@/components/schedule/Schedule";
@@ -96,6 +97,9 @@ const TeachPage: CustomPage<{
             />
           </Columns>
           <Columns columns={3} className="!items-stretch">
+            {teacher.subjects_in_charge.length > 0 && (
+              <TeachReportEntryCard />
+            )}
             {teacher.electives_in_charge.length > 0 && (
               <TeachElectiveEntryCard
                 electivesInCharge={teacher.electives_in_charge}

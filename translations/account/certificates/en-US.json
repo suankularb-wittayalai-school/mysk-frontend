@@ -2,6 +2,8 @@
   "title": "Certificates",
   "empty": "You have not received any certificates yet. Contact us if you think this is a mistake.",
   "ineligibleForCeremony": "You are not eligible for the ceremony. Recieve this year’s certificates at the library.",
+  "help": "For certificate inquiries, <0>contact us.</0>",
+  "prepare": "Please have your order number and seat code ready for registration.",
   "action": {
     "order": "Order {{order, number}}",
     "seat": "Seat {{seat}}"

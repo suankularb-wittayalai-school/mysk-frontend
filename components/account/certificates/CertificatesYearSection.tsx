@@ -1,7 +1,9 @@
+import CertificateCeremonyCard from "@/components/account/certificates/CeremonyConfirmationCard";
 import CertificateCard from "@/components/account/certificates/CertificateCard";
 import ReceivingOrderDialog from "@/components/account/certificates/ReceivingOrderDialog";
 import SeatDialog from "@/components/account/certificates/SeatDialog";
 import cn from "@/utils/helpers/cn";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getLocaleYear from "@/utils/helpers/getLocaleYear";
 import useLocale from "@/utils/helpers/useLocale";
 import { StudentCertificate } from "@/utils/types/certificate";
@@ -16,6 +18,9 @@ import {
 } from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
+import { Student } from "@/utils/types/person";
+import { CeremonyConfirmationStatus } from "@/utils/types/certificate";
+import Trans from "next-translate/Trans";
 
 /**
  * A section that shows the user’s Student Certificates in a specific academic
@@ -27,9 +32,21 @@ import { useState } from "react";
 const CertificatesYearSection: StylableFC<{
   year: number;
   certificates: StudentCertificate[];
-}> = ({ year, certificates, style, className }) => {
+  person: Student;
+  rsvpStatus: Boolean;
+  enrollmentStatus: CeremonyConfirmationStatus;
+}> = ({
+  year,
+  certificates,
+  person,
+  rsvpStatus,
+  enrollmentStatus,
+  style,
+  className,
+}) => {
   const locale = useLocale();
   const { t } = useTranslation("account/certificates");
+  const currentAcademicYear = getCurrentAcademicYear();
 
   const [orderOpen, setOrderOpen] = useState(false);
   const [seatOpen, setSeatOpen] = useState(false);
@@ -43,40 +60,69 @@ const CertificatesYearSection: StylableFC<{
       {(() => {
         if (!certificates?.length) return null;
         const { receiving_order_number, seat_code } = certificates[0];
-        if (!(receiving_order_number && seat_code))
-          return (
-            <Text type="body-medium" className="mb-1">
-              {t("ineligibleForCeremony")}
-            </Text>
-          );
-        return (
-          <ChipSet className="pb-2">
-            <AssistChip
-              icon={<MaterialIcon icon="group" />}
-              onClick={() => setOrderOpen(true)}
-            >
-              {t("action.order", { order: receiving_order_number })}
-            </AssistChip>
-            <ReceivingOrderDialog
-              open={orderOpen}
-              receivingOrder={receiving_order_number}
-              onClose={() => setOrderOpen(false)}
-            />
 
-            <AssistChip
-              icon={<MaterialIcon icon="event_seat" />}
-              onClick={() => setSeatOpen(true)}
-            >
-              {t("action.seat", { seat: seat_code })}
-            </AssistChip>
-            <SeatDialog
-              open={seatOpen}
-              seat={seat_code}
-              onClose={() => setSeatOpen(false)}
-            />
-          </ChipSet>
-        );
+        if (
+          (rsvpStatus == false &&
+            process.env.NEXT_PUBLIC_CERTIFICATES_CEREMONY_SHOW_SEATING ==
+              "true") ||
+          currentAcademicYear != year
+        ) {
+          if (!receiving_order_number && !seat_code)
+            return (
+              <Text type="body-medium" className="mb-1">
+                {t("ineligibleForCeremony")}
+              </Text>
+            );
+          return (
+            <>
+              <ChipSet className="pb-2">
+                {receiving_order_number && (
+                  <>
+                    <AssistChip
+                      icon={<MaterialIcon icon="group" />}
+                      onClick={() => setOrderOpen(true)}
+                    >
+                      {t("action.order", { order: receiving_order_number })}
+                    </AssistChip>
+                    <ReceivingOrderDialog
+                      open={orderOpen}
+                      receivingOrder={receiving_order_number}
+                      onClose={() => setOrderOpen(false)}
+                    />
+                  </>
+                )}
+                {seat_code && (
+                  <>
+                    <AssistChip
+                      icon={<MaterialIcon icon="event_seat" />}
+                      onClick={() => setSeatOpen(true)}
+                    >
+                      {t("action.seat", { seat: seat_code })}
+                    </AssistChip>
+                    <SeatDialog
+                      open={seatOpen}
+                      seat={seat_code}
+                      onClose={() => setSeatOpen(false)}
+                    />
+                  </>
+                )}
+              </ChipSet>
+              {year == currentAcademicYear && (
+                <Text type="label-large" className="pb-2 text-on-background">
+                  <Trans i18nKey="account/certificates:prepare" />
+                </Text>
+              )}
+            </>
+          );
+        }
       })()}
+
+      {currentAcademicYear == year && rsvpStatus == true && (
+        <CertificateCeremonyCard
+          person={person}
+          enrollmentStatus={enrollmentStatus}
+        />
+      )}
 
       {/* List */}
       <ul role="list" className="contents">

@@ -59,7 +59,9 @@ const AttendanceDatePickerDialog: StylableFC<{
         ({
           date:
             YYYYMMDDRegex.test(value) &&
-            !isWeekend(new Date(value)) &&
+            (value !== process.env.NEXT_PUBLIC_ATTENDANCE_SPECIAL_DATE
+              ? !isWeekend(new Date(value))
+              : true) &&
             // Converting to UTC here means using the client’s midnight time.
             !isFuture(toZonedTime(new Date(value), "Etc/UTC")),
           month: YYYYMMRegex.test(value) && isPast(new Date(value)),
