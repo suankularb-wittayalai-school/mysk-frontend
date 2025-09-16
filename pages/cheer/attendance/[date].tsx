@@ -244,20 +244,22 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const { date } = params as { [key: string]: string };
 
-  const { data: CheerSessionID } = await mysk.fetch<CheerPracticeSession[]>(
-    `/v1/attendance/cheer/periods`,
-    {
-      query: {
-        fetch_level: "id_only",
-        filter: { data: { date: date } },
-      },
+  const { data: CheerSessionID, error: fetchIdError } = await mysk.fetch<
+    CheerPracticeSession[]
+  >(`/v1/attendance/cheer/periods`, {
+    query: {
+      fetch_level: "id_only",
+      filter: { data: { date: date } },
     },
-  );
-  if (!CheerSessionID) return { notFound: true };
+  });
+  if (fetchIdError) {
+    console.error(`error fetching for date ${date}`);
+    return { notFound: true };
+  }
   const rawCheerSession = (
     await Promise.all(
-      (CheerSessionID ?? []).map(async (session) => {
-        const { data } = await mysk.fetch<CheerPracticeSession>(
+      CheerSessionID.map(async (session) => {
+        const { data, error: fetchPeriodsError } = await mysk.fetch<CheerPracticeSession>(
           `/v1/attendance/cheer/periods/${session.id}`,
           {
             query: {
@@ -266,11 +268,15 @@ export const getServerSideProps: GetServerSideProps = async ({
             },
           },
         );
+        if (fetchPeriodsError) {
+          console.error(`error fetching for session ${session.id}`);
+          return { notFound: true };
+        }
         return data;
       }),
     )
   ).filter((session): session is CheerPracticeSession => session !== null);
-  
+
   // turn arr -> set -> arr to remove duplicate
   const classroomIDs = Array.from(
     new Set(
@@ -279,7 +285,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         .map((classrooms) => classrooms.classroom.id),
     ),
   );
-  
+
   const DetailClassrooms = await Promise.all(
     classroomIDs.map(async (id) => {
       const { data: classroom } = await getClassroomByID(supabase, id, {
