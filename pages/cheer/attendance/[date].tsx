@@ -244,17 +244,32 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const { date } = params as { [key: string]: string };
 
-  const { data: rawCheerSession } = await mysk.fetch<CheerPracticeSession[]>(
+  const { data: CheerSessionID } = await mysk.fetch<CheerPracticeSession[]>(
     `/v1/attendance/cheer/periods`,
     {
       query: {
-        fetch_level: "detailed",
-        descendant_fetch_level: "id_only",
+        fetch_level: "id_only",
         filter: { data: { date: date } },
       },
     },
   );
-  if (!rawCheerSession) return { notFound: true };
+  const rawCheerSession = (
+    await Promise.all(
+      (CheerSessionID ?? []).map(async (session) => {
+        const { data } = await mysk.fetch<CheerPracticeSession>(
+          `/v1/attendance/cheer/periods/${session.id}`,
+          {
+            query: {
+              fetch_level: "detailed",
+              descendant_fetch_level: "id_only",
+            },
+          },
+        );
+        return data;
+      }),
+    )
+  ).filter((session): session is CheerPracticeSession => session !== null);
+  if (rawCheerSession.length === 0) return { notFound: true };
   // turn arr -> set -> arr to remove duplicate
   const classroomIDs = Array.from(
     new Set(
