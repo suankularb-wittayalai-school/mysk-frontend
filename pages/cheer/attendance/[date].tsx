@@ -269,7 +269,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       }),
     )
   ).filter((session): session is CheerPracticeSession => session !== null);
-  if (rawCheerSession.length === 0) return { notFound: true };
+  
   // turn arr -> set -> arr to remove duplicate
   const classroomIDs = Array.from(
     new Set(
@@ -278,7 +278,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         .map((classrooms) => classrooms.classroom.id),
     ),
   );
-
+  
   const DetailClassrooms = await Promise.all(
     classroomIDs.map(async (id) => {
       const { data: classroom } = await getClassroomByID(supabase, id, {
