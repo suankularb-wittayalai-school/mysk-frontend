@@ -253,6 +253,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     },
   );
+  if (!CheerSessionID) return { notFound: true };
   const rawCheerSession = (
     await Promise.all(
       (CheerSessionID ?? []).map(async (session) => {
