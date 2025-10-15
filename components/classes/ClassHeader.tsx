@@ -131,6 +131,14 @@ const ClassHeader: StylableFC<{
                 }`,
               )}
             </AssistChip>
+            {/* Cheer Attendance */}
+            <AssistChip
+              icon={<MaterialIcon icon="Stadium" />}
+              element={Link}
+              href={`/classes/${classroom.number}/cheer`}
+            >
+              {t("action.cheer")}
+            </AssistChip>
           </>
         )}
 
