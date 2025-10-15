@@ -8,7 +8,6 @@ import CheerAttendanceFigureDay from "./CheerAttendanceFigureDay";
 import CheerMonthBarSparkLine from "./CheerMonthBarSparkLine";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import useTranslation from "next-translate/useTranslation";
-import { sort } from "radash";
 
 const ClassCheerAttendanceSummary: StylableFC<{
   classroom: Pick<Classroom, "number">;
