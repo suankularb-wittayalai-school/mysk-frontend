@@ -23,7 +23,13 @@ export type CheerAttendanceRecord = {
   practice_period: CheerPracticePeriod;
   student: Pick<
     Student,
-    "id" | "first_name" | "last_name" | "nickname" | "profile" | "class_no"
+    | "id"
+    | "first_name"
+    | "middle_name"
+    | "last_name"
+    | "nickname"
+    | "profile"
+    | "class_no"
   >;
   presence: CheerAttendanceType | null;
   absence_reason: string | null;
