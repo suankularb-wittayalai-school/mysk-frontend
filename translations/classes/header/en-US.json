@@ -5,6 +5,7 @@
       "view": "View attendance",
       "edit": "Take attendance"
     },
+    "cheer": "View Cheer Attendance",
     "saveContact": "Save contact"
   }
 }
