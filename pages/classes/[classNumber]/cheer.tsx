@@ -164,7 +164,6 @@ const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
               className="md:[&:last-child>*]:!border-b-0"
             >
               <StudentCheerAttendanceSummaryCard
-                key={student.student.id}
                 student={student.student}
                 attendances={student.attendances}
                 practiceDates={practiceDates}

@@ -59,7 +59,7 @@ const StudentCheerAttendanceSummaryCard: StylableFC<{
         >
           {attendances.map((attendance) => (
             <CheerAttendanceFigureDay
-              key={attendance.student.id}
+              key={student.id + attendance.id}
               practiceDates={practiceDates}
               date={attendance.practice_period.date}
             >
