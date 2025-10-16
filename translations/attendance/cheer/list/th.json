@@ -1,6 +1,9 @@
 {
-  "date": "{{date, dateshort}}",
-  "period": "คาบ {{start}} - {{end}}",
+  "date": "{{date, datelong}}",
+  "period": {
+    "single": "คาบ {{start}}",
+    "multiple": "คาบ {{start}} - {{end}}"
+  },
   "chip": {
     "start": {
       "present": "มา",
@@ -21,11 +24,13 @@
     "start": "เริ่ม",
     "end": "เลิก"
   },
-  "enrollment": {
+  "attendanceTally": {
     "alt": "ลงทะเบียนแล้ว {{count}} คน จาก {{max}} คน",
     "label": "<0>{{count}}</0>/{{max}}",
+    "labelEmpty": "<0>-</0>/-",
     "progressAlt": "จำนวนนักเรียนที่ลงทะเบียนแล้ว"
   },
   "classNo": "เลขที่ {{classNo}}",
-  "enterReason": "ระบุเหตุผล"
+  "enterReason": "ระบุเหตุผล",
+  "empty": "ไม่มีการซ้อมเชียร์สำหรับวันที่กำหนด"
 }

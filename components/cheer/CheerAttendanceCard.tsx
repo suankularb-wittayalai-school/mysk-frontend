@@ -16,13 +16,23 @@ import CheerAttendanceListItem from "@/components/cheer/CheerAttendanceStaffList
 const CheerAttendanceCard: StylableFC<{
   classroom: Pick<Classroom, "id" | "number" | "main_room"> | null;
   attendances: CheerAttendanceRecord[];
-  date: string;
   onAttendancesChange: (attendances: CheerAttendanceRecord[]) => void;
+  onCheerTallyCounts: (
+    attendances: CheerAttendanceRecord[],
+    classroomID: string,
+  ) => void;
   loading: boolean;
-}> = ({ classroom, attendances, onAttendancesChange, loading }) => {
+}> = ({
+  classroom,
+  attendances,
+  onAttendancesChange,
+  onCheerTallyCounts,
+  loading,
+}) => {
   const { t: tx } = useTranslation("common");
   const [event, setEvent] = useState<CheerAttendanceEvent>("start");
   const [saving, setSaving] = useState<boolean>(false);
+
   return (
     <LookupDetailsCard>
       {classroom && (
@@ -64,15 +74,15 @@ const CheerAttendanceCard: StylableFC<{
             editable={!loading}
             saving={saving}
             setSaving={setSaving}
-            onAttendancesChange={(attendance) =>
-              onAttendancesChange(
-                replace(
-                  attendances,
-                  attendance,
-                  (item) => attendance.student!.id === item.student!.id,
-                ),
-              )
-            }
+            onAttendancesChange={(attendance) => {
+              const newAttendances = replace(
+                attendances,
+                attendance,
+                (item) => item.student?.id === attendance.student!.id,
+              );
+              onAttendancesChange(newAttendances);
+              onCheerTallyCounts(newAttendances, classroom!.id);
+            }}
           />
         ))}
       </List>

@@ -1,7 +1,12 @@
 {
   "title": {
     "student": "Your Cheer Practice Attendance",
-    "staff": "Cheer Practice Attendance"
+    "staff": "Cheer Practice Attendance",
+    "staffAttendance": "Cheer Practice {{date, datelong}}",
+    "period": {
+      "single": "Period {{start}}",
+      "multiple": "Period {{start}} - {{end}}"
+    }
   },
   "header": {
     "student": "Cheer Practice Attendance",

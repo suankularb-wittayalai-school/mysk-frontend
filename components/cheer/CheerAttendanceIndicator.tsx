@@ -3,6 +3,7 @@ import { StylableFC } from "@/utils/types/common";
 import { Progress, Text } from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
 import Trans from "next-translate/Trans";
+import { CheerTallyCount } from "@/utils/types/cheer";
 
 /**
  * An indicator showing the number of student that have already check their attendance.
@@ -11,17 +12,18 @@ import Trans from "next-translate/Trans";
  * @param capSize The number of student in classroom.
  */
 const CheerAttendanceIndicator: StylableFC<{
-  classSize: number;
-  capSize: number;
-}> = ({ classSize, capSize, style, className }) => {
+  cheerTallyCount?: CheerTallyCount;
+}> = ({ cheerTallyCount, style, className }) => {
   const { t } = useTranslation("attendance/cheer/list");
-  const translationValues = { count: classSize, max: capSize };
 
-  const isFull = classSize >= capSize;
+  const translationValues = {
+    count: cheerTallyCount?.count.presence,
+    max: cheerTallyCount?.count.total,
+  };
 
   return (
     <div
-      aria-label={t("enrollment.alt", translationValues)}
+      aria-label={t("attendanceTally.alt", translationValues)}
       className={cn(`space-y-1`, className)}
       style={style}
     >
@@ -30,7 +32,7 @@ const CheerAttendanceIndicator: StylableFC<{
         className="block text-center text-on-surface-variant"
       >
         <Trans
-          i18nKey="attendance/cheer/list:enrollment.label"
+          i18nKey={`attendance/cheer/list:attendanceTally.${cheerTallyCount ? "label" : "labelEmpty"}`}
           values={translationValues}
           components={{
             0: (
@@ -47,8 +49,13 @@ const CheerAttendanceIndicator: StylableFC<{
 
       <Progress
         appearance="linear"
-        alt={t("enrollment.progressAlt")}
-        value={(classSize / capSize) * 100}
+        alt={t("attendanceTally.progressAlt")}
+        value={
+          cheerTallyCount
+            ? (cheerTallyCount.count.presence / cheerTallyCount.count.total) *
+              100
+            : 0
+        }
         visible
         className={cn(
           `w-10 ![--_remainder-color:transparent] *:!gap-0 *:overflow-hidden [&>*>*:first-child]:z-10 [&>*>*:last-child]:hidden`,

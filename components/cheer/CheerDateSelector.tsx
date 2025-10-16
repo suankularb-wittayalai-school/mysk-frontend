@@ -16,7 +16,7 @@ const CheerDateSelector: StylableFC<{ date: string }> = ({ date }) => {
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
   return (
-    <Actions align="full" className="!mb-8">
+    <Actions align="full" className="p-4 md:bg-surface">
       {/* Date picker */}
       <Button
         appearance="tonal"
