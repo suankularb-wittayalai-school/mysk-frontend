@@ -22,6 +22,7 @@ const StudentCheerAttendanceSummaryCard: StylableFC<{
   attendances.sort((a, b) => {
     return a.practice_period.date.localeCompare(b.practice_period.date);
   });
+  practiceDates.sort();
   const { t } = useTranslation("common");
   return (
     <Card

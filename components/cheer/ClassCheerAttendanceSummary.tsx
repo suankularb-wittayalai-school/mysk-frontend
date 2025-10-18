@@ -20,6 +20,7 @@ const ClassCheerAttendanceSummary: StylableFC<{
   summaries.sort((a, b) => {
     return a.practice_period.date.localeCompare(b.practice_period.date);
   });
+  practiceDates.sort();
   return (
     <Card
       appearance="outlined"

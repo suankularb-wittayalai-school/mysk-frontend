@@ -131,7 +131,6 @@ const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
           },
         );
       } finally {
-        practiceDates.sort();
       }
     };
     fetchData();
