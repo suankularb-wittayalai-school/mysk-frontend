@@ -29,7 +29,7 @@ const CheerMonthBarSparkLine: StylableFC<{
         className="bg-tertiary-container dark:bg-tertiary"
       />
       <div
-        style={{ height: (summary.absentWithRemedial / total) * CHART_HEIGHT }}
+        style={{ height: (summary.absentNoRemedial / total) * CHART_HEIGHT }}
         className="bg-outline-variant dark:bg-outline"
       />
       <div
