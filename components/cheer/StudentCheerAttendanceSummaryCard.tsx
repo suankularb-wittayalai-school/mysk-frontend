@@ -58,20 +58,31 @@ const StudentCheerAttendanceSummaryCard: StylableFC<{
             `md:h-14w-fit flex h-20 flex-row items-center gap-0.5 px-4 md:w-full md:px-0 md:[&>*:not([role=separator])>*:first-child]:hidden md:[&_[role=separator]]:h-[calc(3rem+1px)]`,
           )}
         >
-          {attendances.map((attendance) => (
-            <CheerAttendanceFigureDay
-              key={student.id + attendance.practice_period.id}
-              practiceDates={practiceDates}
-              date={attendance.practice_period.date}
-            >
-              <div className="w-full space-y-[1px] overflow-hidden rounded-sm">
-                <CheerAttendanceFigureEvent attendance={attendance.presence} />
-                <CheerAttendanceFigureEvent
-                  attendance={attendance.presence_at_end}
-                />
-              </div>
-            </CheerAttendanceFigureDay>
-          ))}
+          {practiceDates.map((date) => {
+            let attendance = attendances.find(
+              (attendance) => attendance.practice_period.date == date,
+            );
+            return (
+              <CheerAttendanceFigureDay
+                key={student.id + date}
+                practiceDates={practiceDates}
+                date={date}
+              >
+                {attendance ? (
+                  <div className="w-full space-y-[1px] overflow-hidden rounded-sm">
+                    <CheerAttendanceFigureEvent
+                      attendance={attendance.presence}
+                    />
+                    <CheerAttendanceFigureEvent
+                      attendance={attendance.presence_at_end}
+                    />
+                  </div>
+                ) : (
+                  <div className="h-12 w-full" />
+                )}
+              </CheerAttendanceFigureDay>
+            );
+          })}
         </figure>
       </div>
       <CheerAttendanceCountGrid counts={count} className="p-4 pb-3" />

@@ -26,7 +26,7 @@ const ClassCheerAttendanceSummary: StylableFC<{
       appearance="outlined"
       style={style}
       className={cn(
-        `md:pb-0z !grid !items-end pb-4 md:grid-cols-[3fr,7fr,2fr] md:!gap-6 md:!rounded-none md:!border-0 md:!border-b-1 md:!bg-transparent md:!py-1`,
+        `md:pb-0z !grid !items-end pb-4 md:grid-cols-[minmax(0,3fr),minmax(0,7fr),minmax(0,2fr)] md:!gap-6 md:!rounded-none md:!border-0 md:!border-b-1 md:!bg-transparent md:!py-1`,
         className,
       )}
     >
@@ -46,19 +46,31 @@ const ClassCheerAttendanceSummary: StylableFC<{
         <figure
           style={style}
           className={cn(
-            `flex h-20 w-fit flex-row items-center gap-0.5 px-4 md:w-full md:px-0 [&_[role=separator]]:md:!h-[calc(4rem+1px)]`,
+            `flex h-20 flex-row items-center gap-0.5 px-4 md:w-full md:px-0 [&_[role=separator]]:md:!h-[calc(4rem+1px)]`,
             className,
           )}
         >
-          {summaries.map((summary) => (
-            <CheerAttendanceFigureDay
-              key={summary.practice_period.id}
-              date={summary.practice_period.date}
-              practiceDates={practiceDates}
-            >
-              <CheerMonthBarSparkLine summary={summary} />
-            </CheerAttendanceFigureDay>
-          ))}
+          {practiceDates.map((date) => {
+            let summary = summaries.find(
+              (summary) => summary.practice_period.date == date,
+            );
+            return (
+              <CheerAttendanceFigureDay
+                key={date}
+                date={date}
+                practiceDates={practiceDates}
+              >
+                {summary ? (
+                  <CheerMonthBarSparkLine summary={summary} />
+                ) : (
+                  <div
+                    style={{ height: 48 }}
+                    className="w-full overflow-hidden rounded-sm"
+                  />
+                )}
+              </CheerAttendanceFigureDay>
+            );
+          })}
         </figure>
       </div>
     </Card>
