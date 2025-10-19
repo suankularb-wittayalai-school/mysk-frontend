@@ -26,7 +26,7 @@ const ClassCheerAttendanceSummary: StylableFC<{
       appearance="outlined"
       style={style}
       className={cn(
-        `!grid !items-end pb-4 md:grid-cols-[3fr,7fr,2fr] md:!gap-6 md:!rounded-none md:!border-0 md:!border-b-1 md:!py-1 md:pb-0`,
+        `md:pb-0z !grid !items-end pb-4 md:grid-cols-[3fr,7fr,2fr] md:!gap-6 md:!rounded-none md:!border-0 md:!border-b-1 md:!bg-transparent md:!py-1`,
         className,
       )}
     >
