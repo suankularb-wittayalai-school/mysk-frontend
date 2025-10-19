@@ -15,7 +15,7 @@ const CheerMonthBarSparkLine: StylableFC<{
     <div
       style={{ ...style, height: CHART_HEIGHT }}
       className={cn(
-        `w-full overflow-hidden rounded-full *:rounded-xs`,
+        `w-full overflow-hidden rounded-sm`,
         total === 0 && `bg-surface-container`,
         className,
       )}

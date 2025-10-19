@@ -64,7 +64,7 @@ const StudentCheerAttendanceSummaryCard: StylableFC<{
               practiceDates={practiceDates}
               date={attendance.practice_period.date}
             >
-              <div className="w-full space-y-[1px] overflow-hidden rounded-full">
+              <div className="w-full space-y-[1px] overflow-hidden rounded-sm">
                 <CheerAttendanceFigureEvent attendance={attendance.presence} />
                 <CheerAttendanceFigureEvent
                   attendance={attendance.presence_at_end}
