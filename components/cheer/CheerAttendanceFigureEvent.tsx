@@ -28,7 +28,7 @@ const CheerAttendanceFigureEvent: StylableFC<{
     <div
       style={style}
       className={cn(
-        `relative h-6 w-full *:absolute *:left-1/2 *:top-1/2 *:-translate-x-1/2 *:-translate-y-1/2 *:!text-lg *:![font-variation-settings:'opsz'20]`,
+        `relative h-6 w-full rounded-xs *:absolute *:left-1/2 *:top-1/2 *:-translate-x-1/2 *:-translate-y-1/2 *:!text-lg *:![font-variation-settings:'opsz'20]`,
         [
           `bg-primary-container`,
           `bg-tertiary-container text-on-tertiary-container`,
