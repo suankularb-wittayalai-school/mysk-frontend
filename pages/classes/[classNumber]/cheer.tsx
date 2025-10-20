@@ -148,7 +148,7 @@ const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
         {t("header", { classNumber: classroom.number })}
       </PageHeader>
       <ContentLayout>
-        <CheerAttendanceLegend className="-mb-4 -mt-2" />
+        <CheerAttendanceLegend className="my-1" />
         <ul className="mx-4 space-y-2 sm:mx-0 md:space-y-0">
           <li key={classroom.id} className="top-0 z-10 md:sticky">
             <ClassCheerAttendanceSummary
