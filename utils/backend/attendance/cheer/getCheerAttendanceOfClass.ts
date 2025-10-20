@@ -51,13 +51,13 @@ export default async function getCheerAttendanceOfClass(
       return {
         ...existing,
         practice_period: cheerSession,
-        student,
+        student: student,
       };
     }
 
     return {
       practice_period: cheerSession,
-      student,
+      student: student,
       presence: null,
       absence_reason: null,
       presence_at_end: null,
