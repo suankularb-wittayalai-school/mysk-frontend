@@ -36,10 +36,12 @@ import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import { Breakpoint } from "@/utils/helpers/useBreakpoint";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import SnackbarContext from "@/contexts/SnackbarContext";
+import logError from "@/utils/helpers/logError";
 
 const CheerAttendancePage: CustomPage<{
   cheerSession: CheerPracticeSession;
-}> = ({ cheerSession }) => {
+  date: string;
+}> = ({ cheerSession, date }) => {
   const { t } = useTranslation("attendance/cheer");
   const { t: tx } = useTranslation("common");
 
@@ -160,7 +162,7 @@ const CheerAttendancePage: CustomPage<{
       <Head>
         <title>{t("header.staff")}</title>
       </Head>
-      <PageHeader>
+      <PageHeader parentURL={`/cheer/attendance/${date}`}>
         {t("title.staffAttendance", {
           date: new Date(cheerSession.date),
         })}{" "}
@@ -260,6 +262,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   });
 
   const { id } = params as { [key: string]: string };
+  const { date } = params as { [key: string]: string };
 
   const { data: rawCheerSession, error: fetchSessionError } =
     await mysk.fetch<CheerPracticeSession>(
@@ -272,7 +275,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     );
   if (fetchSessionError) {
-    console.error(`error fetching for cheer session`);
+    logError("CheerAttendancePage", fetchSessionError);
     return { notFound: true };
   }
 
@@ -299,7 +302,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 
   return {
-    props: { cheerSession },
+    props: { cheerSession, date },
   };
 };
 
