@@ -16,6 +16,7 @@ const formatters = (lang) => ({
     month: "long",
   }),
   month: new Intl.DateTimeFormat(lang, { month: "long", year: "numeric" }),
+  monthonlyshort: new Intl.DateTimeFormat(lang, { month: "short" }),
   monthshort: new Intl.DateTimeFormat(lang, {
     month: "short",
     year: "numeric",

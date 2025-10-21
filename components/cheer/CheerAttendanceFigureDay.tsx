@@ -25,6 +25,8 @@ const CheerAttendanceFigureDay: StylableFC<{
         className={cn(`flex w-[40px] flex-col items-center`, className)}
       >
         <Text type="label-small" className="text-on-surface-variant">
+          {t("list.month", { date: new Date(date) })}
+          {"\n"}
           {t("list.date", { date: new Date(date) })}
         </Text>
         {children}

@@ -9,5 +9,5 @@
     "missing": "Absent",
     "empty": "Unknown"
   },
-  "list": { "date": "{{date, dateshort}}" }
+  "list": { "date": "{{date, dateonly}}", "month": "{{date, monthonlyshort}}" }
 }

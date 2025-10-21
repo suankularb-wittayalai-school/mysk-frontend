@@ -9,5 +9,5 @@
     "missing": "ขาด",
     "empty": "ไม่มีข้อมูล"
   },
-  "list": { "date": "{{date, dateshort}}" }
+  "list": { "date": "{{date, dateonly}}", "month": "{{date, monthonlyshort}}" }
 }
