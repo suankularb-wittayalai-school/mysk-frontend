@@ -11,6 +11,10 @@ const formatters = (lang) => ({
     day: "numeric",
     month: "short",
   }),
+  datelong: new Intl.DateTimeFormat(lang, {
+    day: "numeric",
+    month: "long",
+  }),
   month: new Intl.DateTimeFormat(lang, { month: "long", year: "numeric" }),
   monthshort: new Intl.DateTimeFormat(lang, {
     month: "short",
@@ -152,7 +156,11 @@ module.exports = {
     "/cheer/attendance/[date]": [
       "attendance/cheer",
       "attendance/cheer/list",
-      "elective/list",
+      "search/common",
+    ],
+    "/cheer/attendance/[date]/[id]": [
+      "attendance/cheer",
+      "attendance/cheer/list",
       "search/common",
     ],
   },

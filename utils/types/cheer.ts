@@ -33,13 +33,19 @@ export type CheerAttendanceRecord = {
     | null;
 };
 
-export type ClassroomCheerAttendance = {
-  classroom: Pick<
-    Classroom,
-    "id" | "number" | "main_room" | "class_advisors" | "students"
-  >;
+export type ClassroomCheerAttendance = Pick<
+  Classroom,
+  "id" | "number" | "main_room" | "class_advisors" | "students"
+> & {
   attendances: CheerAttendanceRecord[];
-  count: number;
+};
+
+export type CheerTallyCount = {
+  id: string;
+  count: {
+    presence: number;
+    total: number;
+  };
 };
 
 export type CheerPracticeSession = CheerPracticePeriod & {

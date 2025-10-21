@@ -1,5 +1,4 @@
 import CheerAttendanceCard from "@/components/cheer/CheerAttendanceCard";
-import CheerDateSelector from "@/components/cheer/CheerDateSelector";
 import PageHeader from "@/components/common/PageHeader";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupListSide from "@/components/lookup/LookupListSide";
@@ -9,14 +8,15 @@ import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useListDetail from "@/utils/helpers/search/useListDetail";
 import {
   CheerAttendanceRecord,
-  CheerPracticePeriod,
   CheerPracticeSession,
+  CheerTallyCount,
 } from "@/utils/types/cheer";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage } from "@/utils/types/common";
 import {
   DURATION,
   EASING,
+  Snackbar,
   SplitLayout,
   Text,
   transition,
@@ -25,34 +25,37 @@ import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { LayoutGroup, motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
-import { group, pick, sort } from "radash";
+import { group, pick } from "radash";
 import useTranslation from "next-translate/useTranslation";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import CheerGradeSection from "@/components/cheer/CheerGradeSection";
 import React from "react";
-import getCheerAttendanceOfClass from "@/utils/backend/attendance/getCheerAttendanceOfClass";
+import getCheerAttendanceOfClass from "@/utils/backend/attendance/cheer/getCheerAttendanceOfClass";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import { Breakpoint } from "@/utils/helpers/useBreakpoint";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import logError from "@/utils/helpers/logError";
 
-const DateCheerAttendancePage: CustomPage<{
-  cheerSession: CheerPracticeSession[];
+const CheerAttendancePage: CustomPage<{
+  cheerSession: CheerPracticeSession;
   date: string;
 }> = ({ cheerSession, date }) => {
   const { t } = useTranslation("attendance/cheer");
+  const { t: tx } = useTranslation("common");
+
+  const mysk = useMySKClient();
+
+  const { setSnackbar } = useContext(SnackbarContext);
 
   const supabase = useSupabaseClient();
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedSessionID, setSelectedSessionID] = useState<string>("");
   const cacheRef = useRef<Record<string, CheerAttendanceRecord[]>>({});
   const [attendances, setAttendances] = useState<CheerAttendanceRecord[]>([]);
-  useEffect(() => {
-    setAttendances([]);
-    onSelectedChange(null!);
-  }, [date]);
-
-  const allSessionClassrooms = cheerSession.flatMap((s) =>
-    s.classrooms.map((r) => r.classroom),
+  const [cheerTallyCounts, setCheerTallyCounts] = useState<CheerTallyCount[]>(
+    [],
   );
 
   const {
@@ -62,7 +65,7 @@ const DateCheerAttendancePage: CustomPage<{
     detailsOpen,
     onDetailsClose,
   } = useListDetail<Pick<Classroom, "id" | "number" | "main_room">>(
-    allSessionClassrooms,
+    cheerSession.classrooms,
     undefined,
     {
       firstByDefault: false,
@@ -72,39 +75,45 @@ const DateCheerAttendancePage: CustomPage<{
 
   const fetchIdRef = useRef(0);
   useEffect(() => {
-    if (!selectedID || !selectedSessionID) {
+    if (!selectedID) {
       setAttendances([]);
       return;
     }
 
     const thisFetchId = ++fetchIdRef.current;
-    const key = `${selectedSessionID}__${selectedID}`;
-    if (cacheRef.current[key] && cacheRef.current[key].length != 0) {
-      setAttendances(cacheRef.current[key]!);
+    if (
+      cacheRef.current[selectedID] &&
+      cacheRef.current[selectedID].length != 0
+    ) {
+      setAttendances(cacheRef.current[selectedID]);
+      onCheerTallyCounts(cacheRef.current[selectedID], selectedID);
       setLoading(false);
       return;
     }
 
-    const fetchData = async () => {
+    const fetchAttendance = async () => {
       setLoading(true);
-      let [selectedSession] = cheerSession.filter(
-        (session) => session.id === selectedSessionID,
-      );
-      let [selectedClassroom] = selectedSession.classrooms.filter(
-        (classroom) => classroom.classroom.id === selectedID,
+      let [selectedClassroom] = cheerSession.classrooms.filter(
+        (classroom) => classroom.id === selectedID,
       );
       try {
         const { data, error } = await getCheerAttendanceOfClass(
           selectedClassroom,
-          pick(selectedSession, ["id", "date", "start_time", "duration"]),
+          pick(cheerSession, ["id", "date", "start_time", "duration"]),
           supabase,
+          mysk,
         );
 
+        if (error) {
+          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+        }
+
         if (!error && data) {
-          cacheRef.current[key] = data;
+          cacheRef.current[selectedID] = data;
           // only show if this is the latest fetch
           if (thisFetchId !== fetchIdRef.current) return;
           setAttendances(data);
+          onCheerTallyCounts(data, selectedID);
         }
       } finally {
         // only turn loading off if this is still the latest fetch
@@ -114,72 +123,82 @@ const DateCheerAttendancePage: CustomPage<{
       }
     };
 
-    fetchData();
+    fetchAttendance();
   }, [selectedID, selectedSessionID]);
 
   useEffect(() => {
     if (!selectedID || !selectedSessionID) return;
-    cacheRef.current[`${selectedSessionID}__${selectedID}`] = attendances;
+    cacheRef.current[selectedID] = attendances;
   }, [attendances, selectedID, selectedSessionID]);
+
+  const onCheerTallyCounts = (
+    attendances: CheerAttendanceRecord[],
+    classroomID: string,
+  ) => {
+    let presence = 0;
+    let total = attendances.length;
+
+    for (const attendance of attendances) {
+      if (attendance.presence === "present" || attendance.presence === "late")
+        presence += 1;
+    }
+
+    const newTally: CheerTallyCount = {
+      id: classroomID,
+      count: {
+        presence,
+        total,
+      },
+    };
+
+    setCheerTallyCounts((prev) => {
+      const other = prev.filter((c) => c.id !== classroomID);
+      return [...other, newTally];
+    });
+  };
 
   return (
     <>
       <Head>
         <title>{t("header.staff")}</title>
       </Head>
-      <PageHeader>{t("title.staff")}</PageHeader>
+      <PageHeader parentURL={`/cheer/attendance/${date}`}>
+        {t("title.staffAttendance", {
+          date: new Date(cheerSession.date),
+        })}{" "}
+        {cheerSession.duration != 1
+          ? t("title.period.multiple", {
+              start: cheerSession.start_time,
+              end: cheerSession.start_time + cheerSession.duration - 1,
+            })
+          : t("title.period.single", { start: cheerSession.start_time })}
+      </PageHeader>
       <SplitLayout ratio="list-detail">
-        <LookupListSide length={allSessionClassrooms.length}>
-          <CheerDateSelector date={date} />
+        <LookupListSide length={cheerSession.classrooms.length}>
           <LookupResultsList
-            length={allSessionClassrooms.length}
+            length={cheerSession.classrooms.length}
             className="[&>ul]:!gap-8 [&>ul]:!pt-0"
           >
             <LayoutGroup>
               {/* Classrooms grouped by grade */}
-              {cheerSession.map((session) => {
-                // Period
-                const period: CheerPracticePeriod = (({
-                  id,
-                  date,
-                  start_time,
-                  duration,
-                }) => ({
-                  id,
-                  date,
-                  start_time,
-                  duration,
-                }))(session);
-                const byGrade = group(session.classrooms, (item) =>
-                  Math.floor(item.classroom.number / 100).toString(),
-                ) as Record<string, typeof session.classrooms>;
-                return (
-                  <React.Fragment key={session.id}>
-                    {sort(Object.entries(byGrade), ([grade]) =>
-                      Number(grade),
-                    ).map(([grade, records]) => {
-                      const classroomList = records.map((r) => r.classroom);
-                      const countList = records.map((r) => r.count);
-                      return (
-                        <CheerGradeSection
-                          key={session.id + grade}
-                          layoutId={session.id + grade}
-                          grade={grade}
-                          period={period}
-                          classrooms={classroomList}
-                          count={countList}
-                          selectedID={selectedID}
-                          onSelectedChange={(classroomID) => {
-                            setSelectedSessionID(session.id);
-                            onSelectedChange(classroomID);
-                            setAttendances([]);
-                          }}
-                        />
-                      );
-                    })}
-                  </React.Fragment>
-                );
-              })}
+              {Object.entries(
+                group(cheerSession.classrooms, (classroom) =>
+                  Math.floor(classroom.number / 100),
+                ) as Record<string, typeof cheerSession.classrooms>,
+              ).map(([grade, classrooms]) => (
+                <CheerGradeSection
+                  key={grade}
+                  grade={grade}
+                  classrooms={classrooms}
+                  cheerTallyCounts={cheerTallyCounts}
+                  selectedID={selectedID}
+                  onSelectedChange={(classroomID) => {
+                    setSelectedSessionID(cheerSession.id);
+                    onSelectedChange(classroomID);
+                    setAttendances([]);
+                  }}
+                />
+              ))}
             </LayoutGroup>
           </LookupResultsList>
         </LookupListSide>
@@ -195,13 +214,13 @@ const DateCheerAttendancePage: CustomPage<{
           {selectedID ? (
             <LookupDetailsSide
               selectedID={selectedDetail?.id || selectedID}
-              length={allSessionClassrooms.length}
+              length={cheerSession.classrooms.length}
             >
               <CheerAttendanceCard
-                date={date}
                 classroom={selectedDetail}
                 attendances={attendances}
                 onAttendancesChange={setAttendances}
+                onCheerTallyCounts={onCheerTallyCounts}
                 loading={loading}
               />
             </LookupDetailsSide>
@@ -220,10 +239,10 @@ const DateCheerAttendancePage: CustomPage<{
       </SplitLayout>
       <LookupDetailsDialog open={detailsOpen} onClose={onDetailsClose}>
         <CheerAttendanceCard
-          date={date}
           classroom={selectedDetail}
           attendances={attendances}
           onAttendancesChange={setAttendances}
+          onCheerTallyCounts={onCheerTallyCounts}
           loading={loading}
         />
       </LookupDetailsDialog>
@@ -242,76 +261,49 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
+  const { id } = params as { [key: string]: string };
   const { date } = params as { [key: string]: string };
 
-  const { data: CheerSessionID, error: fetchIdError } = await mysk.fetch<
-    CheerPracticeSession[]
-  >(`/v1/attendance/cheer/periods`, {
-    query: {
-      fetch_level: "id_only",
-      filter: { data: { date: date } },
-    },
-  });
-  if (fetchIdError) {
-    console.error(`error fetching for date ${date}`);
+  const { data: rawCheerSession, error: fetchSessionError } =
+    await mysk.fetch<CheerPracticeSession>(
+      `/v1/attendance/cheer/periods/${id}`,
+      {
+        query: {
+          fetch_level: "default",
+          descendant_fetch_level: "compact",
+        },
+      },
+    );
+  if (fetchSessionError) {
+    logError("CheerAttendancePage", fetchSessionError);
     return { notFound: true };
   }
-  const rawCheerSession = (
-    await Promise.all(
-      CheerSessionID.map(async (session) => {
-        const { data, error: fetchPeriodsError } = await mysk.fetch<CheerPracticeSession>(
-          `/v1/attendance/cheer/periods/${session.id}`,
-          {
-            query: {
-              fetch_level: "detailed",
-              descendant_fetch_level: "id_only",
-            },
-          },
-        );
-        if (fetchPeriodsError) {
-          console.error(`error fetching for session ${session.id}`);
-          return { notFound: true };
-        }
-        return data;
-      }),
-    )
-  ).filter((session): session is CheerPracticeSession => session !== null);
-
-  // turn arr -> set -> arr to remove duplicate
-  const classroomIDs = Array.from(
-    new Set(
-      rawCheerSession
-        .flatMap((session) => session.classrooms)
-        .map((classrooms) => classrooms.classroom.id),
-    ),
-  );
 
   const DetailClassrooms = await Promise.all(
-    classroomIDs.map(async (id) => {
-      const { data: classroom } = await getClassroomByID(supabase, id, {
-        includeStudents: true,
-      });
-      return classroom!;
+    rawCheerSession.classrooms.map(async (classroom) => {
+      const { data: detailClassroom } = await getClassroomByID(
+        supabase,
+        classroom.id,
+      );
+      return detailClassroom!;
     }),
   );
 
-  const cheerSession: CheerPracticeSession[] = rawCheerSession.map(
-    (session) => ({
-      ...session,
-      classrooms: session.classrooms
-        .map((cc) => ({
-          ...cc,
-          classroom: DetailClassrooms.find((c) => c.id === cc.classroom.id)!,
-          attendances: cc.attendances,
-          count: cc.count,
-        }))
-        .sort((a, b) => a.classroom.number - b.classroom.number),
-    }),
-  );
+  const cheerSession: CheerPracticeSession = {
+    ...rawCheerSession,
+    classrooms: rawCheerSession.classrooms
+      .map((CheerClassroom) => ({
+        ...DetailClassrooms.find(
+          (classroom) => classroom.id === CheerClassroom.id,
+        )!,
+        attendances: [],
+      }))
+      .sort((a, b) => a.number - b.number),
+  };
 
   return {
     props: { cheerSession, date },
   };
 };
 
-export default DateCheerAttendancePage;
+export default CheerAttendancePage;

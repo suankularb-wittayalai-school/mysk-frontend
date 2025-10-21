@@ -89,7 +89,7 @@ const CheerAttendanceStaffListItem: StylableFC<{
     setSaving(false);
 
     if (success) {
-      onAttendancesChange(eventAttendance); // only update after server OK
+      onAttendancesChange(eventAttendance); // only update after no api error
     }
   }
 
