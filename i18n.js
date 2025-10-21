@@ -72,6 +72,7 @@ module.exports = {
     "rgx:/((classes/\\[classNumber\\]|manage/(classrooms|electives))/print)$": [
       "classes/print",
     ],
+    "/classes/[classNumber]/cheer": ["classes/cheer"],
     // Search
     "/search/[view]": [
       "search/landing",
