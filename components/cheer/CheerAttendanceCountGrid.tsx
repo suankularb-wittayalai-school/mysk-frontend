@@ -29,7 +29,7 @@ const CheerAttendanceCountGrid: StylableFC<{
           size={20}
           className="text-on-surface-variant"
         />
-        <span>{counts.absentNoRemedial}</span>
+        <span>{counts.onLeaveNoRemedial}</span>
       </li>
       <li title={"Absent With Remedial"}>
         <MaterialIcon
@@ -37,7 +37,7 @@ const CheerAttendanceCountGrid: StylableFC<{
           size={20}
           className="text-on-secondary-container"
         />
-        <span>{counts.absentWithRemedial}</span>
+        <span>{counts.onLeaveWithRemedial}</span>
       </li>
       <li title={"Absent"}>
         <MaterialIcon icon="close" size={20} className="text-error" />

@@ -22,8 +22,8 @@ const CheerAttendanceSelector: StylableFC<{
   const locale = useLocale();
   function isAbsent(attendance: CheerAttendanceType | null): boolean {
     if (
-      attendance == CheerAttendanceType.absentNoRemedial ||
-      attendance == CheerAttendanceType.absentWithRemedial ||
+      attendance == CheerAttendanceType.onLeaveNoRemedial ||
+      attendance == CheerAttendanceType.onLeaveWithRemedial ||
       attendance == CheerAttendanceType.missing
     ) {
       return true;

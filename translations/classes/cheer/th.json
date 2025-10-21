@@ -4,8 +4,8 @@
   "legend": {
     "present": "มาซ้อม",
     "late": "มาสาย",
-    "absentNoRemedial": "ลาไม่ต้องชดเชย",
-    "absentWithRemedial": "ลาต้องชดเชย",
+    "onLeaveNoRemedial": "ลาไม่ต้องชดเชย",
+    "onLeaveWithRemedial": "ลาต้องชดเชย",
     "missing": "ขาด",
     "empty": "ไม่มีข้อมูล"
   },

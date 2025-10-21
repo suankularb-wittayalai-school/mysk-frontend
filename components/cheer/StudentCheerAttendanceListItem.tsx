@@ -56,8 +56,8 @@ const StudentCheerAttendanceListItem: FC<{
           />
         </ListItem>
         {event == "start" &&
-          (attendance.presence == CheerAttendanceType.absentNoRemedial ||
-            attendance.presence == CheerAttendanceType.absentWithRemedial ||
+          (attendance.presence == CheerAttendanceType.onLeaveNoRemedial ||
+            attendance.presence == CheerAttendanceType.onLeaveWithRemedial ||
             attendance.presence == CheerAttendanceType.missing) && (
             <CheerAbsenceTypeSelector
               attendance={attendance}
@@ -67,8 +67,8 @@ const StudentCheerAttendanceListItem: FC<{
             />
           )}
         {event == "start" &&
-          (attendance.presence == CheerAttendanceType.absentNoRemedial ||
-            attendance.presence == CheerAttendanceType.absentWithRemedial) && (
+          (attendance.presence == CheerAttendanceType.onLeaveNoRemedial ||
+            attendance.presence == CheerAttendanceType.onLeaveWithRemedial) && (
             <div className="mt-1 px-4 sm:pb-2">
               <TextField<string>
                 appearance="outlined"

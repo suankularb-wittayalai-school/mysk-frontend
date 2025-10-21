@@ -9,8 +9,8 @@ export default function tallyCheerAttendances(
   const summary = {
     present: 0,
     late: 0,
-    absentNoRemedial: 0,
-    absentWithRemedial: 0,
+    onLeaveNoRemedial: 0,
+    onLeaveWithRemedial: 0,
     missing: 0,
     empty: 0,
   };
@@ -33,10 +33,12 @@ export default function tallyCheerAttendances(
       attendance.presence_at_end === CheerAttendanceType.present
     ) {
       summary.late++;
-    } else if (attendance.presence === CheerAttendanceType.absentNoRemedial) {
-      summary.absentNoRemedial++;
-    } else if (attendance.presence === CheerAttendanceType.absentWithRemedial) {
-      summary.absentWithRemedial++;
+    } else if (attendance.presence === CheerAttendanceType.onLeaveNoRemedial) {
+      summary.onLeaveNoRemedial++;
+    } else if (
+      attendance.presence === CheerAttendanceType.onLeaveWithRemedial
+    ) {
+      summary.onLeaveWithRemedial++;
     } else if (attendance.presence === CheerAttendanceType.missing) {
       summary.missing++;
     }

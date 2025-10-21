@@ -5,8 +5,8 @@ import { MaterialIcon } from "@suankularb-components/react";
 enum CellType {
   present,
   late,
-  absentNoRemedial,
-  absentWithRemedial,
+  onLeaveNoRemedial,
+  onLeaveWithRemedial,
   missing,
   empty,
 }
@@ -17,10 +17,10 @@ const CheerAttendanceFigureEvent: StylableFC<{
   const type = (() => {
     if (attendance == CheerAttendanceType.present) return CellType.present;
     else if (attendance == CheerAttendanceType.late) return CellType.late;
-    else if (attendance == CheerAttendanceType.absentNoRemedial)
-      return CellType.absentNoRemedial;
-    else if (attendance == CheerAttendanceType.absentWithRemedial)
-      return CellType.absentWithRemedial;
+    else if (attendance == CheerAttendanceType.onLeaveNoRemedial)
+      return CellType.onLeaveNoRemedial;
+    else if (attendance == CheerAttendanceType.onLeaveWithRemedial)
+      return CellType.onLeaveWithRemedial;
     else if (attendance == CheerAttendanceType.missing) return CellType.missing;
     else return CellType.empty;
   })();
@@ -41,8 +41,8 @@ const CheerAttendanceFigureEvent: StylableFC<{
       )}
     >
       {type === CellType.late && <MaterialIcon icon="alarm" />}
-      {type === CellType.absentNoRemedial && <MaterialIcon icon="close" />}
-      {type === CellType.absentWithRemedial && <MaterialIcon icon="history" />}
+      {type === CellType.onLeaveNoRemedial && <MaterialIcon icon="close" />}
+      {type === CellType.onLeaveWithRemedial && <MaterialIcon icon="history" />}
       {type === CellType.missing && <MaterialIcon icon="close" />}
     </div>
   );

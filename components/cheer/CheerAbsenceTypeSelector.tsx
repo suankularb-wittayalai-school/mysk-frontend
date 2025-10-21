@@ -29,24 +29,24 @@ const CheerAbsenceTypeSelector: StylableFC<{
         {t("chip.absenceType.missing")}
       </FilterChip>
       <FilterChip
-        selected={value == CheerAttendanceType.absentNoRemedial}
+        selected={value == CheerAttendanceType.onLeaveNoRemedial}
         onClick={() => {
           if (!editable) return;
           onChange({
             ...attendance,
-            presence: CheerAttendanceType.absentNoRemedial,
+            presence: CheerAttendanceType.onLeaveNoRemedial,
           });
         }}
       >
         {t("chip.absenceType.noRemedial")}
       </FilterChip>
       <FilterChip
-        selected={value == CheerAttendanceType.absentWithRemedial}
+        selected={value == CheerAttendanceType.onLeaveWithRemedial}
         onClick={() => {
           if (!editable) return;
           onChange({
             ...attendance,
-            presence: CheerAttendanceType.absentWithRemedial,
+            presence: CheerAttendanceType.onLeaveWithRemedial,
           });
         }}
       >

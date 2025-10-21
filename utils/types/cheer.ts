@@ -4,8 +4,8 @@ import { Classroom } from "@/utils/types/classroom";
 export enum CheerAttendanceType {
   present = "present",
   late = "late",
-  absentWithRemedial = "absent_without_leave",
-  absentNoRemedial = "absent_with_leave",
+  onLeaveWithRemedial = "absent_without_leave",
+  onLeaveNoRemedial = "absent_with_leave",
   missing = "deserted",
 }
 

@@ -118,8 +118,8 @@ const CheerAttendanceStaffListItem: StylableFC<{
                 ? attendance.presence
                 : attendance.presence_at_end,
             ...(shownEvent === "start" &&
-            (attendance.presence == CheerAttendanceType.absentNoRemedial ||
-              attendance.presence == CheerAttendanceType.absentWithRemedial) &&
+            (attendance.presence == CheerAttendanceType.onLeaveNoRemedial ||
+              attendance.presence == CheerAttendanceType.onLeaveWithRemedial) &&
             attendance.absence_reason
               ? { absence_reason: attendance.absence_reason }
               : {}),
@@ -197,8 +197,8 @@ const CheerAttendanceStaffListItem: StylableFC<{
         {shownEvent == "start" &&
           attendance.presence != null &&
           [
-            CheerAttendanceType.absentWithRemedial,
-            CheerAttendanceType.absentNoRemedial,
+            CheerAttendanceType.onLeaveWithRemedial,
+            CheerAttendanceType.onLeaveNoRemedial,
           ].includes(attendance.presence) && (
             <motion.div
               initial={{ opacity: 0 }}

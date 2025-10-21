@@ -25,15 +25,15 @@ const CheerAttendanceLegend: StylableFC = ({ style, className }) => {
       </li>
       <li>
         <CheerAttendanceFigureEvent
-          attendance={CheerAttendanceType.absentNoRemedial}
+          attendance={CheerAttendanceType.onLeaveNoRemedial}
         />
-        <Text type="body-medium">{t("legend.absentNoRemedial")}</Text>
+        <Text type="body-medium">{t("legend.onLeaveNoRemedial")}</Text>
       </li>
       <li>
         <CheerAttendanceFigureEvent
-          attendance={CheerAttendanceType.absentWithRemedial}
+          attendance={CheerAttendanceType.onLeaveWithRemedial}
         />
-        <Text type="body-medium">{t("legend.absentWithRemedial")}</Text>
+        <Text type="body-medium">{t("legend.onLeaveWithRemedial")}</Text>
       </li>
       <li>
         <CheerAttendanceFigureEvent attendance={CheerAttendanceType.missing} />

@@ -4,8 +4,8 @@
   "legend": {
     "present": "Present",
     "late": "Late",
-    "absentNoRemedial": "Absent No Remedial",
-    "absentWithRemedial": "Absent With Remedial",
+    "onLeaveNoRemedial": "On Leave No Remedial",
+    "onLeaveWithRemedial": "On Leave With Remedial",
     "missing": "Absent",
     "empty": "Unknown"
   },
