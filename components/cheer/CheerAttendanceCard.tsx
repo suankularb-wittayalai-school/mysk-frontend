@@ -16,6 +16,7 @@ import CheerAttendanceListItem from "@/components/cheer/CheerAttendanceStaffList
 const CheerAttendanceCard: StylableFC<{
   classroom: Pick<Classroom, "id" | "number" | "main_room"> | null;
   attendances: CheerAttendanceRecord[];
+  cheerStaffSet: Set<string>
   onAttendancesChange: (attendances: CheerAttendanceRecord[]) => void;
   onCheerTallyCounts: (
     attendances: CheerAttendanceRecord[],
@@ -25,6 +26,7 @@ const CheerAttendanceCard: StylableFC<{
 }> = ({
   classroom,
   attendances,
+  cheerStaffSet,
   onAttendancesChange,
   onCheerTallyCounts,
   loading,
@@ -74,6 +76,7 @@ const CheerAttendanceCard: StylableFC<{
             editable={!loading}
             saving={saving}
             setSaving={setSaving}
+            cheerStaffSet={cheerStaffSet}
             onAttendancesChange={(attendance) => {
               const newAttendances = replace(
                 attendances,

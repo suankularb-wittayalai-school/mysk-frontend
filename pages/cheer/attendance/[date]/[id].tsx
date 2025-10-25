@@ -37,13 +37,15 @@ import { Breakpoint } from "@/utils/helpers/useBreakpoint";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import logError from "@/utils/helpers/logError";
+import getCheerStaffs from "@/utils/backend/attendance/cheer/getCheerStaffs";
 import getAdvisingClass from "@/utils/backend/person/getAdvisingClass";
 import { getTeacherFromUserID } from "@/utils/backend/account/getLoggedInPerson";
 
 const CheerAttendancePage: CustomPage<{
   cheerSession: CheerPracticeSession;
+  cheerStaffs: { student_id: string }[];
   date: string;
-}> = ({ cheerSession, date }) => {
+}> = ({ cheerSession, cheerStaffs, date }) => {
   const { t } = useTranslation("attendance/cheer");
   const { t: tx } = useTranslation("common");
 
@@ -59,6 +61,8 @@ const CheerAttendancePage: CustomPage<{
   const [cheerTallyCounts, setCheerTallyCounts] = useState<CheerTallyCount[]>(
     [],
   );
+
+  const cheerStaffSet = new Set(cheerStaffs.map(staff => staff.student_id));
 
   const {
     selectedID,
@@ -221,6 +225,7 @@ const CheerAttendancePage: CustomPage<{
               <CheerAttendanceCard
                 classroom={selectedDetail}
                 attendances={attendances}
+                cheerStaffSet={cheerStaffSet}
                 onAttendancesChange={setAttendances}
                 onCheerTallyCounts={onCheerTallyCounts}
                 loading={loading}
@@ -243,6 +248,7 @@ const CheerAttendancePage: CustomPage<{
         <CheerAttendanceCard
           classroom={selectedDetail}
           attendances={attendances}
+          cheerStaffSet={cheerStaffSet}
           onAttendancesChange={setAttendances}
           onCheerTallyCounts={onCheerTallyCounts}
           loading={loading}
@@ -320,9 +326,11 @@ export const getServerSideProps: GetServerSideProps = async ({
       }))
       .sort((a, b) => a.number - b.number),
   };
+  
+  const { data: cheerStaffs } = await getCheerStaffs(supabase);
 
   return {
-    props: { cheerSession, date },
+    props: { cheerSession, cheerStaffs, date },
   };
 };
 

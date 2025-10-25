@@ -44,6 +44,7 @@ const CheerAttendanceStaffListItem: StylableFC<{
   shownEvent: CheerAttendanceEvent;
   editable?: boolean;
   saving: boolean;
+  cheerStaffSet: Set<string>;
   setSaving: React.Dispatch<React.SetStateAction<boolean>>;
   onAttendancesChange: (attendance: CheerAttendanceRecord) => void;
 }> = ({
@@ -51,6 +52,7 @@ const CheerAttendanceStaffListItem: StylableFC<{
   shownEvent,
   editable,
   saving,
+  cheerStaffSet,
   setSaving,
   onAttendancesChange,
 }) => {
@@ -179,8 +181,13 @@ const CheerAttendanceStaffListItem: StylableFC<{
             attendance={attendance}
             shownEvent={shownEvent}
             onChange={setAttendanceOfShownEvent}
-            editable={true}
-            className="-mr-4 -space-x-1"
+            editable={!cheerStaffSet.has(attendance.student.id)}
+            className={cn(
+              "-mr-4 -space-x-1",
+              cheerStaffSet.has(attendance.student.id)
+                ? "pointer-events-none cursor-not-allowed opacity-50"
+                : null,
+            )}
           />
         </ListItem>
 
