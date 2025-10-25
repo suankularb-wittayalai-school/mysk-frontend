@@ -27,7 +27,7 @@ const CheerPeriodListItem: StylableFC<{
           align="center"
           lines={2}
           element="div"
-          className="!items-center !overflow-hidden rounded-md !px-4 !py-4"
+          className="!items-center !overflow-hidden rounded-xl !px-4 !py-4"
           onClick={() => onSessionSelect(cheerSession.id)}
         >
           <ListItemContent
@@ -40,7 +40,7 @@ const CheerPeriodListItem: StylableFC<{
                 : t("period.single", { start: cheerSession.start_time })
             }
             desc={t("date", { date: new Date(cheerSession.date) })}
-            className="w-0 [&>span]:!truncate"
+            className="w-0 [&>span]:!truncate px-4"
           />
         </ListItem>
       </motion.ul>

@@ -37,16 +37,16 @@ const CheerPeriodPage: CustomPage<{
       <ContentLayout className="!pb-0 *:lg:!items-center">
         <div className={cn(`lg:w-[calc((10/12*100%)-3rem)]`)}>
           <div className={cn(`h-[calc(100dvh-5.75rem)]`)}>
+            <CheerDateSelector date={date} />
             <div
               className={cn(
-                `relative flex h-full flex-col overflow-hidden rounded-xl sm:overflow-auto md:overflow-hidden md:bg-surface-container`,
+                `relative flex h-full flex-col overflow-hidden rounded-lg sm:overflow-auto md:overflow-hidden md:bg-surface-container`,
               )}
             >
-              <CheerDateSelector date={date} />
               {cheerPeriods.length !== 0 ? (
                 <List
                   className={cn(
-                    `!mt-1 !overflow-y-auto *:bg-none md:!m-0 md:space-y-1 md:!p-1 *:md:rounded-md *:md:bg-surface`,
+                    `!mt-1 !overflow-y-auto *:bg-none md:!m-0 md:space-y-1 md:!p-2 *:md:rounded-lg *:md:bg-surface`,
                   )}
                 >
                   {cheerPeriods.map((cheerSession) => (
