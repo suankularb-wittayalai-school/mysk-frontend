@@ -5,13 +5,16 @@ import { ContentLayout, List } from "@suankularb-components/react";
 import CheerDateSelector from "@/components/cheer/CheerDateSelector";
 import cn from "@/utils/helpers/cn";
 import CheerPeriodListItem from "@/components/cheer/CheerPeriodListItem";
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import { CheerPracticeSession } from "@/utils/types/cheer";
 import { useRouter } from "next/router";
 import useTranslation from "next-translate/useTranslation";
 import logError from "@/utils/helpers/logError";
 import { Text } from "@suankularb-components/react";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import getAdvisingClass from "@/utils/backend/person/getAdvisingClass";
+import { getTeacherFromUserID } from "@/utils/backend/account/getLoggedInPerson";
 
 const CheerPeriodPage: CustomPage<{
   cheerPeriods: CheerPracticeSession[];
@@ -78,9 +81,12 @@ export const getServerSideProps: GetServerSideProps = async ({
   res,
 }) => {
   const mysk = await createMySKClient(req);
+  const supabase = createPagesServerClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
   const { date } = params as { [key: string]: string };
-
   const { data: cheerPeriods, error: fetchIdError } = await mysk.fetch<
     CheerPracticeSession[]
   >(`/v1/attendance/cheer/periods`, {
@@ -90,9 +96,25 @@ export const getServerSideProps: GetServerSideProps = async ({
     },
   });
   if (fetchIdError) logError("CheerPeriodPage", fetchIdError);
-
+  let filteredCheerPeriods = cheerPeriods;
+  if (mysk.user?.role == "teacher") {
+    const { data: teacher } = await getTeacherFromUserID(
+      supabase,
+      mysk,
+      mysk.user.id,
+    );
+    const { data: advisingClassroomID } = await getAdvisingClass(
+      supabase,
+      teacher!.id,
+    );
+    filteredCheerPeriods = cheerPeriods!.filter((period) => {
+      period.classrooms.some(
+        (classroom) => classroom.id === advisingClassroomID,
+      );
+    });
+  }
   return {
-    props: { cheerPeriods, date },
+    props: { cheerPeriods: filteredCheerPeriods, date },
   };
 };
 

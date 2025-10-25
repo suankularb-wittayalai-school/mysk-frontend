@@ -37,6 +37,8 @@ import { Breakpoint } from "@/utils/helpers/useBreakpoint";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import logError from "@/utils/helpers/logError";
+import getAdvisingClass from "@/utils/backend/person/getAdvisingClass";
+import { getTeacherFromUserID } from "@/utils/backend/account/getLoggedInPerson";
 
 const CheerAttendancePage: CustomPage<{
   cheerSession: CheerPracticeSession;
@@ -278,9 +280,27 @@ export const getServerSideProps: GetServerSideProps = async ({
     logError("CheerAttendancePage", fetchSessionError);
     return { notFound: true };
   }
+  let filteredCheerSession = rawCheerSession;
+  if (mysk.user?.role == "teacher") {
+    const { data: teacher } = await getTeacherFromUserID(
+      supabase,
+      mysk,
+      mysk.user.id,
+    );
+    const { data: advisingClassroomID } = await getAdvisingClass(
+      supabase,
+      teacher!.id,
+    );
+    filteredCheerSession = {
+      ...rawCheerSession,
+      classrooms: rawCheerSession.classrooms.filter(
+        (classroom) => classroom.id == advisingClassroomID,
+      ),
+    };
+  }
 
   const DetailClassrooms = await Promise.all(
-    rawCheerSession.classrooms.map(async (classroom) => {
+    filteredCheerSession.classrooms.map(async (classroom) => {
       const { data: detailClassroom } = await getClassroomByID(
         supabase,
         classroom.id,
@@ -290,8 +310,8 @@ export const getServerSideProps: GetServerSideProps = async ({
   );
 
   const cheerSession: CheerPracticeSession = {
-    ...rawCheerSession,
-    classrooms: rawCheerSession.classrooms
+    ...filteredCheerSession,
+    classrooms: filteredCheerSession.classrooms
       .map((CheerClassroom) => ({
         ...DetailClassrooms.find(
           (classroom) => classroom.id === CheerClassroom.id,
