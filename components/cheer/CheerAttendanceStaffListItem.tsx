@@ -44,6 +44,7 @@ const CheerAttendanceStaffListItem: StylableFC<{
   shownEvent: CheerAttendanceEvent;
   editable?: boolean;
   saving: boolean;
+  cheerStaffSet: Set<string>;
   setSaving: React.Dispatch<React.SetStateAction<boolean>>;
   onAttendancesChange: (attendance: CheerAttendanceRecord) => void;
 }> = ({
@@ -51,6 +52,7 @@ const CheerAttendanceStaffListItem: StylableFC<{
   shownEvent,
   editable,
   saving,
+  cheerStaffSet,
   setSaving,
   onAttendancesChange,
 }) => {
@@ -89,7 +91,7 @@ const CheerAttendanceStaffListItem: StylableFC<{
     setSaving(false);
 
     if (success) {
-      onAttendancesChange(eventAttendance); // only update after server OK
+      onAttendancesChange(eventAttendance); // only update after no api error
     }
   }
 
@@ -118,8 +120,8 @@ const CheerAttendanceStaffListItem: StylableFC<{
                 ? attendance.presence
                 : attendance.presence_at_end,
             ...(shownEvent === "start" &&
-            (attendance.presence == CheerAttendanceType.absentNoRemedial ||
-              attendance.presence == CheerAttendanceType.absentWithRemedial) &&
+            (attendance.presence == CheerAttendanceType.onLeaveNoRemedial ||
+              attendance.presence == CheerAttendanceType.onLeaveWithRemedial) &&
             attendance.absence_reason
               ? { absence_reason: attendance.absence_reason }
               : {}),
@@ -179,8 +181,13 @@ const CheerAttendanceStaffListItem: StylableFC<{
             attendance={attendance}
             shownEvent={shownEvent}
             onChange={setAttendanceOfShownEvent}
-            editable={true}
-            className="-mr-4 -space-x-1"
+            editable={!cheerStaffSet.has(attendance.student.id)}
+            className={cn(
+              "-mr-4 -space-x-1",
+              cheerStaffSet.has(attendance.student.id)
+                ? "pointer-events-none cursor-not-allowed opacity-50"
+                : null,
+            )}
           />
         </ListItem>
 
@@ -197,8 +204,8 @@ const CheerAttendanceStaffListItem: StylableFC<{
         {shownEvent == "start" &&
           attendance.presence != null &&
           [
-            CheerAttendanceType.absentWithRemedial,
-            CheerAttendanceType.absentNoRemedial,
+            CheerAttendanceType.onLeaveWithRemedial,
+            CheerAttendanceType.onLeaveNoRemedial,
           ].includes(attendance.presence) && (
             <motion.div
               initial={{ opacity: 0 }}

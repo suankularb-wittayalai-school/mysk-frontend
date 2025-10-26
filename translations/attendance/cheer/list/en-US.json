@@ -1,6 +1,9 @@
 {
-  "date": "{{date, dateshort}}",
-  "period": "Period {{start}} - {{end}}",
+  "date": "{{date, datelong}}",
+  "period": {
+    "single": "Period {{start}}",
+    "multiple": "Period {{start}} - {{end}}"
+  },
   "chip": {
     "start": {
       "present": "P",
@@ -21,11 +24,13 @@
     "start": "Start",
     "end": "End"
   },
-  "enrollment": {
+  "attendanceTally": {
     "alt": "{{count}} enrolled out of {{max}}",
     "label": "<0>{{count}}</0>/{{max}}",
+    "labelEmpty": "<0>-</0>/-",
     "progressAlt": "Enrollment progress bar"
   },
   "classNo": "No. {{classNo}}",
-  "enterReason": "Enter reason"
+  "enterReason": "Enter reason",
+  "empty": "No cheer practice for given date"
 }

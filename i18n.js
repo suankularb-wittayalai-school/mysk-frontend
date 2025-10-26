@@ -11,7 +11,12 @@ const formatters = (lang) => ({
     day: "numeric",
     month: "short",
   }),
+  datelong: new Intl.DateTimeFormat(lang, {
+    day: "numeric",
+    month: "long",
+  }),
   month: new Intl.DateTimeFormat(lang, { month: "long", year: "numeric" }),
+  monthonlyshort: new Intl.DateTimeFormat(lang, { month: "short" }),
   monthshort: new Intl.DateTimeFormat(lang, {
     month: "short",
     year: "numeric",
@@ -68,6 +73,7 @@ module.exports = {
     "rgx:/((classes/\\[classNumber\\]|manage/(classrooms|electives))/print)$": [
       "classes/print",
     ],
+    "/classes/[classNumber]/cheer": ["classes/cheer"],
     // Search
     "/search/[view]": [
       "search/landing",
@@ -152,7 +158,11 @@ module.exports = {
     "/cheer/attendance/[date]": [
       "attendance/cheer",
       "attendance/cheer/list",
-      "elective/list",
+      "search/common",
+    ],
+    "/cheer/attendance/[date]/[id]": [
+      "attendance/cheer",
+      "attendance/cheer/list",
       "search/common",
     ],
   },

@@ -1,7 +1,12 @@
 {
   "title": {
     "student": "การเช็กชื่อซ้อมเชียร์ของคุณ",
-    "staff": "การเช็กชื่อซ้อมเชียร์"
+    "staff": "การเช็กชื่อซ้อมเชียร์",
+    "staffAttendance": "ซ้อมเชียร์ วันที่ {{date, datelong}}",
+    "period": {
+      "single": "คาบ {{start}}",
+      "multiple": "คาบ {{start}} - {{end}}"
+    }
   },
   "header": {
     "student": "การเช็กชื่อซ้อมเชียร์",

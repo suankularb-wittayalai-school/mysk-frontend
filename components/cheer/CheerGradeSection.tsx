@@ -1,5 +1,4 @@
 import cn from "@/utils/helpers/cn";
-import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import {
   Button,
@@ -14,7 +13,7 @@ import useTranslation from "next-translate/useTranslation";
 import { usePlausible } from "next-plausible";
 import { useEffect, useState } from "react";
 import CheerLookupClassCard from "@/components/cheer/CheerLookupClassCard";
-import { CheerPracticePeriod } from "@/utils/types/cheer";
+import { CheerTallyCount, ClassroomCheerAttendance } from "@/utils/types/cheer";
 
 /**
  * A section of the Lookup Classes list that shows all Classrooms in a grade.
@@ -28,32 +27,24 @@ import { CheerPracticePeriod } from "@/utils/types/cheer";
  */
 const CheerGradeSection: StylableFC<{
   grade?: string;
-  classrooms: Pick<
-    Classroom,
-    "id" | "number" | "main_room" | "class_advisors" | "students"
-  >[];
-  period: CheerPracticePeriod;
-  count: number[];
+  classrooms: ClassroomCheerAttendance[];
+  cheerTallyCounts: CheerTallyCount[];
   selectedID: string | null;
   onSelectedChange: (value: string) => void;
   expandedByDefault?: boolean;
   titleOverride?: string;
-  layoutId: string;
 }> = ({
   grade,
   classrooms,
-  period,
-  count,
+  cheerTallyCounts,
   selectedID,
   onSelectedChange,
   expandedByDefault,
   titleOverride,
-  layoutId,
   style,
   className,
 }) => {
-  const { t } = useTranslation("attendance/cheer/list");
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("common");
 
   const plausible = usePlausible();
 
@@ -63,7 +54,7 @@ const CheerGradeSection: StylableFC<{
   return (
     <motion.li
       layout="position"
-      layoutId={layoutId}
+      layoutId={grade}
       transition={transition(DURATION.medium4, EASING.standard)}
       style={style}
       className={cn(`space-y-2`, className)}
@@ -94,16 +85,7 @@ const CheerGradeSection: StylableFC<{
 
         {/* Grade */}
         <Text type="headline-medium">
-          {titleOverride || tx("class", { number: grade })}
-        </Text>
-        <Text
-          type="body-medium"
-          className="!col-start-2 !-mt-1 !flex !flex-grow !text-on-surface"
-        >
-          {t("period", {
-            start: period.start_time,
-            end: period.start_time + period.duration - 1,
-          })}
+          {titleOverride || t("class", { number: grade })}
         </Text>
       </div>
 
@@ -123,7 +105,7 @@ const CheerGradeSection: StylableFC<{
               >
                 <CheerLookupClassCard
                   classroom={classroom}
-                  count={count[idx]}
+                  cheerTallyCounts={cheerTallyCounts}
                   selected={classroom.id === selectedID}
                   onClick={onSelectedChange}
                 />

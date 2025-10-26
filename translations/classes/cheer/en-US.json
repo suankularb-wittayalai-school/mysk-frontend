@@ -1,0 +1,13 @@
+{
+  "title": "M.{{classNumber}} cheer practice attendance",
+  "header": "M.{{classNumber}} cheer practice attendance",
+  "legend": {
+    "present": "Present",
+    "late": "Late",
+    "onLeaveNoRemedial": "On Leave No Remedial",
+    "onLeaveWithRemedial": "On Leave With Remedial",
+    "missing": "Absent",
+    "empty": "Unknown"
+  },
+  "list": { "date": "{{date, dateonly}}", "month": "{{date, monthonlyshort}}" }
+}

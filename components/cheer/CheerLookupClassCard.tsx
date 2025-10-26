@@ -15,6 +15,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
 import CheerAttendenceIndicator from "@/components/cheer/CheerAttendanceIndicator";
+import { CheerTallyCount } from "@/utils/types/cheer";
 
 /**
  * Cheer Lookup Class Card is a card that displays a Classroom in the Cheer attendance
@@ -29,10 +30,10 @@ const CheerLookupClassCard: StylableFC<{
     Classroom,
     "id" | "number" | "main_room" | "class_advisors" | "students"
   >;
-  count: number;
+  cheerTallyCounts: CheerTallyCount[];
   selected?: boolean;
   onClick: (value: string) => void;
-}> = ({ classroom, count, selected, onClick, style, className }) => {
+}> = ({ classroom, cheerTallyCounts, selected, onClick, style, className }) => {
   const locale = useLocale();
   const { t: tx } = useTranslation("common");
 
@@ -86,8 +87,7 @@ const CheerLookupClassCard: StylableFC<{
       />
       <div className="-mt-3 mr-3 flex justify-center">
         <CheerAttendenceIndicator
-          classSize={count}
-          capSize={classroom.students.length}
+          cheerTallyCount={cheerTallyCounts.find((cheerTallyCount)=>(cheerTallyCount.id === classroom.id))}
           className={cn(
             selected
               ? `[&_.skc-progress>*]:!bg-surface-bright`

@@ -1,0 +1,13 @@
+{
+  "title": "การเช็กชื่อซ้อมเชียร์ ม.{{classNumber}}",
+  "header": "การเช็กชื่อซ้อมเชียร์ ม.{{classNumber}}",
+  "legend": {
+    "present": "มาซ้อม",
+    "late": "มาสาย",
+    "onLeaveNoRemedial": "ลาไม่ต้องชดเชย",
+    "onLeaveWithRemedial": "ลาต้องชดเชย",
+    "missing": "ขาด",
+    "empty": "ไม่มีข้อมูล"
+  },
+  "list": { "date": "{{date, dateonly}}", "month": "{{date, monthonlyshort}}" }
+}
