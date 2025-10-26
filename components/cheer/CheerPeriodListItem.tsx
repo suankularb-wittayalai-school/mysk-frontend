@@ -27,7 +27,7 @@ const CheerPeriodListItem: StylableFC<{
           align="center"
           lines={2}
           element="div"
-          className="!items-center !overflow-hidden rounded-xl !px-4 !py-4"
+          className="!items-center !overflow-hidden rounded-lg !px-4 !py-4"
           onClick={() => onSessionSelect(cheerSession.id)}
         >
           <ListItemContent
