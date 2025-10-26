@@ -107,11 +107,11 @@ export const getServerSideProps: GetServerSideProps = async ({
       supabase,
       teacher!.id,
     );
-    filteredCheerPeriods = cheerPeriods!.filter((period) => {
+    filteredCheerPeriods = cheerPeriods!.filter((period) =>
       period.classrooms.some(
         (classroom) => classroom.id === advisingClassroomID,
-      );
-    });
+      ),
+    );
   }
   return {
     props: { cheerPeriods: filteredCheerPeriods, date },
