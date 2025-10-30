@@ -29,6 +29,7 @@ import { useContext, useState } from "react";
 import CheerAttendanceSelector from "@/components/cheer/CheerAttendanceSelector";
 import CheerAbsenceTypeSelector from "@/components/cheer/CheerAbsenceTypeSelector";
 import useTranslation from "next-translate/useTranslation";
+import logError from "@/utils/helpers/logError";
 
 /**
  * A List Item for the Attendance page.
@@ -132,6 +133,7 @@ const CheerAttendanceStaffListItem: StylableFC<{
 
     if (error) {
       setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+      logError("Saving Cheer Attendance",error)
       return false;
     }
 
