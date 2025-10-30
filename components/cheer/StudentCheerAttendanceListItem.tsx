@@ -24,6 +24,7 @@ const StudentCheerAttendanceListItem: FC<{
   const { t } = useTranslation("attendance/cheer/list");
   return (
     <motion.li
+      key={attendance.id}
       layoutId={attendance.id}
       transition={transition(DURATION.medium2, EASING.standard)}
     >
