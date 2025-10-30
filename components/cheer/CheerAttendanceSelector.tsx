@@ -45,6 +45,17 @@ const CheerAttendanceSelector: StylableFC<{
           },
           shownEvent,
         );
+      } else if (
+        presence === CheerAttendanceType.missing &&
+        isAbsent(attendance.presence) === isAbsent(presence)
+      ) {
+        onChange(
+          {
+            ...attendance,
+            presence: null,
+          },
+          shownEvent,
+        );
       } else {
         onChange(
           {
