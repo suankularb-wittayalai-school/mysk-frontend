@@ -63,6 +63,7 @@ const CheerPage: CustomPage<{
               >
                 {attendances.map((attendance) => (
                   <StudentCheerAttendanceListItem
+                    key={attendance.practice_period.id}
                     attendance={attendance}
                     event={event}
                   />
