@@ -5,7 +5,11 @@ import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber
 import { supabase } from "@/utils/supabase-backend";
 import { CustomPage } from "@/utils/types/common";
 import { Classroom } from "@/utils/types/classroom";
-import { ContentLayout, Snackbar } from "@suankularb-components/react";
+import {
+  ContentLayout,
+  Snackbar,
+  Progress,
+} from "@suankularb-components/react";
 import CheerAttendanceLegend from "@/components/cheer/CheerAttendanceLegend";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import {
@@ -42,6 +46,7 @@ const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
       typeof tallyCheerAttendances
     >)[]
   >([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const mysk = useMySKClient();
 
@@ -52,6 +57,7 @@ const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const { data: classPracticePeriods, error: classPracticePeriodsError } =
           await mysk.fetch<CheerPracticePeriod[]>(
@@ -66,6 +72,7 @@ const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
         if (classPracticePeriodsError || !classPracticePeriods) {
           logError("getClassPracticePeriods", classPracticePeriodsError);
           setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+          setLoading(false);
           return;
         }
         await parallel(
@@ -128,6 +135,7 @@ const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
                 ...tallyCheerAttendances(periodAttendances),
               },
             ]);
+            setLoading(false);
           },
         );
       } finally {
@@ -144,6 +152,14 @@ const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
           })}
         </title>
       </Head>
+      {practiceDates.length == 0 && loading && (
+        <Progress
+          appearance="linear"
+          visible={loading}
+          alt="loading"
+          className="absolute inset-0 bottom-auto"
+        />
+      )}
       <PageHeader parentURL="/classes">
         {t("header", { classNumber: classroom.number })}
       </PageHeader>
