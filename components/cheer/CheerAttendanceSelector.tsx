@@ -32,6 +32,56 @@ const CheerAttendanceSelector: StylableFC<{
     return false;
   }
 
+  const handleChange = (
+    shownEvent: "start" | "end",
+    presence: CheerAttendanceType,
+  ) => {
+    if (shownEvent === "start") {
+      if (attendance.presence === presence) {
+        onChange(
+          {
+            ...attendance,
+            presence: null,
+          },
+          shownEvent,
+        );
+      } else {
+        onChange(
+          {
+            ...attendance,
+            presence: presence,
+          },
+          shownEvent,
+        );
+      }
+    }
+    if (shownEvent === "end") {
+      if (
+        presence === CheerAttendanceType.present ||
+        presence === CheerAttendanceType.missing ||
+        presence === null
+      ) {
+        if (attendance.presence_at_end === presence) {
+          onChange(
+            {
+              ...attendance,
+              presence_at_end: null,
+            },
+            shownEvent,
+          );
+        } else {
+          onChange(
+            {
+              ...attendance,
+              presence_at_end: presence,
+            },
+            shownEvent,
+          );
+        }
+      }
+    }
+  };
+
   return (
     <ChipSet style={style} className={className}>
       {shownEvent == "start" && (
@@ -39,13 +89,7 @@ const CheerAttendanceSelector: StylableFC<{
           <InputChip
             onClick={() => {
               if (!editable) return;
-              onChange(
-                {
-                  ...attendance,
-                  presence: CheerAttendanceType.present,
-                },
-                shownEvent,
-              );
+              handleChange(shownEvent, CheerAttendanceType.present);
             }}
             {...(attendance.presence === CheerAttendanceType.present
               ? {
@@ -61,13 +105,7 @@ const CheerAttendanceSelector: StylableFC<{
           <InputChip
             onClick={() => {
               if (!editable) return;
-              onChange(
-                {
-                  ...attendance,
-                  presence: CheerAttendanceType.late,
-                },
-                shownEvent,
-              );
+              handleChange(shownEvent, CheerAttendanceType.late);
             }}
             {...(attendance.presence == CheerAttendanceType.late
               ? {
@@ -83,13 +121,7 @@ const CheerAttendanceSelector: StylableFC<{
           <InputChip
             onClick={() => {
               if (!editable) return;
-              onChange(
-                {
-                  ...attendance,
-                  presence: CheerAttendanceType.missing,
-                },
-                shownEvent,
-              );
+              handleChange(shownEvent, CheerAttendanceType.missing);
             }}
             {...(isAbsent(attendance.presence)
               ? {
@@ -110,13 +142,7 @@ const CheerAttendanceSelector: StylableFC<{
             <InputChip
               onClick={() => {
                 if (!editable) return;
-                onChange(
-                  {
-                    ...attendance,
-                    presence_at_end: CheerAttendanceType.present,
-                  },
-                  shownEvent,
-                );
+                handleChange(shownEvent, CheerAttendanceType.present);
               }}
               {...(attendance.presence_at_end == CheerAttendanceType.present
                 ? {
@@ -133,13 +159,7 @@ const CheerAttendanceSelector: StylableFC<{
           <InputChip
             onClick={() => {
               if (!editable) return;
-              onChange(
-                {
-                  ...attendance,
-                  presence_at_end: CheerAttendanceType.missing,
-                },
-                shownEvent,
-              );
+              handleChange(shownEvent, CheerAttendanceType.missing);
             }}
             {...(isAbsent(attendance.presence_at_end)
               ? {
