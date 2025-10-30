@@ -39,13 +39,19 @@ const StudentCheerAttendanceListItem: FC<{
             title={t("date", {
               date: new Date(attendance.practice_period.date),
             })}
-            desc={t("period", {
-              start: attendance.practice_period.start_time,
-              end:
-                attendance.practice_period.start_time +
-                attendance.practice_period.duration -
-                1,
-            })}
+            desc={
+              attendance.practice_period.duration != 1
+                ? t("period.multiple", {
+                    start: attendance.practice_period.start_time,
+                    end:
+                      attendance.practice_period.start_time +
+                      attendance.practice_period.duration -
+                      1,
+                  })
+                : t("period.single", {
+                    start: attendance.practice_period.start_time,
+                  })
+            }
             className="w-0 [&>span]:!truncate"
           />
           <CheerAttendanceSelector
