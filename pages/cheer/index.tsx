@@ -8,6 +8,7 @@ import cn from "@/utils/helpers/cn";
 import {
   CheerAttendanceRecord,
   CheerAttendanceEvent,
+  CheerPracticePeriod,
 } from "@/utils/types/cheer";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
@@ -85,13 +86,42 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     detailed: true,
   })) as BackendReturn<Student>;
   if (!student) return { notFound: true };
+  let formattedAttendances: CheerAttendanceRecord[] = [];
+  const { data: practicePeriods } = await mysk.fetch<CheerPracticePeriod[]>(
+    "/v1/attendance/cheer/periods",
+    {
+      query: {
+        fetch_level: "compact",
+        filter: { data: { classroom_id: student.classroom!.id } },
+        sort: { by: ["date"], ascending: true },
+      },
+    },
+  );
+  if (!practicePeriods) return { notFound: true };
   const { data: attendances } = await mysk.fetch<CheerAttendanceRecord[]>(
     `/v1/students/${student.id}/attendance/cheer`,
     {
-      query: { fetch_level: "detailed", descendant_fetch_level: "default" },
+      query: { fetch_level: "detailed", descendant_fetch_level: "id_only" },
     },
   );
-  return { props: { attendances } };
+  if (!attendances) return { notFound: true };
+  for (const period of practicePeriods) {
+    const existing = attendances?.find(
+      (attendance) => attendance.practice_period.id == period.id,
+    );
+    if (existing) {
+      formattedAttendances.push({ ...existing, practice_period: period });
+    } else {
+      formattedAttendances.push({
+        practice_period: period,
+        student: student,
+        presence: null,
+        absence_reason: null,
+        presence_at_end: null,
+      });
+    }
+  }
+  return { props: { attendances: formattedAttendances } };
 };
 
 export default CheerPage;
