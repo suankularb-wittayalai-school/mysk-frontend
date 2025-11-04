@@ -1,20 +1,25 @@
 import { CustomPage } from "@/utils/types/common";
 import PageHeader from "@/components/common/PageHeader";
 import Head from "next/head";
-import { ContentLayout, List } from "@suankularb-components/react";
+import { ContentLayout, List, Progress } from "@suankularb-components/react";
 import CheerDateSelector from "@/components/cheer/CheerDateSelector";
 import cn from "@/utils/helpers/cn";
 import CheerPeriodListItem from "@/components/cheer/CheerPeriodListItem";
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import {
+  GetStaticPaths,
+  GetStaticProps,
+} from "next";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import { CheerPracticePeriod, CheerPracticeSession } from "@/utils/types/cheer";
 import { useRouter } from "next/router";
 import useTranslation from "next-translate/useTranslation";
 import logError from "@/utils/helpers/logError";
 import { Text } from "@suankularb-components/react";
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import getAdvisingClassroomID from "@/utils/backend/person/getAdvisingClassroomID";
 import { getTeacherFromUserID } from "@/utils/backend/account/getLoggedInPerson";
+import { useEffect, useState } from "react";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 const CheerPeriodPage: CustomPage<{
   cheerPeriods: CheerPracticeSession[];
@@ -23,6 +28,43 @@ const CheerPeriodPage: CustomPage<{
   const router = useRouter();
   const { t } = useTranslation("attendance/cheer");
   const { t: tx } = useTranslation("attendance/cheer/list");
+
+  const mysk = useMySKClient();
+  const supabase = useSupabaseClient();
+
+  const [cheerFilterdPeriods, setFilterdCheerPeriods] = useState<
+    CheerPracticeSession[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!mysk.user) return;
+    const filterAttendance = async () => {
+      setLoading(true);
+      if (mysk.user?.role == "teacher") {
+        const { data: teacher } = await getTeacherFromUserID(
+          supabase,
+          mysk,
+          mysk.user.id,
+        );
+        const { data: advisingClassroomID } = await getAdvisingClassroomID(
+          supabase,
+          teacher!.id,
+        );
+        const filtered = cheerPeriods!.filter((period) =>
+          (period.classrooms as unknown as string[]).includes(
+            advisingClassroomID || "",
+          ),
+        );
+        setFilterdCheerPeriods(filtered);
+      } else {
+        setFilterdCheerPeriods(cheerPeriods);
+      }
+      setLoading(false);
+    };
+
+    filterAttendance();
+  }, [mysk.user, cheerPeriods]);
 
   const handleSessionSelect = (id: string) => {
     router.push(`/cheer/attendance/${date}/${id}`);
@@ -43,28 +85,42 @@ const CheerPeriodPage: CustomPage<{
                 `relative flex h-full flex-col overflow-hidden rounded-lg sm:overflow-auto md:overflow-hidden md:bg-surface-container`,
               )}
             >
-              {cheerPeriods.length !== 0 ? (
-                <List
-                  className={cn(
-                    `!mt-1 !overflow-y-auto *:bg-none md:!m-0 md:space-y-1 md:!p-2 *:md:rounded-lg *:md:bg-surface`,
+              {loading && (
+                <div className="flex h-full w-full items-center justify-center">
+                  <Progress
+                    appearance="circular"
+                    visible={loading}
+                    alt="loading"
+                    className=""
+                  />
+                </div>
+              )}
+              {!loading && (
+                <div className="h-full">
+                  {cheerFilterdPeriods.length !== 0 ? (
+                    <List
+                      className={cn(
+                        `!mt-1 !overflow-y-auto *:bg-none md:!m-0 md:space-y-1 md:!p-2 *:md:rounded-lg *:md:bg-surface`,
+                      )}
+                    >
+                      {cheerFilterdPeriods.map((cheerSession) => (
+                        <CheerPeriodListItem
+                          key={cheerSession.id}
+                          cheerSession={cheerSession}
+                          onSessionSelect={handleSessionSelect}
+                        />
+                      ))}
+                    </List>
+                  ) : (
+                    <div className="flex h-full items-center justify-center">
+                      <Text
+                        type="body-medium"
+                        className="text-center text-on-surface-variant"
+                      >
+                        {tx("empty")}
+                      </Text>
+                    </div>
                   )}
-                >
-                  {cheerPeriods.map((cheerSession) => (
-                    <CheerPeriodListItem
-                      key={cheerSession.id}
-                      cheerSession={cheerSession}
-                      onSessionSelect={handleSessionSelect}
-                    />
-                  ))}
-                </List>
-              ) : (
-                <div className="flex h-full items-center justify-center">
-                  <Text
-                    type="body-medium"
-                    className="text-center text-on-surface-variant"
-                  >
-                    {tx("empty")}
-                  </Text>
                 </div>
               )}
             </div>
@@ -74,17 +130,29 @@ const CheerPeriodPage: CustomPage<{
     </>
   );
 };
+export const getStaticPaths: GetStaticPaths = async () => {
+  const mysk = await createMySKClient();
+  const { data: sessions, error } = await mysk.fetch<CheerPracticeSession[]>(
+    "/v1/attendance/cheer/periods",
+    { query: { fetch_level: "compact" } },
+  );
+  if (error) logError("CheerSessionPaths", error);
 
-export const getServerSideProps: GetServerSideProps = async ({
-  params,
-  req,
-  res,
-}) => {
-  const mysk = await createMySKClient(req);
-  const supabase = createPagesServerClient({
-    req: req as NextApiRequest,
-    res: res as NextApiResponse,
-  });
+  const paths =
+    sessions?.map((period) => ({
+      params: {
+        date: period.date,
+      },
+    })) ?? [];
+
+  return {
+    paths,
+    fallback: "blocking",
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const mysk = await createMySKClient();
 
   const { date } = params as { [key: string]: string };
   const { data: cheerPeriods, error: fetchIdError } = await mysk.fetch<
@@ -96,23 +164,9 @@ export const getServerSideProps: GetServerSideProps = async ({
     },
   });
   if (fetchIdError) logError("CheerPeriodPage", fetchIdError);
-  let filteredCheerPeriods = cheerPeriods;
-  if (mysk.user?.role == "teacher") {
-    const { data: teacher } = await getTeacherFromUserID(
-      supabase,
-      mysk,
-      mysk.user.id,
-    );
-    const { data: advisingClassroomID } = await getAdvisingClassroomID(
-      supabase,
-      teacher!.id,
-    );
-    filteredCheerPeriods = cheerPeriods!.filter((period) =>
-      period.classrooms.includes(advisingClassroomID || ""),
-    );
-  }
   return {
-    props: { cheerPeriods: filteredCheerPeriods, date },
+    props: { cheerPeriods, date },
+    revalidate: 600,
   };
 };
 
