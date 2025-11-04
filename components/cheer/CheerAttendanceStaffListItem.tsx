@@ -46,6 +46,7 @@ const CheerAttendanceStaffListItem: StylableFC<{
   editable?: boolean;
   saving: boolean;
   cheerStaffSet: Set<string>;
+  blackListedStudentSet: Set<string>;
   setSaving: React.Dispatch<React.SetStateAction<boolean>>;
   onAttendancesChange: (attendance: CheerAttendanceRecord) => void;
 }> = ({
@@ -54,6 +55,7 @@ const CheerAttendanceStaffListItem: StylableFC<{
   editable,
   saving,
   cheerStaffSet,
+  blackListedStudentSet,
   setSaving,
   onAttendancesChange,
 }) => {
@@ -133,13 +135,12 @@ const CheerAttendanceStaffListItem: StylableFC<{
 
     if (error) {
       setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
-      logError("Saving Cheer Attendance",error)
+      logError("Saving Cheer Attendance", error);
       return false;
     }
 
     return true;
   }
-
   return (
     <motion.li
       layoutId={attendance.student.id}
@@ -183,10 +184,14 @@ const CheerAttendanceStaffListItem: StylableFC<{
             attendance={attendance}
             shownEvent={shownEvent}
             onChange={setAttendanceOfShownEvent}
-            editable={!cheerStaffSet.has(attendance.student.id)}
+            editable={
+              !cheerStaffSet.has(attendance.student.id) ||
+              !blackListedStudentSet.has(attendance.student.id)
+            }
             className={cn(
               "-mr-4 -space-x-1",
-              cheerStaffSet.has(attendance.student.id)
+              cheerStaffSet.has(attendance.student.id) ||
+                blackListedStudentSet.has(attendance.student.id)
                 ? "pointer-events-none cursor-not-allowed opacity-50"
                 : null,
             )}
