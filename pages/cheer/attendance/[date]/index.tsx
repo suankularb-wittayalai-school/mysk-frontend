@@ -13,7 +13,7 @@ import useTranslation from "next-translate/useTranslation";
 import logError from "@/utils/helpers/logError";
 import { Text } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import getAdvisingClass from "@/utils/backend/person/getAdvisingClass";
+import getAdvisingClassroomID from "@/utils/backend/person/getAdvisingClassroomID";
 import { getTeacherFromUserID } from "@/utils/backend/account/getLoggedInPerson";
 
 const CheerPeriodPage: CustomPage<{
@@ -103,7 +103,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       mysk,
       mysk.user.id,
     );
-    const { data: advisingClassroomID } = await getAdvisingClass(
+    const { data: advisingClassroomID } = await getAdvisingClassroomID(
       supabase,
       teacher!.id,
     );

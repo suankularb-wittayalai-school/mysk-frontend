@@ -39,7 +39,7 @@ import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import logError from "@/utils/helpers/logError";
 import getCheerStaffs from "@/utils/backend/attendance/cheer/getCheerStaffs";
-import getAdvisingClass from "@/utils/backend/person/getAdvisingClass";
+import getAdvisingClassroomID from "@/utils/backend/person/getAdvisingClassroomID";
 import { getTeacherFromUserID } from "@/utils/backend/account/getLoggedInPerson";
 import getBlackListedCheerStudents from "@/utils/backend/attendance/cheer/getBlackListedCheerStudents";
 
@@ -299,7 +299,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       mysk,
       mysk.user.id,
     );
-    const { data: advisingClassroomID } = await getAdvisingClass(
+    const { data: advisingClassroomID } = await getAdvisingClassroomID(
       supabase,
       teacher!.id,
     );
