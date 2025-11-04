@@ -6,17 +6,18 @@ export default async function getAdvisingClassroomID(
   supabase: DatabaseClient,
   teacherID: string,
 ): Promise<BackendReturn<string>> {
-  let { data, error } = await supabase
+  const { data, error } = await supabase
     .from("classroom_advisors")
-    .select("classroom_id, classrooms(year)")
-    .eq("teacher_id", teacherID)
-    .eq("classrooms.year", getCurrentAcademicYear())
-    .limit(1)
-    .single();
-  console.log(data, "wht");
+    .select("classroom_id, classrooms(id, year)")
+    .eq("teacher_id", teacherID);
   if (error) {
     logError("getAdvisingClassroomID", error);
     return { data: null, error };
   }
-  return { data: data!.classroom_id, error: null };
+  return {
+    data: data.filter(
+      (classroom) => classroom.classrooms?.year == getCurrentAcademicYear(),
+    )[0].classroom_id,
+    error: null,
+  };
 }
