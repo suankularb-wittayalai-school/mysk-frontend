@@ -137,7 +137,7 @@ const CheerAttendancePage: CustomPage<{
     };
 
     fetchAttendance();
-  }, [selectedID, selectedSessionID]);
+  }, [selectedID]);
 
   useEffect(() => {
     if (!selectedID || !selectedSessionID) return;
@@ -208,7 +208,9 @@ const CheerAttendancePage: CustomPage<{
                   onSelectedChange={(classroomID) => {
                     setSelectedSessionID(cheerSession.id);
                     onSelectedChange(classroomID);
-                    setAttendances([]);
+                    if (classroomID !== selectedID) {
+                      setAttendances([]);
+                    }
                   }}
                 />
               ))}
