@@ -22,9 +22,8 @@ import {
   Text,
   transition,
 } from "@suankularb-components/react";
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { LayoutGroup, motion } from "framer-motion";
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
 import { group, pick } from "radash";
 import useTranslation from "next-translate/useTranslation";
@@ -42,6 +41,8 @@ import getCheerStaffs from "@/utils/backend/attendance/cheer/getCheerStaffs";
 import getAdvisingClassroomID from "@/utils/backend/person/getAdvisingClassroomID";
 import { getTeacherFromUserID } from "@/utils/backend/account/getLoggedInPerson";
 import getBlackListedCheerStudents from "@/utils/backend/attendance/cheer/getBlackListedCheerStudents";
+import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/utils/supabase-backend";
 
 const CheerAttendancePage: CustomPage<{
   cheerSession: CheerPracticeSession;
@@ -266,16 +267,30 @@ const CheerAttendancePage: CustomPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  params,
-  req,
-  res,
-}) => {
-  const mysk = await createMySKClient(req);
-  const supabase = createPagesServerClient({
-    req: req as NextApiRequest,
-    res: res as NextApiResponse,
-  });
+export const getStaticPaths: GetStaticPaths = async () => {
+  const mysk = await createMySKClient();
+  const { data: sessions, error } = await mysk.fetch<CheerPracticeSession[]>(
+    "/v1/attendance/cheer/periods",
+    { query: { fetch_level: "compact" } },
+  );
+  if (error) logError("CheerSessionPaths", error);
+
+  const paths =
+    sessions?.map((period) => ({
+      params: {
+        date: period.date,
+        id: period.id,
+      },
+    })) ?? [];
+
+  return {
+    paths,
+    fallback: "blocking",
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const mysk = await createMySKClient();
 
   const { id } = params as { [key: string]: string };
   const { date } = params as { [key: string]: string };
@@ -335,6 +350,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     await getBlackListedCheerStudents(supabase);
   return {
     props: { cheerSession, cheerStaffs, blackListedStudents, date },
+    revalidate: 600,
   };
 };
 
