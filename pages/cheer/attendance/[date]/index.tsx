@@ -7,7 +7,7 @@ import cn from "@/utils/helpers/cn";
 import CheerPeriodListItem from "@/components/cheer/CheerPeriodListItem";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
-import { CheerPracticeSession } from "@/utils/types/cheer";
+import { CheerPracticePeriod, CheerPracticeSession } from "@/utils/types/cheer";
 import { useRouter } from "next/router";
 import useTranslation from "next-translate/useTranslation";
 import logError from "@/utils/helpers/logError";
@@ -88,7 +88,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const { date } = params as { [key: string]: string };
   const { data: cheerPeriods, error: fetchIdError } = await mysk.fetch<
-    CheerPracticeSession[]
+    (CheerPracticePeriod & { classrooms: string[] })[]
   >(`/v1/attendance/cheer/periods`, {
     query: {
       fetch_level: "compact",
@@ -108,9 +108,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       teacher!.id,
     );
     filteredCheerPeriods = cheerPeriods!.filter((period) =>
-      period.classrooms.some(
-        (classroom) => classroom.id === advisingClassroomID,
-      ),
+      period.classrooms.includes(advisingClassroomID || ""),
     );
   }
   return {

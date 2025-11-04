@@ -8,6 +8,7 @@ import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useListDetail from "@/utils/helpers/search/useListDetail";
 import {
   CheerAttendanceRecord,
+  CheerPracticePeriod,
   CheerPracticeSession,
   CheerTallyCount,
 } from "@/utils/types/cheer";
@@ -62,7 +63,7 @@ const CheerAttendancePage: CustomPage<{
     [],
   );
 
-  const cheerStaffSet = new Set(cheerStaffs.map(staff => staff.student_id));
+  const cheerStaffSet = new Set(cheerStaffs.map((staff) => staff.student_id));
 
   const {
     selectedID,
@@ -272,16 +273,14 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { id } = params as { [key: string]: string };
   const { date } = params as { [key: string]: string };
 
-  const { data: rawCheerSession, error: fetchSessionError } =
-    await mysk.fetch<CheerPracticeSession>(
-      `/v1/attendance/cheer/periods/${id}`,
-      {
-        query: {
-          fetch_level: "default",
-          descendant_fetch_level: "compact",
-        },
-      },
-    );
+  const { data: rawCheerSession, error: fetchSessionError } = await mysk.fetch<
+    CheerPracticePeriod & { classrooms: string[] }
+  >(`/v1/attendance/cheer/periods/${id}`, {
+    query: {
+      fetch_level: "default",
+      descendant_fetch_level: "compact",
+    },
+  });
   if (fetchSessionError) {
     logError("CheerAttendancePage", fetchSessionError);
     return { notFound: true };
@@ -300,16 +299,16 @@ export const getServerSideProps: GetServerSideProps = async ({
     filteredCheerSession = {
       ...rawCheerSession,
       classrooms: rawCheerSession.classrooms.filter(
-        (classroom) => classroom.id == advisingClassroomID,
+        (classroomID) => classroomID == advisingClassroomID,
       ),
     };
   }
 
   const DetailClassrooms = await Promise.all(
-    filteredCheerSession.classrooms.map(async (classroom) => {
+    filteredCheerSession.classrooms.map(async (classroomID) => {
       const { data: detailClassroom } = await getClassroomByID(
         supabase,
-        classroom.id,
+        classroomID,
       );
       return detailClassroom!;
     }),
@@ -318,15 +317,12 @@ export const getServerSideProps: GetServerSideProps = async ({
   const cheerSession: CheerPracticeSession = {
     ...filteredCheerSession,
     classrooms: filteredCheerSession.classrooms
-      .map((CheerClassroom) => ({
-        ...DetailClassrooms.find(
-          (classroom) => classroom.id === CheerClassroom.id,
-        )!,
+      .map((classroomID) => ({
+        ...DetailClassrooms.find((classroom) => classroom.id === classroomID)!,
         attendances: [],
       }))
       .sort((a, b) => a.number - b.number),
   };
-  
   const { data: cheerStaffs } = await getCheerStaffs(supabase);
 
   return {
