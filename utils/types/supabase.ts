@@ -1447,6 +1447,11 @@ export type Database = {
         Insert: { id: string; created_at: string; student_id: string };
         Update: { id: string; created_at: string; student_id: string };
       };
+      cheer_practice_blacklisted_students: {
+        Row: { id: string; created_at: string; student_id: string };
+        Insert: { id: string; created_at: string; student_id: string };
+        Update: { id: string; created_at: string; student_id: string };
+      };
       student_certificates: {
         Row: {
           certificate_detail: string;

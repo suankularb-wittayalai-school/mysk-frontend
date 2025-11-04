@@ -41,12 +41,14 @@ import logError from "@/utils/helpers/logError";
 import getCheerStaffs from "@/utils/backend/attendance/cheer/getCheerStaffs";
 import getAdvisingClass from "@/utils/backend/person/getAdvisingClass";
 import { getTeacherFromUserID } from "@/utils/backend/account/getLoggedInPerson";
+import getBlackListedCheerStudents from "@/utils/backend/attendance/cheer/getBlackListedCheerStudents";
 
 const CheerAttendancePage: CustomPage<{
   cheerSession: CheerPracticeSession;
   cheerStaffs: { student_id: string }[];
+  blackListedStudents: { student_id: string }[];
   date: string;
-}> = ({ cheerSession, cheerStaffs, date }) => {
+}> = ({ cheerSession, cheerStaffs, blackListedStudents, date }) => {
   const { t } = useTranslation("attendance/cheer");
   const { t: tx } = useTranslation("common");
 
@@ -64,6 +66,9 @@ const CheerAttendancePage: CustomPage<{
   );
 
   const cheerStaffSet = new Set(cheerStaffs.map((staff) => staff.student_id));
+  const blackListedStudentSet = new Set(
+    blackListedStudents.map((student) => student.student_id),
+  );
 
   const {
     selectedID,
@@ -227,6 +232,7 @@ const CheerAttendancePage: CustomPage<{
                 classroom={selectedDetail}
                 attendances={attendances}
                 cheerStaffSet={cheerStaffSet}
+                blackListedStudentSet={blackListedStudentSet}
                 onAttendancesChange={setAttendances}
                 onCheerTallyCounts={onCheerTallyCounts}
                 loading={loading}
@@ -250,6 +256,7 @@ const CheerAttendancePage: CustomPage<{
           classroom={selectedDetail}
           attendances={attendances}
           cheerStaffSet={cheerStaffSet}
+          blackListedStudentSet={blackListedStudentSet}
           onAttendancesChange={setAttendances}
           onCheerTallyCounts={onCheerTallyCounts}
           loading={loading}
@@ -324,9 +331,10 @@ export const getServerSideProps: GetServerSideProps = async ({
       .sort((a, b) => a.number - b.number),
   };
   const { data: cheerStaffs } = await getCheerStaffs(supabase);
-
+  const { data: blackListedStudents } =
+    await getBlackListedCheerStudents(supabase);
   return {
-    props: { cheerSession, cheerStaffs, date },
+    props: { cheerSession, cheerStaffs, blackListedStudents, date },
   };
 };
 
