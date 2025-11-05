@@ -65,6 +65,8 @@ const CheerAttendancePage: CustomPage<{
   const [cheerTallyCounts, setCheerTallyCounts] = useState<CheerTallyCount[]>(
     [],
   );
+  const [cheerFilteredSession, setcheerFilteredSession] =
+    useState<CheerPracticeSession>(cheerSession);
 
   const cheerStaffSet = new Set(cheerStaffs.map((staff) => staff.student_id));
   const blackListedStudentSet = new Set(
@@ -78,7 +80,7 @@ const CheerAttendancePage: CustomPage<{
     detailsOpen,
     onDetailsClose,
   } = useListDetail<Pick<Classroom, "id" | "number" | "main_room">>(
-    cheerSession.classrooms,
+    cheerFilteredSession.classrooms,
     undefined,
     {
       firstByDefault: false,
@@ -106,13 +108,13 @@ const CheerAttendancePage: CustomPage<{
 
     const fetchAttendance = async () => {
       setLoading(true);
-      let [selectedClassroom] = cheerSession.classrooms.filter(
+      let [selectedClassroom] = cheerFilteredSession.classrooms.filter(
         (classroom) => classroom.id === selectedID,
       );
       try {
         const { data, error } = await getCheerAttendanceOfClass(
           selectedClassroom,
-          pick(cheerSession, ["id", "date", "start_time", "duration"]),
+          pick(cheerFilteredSession, ["id", "date", "start_time", "duration"]),
           supabase,
           mysk,
         );
@@ -143,6 +145,29 @@ const CheerAttendancePage: CustomPage<{
     if (!selectedID || !selectedSessionID) return;
     cacheRef.current[selectedID] = attendances;
   }, [attendances, selectedID, selectedSessionID]);
+
+  useEffect(() => {
+    const fetchcAdvisingClassroomID = async () => {
+      const { data: teacher } = await getTeacherFromUserID(
+        supabase,
+        mysk,
+        mysk.user!.id,
+      );
+      const { data: advisingClassroomID } = await getAdvisingClassroomID(
+        supabase,
+        teacher!.id,
+      );
+      setcheerFilteredSession({
+        ...cheerFilteredSession,
+        classrooms: cheerFilteredSession.classrooms.filter(
+          (classroom) => classroom.id == advisingClassroomID,
+        ),
+      });
+    };
+    if (mysk.user?.role == "teacher") {
+      fetchcAdvisingClassroomID();
+    }
+  }, []);
 
   const onCheerTallyCounts = (
     attendances: CheerAttendanceRecord[],
@@ -177,27 +202,32 @@ const CheerAttendancePage: CustomPage<{
       </Head>
       <PageHeader parentURL={`/cheer/attendance/${date}`}>
         {t("title.staffAttendance", {
-          date: new Date(cheerSession.date),
+          date: new Date(cheerFilteredSession.date),
         })}{" "}
-        {cheerSession.duration != 1
+        {cheerFilteredSession.duration != 1
           ? t("title.period.multiple", {
-              start: cheerSession.start_time,
-              end: cheerSession.start_time + cheerSession.duration - 1,
+              start: cheerFilteredSession.start_time,
+              end:
+                cheerFilteredSession.start_time +
+                cheerFilteredSession.duration -
+                1,
             })
-          : t("title.period.single", { start: cheerSession.start_time })}
+          : t("title.period.single", {
+              start: cheerFilteredSession.start_time,
+            })}
       </PageHeader>
       <SplitLayout ratio="list-detail">
-        <LookupListSide length={cheerSession.classrooms.length}>
+        <LookupListSide length={cheerFilteredSession.classrooms.length}>
           <LookupResultsList
-            length={cheerSession.classrooms.length}
+            length={cheerFilteredSession.classrooms.length}
             className="[&>ul]:!gap-8 [&>ul]:!pt-0"
           >
             <LayoutGroup>
               {/* Classrooms grouped by grade */}
               {Object.entries(
-                group(cheerSession.classrooms, (classroom) =>
+                group(cheerFilteredSession.classrooms, (classroom) =>
                   Math.floor(classroom.number / 100),
-                ) as Record<string, typeof cheerSession.classrooms>,
+                ) as Record<string, typeof cheerFilteredSession.classrooms>,
               ).map(([grade, classrooms]) => (
                 <CheerGradeSection
                   key={grade}
@@ -206,7 +236,7 @@ const CheerAttendancePage: CustomPage<{
                   cheerTallyCounts={cheerTallyCounts}
                   selectedID={selectedID}
                   onSelectedChange={(classroomID) => {
-                    setSelectedSessionID(cheerSession.id);
+                    setSelectedSessionID(cheerFilteredSession.id);
                     onSelectedChange(classroomID);
                     if (classroomID !== selectedID) {
                       setAttendances([]);
@@ -229,7 +259,7 @@ const CheerAttendancePage: CustomPage<{
           {selectedID ? (
             <LookupDetailsSide
               selectedID={selectedDetail?.id || selectedID}
-              length={cheerSession.classrooms.length}
+              length={cheerFilteredSession.classrooms.length}
             >
               <CheerAttendanceCard
                 classroom={selectedDetail}
@@ -292,27 +322,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     logError("CheerAttendancePage", fetchSessionError);
     return { notFound: true };
   }
-  let filteredCheerSession = rawCheerSession;
-  if (mysk.user?.role == "teacher") {
-    const { data: teacher } = await getTeacherFromUserID(
-      supabase,
-      mysk,
-      mysk.user.id,
-    );
-    const { data: advisingClassroomID } = await getAdvisingClassroomID(
-      supabase,
-      teacher!.id,
-    );
-    filteredCheerSession = {
-      ...rawCheerSession,
-      classrooms: rawCheerSession.classrooms.filter(
-        (classroomID) => classroomID == advisingClassroomID,
-      ),
-    };
-  }
 
   const DetailClassrooms = await Promise.all(
-    filteredCheerSession.classrooms.map(async (classroomID) => {
+    rawCheerSession.classrooms.map(async (classroomID) => {
       const { data: detailClassroom } = await getClassroomByID(
         supabase,
         classroomID,
@@ -322,8 +334,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   );
 
   const cheerSession: CheerPracticeSession = {
-    ...filteredCheerSession,
-    classrooms: filteredCheerSession.classrooms
+    ...rawCheerSession,
+    classrooms: rawCheerSession.classrooms
       .map((classroomID) => ({
         ...DetailClassrooms.find((classroom) => classroom.id === classroomID)!,
         attendances: [],
