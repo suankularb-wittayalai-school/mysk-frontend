@@ -1,8 +1,12 @@
 import PageHeader from "@/components/common/PageHeader";
-import { GetStaticPaths, GetStaticProps } from "next";
+import {
+  GetServerSideProps,
+  GetStaticPaths,
+  NextApiRequest,
+  NextApiResponse,
+} from "next";
 import Head from "next/head";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
-import { supabase } from "@/utils/supabase-backend";
 import { CustomPage } from "@/utils/types/common";
 import { Classroom } from "@/utils/types/classroom";
 import {
@@ -16,133 +20,28 @@ import {
   CheerAttendanceRecord,
   CheerPracticePeriod,
 } from "@/utils/types/cheer";
-import { useContext, useEffect, useState } from "react";
-import useMySKClient from "@/utils/backend/mysk/useMySKClient";
-import logError from "@/utils/helpers/logError";
 import ClassCheerAttendanceSummary from "@/components/cheer/ClassCheerAttendanceSummary";
 import tallyCheerAttendances from "@/utils/helpers/attendance/cheer/tallyCheerAttendances";
 import StudentCheerAttendanceSummaryCard from "@/components/cheer/StudentCheerAttendanceSummaryCard";
 import useTranslation from "next-translate/useTranslation";
 import { parallel } from "radash";
-import SnackbarContext from "@/contexts/SnackbarContext";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 
 const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
   classroom: Pick<Classroom, "id" | "number">;
-  students: Classroom["students"];
-}> = ({ classroom, students }) => {
-  const [studentWithAttendances, setStudentWithAttendances] = useState<
-    {
-      student: Classroom["students"][number];
-      attendances: CheerAttendanceRecord[];
-    }[]
-  >(
-    students.map((student) => {
-      return { student: student, attendances: [] };
-    }),
-  );
-  const [practiceDates, setPracticeDates] = useState<string[]>([]);
-  const [summaries, setSummaries] = useState<
-    ({ practice_period: CheerPracticePeriod } & ReturnType<
-      typeof tallyCheerAttendances
-    >)[]
-  >([]);
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const mysk = useMySKClient();
-
+  studentsWithAttendances: {
+    student: Classroom["students"][number];
+    attendances: CheerAttendanceRecord[];
+  }[];
+  practiceDates: string[];
+  summaries: ({ practice_period: CheerPracticePeriod } & ReturnType<
+    typeof tallyCheerAttendances
+  >)[];
+}> = ({ classroom, studentsWithAttendances, practiceDates, summaries }) => {
   const { t } = useTranslation("classes/cheer");
   const { t: tx } = useTranslation("common");
 
-  const { setSnackbar } = useContext(SnackbarContext);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const { data: classPracticePeriods, error: classPracticePeriodsError } =
-          await mysk.fetch<CheerPracticePeriod[]>(
-            "/v1/attendance/cheer/periods",
-            {
-              query: {
-                fetch_level: "compact",
-                filter: { data: { classroom_id: classroom.id } },
-              },
-            },
-          );
-        if (classPracticePeriodsError || !classPracticePeriods) {
-          logError("getClassPracticePeriods", classPracticePeriodsError);
-          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
-          setLoading(false);
-          return;
-        }
-        await parallel(
-          classPracticePeriods.length,
-          classPracticePeriods,
-          async (practicePeriod) => {
-            setPracticeDates((previousDates) => [
-              ...previousDates,
-              practicePeriod.date,
-            ]);
-            const { data: periodAttendances, error: periodAttendancesError } =
-              await mysk.fetch<CheerAttendanceRecord[]>(
-                "/v1/attendance/cheer",
-                {
-                  query: {
-                    fetch_level: "compact",
-                    filter: {
-                      data: {
-                        classroom_id: classroom.id,
-                        practice_period_id: practicePeriod.id,
-                      },
-                    },
-                  },
-                },
-              );
-            if (periodAttendancesError || !periodAttendances) {
-              logError("getClassPeriodAttendances", periodAttendancesError);
-              setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
-              return;
-            }
-            periodAttendances.forEach((attendance) => {
-              attendance.practice_period = practicePeriod;
-            });
-
-            const studentWithNewAttendances = studentWithAttendances;
-            for (const student of studentWithNewAttendances) {
-              let attendanceOfStudent = periodAttendances.find(
-                (attendance) => attendance.student.id == student.student.id,
-              );
-              if (attendanceOfStudent) {
-                student.attendances.push(attendanceOfStudent);
-              } else {
-                let defaultAttendance = {
-                  practice_period: practicePeriod,
-                  student: student.student,
-                  presence: null,
-                  absence_reason: null,
-                  presence_at_end: null,
-                };
-                student.attendances.push(defaultAttendance);
-                periodAttendances.push(defaultAttendance);
-              }
-            }
-
-            setStudentWithAttendances(studentWithNewAttendances);
-            setSummaries((previousSummaries) => [
-              ...previousSummaries,
-              {
-                practice_period: practicePeriod,
-                ...tallyCheerAttendances(periodAttendances),
-              },
-            ]);
-            setLoading(false);
-          },
-        );
-      } finally {
-      }
-    };
-    fetchData();
-  }, []);
   return (
     <>
       <Head>
@@ -152,14 +51,6 @@ const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
           })}
         </title>
       </Head>
-      {practiceDates.length == 0 && loading && (
-        <Progress
-          appearance="linear"
-          visible={loading}
-          alt="loading"
-          className="absolute inset-0 bottom-auto"
-        />
-      )}
       <PageHeader parentURL="/classes">
         {t("header", { classNumber: classroom.number })}
       </PageHeader>
@@ -173,7 +64,7 @@ const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
               summaries={summaries}
             />
           </li>
-          {studentWithAttendances.map((student) => (
+          {studentsWithAttendances.map((student) => (
             <li
               key={student.student.id}
               className="md:[&:last-child>*]:!border-b-0"
@@ -191,8 +82,17 @@ const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  req,
+  res,
+}) => {
   const { classNumber } = params as { [key: string]: string };
+  const mysk = await createMySKClient(req);
+  const supabase = createPagesServerClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
   const { data: classroom, error: classroomError } = await getClassroomByNumber(
     supabase,
     Number(classNumber),
@@ -204,12 +104,78 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     classroom.id,
   );
   if (studentsError) return { notFound: true };
-  return { props: { classroom, students }, revalidate: 300 };
-};
+  const studentsWithAttendances: {
+    student: Classroom["students"][number];
+    attendances: CheerAttendanceRecord[];
+  }[] = students.map((student) => {
+    return { student: student, attendances: [] };
+  });
 
-export const getStaticPaths: GetStaticPaths = async () => ({
-  paths: [],
-  fallback: "blocking",
-});
+  const practiceDates: string[] = [];
+  const summaries: ({ practice_period: CheerPracticePeriod } & ReturnType<
+    typeof tallyCheerAttendances
+  >)[] = [];
+  const { data: classPracticePeriods, error: classPracticePeriodsError } =
+    await mysk.fetch<CheerPracticePeriod[]>("/v1/attendance/cheer/periods", {
+      query: {
+        fetch_level: "compact",
+        filter: { data: { classroom_id: classroom.id } },
+      },
+    });
+  if (classPracticePeriodsError || !classPracticePeriods)
+    return { notFound: true };
+  await parallel(
+    classPracticePeriods.length,
+    classPracticePeriods,
+    async (practicePeriod) => {
+      practiceDates.push(practicePeriod.date);
+      const { data: periodAttendances, error: periodAttendancesError } =
+        await mysk.fetch<CheerAttendanceRecord[]>("/v1/attendance/cheer", {
+          query: {
+            fetch_level: "compact",
+            filter: {
+              data: {
+                classroom_id: classroom.id,
+                practice_period_id: practicePeriod.id,
+              },
+            },
+          },
+        });
+      if (periodAttendancesError || !periodAttendances) return;
+
+      periodAttendances.forEach((attendance) => {
+        attendance.practice_period = practicePeriod;
+      });
+
+      for (const student of studentsWithAttendances) {
+        let attendanceOfStudent = periodAttendances.find(
+          (attendance) => attendance.student.id == student.student.id,
+        );
+        if (attendanceOfStudent) {
+          student.attendances.push(attendanceOfStudent);
+        } else {
+          let defaultAttendance = {
+            practice_period: practicePeriod,
+            student: student.student,
+            presence: null,
+            absence_reason: null,
+            presence_at_end: null,
+          };
+          student.attendances.push(defaultAttendance);
+          periodAttendances.push(defaultAttendance);
+        }
+      }
+
+      summaries.push({
+        practice_period: practicePeriod,
+        ...tallyCheerAttendances(periodAttendances),
+      });
+    },
+  );
+
+  return {
+    props: { classroom, studentsWithAttendances, practiceDates, summaries },
+  };
+};
 
 export default ClassroomCheerAtttendanceSummaryPage;

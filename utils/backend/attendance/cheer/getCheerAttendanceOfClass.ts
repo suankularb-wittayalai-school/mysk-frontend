@@ -19,7 +19,7 @@ export default async function getCheerAttendanceOfClass(
     CheerAttendanceRecord[]
   >(`/v1/attendance/cheer`, {
     query: {
-      fetch_level: "default",
+      fetch_level: "compact",
       filter: {
         data: {
           classroom_id: classroom.id,
