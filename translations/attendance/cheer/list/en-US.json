@@ -1,9 +1,6 @@
 {
   "date": "{{date, datelong}}",
-  "period": {
-    "single": "Period {{start}}",
-    "multiple": "Period {{start}} - {{end}}"
-  },
+  "time": "{{start, time}} - {{end, time}}",
   "chip": {
     "start": {
       "present": "P",
