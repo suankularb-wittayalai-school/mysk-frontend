@@ -204,12 +204,12 @@ const CheerAttendancePage: CustomPage<{
         {t("title.staffAttendance", {
           date: new Date(cheerFilteredSession.date),
         })}{" "}
-        {t("time", {
+        {t("title.time", {
           start: new Date(
             cheerFilteredSession.date + "T" + cheerFilteredSession.start_time,
           ),
           end: new Date(
-            cheerFilteredSession.date + "T" + cheerFilteredSession.start_time,
+            cheerFilteredSession.date + "T" + cheerFilteredSession.end_time,
           ),
         })}
       </PageHeader>
