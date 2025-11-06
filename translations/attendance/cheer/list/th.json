@@ -1,9 +1,6 @@
 {
   "date": "{{date, datelong}}",
-  "period": {
-    "single": "คาบ {{start}}",
-    "multiple": "คาบ {{start}} - {{end}}"
-  },
+  "time": "{{start, time}} - {{end, time}}",
   "chip": {
     "start": {
       "present": "มา",

@@ -114,7 +114,7 @@ const CheerAttendancePage: CustomPage<{
       try {
         const { data, error } = await getCheerAttendanceOfClass(
           selectedClassroom,
-          pick(cheerFilteredSession, ["id", "date", "start_time", "duration"]),
+          pick(cheerFilteredSession, ["id", "date", "start_time", "end_time"]),
           supabase,
           mysk,
         );
@@ -204,17 +204,10 @@ const CheerAttendancePage: CustomPage<{
         {t("title.staffAttendance", {
           date: new Date(cheerFilteredSession.date),
         })}{" "}
-        {cheerFilteredSession.duration != 1
-          ? t("title.period.multiple", {
-              start: cheerFilteredSession.start_time,
-              end:
-                cheerFilteredSession.start_time +
-                cheerFilteredSession.duration -
-                1,
-            })
-          : t("title.period.single", {
-              start: cheerFilteredSession.start_time,
-            })}
+        {t("time", {
+          start: new Date(cheerFilteredSession.start_time),
+          end: new Date(cheerFilteredSession.start_time),
+        })}
       </PageHeader>
       <SplitLayout ratio="list-detail">
         <LookupListSide length={cheerFilteredSession.classrooms.length}>

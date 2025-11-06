@@ -14,8 +14,8 @@ export type CheerAttendanceEvent = "start" | "end";
 export type CheerPracticePeriod = {
   id: string;
   date: string;
-  start_time: number;
-  duration: number;
+  start_time: string;
+  end_time: string;
 };
 
 export type CheerAttendanceRecord = {
