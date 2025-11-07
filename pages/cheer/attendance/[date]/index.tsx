@@ -130,26 +130,11 @@ const CheerPeriodPage: CustomPage<{
     </>
   );
 };
-export const getStaticPaths: GetStaticPaths = async () => {
-  const mysk = await createMySKClient();
-  const { data: sessions, error } = await mysk.fetch<CheerPracticeSession[]>(
-    "/v1/attendance/cheer/periods",
-    { query: { fetch_level: "compact" } },
-  );
-  if (error) logError("CheerSessionPaths", error);
 
-  const paths =
-    sessions?.map((period) => ({
-      params: {
-        date: period.date,
-      },
-    })) ?? [];
-
-  return {
-    paths,
-    fallback: "blocking",
-  };
-};
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const mysk = await createMySKClient();

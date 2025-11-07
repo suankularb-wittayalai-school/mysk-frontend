@@ -41,7 +41,6 @@ import getCheerStaffs from "@/utils/backend/attendance/cheer/getCheerStaffs";
 import getAdvisingClassroomID from "@/utils/backend/person/getAdvisingClassroomID";
 import { getTeacherFromUserID } from "@/utils/backend/account/getLoggedInPerson";
 import getBlackListedCheerStudents from "@/utils/backend/attendance/cheer/getBlackListedCheerStudents";
-import { createClient } from "@supabase/supabase-js";
 import { supabase } from "@/utils/supabase-backend";
 
 const CheerAttendancePage: CustomPage<{
