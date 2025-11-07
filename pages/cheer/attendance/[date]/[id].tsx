@@ -344,7 +344,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     await getBlackListedCheerStudents(supabase);
   return {
     props: { cheerSession, cheerStaffs, blackListedStudents, date },
-    revalidate: 600,
+    revalidate: 120,
   };
 };
 

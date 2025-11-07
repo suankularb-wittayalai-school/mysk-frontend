@@ -166,7 +166,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   if (fetchIdError) logError("CheerPeriodPage", fetchIdError);
   return {
     props: { cheerPeriods, date },
-    revalidate: 600,
+    revalidate: 120,
   };
 };
 
