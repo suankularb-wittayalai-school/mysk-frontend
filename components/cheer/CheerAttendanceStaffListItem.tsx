@@ -45,8 +45,6 @@ const CheerAttendanceStaffListItem: StylableFC<{
   shownEvent: CheerAttendanceEvent;
   editable?: boolean;
   saving: boolean;
-  cheerStaffSet: Set<string>;
-  blackListedStudentSet: Set<string>;
   setSaving: React.Dispatch<React.SetStateAction<boolean>>;
   onAttendancesChange: (attendance: CheerAttendanceRecord) => void;
 }> = ({
@@ -54,8 +52,6 @@ const CheerAttendanceStaffListItem: StylableFC<{
   shownEvent,
   editable,
   saving,
-  cheerStaffSet,
-  blackListedStudentSet,
   setSaving,
   onAttendancesChange,
 }) => {

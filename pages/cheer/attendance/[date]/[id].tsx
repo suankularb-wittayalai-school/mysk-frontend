@@ -45,10 +45,8 @@ import { supabase } from "@/utils/supabase-backend";
 
 const CheerAttendancePage: CustomPage<{
   cheerSession: CheerPracticeSession;
-  cheerStaffs: { student_id: string }[];
-  blackListedStudents: { student_id: string }[];
   date: string;
-}> = ({ cheerSession, cheerStaffs, blackListedStudents, date }) => {
+}> = ({ cheerSession, date }) => {
   const { t } = useTranslation("attendance/cheer");
   const { t: tx } = useTranslation("common");
 
@@ -66,11 +64,6 @@ const CheerAttendancePage: CustomPage<{
   );
   const [cheerFilteredSession, setcheerFilteredSession] =
     useState<CheerPracticeSession>(cheerSession);
-
-  const cheerStaffSet = new Set(cheerStaffs.map((staff) => staff.student_id));
-  const blackListedStudentSet = new Set(
-    blackListedStudents.map((student) => student.student_id),
-  );
 
   const {
     selectedID,
@@ -167,7 +160,7 @@ const CheerAttendancePage: CustomPage<{
       fetchcAdvisingClassroomID();
     }
   }, []);
-
+  
   const onCheerTallyCounts = (
     attendances: CheerAttendanceRecord[],
     classroomID: string,
@@ -260,8 +253,6 @@ const CheerAttendancePage: CustomPage<{
               <CheerAttendanceCard
                 classroom={selectedDetail}
                 attendances={attendances}
-                cheerStaffSet={cheerStaffSet}
-                blackListedStudentSet={blackListedStudentSet}
                 onAttendancesChange={setAttendances}
                 onCheerTallyCounts={onCheerTallyCounts}
                 loading={loading}
@@ -284,8 +275,6 @@ const CheerAttendancePage: CustomPage<{
         <CheerAttendanceCard
           classroom={selectedDetail}
           attendances={attendances}
-          cheerStaffSet={cheerStaffSet}
-          blackListedStudentSet={blackListedStudentSet}
           onAttendancesChange={setAttendances}
           onCheerTallyCounts={onCheerTallyCounts}
           loading={loading}
@@ -310,8 +299,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     CheerPracticePeriod & { classrooms: string[] }
   >(`/v1/attendance/cheer/periods/${id}`, {
     query: {
-      fetch_level: "default",
-      descendant_fetch_level: "compact",
+      fetch_level: "compact",
     },
   });
   if (fetchSessionError) {
