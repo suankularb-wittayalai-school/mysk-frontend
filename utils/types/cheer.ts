@@ -37,6 +37,7 @@ export type CheerAttendanceRecord = {
     | CheerAttendanceType.present
     | CheerAttendanceType.missing
     | null;
+  disabled: boolean;
 };
 
 export type ClassroomCheerAttendance = Pick<
