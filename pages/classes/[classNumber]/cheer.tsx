@@ -27,6 +27,7 @@ import useTranslation from "next-translate/useTranslation";
 import { parallel } from "radash";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import CheerAttendanceRemedialGuidelineGlance from "@/components/home/glance/CheerAttendanceRemedialGuidelineGlance";
 
 const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
   classroom: Pick<Classroom, "id" | "number">;
@@ -55,6 +56,7 @@ const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
         {t("header", { classNumber: classroom.number })}
       </PageHeader>
       <ContentLayout>
+        <CheerAttendanceRemedialGuidelineGlance />
         <CheerAttendanceLegend className="my-1" />
         <ul className="mx-4 space-y-2 sm:mx-0 md:space-y-0">
           <li key={classroom.id} className="top-0 z-10 md:sticky">
@@ -160,6 +162,7 @@ export const getServerSideProps: GetServerSideProps = async ({
             presence: null,
             absence_reason: null,
             presence_at_end: null,
+            disabled: false,
           };
           student.attendances.push(defaultAttendance);
           periodAttendances.push(defaultAttendance);

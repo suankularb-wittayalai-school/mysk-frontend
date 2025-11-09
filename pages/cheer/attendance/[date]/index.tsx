@@ -5,10 +5,7 @@ import { ContentLayout, List, Progress } from "@suankularb-components/react";
 import CheerDateSelector from "@/components/cheer/CheerDateSelector";
 import cn from "@/utils/helpers/cn";
 import CheerPeriodListItem from "@/components/cheer/CheerPeriodListItem";
-import {
-  GetStaticPaths,
-  GetStaticProps,
-} from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import { CheerPracticePeriod, CheerPracticeSession } from "@/utils/types/cheer";
 import { useRouter } from "next/router";
@@ -20,11 +17,14 @@ import { getTeacherFromUserID } from "@/utils/backend/account/getLoggedInPerson"
 import { useEffect, useState } from "react";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { supabase } from "@/utils/supabase-backend";
+import getCheerTeacher from "@/utils/backend/attendance/cheer/getCheerTeacher";
 
 const CheerPeriodPage: CustomPage<{
   cheerPeriods: CheerPracticeSession[];
   date: string;
-}> = ({ cheerPeriods, date }) => {
+  cheerTeachers: { teacher_id: string }[];
+}> = ({ cheerPeriods, date, cheerTeachers }) => {
   const router = useRouter();
   const { t } = useTranslation("attendance/cheer");
   const { t: tx } = useTranslation("attendance/cheer/list");
@@ -37,9 +37,22 @@ const CheerPeriodPage: CustomPage<{
   >([]);
   const [loading, setLoading] = useState(true);
 
+  const cheerTeacherSet = new Set(
+    cheerTeachers.map((teacher) => teacher.teacher_id),
+  );
+
   useEffect(() => {
     if (!mysk.user) return;
-    const filterAttendance = async () => {
+    const filterCheerClass = async () => {
+      const { data: isJatuDay, error: isJatuDayError } = await mysk.fetch<
+        (CheerPracticePeriod & { classrooms: string[] })[]
+      >(`/v1/attendance/cheer/in-jaturamitr-period`, {
+        query: {
+          fetch_level: "default",
+        },
+      });
+      if (isJatuDayError) logError("CheerPeriodPage", isJatuDayError);
+
       setLoading(true);
       if (mysk.user?.role == "teacher") {
         const { data: teacher } = await getTeacherFromUserID(
@@ -47,23 +60,27 @@ const CheerPeriodPage: CustomPage<{
           mysk,
           mysk.user.id,
         );
-        const { data: advisingClassroomID } = await getAdvisingClassroomID(
-          supabase,
-          teacher!.id,
-        );
-        const filtered = cheerPeriods!.filter((period) =>
-          (period.classrooms as unknown as string[]).includes(
-            advisingClassroomID || "",
-          ),
-        );
-        setFilterdCheerPeriods(filtered);
+        if (!cheerTeacherSet.has(teacher!.id) && !isJatuDay) {
+          const { data: advisingClassroomID } = await getAdvisingClassroomID(
+            supabase,
+            teacher!.id,
+          );
+          const filtered = cheerPeriods!.filter((period) =>
+            (period.classrooms as unknown as string[]).includes(
+              advisingClassroomID || "",
+            ),
+          );
+          setFilterdCheerPeriods(filtered);
+        } else {
+          setFilterdCheerPeriods(cheerPeriods);
+        }
       } else {
         setFilterdCheerPeriods(cheerPeriods);
       }
       setLoading(false);
     };
 
-    filterAttendance();
+    filterCheerClass();
   }, [mysk.user, cheerPeriods]);
 
   const handleSessionSelect = (id: string) => {
@@ -130,26 +147,11 @@ const CheerPeriodPage: CustomPage<{
     </>
   );
 };
-export const getStaticPaths: GetStaticPaths = async () => {
-  const mysk = await createMySKClient();
-  const { data: sessions, error } = await mysk.fetch<CheerPracticeSession[]>(
-    "/v1/attendance/cheer/periods",
-    { query: { fetch_level: "compact" } },
-  );
-  if (error) logError("CheerSessionPaths", error);
 
-  const paths =
-    sessions?.map((period) => ({
-      params: {
-        date: period.date,
-      },
-    })) ?? [];
-
-  return {
-    paths,
-    fallback: "blocking",
-  };
-};
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const mysk = await createMySKClient();
@@ -164,9 +166,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     },
   });
   if (fetchIdError) logError("CheerPeriodPage", fetchIdError);
+  const { data: cheerTeachers } = await getCheerTeacher(supabase);
   return {
-    props: { cheerPeriods, date },
-    revalidate: 600,
+    props: { cheerPeriods, date, cheerTeachers },
+    revalidate: 120,
   };
 };
 
