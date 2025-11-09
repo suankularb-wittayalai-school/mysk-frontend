@@ -45,8 +45,6 @@ const CheerAttendanceStaffListItem: StylableFC<{
   shownEvent: CheerAttendanceEvent;
   editable?: boolean;
   saving: boolean;
-  cheerStaffSet: Set<string>;
-  blackListedStudentSet: Set<string>;
   setSaving: React.Dispatch<React.SetStateAction<boolean>>;
   onAttendancesChange: (attendance: CheerAttendanceRecord) => void;
 }> = ({
@@ -54,8 +52,6 @@ const CheerAttendanceStaffListItem: StylableFC<{
   shownEvent,
   editable,
   saving,
-  cheerStaffSet,
-  blackListedStudentSet,
   setSaving,
   onAttendancesChange,
 }) => {
@@ -184,14 +180,10 @@ const CheerAttendanceStaffListItem: StylableFC<{
             attendance={attendance}
             shownEvent={shownEvent}
             onChange={setAttendanceOfShownEvent}
-            editable={
-              !cheerStaffSet.has(attendance.student.id) ||
-              !blackListedStudentSet.has(attendance.student.id)
-            }
+            editable={!attendance.disabled}
             className={cn(
               "-mr-4 -space-x-1",
-              cheerStaffSet.has(attendance.student.id) ||
-                blackListedStudentSet.has(attendance.student.id)
+              attendance.disabled
                 ? "pointer-events-none cursor-not-allowed opacity-50"
                 : null,
             )}
