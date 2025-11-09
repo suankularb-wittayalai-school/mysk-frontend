@@ -73,7 +73,10 @@ module.exports = {
     "rgx:/((classes/\\[classNumber\\]|manage/(classrooms|electives))/print)$": [
       "classes/print",
     ],
-    "/classes/[classNumber]/cheer": ["classes/cheer"],
+    "/classes/[classNumber]/cheer": [
+      "classes/cheer",
+      "attendance/cheer/glance",
+    ],
     // Search
     "/search/[view]": [
       "search/landing",
@@ -154,7 +157,11 @@ module.exports = {
     ],
     "/teach/electives/[id]/print": ["elective/print", "classes/print"],
     // Cheer
-    "/cheer": ["attendance/cheer", "attendance/cheer/list"],
+    "/cheer": [
+      "attendance/cheer",
+      "attendance/cheer/list",
+      "attendance/cheer/glance",
+    ],
     "/cheer/attendance/[date]": [
       "attendance/cheer",
       "attendance/cheer/list",
