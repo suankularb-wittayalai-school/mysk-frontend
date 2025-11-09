@@ -1452,6 +1452,11 @@ export type Database = {
         Insert: { id: string; created_at: string; student_id: string };
         Update: { id: string; created_at: string; student_id: string };
       };
+      cheer_practice_teachers: {
+        Row: { id: string; created_at: string; teacher_id: string };
+        Insert: { id: string; created_at: string; teacher_id: string };
+        Update: { id: string; created_at: string; teacher_id: string };
+      };
       student_certificates: {
         Row: {
           certificate_detail: string;
