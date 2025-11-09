@@ -36,23 +36,9 @@ const StudentCheerAttendanceListItem: FC<{
           className="!items-center !overflow-visible"
         >
           <ListItemContent
-            title={[
-              t("date", {
-                date: new Date(attendance.practice_period.date),
-              }),
-              t("time", {
-                start: new Date(
-                  attendance.practice_period.date +
-                    "T" +
-                    attendance.practice_period.start_time,
-                ),
-                end: new Date(
-                  attendance.practice_period.date +
-                    "T" +
-                    attendance.practice_period.end_time,
-                ),
-              }),
-            ].join(" • ")}
+            title={t("date", {
+              date: new Date(attendance.practice_period.date),
+            })}
             desc={attendance.practice_period.note}
             className="w-0 [&>span]:!truncate"
           />
