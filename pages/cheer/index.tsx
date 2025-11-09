@@ -118,6 +118,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         presence: null,
         absence_reason: null,
         presence_at_end: null,
+        disabled: false
       });
     }
   }
