@@ -153,7 +153,7 @@ const CheerAttendancePage: CustomPage<{
       try {
         const { data, error } = await getCheerAttendanceOfClass(
           selectedClassroom,
-          pick(cheerSession, ["id", "date", "start_time", "end_time"]),
+          pick(cheerSession, ["id", "date", "start_time", "end_time", "note"]),
           supabase,
           mysk,
         );
