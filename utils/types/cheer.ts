@@ -16,6 +16,7 @@ export type CheerPracticePeriod = {
   date: string;
   start_time: string;
   end_time: string;
+  note: string;
 };
 
 export type CheerAttendanceRecord = {

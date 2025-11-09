@@ -31,13 +31,13 @@ const CheerPeriodListItem: StylableFC<{
           onClick={() => onSessionSelect(cheerSession.id)}
         >
           <ListItemContent
-            title={t("time", {
+            desc={t("time", {
               start: new Date(
                 cheerSession.date + "T" + cheerSession.start_time,
               ),
               end: new Date(cheerSession.date + "T" + cheerSession.end_time),
             })}
-            desc={t("date", { date: new Date(cheerSession.date) })}
+            title={cheerSession.note}
             className="w-0 px-4 [&>span]:!truncate"
           />
         </ListItem>
