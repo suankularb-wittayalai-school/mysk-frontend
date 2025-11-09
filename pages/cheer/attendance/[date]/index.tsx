@@ -23,7 +23,7 @@ import getCheerTeacher from "@/utils/backend/attendance/cheer/getCheerTeacher";
 const CheerPeriodPage: CustomPage<{
   cheerPeriods: CheerPracticeSession[];
   date: string;
-  cheerTeachers: string[];
+  cheerTeachers: { teacher_id: string }[];
 }> = ({ cheerPeriods, date, cheerTeachers }) => {
   const router = useRouter();
   const { t } = useTranslation("attendance/cheer");
@@ -37,7 +37,9 @@ const CheerPeriodPage: CustomPage<{
   >([]);
   const [loading, setLoading] = useState(true);
 
-  const cheerTeacherSet = new Set(cheerTeachers.map((teacher) => teacher));
+  const cheerTeacherSet = new Set(
+    cheerTeachers.map((teacher) => teacher.teacher_id),
+  );
 
   useEffect(() => {
     if (!mysk.user) return;
@@ -58,7 +60,7 @@ const CheerPeriodPage: CustomPage<{
           mysk,
           mysk.user.id,
         );
-        if (!cheerTeacherSet.has(teacher!.teacher_id!) && !isJatuDay) {
+        if (!cheerTeacherSet.has(teacher!.id) && !isJatuDay) {
           const { data: advisingClassroomID } = await getAdvisingClassroomID(
             supabase,
             teacher!.id,
@@ -69,6 +71,8 @@ const CheerPeriodPage: CustomPage<{
             ),
           );
           setFilterdCheerPeriods(filtered);
+        } else {
+          setFilterdCheerPeriods(cheerPeriods);
         }
       } else {
         setFilterdCheerPeriods(cheerPeriods);

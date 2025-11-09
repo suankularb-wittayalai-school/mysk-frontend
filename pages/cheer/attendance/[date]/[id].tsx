@@ -47,7 +47,7 @@ import getCheerTeacher from "@/utils/backend/attendance/cheer/getCheerTeacher";
 const CheerAttendancePage: CustomPage<{
   cheerSession: CheerPracticeSession;
   date: string;
-  cheerTeachers: string[];
+  cheerTeachers: { teacher_id: string }[];
 }> = ({ cheerSession, date, cheerTeachers }) => {
   const { t } = useTranslation("attendance/cheer");
   const { t: tx } = useTranslation("common");
@@ -68,7 +68,9 @@ const CheerAttendancePage: CustomPage<{
     ClassroomCheerAttendance[]
   >([]);
 
-  const cheerTeacherSet = new Set(cheerTeachers.map((teacher) => teacher));
+  const cheerTeacherSet = new Set(
+    cheerTeachers.map((teacher) => teacher.teacher_id),
+  );
 
   const {
     selectedID,
@@ -104,7 +106,7 @@ const CheerAttendancePage: CustomPage<{
           mysk,
           mysk.user.id,
         );
-        if (!cheerTeacherSet.has(teacher!.teacher_id!) && !isJatuDay) {
+        if (!cheerTeacherSet.has(teacher!.id) && !isJatuDay) {
           const { data: advisingClassroomID } = await getAdvisingClassroomID(
             supabase,
             teacher!.id,
@@ -113,6 +115,8 @@ const CheerAttendancePage: CustomPage<{
             (classroom) => classroom.id == advisingClassroomID,
           );
           setcheerFilteredClass(filter);
+        } else {
+          setcheerFilteredClass(cheerSession.classrooms);
         }
       } else {
         setcheerFilteredClass(cheerSession.classrooms);
