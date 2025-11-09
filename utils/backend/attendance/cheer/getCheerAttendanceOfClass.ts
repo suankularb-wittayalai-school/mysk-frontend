@@ -61,6 +61,7 @@ export default async function getCheerAttendanceOfClass(
       presence: null,
       absence_reason: null,
       presence_at_end: null,
+      disabled: false,
     };
   });
 
