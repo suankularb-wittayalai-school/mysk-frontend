@@ -48,7 +48,7 @@ const StudentCheerAttendanceListItem: FC<{
               end: new Date(
                 attendance.practice_period.date +
                   "T" +
-                  attendance.practice_period.date,
+                  attendance.practice_period.end_time,
               ),
             })}
             className="w-0 [&>span]:!truncate"
