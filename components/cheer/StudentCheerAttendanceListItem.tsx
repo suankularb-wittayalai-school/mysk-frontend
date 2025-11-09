@@ -39,7 +39,7 @@ const StudentCheerAttendanceListItem: FC<{
             title={t("date", {
               date: new Date(attendance.practice_period.date),
             })}
-            desc={t("period", {
+            desc={t("time", {
               start: new Date(
                 attendance.practice_period.date +
                   "T" +
