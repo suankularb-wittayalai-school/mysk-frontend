@@ -52,7 +52,7 @@ const ContactDialog: StylableFC<{
   };
 
   const [counter, incrementCounter] = useReducer((counter) => counter + 1, 1);
-  const { form, resetForm, formOK, formProps } = useForm<
+  const { form, setForm, resetForm, formOK, formProps } = useForm<
     "nameTH" | "nameEN" | "type" | "value"
   >([
     { key: "nameTH", defaultValue: contact?.name?.th },
@@ -60,7 +60,6 @@ const ContactDialog: StylableFC<{
     { key: "type", required: true, defaultValue: contact?.type || "phone" },
     { key: "value", required: true, defaultValue: contact?.value },
   ]);
-
   /**
    * Pass the form data onto `onSubmit`.
    */
@@ -156,19 +155,52 @@ const ContactDialog: StylableFC<{
           />
 
           {/* Label */}
-          <TextField
-            appearance="outlined"
-            label={t("form.nameTH")}
-            helperMsg={t("form.name_helper")}
-            {...formProps.nameTH}
-          />
-          <TextField
-            appearance="outlined"
-            label={t("form.nameEN")}
-            helperMsg={t("form.name_helper")}
-            {...formProps.nameEN}
-          />
+          {form.type !== "phone" && (
+            <>
+              <TextField
+                appearance="outlined"
+                label={t("form.nameTH")}
+                helperMsg={t("form.name_helper")}
+                {...formProps.nameTH}
+              />
+              <TextField
+                appearance="outlined"
+                label={t("form.nameEN")}
+                helperMsg={t("form.name_helper")}
+                {...formProps.nameEN}
+              />
+            </>
+          )}
         </Columns>
+        {/* Fixed Label for Phone */}
+        {form.type == "phone" && (
+          <Select
+            appearance="outlined"
+            label={t("form.phone.type")}
+            className="!mt-8"
+            value={form.nameEN}
+            onChange={(value) => {
+              setForm({
+                ...form,
+                nameTH:
+                  value == "Personal Phone Number"
+                    ? "เบอร์โทรศัพท์ส่วนตัว"
+                    : "เบอร์โทรศัพท์ผู้ปกครอง",
+                nameEN:
+                  value == "Personal Phone Number"
+                    ? "Personal Phone Number"
+                    : "Parent's Phone Number",
+              });
+            }}
+          >
+            <MenuItem value="Personal Phone Number">
+              {t("form.phone.personal")}
+            </MenuItem>
+            <MenuItem value="Parent's Phone Number">
+              {t("form.phone.parent")}
+            </MenuItem>
+          </Select>
+        )}
       </DialogContent>
       <Actions>
         {/* Cancel */}
