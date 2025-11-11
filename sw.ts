@@ -20,7 +20,7 @@ const serwist = new Serwist({
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
-  runtimeCaching: defaultCache,
+  runtimeCaching: defaultCache as any,
   // See: https://github.com/serwist/serwist/issues/64#issuecomment-1925393349
   fallbacks: {
     entries: [
