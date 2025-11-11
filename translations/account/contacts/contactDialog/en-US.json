@@ -21,7 +21,7 @@
     "phone": {
       "type": "Type",
       "personal": "Personal Phone Number",
-      "parent": "Parent's Phone Number"
+      "emergency": "Emergency Contact"
     },
     "value_error": "Invalid value.",
     "includes": {

@@ -189,15 +189,15 @@ const ContactDialog: StylableFC<{
                 nameEN:
                   value == "Personal Phone Number"
                     ? "Personal Phone Number"
-                    : "Parent's Phone Number",
+                    : "Emergency Contact",
               });
             }}
           >
             <MenuItem value="Personal Phone Number">
               {t("form.phone.personal")}
             </MenuItem>
-            <MenuItem value="Parent's Phone Number">
-              {t("form.phone.parent")}
+            <MenuItem value="Emergency Contact">
+              {t("form.phone.emergency")}
             </MenuItem>
           </Select>
         )}
