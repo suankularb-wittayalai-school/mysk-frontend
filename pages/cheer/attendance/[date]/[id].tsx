@@ -3,7 +3,6 @@ import PageHeader from "@/components/common/PageHeader";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupListSide from "@/components/lookup/LookupListSide";
 import LookupResultsList from "@/components/lookup/LookupResultsList";
-import getClassroomByID from "@/utils/backend/classroom/getClassroomByID";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useListDetail from "@/utils/helpers/search/useListDetail";
 import {
@@ -39,6 +38,7 @@ import SnackbarContext from "@/contexts/SnackbarContext";
 import logError from "@/utils/helpers/logError";
 import { supabase } from "@/utils/supabase-client";
 import getCheerTeacher from "@/utils/backend/attendance/cheer/getCheerTeacher";
+import getMultipleClassroomsByIDs from "@/utils/backend/attendance/cheer/getMultipleClassroomsByIDs";
 
 const CheerAttendancePage: CustomPage<{
   cheerSession: CheerPracticeSession;
@@ -261,7 +261,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { id } = params as { [key: string]: string };
   const { date } = params as { [key: string]: string };
 
-  const { data: rawCheerSession, error: fetchSessionError } = await mysk.fetch<
+  const { data: cheerSession, error: fetchSessionError } = await mysk.fetch<
     CheerPracticePeriod & { classrooms: string[] }
   >(`/v1/attendance/cheer/periods/${id}`, {
     query: {
@@ -273,28 +273,25 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     return { notFound: true };
   }
 
-  const DetailClassrooms = await Promise.all(
-    rawCheerSession.classrooms.map(async (classroomID) => {
-      const { data: detailClassroom } = await getClassroomByID(
-        supabase,
-        classroomID,
-      );
-      return detailClassroom!;
-    }),
-  );
+  const { data: detailClassrooms, error: detailClassroomsError } =
+    await getMultipleClassroomsByIDs(supabase, cheerSession.classrooms);
+  if (detailClassroomsError) {
+    logError("CheerAttendancePage", detailClassroomsError);
+    return { notFound: true };
+  }
 
-  const cheerSession: CheerPracticeSession = {
-    ...rawCheerSession,
-    classrooms: rawCheerSession.classrooms
+  const detailCheerSession: CheerPracticeSession = {
+    ...cheerSession,
+    classrooms: cheerSession.classrooms
       .map((classroomID) => ({
-        ...DetailClassrooms.find((classroom) => classroom.id === classroomID)!,
+        ...detailClassrooms.find((classroom) => classroom.id === classroomID)!,
         attendances: [],
       }))
       .sort((a, b) => a.number - b.number),
   };
   const { data: cheerTeachers } = await getCheerTeacher(supabase);
   return {
-    props: { cheerSession, cheerTeachers, date },
+    props: { cheerSession: detailCheerSession, cheerTeachers, date },
     revalidate: 120,
   };
 };
