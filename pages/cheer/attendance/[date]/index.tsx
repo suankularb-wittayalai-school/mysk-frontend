@@ -12,7 +12,6 @@ import { useRouter } from "next/router";
 import useTranslation from "next-translate/useTranslation";
 import logError from "@/utils/helpers/logError";
 import { Text } from "@suankularb-components/react";
-import getAdvisingClassroomID from "@/utils/backend/person/getAdvisingClassroomID";
 import { getTeacherFromUserID } from "@/utils/backend/account/getLoggedInPerson";
 import { useEffect, useState } from "react";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
@@ -60,25 +59,18 @@ const CheerPeriodPage: CustomPage<{
           mysk,
           mysk.user.id,
         );
-        if (!cheerTeacherSet.has(teacher!.id) && !isJatuDay) {
-          const { data: advisingClassroomID } = await getAdvisingClassroomID(
-            supabase,
-            teacher!.id,
-          );
-          const filtered = cheerPeriods!.filter((period) =>
-            (period.classrooms as unknown as string[]).includes(
-              advisingClassroomID || "",
-            ),
-          );
-          setFilterdCheerPeriods(filtered);
-        } else {
+        if (cheerTeacherSet.has(teacher!.id) || isJatuDay) {
           setFilterdCheerPeriods(cheerPeriods);
+        } else {
+          setFilterdCheerPeriods([]);
         }
       } else {
         setFilterdCheerPeriods(cheerPeriods);
       }
       setLoading(false);
     };
+
+    console.log(cheerTeacherSet)
 
     filterCheerClass();
   }, [mysk.user, cheerPeriods]);
