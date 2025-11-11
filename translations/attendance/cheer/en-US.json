@@ -23,5 +23,8 @@
       "cancel": "Cancel",
       "go": "Go"
     }
+  },
+  "actions": {
+    "fromAttendance": "You've been temporarily redirected here because today's Jaturamitr day."
   }
 }

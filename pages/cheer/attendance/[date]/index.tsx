@@ -1,24 +1,31 @@
-import { CustomPage } from "@/utils/types/common";
-import PageHeader from "@/components/common/PageHeader";
-import Head from "next/head";
-import { ContentLayout, List, Progress } from "@suankularb-components/react";
 import CheerDateSelector from "@/components/cheer/CheerDateSelector";
-import cn from "@/utils/helpers/cn";
 import CheerPeriodListItem from "@/components/cheer/CheerPeriodListItem";
-import { GetStaticPaths, GetStaticProps } from "next";
-import createMySKClient from "@/utils/backend/mysk/createMySKClient";
-import { CheerPracticePeriod, CheerPracticeSession } from "@/utils/types/cheer";
-import { useRouter } from "next/router";
-import useTranslation from "next-translate/useTranslation";
-import logError from "@/utils/helpers/logError";
-import { Text } from "@suankularb-components/react";
-import getAdvisingClassroomID from "@/utils/backend/person/getAdvisingClassroomID";
+import PageHeader from "@/components/common/PageHeader";
+import SnackbarContext from "@/contexts/SnackbarContext";
 import { getTeacherFromUserID } from "@/utils/backend/account/getLoggedInPerson";
-import { useEffect, useState } from "react";
-import useMySKClient from "@/utils/backend/mysk/useMySKClient";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { supabase } from "@/utils/supabase-backend";
 import getCheerTeacher from "@/utils/backend/attendance/cheer/getCheerTeacher";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import getAdvisingClassroomID from "@/utils/backend/person/getAdvisingClassroomID";
+import cn from "@/utils/helpers/cn";
+import logError from "@/utils/helpers/logError";
+import { supabase } from "@/utils/supabase-backend";
+import { CheerPracticePeriod, CheerPracticeSession } from "@/utils/types/cheer";
+import { CustomPage } from "@/utils/types/common";
+import {
+  ContentLayout,
+  List,
+  Progress,
+  Snackbar,
+  Text,
+} from "@suankularb-components/react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { GetStaticPaths, GetStaticProps } from "next";
+import useTranslation from "next-translate/useTranslation";
+import Head from "next/head";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
+import { useContext, useEffect, useState } from "react";
 
 const CheerPeriodPage: CustomPage<{
   cheerPeriods: CheerPracticeSession[];
@@ -28,6 +35,16 @@ const CheerPeriodPage: CustomPage<{
   const router = useRouter();
   const { t } = useTranslation("attendance/cheer");
   const { t: tx } = useTranslation("attendance/cheer/list");
+
+  const { setSnackbar } = useContext(SnackbarContext);
+
+  // If the user is redirected from normal attendance, explain why.
+  let params = useSearchParams();
+  useEffect(() => {
+    if (params.get("fromAttendance") == "true") {
+      setSnackbar(<Snackbar>{t("actions.fromAttendance")}</Snackbar>);
+    }
+  }, []);
 
   const mysk = useMySKClient();
   const supabase = useSupabaseClient();
