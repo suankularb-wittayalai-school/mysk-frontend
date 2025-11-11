@@ -65,7 +65,6 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       ...(await serverSideTranslations(locale as LangCode, ["common"])),
       classrooms,
     },
-    revalidate: 60,
   };
 };
 
