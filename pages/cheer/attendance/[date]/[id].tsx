@@ -11,12 +11,14 @@ import {
   CheerPracticePeriod,
   CheerPracticeSession,
   CheerTallyCount,
+  ClassroomCheerAttendance,
 } from "@/utils/types/cheer";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage } from "@/utils/types/common";
 import {
   DURATION,
   EASING,
+  Progress,
   Snackbar,
   SplitLayout,
   Text,
@@ -37,13 +39,17 @@ import { Breakpoint } from "@/utils/helpers/useBreakpoint";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import logError from "@/utils/helpers/logError";
+import getAdvisingClassroomID from "@/utils/backend/person/getAdvisingClassroomID";
+import { getTeacherFromUserID } from "@/utils/backend/account/getLoggedInPerson";
 import { supabase } from "@/utils/supabase-backend";
 import getCheerTeacher from "@/utils/backend/attendance/cheer/getCheerTeacher";
+
 
 const CheerAttendancePage: CustomPage<{
   cheerSession: CheerPracticeSession;
   date: string;
-}> = ({ cheerSession, date }) => {
+  cheerTeachers: { teacher_id: string }[];
+}> = ({ cheerSession, date, cheerTeachers }) => {
   const { t } = useTranslation("attendance/cheer");
   const { t: tx } = useTranslation("common");
 
@@ -53,10 +59,18 @@ const CheerAttendancePage: CustomPage<{
 
   const supabase = useSupabaseClient();
   const [loading, setLoading] = useState<boolean>(false);
+  const [listLoading, setListLoading] = useState<boolean>(false);
   const cacheRef = useRef<Record<string, CheerAttendanceRecord[]>>({});
   const [attendances, setAttendances] = useState<CheerAttendanceRecord[]>([]);
   const [cheerTallyCounts, setCheerTallyCounts] = useState<CheerTallyCount[]>(
     [],
+  );
+  const [cheerFilteredClass, setcheerFilteredClass] = useState<
+    ClassroomCheerAttendance[]
+  >([]);
+
+  const cheerTeacherSet = new Set(
+    cheerTeachers.map((teacher) => teacher.teacher_id),
   );
 
   const {
@@ -66,13 +80,53 @@ const CheerAttendancePage: CustomPage<{
     detailsOpen,
     onDetailsClose,
   } = useListDetail<Pick<Classroom, "id" | "number" | "main_room">>(
-    cheerSession.classrooms,
+    cheerFilteredClass,
     undefined,
     {
       firstByDefault: false,
       dialogBreakpoints: [Breakpoint.base, Breakpoint.sm],
     },
   );
+
+  useEffect(() => {
+    if (!mysk.user) return;
+    const filterPeriod = async () => {
+      const { data: isJatuDay, error: isJatuDayError } = await mysk.fetch<
+        (CheerPracticePeriod & { classrooms: string[] })[]
+      >(`/v1/attendance/cheer/in-jaturamitr-period`, {
+        query: {
+          fetch_level: "default",
+        },
+      });
+      if (isJatuDayError) logError("CheerPeriodPage", isJatuDayError);
+
+      setListLoading(true);
+      if (mysk.user?.role == "teacher") {
+        const { data: teacher } = await getTeacherFromUserID(
+          supabase,
+          mysk,
+          mysk.user.id,
+        );
+        if (!cheerTeacherSet.has(teacher!.id) && !isJatuDay) {
+          const { data: advisingClassroomID } = await getAdvisingClassroomID(
+            supabase,
+            teacher!.id,
+          );
+          const filter = cheerSession.classrooms.filter(
+            (classroom) => classroom.id == advisingClassroomID,
+          );
+          setcheerFilteredClass(filter);
+        } else {
+          setcheerFilteredClass(cheerSession.classrooms);
+        }
+      } else {
+        setcheerFilteredClass(cheerSession.classrooms);
+      }
+      setListLoading(false);
+    };
+
+    filterPeriod();
+  }, [mysk.user, cheerSession]);
 
   const fetchIdRef = useRef(0);
   useEffect(() => {
@@ -94,7 +148,7 @@ const CheerAttendancePage: CustomPage<{
 
     const fetchAttendance = async () => {
       setLoading(true);
-      let [selectedClassroom] = cheerSession.classrooms.filter(
+      let [selectedClassroom] = cheerFilteredClass.filter(
         (classroom) => classroom.id === selectedID,
       );
       try {
@@ -172,35 +226,43 @@ const CheerAttendancePage: CustomPage<{
           end: new Date(cheerSession.date + "T" + cheerSession.end_time),
         })}
       </PageHeader>
+      <Progress
+        appearance="linear"
+        visible={listLoading}
+        alt="loading"
+        className=""
+      />
       <SplitLayout ratio="list-detail">
-        <LookupListSide length={cheerSession.classrooms.length}>
-          <LookupResultsList
-            length={cheerSession.classrooms.length}
-            className="[&>ul]:!gap-8 [&>ul]:!pt-0"
-          >
-            <LayoutGroup>
-              {/* Classrooms grouped by grade */}
-              {Object.entries(
-                group(cheerSession.classrooms, (classroom) =>
-                  Math.floor(classroom.number / 100),
-                ) as Record<string, typeof cheerSession.classrooms>,
-              ).map(([grade, classrooms]) => (
-                <CheerGradeSection
-                  key={grade}
-                  grade={grade}
-                  classrooms={classrooms}
-                  cheerTallyCounts={cheerTallyCounts}
-                  selectedID={selectedID}
-                  onSelectedChange={(classroomID) => {
-                    onSelectedChange(classroomID);
-                    if (classroomID !== selectedID) {
-                      setAttendances([]);
-                    }
-                  }}
-                />
-              ))}
-            </LayoutGroup>
-          </LookupResultsList>
+        <LookupListSide length={cheerFilteredClass.length}>
+          {!listLoading && (
+            <LookupResultsList
+              length={cheerFilteredClass.length}
+              className="[&>ul]:!gap-8 [&>ul]:!pt-0"
+            >
+              <LayoutGroup>
+                {/* Classrooms grouped by grade */}
+                {Object.entries(
+                  group(cheerFilteredClass, (classroom) =>
+                    Math.floor(classroom.number / 100),
+                  ) as Record<string, typeof cheerFilteredClass>,
+                ).map(([grade, classrooms]) => (
+                  <CheerGradeSection
+                    key={grade}
+                    grade={grade}
+                    classrooms={classrooms}
+                    cheerTallyCounts={cheerTallyCounts}
+                    selectedID={selectedID}
+                    onSelectedChange={(classroomID) => {
+                      onSelectedChange(classroomID);
+                      if (classroomID !== selectedID) {
+                        setAttendances([]);
+                      }
+                    }}
+                  />
+                ))}
+              </LayoutGroup>
+            </LookupResultsList>
+          )}
         </LookupListSide>
 
         {/* Details */}
@@ -214,7 +276,7 @@ const CheerAttendancePage: CustomPage<{
           {selectedID ? (
             <LookupDetailsSide
               selectedID={selectedDetail?.id || selectedID}
-              length={cheerSession.classrooms.length}
+              length={cheerFilteredClass.length}
             >
               <CheerAttendanceCard
                 classroom={selectedDetail}
