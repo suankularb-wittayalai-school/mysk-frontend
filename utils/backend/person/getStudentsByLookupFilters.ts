@@ -24,6 +24,7 @@ export default async function getStudentsByLookupFilters(
     .from("students")
     .select(
       `id,
+      student_id,
       people!inner(
         prefix_th,
         prefix_en,
@@ -56,6 +57,8 @@ export default async function getStudentsByLookupFilters(
 
   if (filters.contact)
     query = query.eq("people.person_contacts.contacts.value", filters.contact);
+
+  if (filters.studentId) query = query.eq("student_id", filters.studentId);
 
   const { data, error } = await query.limit(100);
 

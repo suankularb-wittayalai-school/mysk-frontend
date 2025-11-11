@@ -6,6 +6,8 @@
     "nickname": "Search nickname",
     "nickname_helper": "Enter partially or fully the nickname of a student",
     "contact": "Search contact",
-    "contact_helper": "Enter fully a username, email, tel., or URL of a student’s contact"
+    "contact_helper": "Enter fully a username, email, tel., or URL of a student’s contact",
+    "studentID": "Search student ID",
+    "studentID_helper": "Enter 5-digit student ID"
   }
 }

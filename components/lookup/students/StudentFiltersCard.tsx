@@ -23,10 +23,13 @@ const StudentsFiltersCard: StylableFC = ({ style, className }) => {
   const { setSnackbar } = useContext(SnackbarContext);
 
   // Form control
-  const { form, formProps } = useForm<"fullName" | "nickname" | "contact">([
+  const { form, formProps } = useForm<
+    "fullName" | "nickname" | "contact" | "studentId"
+  >([
     { key: "fullName" },
     { key: "nickname" },
     { key: "contact" },
+    { key: "studentId" },
   ]);
 
   function handleSubmit() {
@@ -72,6 +75,12 @@ const StudentsFiltersCard: StylableFC = ({ style, className }) => {
         label={t("form.contact")}
         helperMsg={t("form.contact_helper")}
         {...formProps.contact}
+      />
+      <TextField
+        appearance="outlined"
+        label={t("form.studentID")}
+        helperMsg={t("form.studentID_helper")}
+        {...formProps.studentId}
       />
     </SearchFiltersCard>
   );
