@@ -6,9 +6,18 @@ import { getTeacherFromUserID } from "@/utils/backend/account/getLoggedInPerson"
 import getCheerTeacher from "@/utils/backend/attendance/cheer/getCheerTeacher";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import cn from "@/utils/helpers/cn";
 import logError from "@/utils/helpers/logError";
+import { supabase } from "@/utils/supabase-backend";
 import { CheerPracticePeriod, CheerPracticeSession } from "@/utils/types/cheer";
-import { Text } from "@suankularb-components/react";
+import { CustomPage } from "@/utils/types/common";
+import {
+  ContentLayout,
+  List,
+  Progress,
+  Snackbar,
+  Text,
+} from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetStaticPaths, GetStaticProps } from "next";
 import useTranslation from "next-translate/useTranslation";
@@ -77,8 +86,6 @@ const CheerPeriodPage: CustomPage<{
       }
       setLoading(false);
     };
-
-    console.log(cheerTeacherSet)
 
     filterCheerClass();
   }, [mysk.user, cheerPeriods]);
