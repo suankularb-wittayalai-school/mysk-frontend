@@ -97,7 +97,7 @@ const StudentListTableBody: StylableFC<{
 
           {/* Allergies */}
           {options.columns.includes("allergies") && (
-            <td>{student.allergies?.join()}</td>
+            <td className="w-44 !text-pretty">{student.allergies?.join()}</td>
           )}
 
           {/* Shirt size */}
