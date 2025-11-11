@@ -8,7 +8,7 @@ import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
 import logError from "@/utils/helpers/logError";
-import { supabase } from "@/utils/supabase-backend";
+import { supabase } from "@/utils/supabase-client";
 import { CheerPracticePeriod, CheerPracticeSession } from "@/utils/types/cheer";
 import { CustomPage } from "@/utils/types/common";
 import {

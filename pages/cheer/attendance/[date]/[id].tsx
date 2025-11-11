@@ -37,7 +37,7 @@ import { Breakpoint } from "@/utils/helpers/useBreakpoint";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import logError from "@/utils/helpers/logError";
-import { supabase } from "@/utils/supabase-backend";
+import { supabase } from "@/utils/supabase-client";
 import getCheerTeacher from "@/utils/backend/attendance/cheer/getCheerTeacher";
 
 const CheerAttendancePage: CustomPage<{
