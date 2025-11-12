@@ -16,6 +16,7 @@ export async function getTeacherByID(
     detailed: boolean;
     includeContacts: boolean;
     year: number;
+    includeElectives: boolean;
   }>,
 ): Promise<BackendReturn<Teacher>> {
   let { data, error } = await supabase
@@ -48,7 +49,7 @@ export async function getTeacherByID(
   }
 
   const electivesInCharge: ElectiveSubject[] = [];
-  if (options?.detailed) {
+  if (options?.includeElectives) {
     const { data, error } = await mysk.fetch<ElectiveSubject[]>(
       "/v1/subjects/electives",
       {

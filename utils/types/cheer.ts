@@ -39,6 +39,7 @@ export type CheerAttendanceRecord = {
     | CheerAttendanceType.missing
     | null;
   disabled: boolean;
+  condition: string | null;
 };
 
 export type ClassroomCheerAttendance = Pick<

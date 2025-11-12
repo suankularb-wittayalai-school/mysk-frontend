@@ -23,5 +23,14 @@
       "cancel": "Cancel",
       "go": "Go"
     }
+  },
+  "legend": {
+    "healthProblem": {
+      "typeOne": "Type 1 Health Problems (can not enter the grandstand)",
+      "typeTwo": "Type 2 Health Problems (requires close monitoring)"
+    }
+  },
+  "actions": {
+    "redirected": "You've been temporarily redirected here because today's Jaturamitr day."
   }
 }

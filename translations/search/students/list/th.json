@@ -3,6 +3,7 @@
   "filter": {
     "fullName": "ชื่อจริง: “{{content}}”",
     "nickname": "ชื่อเล่น: “{{content}}”",
-    "contact": "ช่องทางการติดต่อ: “{{content}}”"
+    "contact": "ช่องทางการติดต่อ: “{{content}}”",
+    "studentID": "เลขประจำตัวนักเรียน: {{content}}"
   }
 }

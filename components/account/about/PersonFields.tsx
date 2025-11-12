@@ -35,6 +35,7 @@ export type PersonFieldsKey =
   | "classAdvisorAt"
   | "birthdate"
   | "allergies"
+  | "healthProblem"
   | "shirtSize"
   | "pantsSize";
 
@@ -206,6 +207,15 @@ const PersonFields: StylableFC<{
             allergies={form.allergies}
             onChange={(allergies) => setForm({ ...form, allergies })}
           />
+          {role === UserRole.student && (
+            <TextField
+              label={t("general.healthProblem")}
+              helperMsg={t("general.healthProblem_helper")}
+              appearance="outlined"
+              {...formProps.healthProblem}
+              disabled={true}
+            />
+          )}
           <Select
             appearance="outlined"
             label={t("general.shirtSize.label")}

@@ -1,24 +1,31 @@
-import { CustomPage } from "@/utils/types/common";
-import PageHeader from "@/components/common/PageHeader";
-import Head from "next/head";
-import { ContentLayout, List, Progress } from "@suankularb-components/react";
 import CheerDateSelector from "@/components/cheer/CheerDateSelector";
-import cn from "@/utils/helpers/cn";
 import CheerPeriodListItem from "@/components/cheer/CheerPeriodListItem";
-import { GetStaticPaths, GetStaticProps } from "next";
-import createMySKClient from "@/utils/backend/mysk/createMySKClient";
-import { CheerPracticePeriod, CheerPracticeSession } from "@/utils/types/cheer";
-import { useRouter } from "next/router";
-import useTranslation from "next-translate/useTranslation";
-import logError from "@/utils/helpers/logError";
-import { Text } from "@suankularb-components/react";
-import getAdvisingClassroomID from "@/utils/backend/person/getAdvisingClassroomID";
+import PageHeader from "@/components/common/PageHeader";
+import SnackbarContext from "@/contexts/SnackbarContext";
 import { getTeacherFromUserID } from "@/utils/backend/account/getLoggedInPerson";
-import { useEffect, useState } from "react";
-import useMySKClient from "@/utils/backend/mysk/useMySKClient";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { supabase } from "@/utils/supabase-backend";
 import getCheerTeacher from "@/utils/backend/attendance/cheer/getCheerTeacher";
+import isJatuDay from "@/utils/backend/attendance/cheer/isJatuDay";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import cn from "@/utils/helpers/cn";
+import logError from "@/utils/helpers/logError";
+import { supabase } from "@/utils/supabase-client";
+import { CheerPracticePeriod, CheerPracticeSession } from "@/utils/types/cheer";
+import { CustomPage } from "@/utils/types/common";
+import {
+  ContentLayout,
+  List,
+  Progress,
+  Snackbar,
+  Text,
+} from "@suankularb-components/react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { GetStaticPaths, GetStaticProps } from "next";
+import useTranslation from "next-translate/useTranslation";
+import Head from "next/head";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
+import { useContext, useEffect, useState } from "react";
 
 const CheerPeriodPage: CustomPage<{
   cheerPeriods: CheerPracticeSession[];
@@ -28,6 +35,16 @@ const CheerPeriodPage: CustomPage<{
   const router = useRouter();
   const { t } = useTranslation("attendance/cheer");
   const { t: tx } = useTranslation("attendance/cheer/list");
+
+  const { setSnackbar } = useContext(SnackbarContext);
+
+  // If the user is redirected from normal attendance, explain why.
+  let params = useSearchParams();
+  useEffect(() => {
+    if (params.get("redirected") == "true") {
+      setSnackbar(<Snackbar>{t("actions.redirected")}</Snackbar>);
+    }
+  }, []);
 
   const mysk = useMySKClient();
   const supabase = useSupabaseClient();
@@ -44,14 +61,7 @@ const CheerPeriodPage: CustomPage<{
   useEffect(() => {
     if (!mysk.user) return;
     const filterCheerClass = async () => {
-      const { data: isJatuDay, error: isJatuDayError } = await mysk.fetch<
-        (CheerPracticePeriod & { classrooms: string[] })[]
-      >(`/v1/attendance/cheer/in-jaturamitr-period`, {
-        query: {
-          fetch_level: "default",
-        },
-      });
-      if (isJatuDayError) logError("CheerPeriodPage", isJatuDayError);
+      const { data: isJatu } = await isJatuDay(date, mysk);
 
       setLoading(true);
       if (mysk.user?.role == "teacher") {
@@ -60,19 +70,10 @@ const CheerPeriodPage: CustomPage<{
           mysk,
           mysk.user.id,
         );
-        if (!cheerTeacherSet.has(teacher!.id) && !isJatuDay) {
-          const { data: advisingClassroomID } = await getAdvisingClassroomID(
-            supabase,
-            teacher!.id,
-          );
-          const filtered = cheerPeriods!.filter((period) =>
-            (period.classrooms as unknown as string[]).includes(
-              advisingClassroomID || "",
-            ),
-          );
-          setFilterdCheerPeriods(filtered);
-        } else {
+        if (cheerTeacherSet.has(teacher!.id) || isJatu) {
           setFilterdCheerPeriods(cheerPeriods);
+        } else {
+          setFilterdCheerPeriods([]);
         }
       } else {
         setFilterdCheerPeriods(cheerPeriods);

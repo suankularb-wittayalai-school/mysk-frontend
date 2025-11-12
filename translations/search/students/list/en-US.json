@@ -3,6 +3,7 @@
   "filter": {
     "fullName": "Full name: “{{content}}”",
     "nickname": "Nickname: “{{content}}”",
-    "contact": "Contact: “{{content}}”"
+    "contact": "Contact: “{{content}}”",
+    "studentID": "Student ID: {{content}}"
   }
 }

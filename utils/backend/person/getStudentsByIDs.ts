@@ -44,6 +44,7 @@ export async function getStudentsByIDs(
         seat_code,
         rsvp_status
       ),
+      cheer_practice_medical_risk_students(condition, risk_priority),
       people(
         *,
         person_contacts(contacts(*)),
@@ -143,6 +144,11 @@ export async function getStudentsByIDs(
           allergies: student!.people.person_allergies.map(
             ({ allergy_name }) => allergy_name,
           ),
+          health_problem:
+            student!.cheer_practice_medical_risk_students.map(
+              ({ condition, risk_priority }) =>
+                `ประเภทที่ ${risk_priority} ${condition} ${risk_priority == 1 ? "(ห้ามขึ้นสแตนด์)" : "(ดูแลอย่างใกล้ชิด)"}`,
+            )[0] || "",
           citizen_id: student!.people.citizen_id,
           birthdate: student!.people.birthdate,
           shirt_size: <ShirtSize>student!.people.shirt_size,

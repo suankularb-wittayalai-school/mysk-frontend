@@ -68,10 +68,17 @@ const StudentListTableHead: StylableFC<{
         </th>
       )}
 
-      {/* Notes */}
+      {/* Allergies */}
       {options.columns.includes("allergies") && (
         <th className="w-32">
           {options.language === "en-US" ? "Allergies" : "ภูมิแพ้/อาหารที่แพ้"}
+        </th>
+      )}
+
+      {/* Health Problem */}
+      {options.columns.includes("healthProblem") && (
+        <th className="w-32">
+          {options.language === "en-US" ? "Health Problems" : "ปัญหาสุขภาพ"}
         </th>
       )}
 

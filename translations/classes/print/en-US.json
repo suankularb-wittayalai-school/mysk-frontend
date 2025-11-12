@@ -11,6 +11,7 @@
     "nickname": "Nickname",
     "classroom": "Classroom",
     "allergies": "Allergies (in Thai)",
+    "healthProblem": "Health Problems (in Thai)",
     "shirtSize": "Shirt size",
     "pantsSize": "School pants size",
     "elective": "Chosen elective"
@@ -18,7 +19,8 @@
   "filters": {
     "label": "Filters",
     "noElective": "Without elective",
-    "hasAllergies": "With allergies"
+    "hasAllergies": "With allergies",
+    "hasHealthProblem": "With health problems"
   },
   "numEmpty": "Empty columns",
   "enableNotes": "Notes column",

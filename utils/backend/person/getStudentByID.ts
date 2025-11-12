@@ -39,6 +39,7 @@ export async function getStudentByID(
     detailed: boolean;
     includeContacts: boolean;
     includeCertificates: boolean;
+    includeElectives: boolean;
   }>,
 ): Promise<BackendReturn<Student>> {
   let { data: data, error: error } = await supabase
@@ -54,6 +55,7 @@ export async function getStudentByID(
         seat_code,
         rsvp_status
       ),
+      cheer_practice_medical_risk_students(condition),
       people(
         *,
         person_contacts(contacts(*)),
@@ -71,7 +73,7 @@ export async function getStudentByID(
   }
 
   let chosenElective: ElectiveSubject | null = null;
-  if (options?.detailed) {
+  if (options?.includeElectives) {
     const { data, error } = await mysk.fetch<ElectiveSubject[]>(
       "/v1/subjects/electives",
       {
@@ -131,6 +133,10 @@ export async function getStudentByID(
           allergies: data!.people.person_allergies.map(
             ({ allergy_name }) => allergy_name,
           ),
+          health_problem:
+            data!.cheer_practice_medical_risk_students.map(
+              ({ condition }) => condition,
+            )[0] || "",
           citizen_id: data!.people.citizen_id,
           birthdate: data!.people.birthdate,
           shirt_size: <ShirtSize>data!.people.shirt_size,

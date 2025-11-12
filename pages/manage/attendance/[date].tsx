@@ -74,6 +74,7 @@ const AttendanceOverviewPage: CustomPage<{
       <Head>
         <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
+
       <PageHeader parentURL="/manage" className="print:!hidden">
         {t("title")}
       </PageHeader>

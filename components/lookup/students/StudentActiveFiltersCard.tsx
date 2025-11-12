@@ -31,6 +31,11 @@ const StudentActiveFiltersCard: StylableFC<{
           {t("filter.contact", { content: filters.contact })}
         </InputChip>
       )}
+      {filters.studentId && (
+        <InputChip>
+          {t("filter.studentID", { content: filters.studentId })}
+        </InputChip>
+      )}
     </ActiveSearchFiltersCard>
   );
 };

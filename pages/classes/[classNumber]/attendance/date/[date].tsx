@@ -8,13 +8,16 @@ import AttendanceViewSelector, {
 import HomeroomContentDialog from "@/components/attendance/HomeroomContentDialog";
 import TodaySummary from "@/components/attendance/TodaySummary";
 import PageHeader from "@/components/common/PageHeader";
+import isJatuDay from "@/utils/backend/attendance/cheer/isJatuDay";
 import getAttendanceOfClass from "@/utils/backend/attendance/getAttendanceOfClass";
 import getHomeroomOfClass from "@/utils/backend/attendance/getHomeroomOfClass";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import isValidAttendanceDate from "@/utils/helpers/attendance/isValidAttendanceDate";
 import classroomOfPerson from "@/utils/helpers/classroom/classroomOfPerson";
 import cn from "@/utils/helpers/cn";
+import getISODateString from "@/utils/helpers/getISODateString";
 import useToggle from "@/utils/helpers/useToggle";
 import {
   AttendanceEvent,
@@ -253,6 +256,8 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
+  const mysk = await createMySKClient(req);
+
   const { classNumber, date } = params as { [key: string]: string };
   if (!isValidAttendanceDate(date)) return { notFound: true };
 
@@ -277,6 +282,17 @@ export const getServerSideProps: GetServerSideProps = async ({
     classroom.id,
     date,
   );
+
+  // If today's Jaturamitr day, redirect to cheer attendance page.
+  const { data: isJatu } = await isJatuDay(date, mysk);
+  if (isJatu) {
+    return {
+      redirect: {
+        destination: `/cheer/attendance/${getISODateString(new Date())}?redirected=true`,
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {

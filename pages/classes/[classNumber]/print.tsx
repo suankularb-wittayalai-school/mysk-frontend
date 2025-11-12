@@ -60,11 +60,12 @@ const ClassroomPrintPage: CustomPage<{
           "fullName",
           "nickname",
           "allergies",
+          canSeeSensitive && "healthProblem",
           "shirtSize",
           "pantsSize",
           canSeeSensitive && "elective",
         ])}
-        filters={sift([canSeeSensitive && "noElective", "hasAllergies"])}
+        filters={sift([canSeeSensitive && "noElective", "hasAllergies", "hasHealthProblem"])}
         parentURL="/classes"
       />
     </>

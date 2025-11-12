@@ -29,7 +29,9 @@ const StudentListTableBody: StylableFC<{
           (!options.filters.includes("noElective") ||
             !student.chosen_elective) &&
           (!options.filters.includes("hasAllergies") ||
-            student.allergies?.length),
+            student.allergies?.length) &&
+          (!options.filters.includes("hasHealthProblem") ||
+            student.health_problem),
       )
       .map((student, index) => (
         <tr key={student.id}>
@@ -98,6 +100,11 @@ const StudentListTableBody: StylableFC<{
           {/* Allergies */}
           {options.columns.includes("allergies") && (
             <td className="w-44 !text-pretty">{student.allergies?.join()}</td>
+          )}
+
+          {/* Health Problem */}
+          {options.columns.includes("healthProblem") && (
+            <td className="w-44 !text-pretty">{student.health_problem}</td>
           )}
 
           {/* Shirt size */}

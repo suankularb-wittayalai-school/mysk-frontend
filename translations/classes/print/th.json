@@ -11,6 +11,7 @@
     "nickname": "ชื่อเล่น",
     "classroom": "ห้องเรียน",
     "allergies": "ภูมิแพ้/อาหารที่แพ้ (ภาษาไทย)",
+    "healthProblem": "ปัญหาสุขภาพ (ภาษาไทย)",
     "shirtSize": "ไซส์เสื้อ",
     "pantsSize": "ขนาดกางเกงนักเรียน",
     "elective": "วิชาเลือก"
@@ -18,7 +19,8 @@
   "filters": {
     "label": "ตัวกรอง",
     "noElective": "ไม่มีวิชาเลือก",
-    "hasAllergies": "มีภูมิแพ้"
+    "hasAllergies": "มีภูมิแพ้",
+    "hasHealthProblem": "มีปัญหาสุขภาพ"
   },
   "numEmpty": "เพิ่มหลัก",
   "enableNotes": "หลักหมายเหตุ",

@@ -29,6 +29,7 @@ export type StudentSearchFilters = Partial<{
   fullName: string;
   nickname: string;
   contact: string;
+  studentId: string;
 }>;
 
 /**
@@ -130,7 +131,9 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const filters = Object.fromEntries(
     Object.entries(query)
-      .filter(([key]) => ["full_name", "nickname", "contact"].includes(key))
+      .filter(([key]) =>
+        ["full_name", "nickname", "contact", "student_id"].includes(key),
+      )
       .map(([key, value]) => [camel(key), value]),
   ) as StudentSearchFilters;
 

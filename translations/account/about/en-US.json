@@ -48,6 +48,8 @@
     "passportNumber_error": "Invalid passport number or unsupported passport.",
     "allergies": "Allergies (in Thai)",
     "allergies_helper": "Field is comma-seperated • Leave blank if you don’t have any.",
+    "healthProblem": "Health Problems",
+    "healthProblem_helper": "For Jaturamitr Samakkee",
     "shirtSize": {
       "label": "Shirt size",
       "metadata_one": "{{count, number}} inch",

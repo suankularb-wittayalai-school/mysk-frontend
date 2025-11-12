@@ -1,7 +1,6 @@
 import PageHeader from "@/components/common/PageHeader";
 import {
   GetServerSideProps,
-  GetStaticPaths,
   NextApiRequest,
   NextApiResponse,
 } from "next";
@@ -11,8 +10,6 @@ import { CustomPage } from "@/utils/types/common";
 import { Classroom } from "@/utils/types/classroom";
 import {
   ContentLayout,
-  Snackbar,
-  Progress,
 } from "@suankularb-components/react";
 import CheerAttendanceLegend from "@/components/cheer/CheerAttendanceLegend";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
@@ -163,6 +160,7 @@ export const getServerSideProps: GetServerSideProps = async ({
             absence_reason: null,
             presence_at_end: null,
             disabled: false,
+            condition: null,
           };
           student.attendances.push(defaultAttendance);
           periodAttendances.push(defaultAttendance);

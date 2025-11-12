@@ -47,6 +47,7 @@ const WithPersonDetails: StylableFC<{
         detailed: true,
         includeContacts: true,
         includeCertificates: true,
+        includeElectives: false,
       });
       if (error) return;
       setPersonDetails(data);
