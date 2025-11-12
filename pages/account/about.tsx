@@ -105,6 +105,11 @@ const AboutYouPage: CustomPage<{
       },
       { key: "birthdate", required: true, defaultValue: user.birthdate },
       { key: "allergies", defaultValue: user.allergies },
+      {
+        key: "healthProblem",
+        defaultValue:
+          user.role === UserRole.student ? user.health_problem : undefined,
+      },
       { key: "shirtSize", defaultValue: user.shirt_size },
       {
         key: "pantsSize",
@@ -155,10 +160,9 @@ const AboutYouPage: CustomPage<{
           // variable.
           // Using this variable, we can add the appropriate padding to the top
           // of the form and the appropriately position the fade-out mask.
-          className={cn(`h-full space-y-6 overflow-y-auto pb-9
-            pt-[calc(var(--header-height)+2rem)] [--header-height:7.125rem]
-            [mask-image:linear-gradient(to_bottom,transparent_var(--header-height),black_calc(var(--header-height)+2rem))]
-            sm:px-0 md:[--header-height:4rem]`)}
+          className={cn(
+            `h-full space-y-6 overflow-y-auto pb-9 pt-[calc(var(--header-height)+2rem)] [--header-height:7.125rem] [mask-image:linear-gradient(to_bottom,transparent_var(--header-height),black_calc(var(--header-height)+2rem))] sm:px-0 md:[--header-height:4rem]`,
+          )}
         >
           {/* {user.role === UserRole.student && (
             <CertficateAnnouncementBanner className="!hidden sm:!block" />

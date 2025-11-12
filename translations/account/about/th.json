@@ -49,6 +49,8 @@
     "passportNumber_error": "เลขหนังสือเดินทางไม่ถูกต้อง หรือเป็นหนังสือเดินทางที่ไม่รู้จัก",
     "allergies": "ภูมิแพ้/อาหารที่แพ้",
     "allergies_helper": "กด Enter หลังแต่ละภูมิแพ้/อาหารที่แพ้ • เว้นช่องนี้หากไม่มี",
+    "healthProblem": "ปัญหาสุขภาพ",
+    "healthProblem_helper": "สำหรับงานจตุรมิตรสามัคคี",
     "shirtSize": {
       "label": "ไซส์เสื้อ",
       "metadata": "{{count, number}} นิ้ว"

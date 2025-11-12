@@ -73,6 +73,7 @@ export type Student = Person & {
   certificates: StudentCertificate[];
   chosen_elective: ElectiveSubject | null;
   role: UserRole.student;
+  health_problem?: string;
 };
 
 export type Teacher = Person & {

@@ -1598,6 +1598,38 @@ export type Database = {
           },
         ];
       };
+      cheer_practice_medical_risk_students: {
+        Row: {
+          created_at: string | null;
+          id: string;
+          risk_priority: number;
+          student_id: string;
+          condition: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: string;
+          risk_priority: number;
+          student_id: string;
+          condition: string;
+        };
+        Update: {
+          created_at?: string | null;
+          id: string;
+          risk_priority?: number;
+          student_id?: string;
+          condition?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "cheer_practice_medical_risk_students_student_id_fkey";
+            columns: ["student_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       subject_co_teachers: {
         Row: {
           created_at: string | null;
