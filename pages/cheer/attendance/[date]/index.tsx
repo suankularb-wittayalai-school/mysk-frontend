@@ -41,8 +41,8 @@ const CheerPeriodPage: CustomPage<{
   // If the user is redirected from normal attendance, explain why.
   let params = useSearchParams();
   useEffect(() => {
-    if (params.get("fromAttendance") == "true") {
-      setSnackbar(<Snackbar>{t("actions.fromAttendance")}</Snackbar>);
+    if (params.get("redirected") == "true") {
+      setSnackbar(<Snackbar>{t("actions.redirected")}</Snackbar>);
     }
   }, []);
 

@@ -288,7 +288,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (isJatu) {
     return {
       redirect: {
-        destination: `/cheer/attendance/${getISODateString(new Date())}?fromAttendance=true`,
+        destination: `/cheer/attendance/${getISODateString(new Date())}?redirected=true`,
         permanent: false,
       },
     };

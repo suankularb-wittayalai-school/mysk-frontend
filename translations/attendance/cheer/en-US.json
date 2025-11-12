@@ -31,6 +31,6 @@
     }
   },
   "actions": {
-    "fromAttendance": "You've been temporarily redirected here because today's Jaturamitr day."
+    "redirected": "You've been temporarily redirected here because today's Jaturamitr day."
   }
 }

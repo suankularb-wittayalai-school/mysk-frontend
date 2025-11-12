@@ -31,6 +31,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
 import CheerAttendanceEntryCard from "@/components/cheer/CheerAttendanceEntryCard";
+import isJatuDay from "@/utils/backend/attendance/cheer/isJatuDay";
+import getISODateString from "@/utils/helpers/getISODateString";
 
 /**
  * The Teacher’s counterpart to Learn, where the user can see their Schedule
@@ -97,9 +99,7 @@ const TeachPage: CustomPage<{
             />
           </Columns>
           <Columns columns={3} className="!items-stretch">
-            {teacher.subjects_in_charge.length > 0 && (
-              <TeachReportEntryCard />
-            )}
+            {teacher.subjects_in_charge.length > 0 && <TeachReportEntryCard />}
             {teacher.electives_in_charge.length > 0 && (
               <TeachElectiveEntryCard
                 electivesInCharge={teacher.electives_in_charge}
@@ -144,6 +144,16 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
+  const { data: isJatu } = await isJatuDay(getISODateString(new Date()), mysk);
+
+  if (isJatu) {
+    return {
+      redirect: {
+        destination: `/cheer/attendance/${getISODateString(new Date())}?redirected=true`,
+        permanent: false,
+      },
+    };
+  }
   const { data: teacher, error } = (await getLoggedInPerson(supabase, mysk, {
     includeContacts: true,
     detailed: true,
