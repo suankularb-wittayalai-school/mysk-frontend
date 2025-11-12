@@ -163,6 +163,7 @@ export const getServerSideProps: GetServerSideProps = async ({
             absence_reason: null,
             presence_at_end: null,
             disabled: false,
+            condition: null,
           };
           student.attendances.push(defaultAttendance);
           periodAttendances.push(defaultAttendance);
