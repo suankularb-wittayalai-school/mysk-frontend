@@ -14,6 +14,7 @@ import useTranslation from "next-translate/useTranslation";
 import CheerAttendanceListItem from "@/components/cheer/CheerAttendanceStaffListItem";
 
 const CheerAttendanceCard: StylableFC<{
+  isJatuDay: boolean;
   classroom: Pick<Classroom, "id" | "number" | "main_room"> | null;
   attendances: CheerAttendanceRecord[];
   onAttendancesChange: (attendances: CheerAttendanceRecord[]) => void;
@@ -23,6 +24,7 @@ const CheerAttendanceCard: StylableFC<{
   ) => void;
   loading: boolean;
 }> = ({
+  isJatuDay,
   classroom,
   attendances,
   onAttendancesChange,
@@ -69,6 +71,7 @@ const CheerAttendanceCard: StylableFC<{
         {attendances.map((attendance) => (
           <CheerAttendanceListItem
             key={attendance.student.id}
+            isJatuDay={isJatuDay}
             attendance={attendance}
             shownEvent={event}
             editable={!loading}

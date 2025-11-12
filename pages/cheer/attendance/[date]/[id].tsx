@@ -39,6 +39,7 @@ import logError from "@/utils/helpers/logError";
 import { supabase } from "@/utils/supabase-client";
 import getCheerTeacher from "@/utils/backend/attendance/cheer/getCheerTeacher";
 import getMultipleClassroomsByIDs from "@/utils/backend/attendance/cheer/getMultipleClassroomsByIDs";
+import isJatuDay from "@/utils/backend/attendance/cheer/isJatuDay";
 
 const CheerAttendancePage: CustomPage<{
   cheerSession: CheerPracticeSession;
@@ -58,6 +59,7 @@ const CheerAttendancePage: CustomPage<{
   const [cheerTallyCounts, setCheerTallyCounts] = useState<CheerTallyCount[]>(
     [],
   );
+  const [isJatu, setIsJatu] = useState<boolean>(false);
 
   const {
     selectedID,
@@ -131,6 +133,14 @@ const CheerAttendancePage: CustomPage<{
     if (!selectedID) return;
     cacheRef.current[selectedID] = attendances;
   }, [attendances, selectedID]);
+  useEffect(() => {
+    const fetchJatuDay = async () => {
+      const { data, error } = await isJatuDay(cheerSession.date, mysk);
+      if (error) return;
+      setIsJatu(data);
+    };
+    fetchJatuDay();
+  }, []);
 
   const onCheerTallyCounts = (
     attendances: CheerAttendanceRecord[],
@@ -217,6 +227,7 @@ const CheerAttendancePage: CustomPage<{
               length={cheerSession.classrooms.length}
             >
               <CheerAttendanceCard
+                isJatuDay={isJatu}
                 classroom={selectedDetail}
                 attendances={attendances}
                 onAttendancesChange={setAttendances}
@@ -239,6 +250,7 @@ const CheerAttendancePage: CustomPage<{
       </SplitLayout>
       <LookupDetailsDialog open={detailsOpen} onClose={onDetailsClose}>
         <CheerAttendanceCard
+          isJatuDay={isJatu}
           classroom={selectedDetail}
           attendances={attendances}
           onAttendancesChange={setAttendances}

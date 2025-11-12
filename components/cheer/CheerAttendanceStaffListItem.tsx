@@ -19,6 +19,7 @@ import {
   Interactive,
   ListItem,
   ListItemContent,
+  MaterialIcon,
   Snackbar,
   TextField,
   transition,
@@ -41,6 +42,7 @@ import logError from "@/utils/helpers/logError";
  * @param onAttendanceChange Callback when the Attendance is changed.
  */
 const CheerAttendanceStaffListItem: StylableFC<{
+  isJatuDay: boolean;
   attendance: CheerAttendanceRecord;
   shownEvent: CheerAttendanceEvent;
   editable?: boolean;
@@ -48,6 +50,7 @@ const CheerAttendanceStaffListItem: StylableFC<{
   setSaving: React.Dispatch<React.SetStateAction<boolean>>;
   onAttendancesChange: (attendance: CheerAttendanceRecord) => void;
 }> = ({
+  isJatuDay,
   attendance,
   shownEvent,
   editable,
@@ -167,7 +170,21 @@ const CheerAttendanceStaffListItem: StylableFC<{
             </Interactive>
           </WithPersonDetails>
           <ListItemContent
-            title={getLocaleName(locale, attendance.student)}
+            title={
+              <div className="flex flex-row gap-1">
+                <span>{getLocaleName(locale, attendance.student)}</span>
+                {Boolean(attendance.condition) && isJatuDay && (
+                  <>
+                    {attendance.disabled ? (
+                      <MaterialIcon icon="sentiment_very_dissatisfied" />
+                    ) : (
+                      <MaterialIcon icon="healing" />
+                    )}
+                  </>
+                )}
+              </div>
+            }
+            alt="Student Full Name and Medical Condition Icon"
             desc={sift([
               t("classNo", { classNo: attendance.student.class_no }),
               (attendance.student.nickname?.th ||
