@@ -45,11 +45,12 @@ const ClassroomsBulkPrintPage: CustomPage<{
           "fullName",
           "nickname",
           "allergies",
+          "healthProblem",
           "shirtSize",
           "pantsSize",
           "elective",
         ]}
-        filters={["noElective", "hasAllergies"]}
+        filters={["noElective", "hasAllergies", "hasHealthProblem"]}
         parentURL="/manage"
       />
     </>

@@ -22,12 +22,13 @@ export type OptionsType = {
     | "nickname"
     | "classroom"
     | "allergies"
+    | "healthProblem"
     | "shirtSize"
     | "pantsSize"
     | "elective"
     | "randomized"
   )[];
-  filters: ("noElective" | "hasAllergies")[];
+  filters: ("noElective" | "hasAllergies" | "hasHealthProblem")[];
   numEmpty: number;
   enableNotes: boolean;
   enableTimestamp: boolean;

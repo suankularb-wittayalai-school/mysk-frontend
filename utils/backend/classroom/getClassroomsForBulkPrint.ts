@@ -52,6 +52,7 @@ export default async function getClassroomsForBulkPrint(
         students(
           id,
           student_id,
+          cheer_practice_medical_risk_students(condition, risk_priority),
           people(
             *,
             person_contacts(contacts(*)),
@@ -145,6 +146,11 @@ export default async function getClassroomsForBulkPrint(
             student.people?.person_allergies.map(
               (allergy) => allergy.allergy_name,
             ) || null,
+          health_problem:
+            student!.cheer_practice_medical_risk_students.map(
+              ({ condition, risk_priority }) =>
+                `ประเภทที่ ${risk_priority} ${condition}`,
+            )[0] || "",
           contacts: [],
           is_admin: null,
           student_id: student.student_id,
