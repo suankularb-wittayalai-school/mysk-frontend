@@ -184,7 +184,7 @@ const CheerAttendanceStaffListItem: StylableFC<{
                 )}
               </div>
             }
-            alt="Student Full Name and Medical Condition Icon"
+            alt="Student Full Name and Health Problem Icon"
             desc={sift([
               t("classNo", { classNo: attendance.student.class_no }),
               (attendance.student.nickname?.th ||

@@ -40,7 +40,7 @@ import { supabase } from "@/utils/supabase-client";
 import getCheerTeacher from "@/utils/backend/attendance/cheer/getCheerTeacher";
 import getMultipleClassroomsByIDs from "@/utils/backend/attendance/cheer/getMultipleClassroomsByIDs";
 import isJatuDay from "@/utils/backend/attendance/cheer/isJatuDay";
-import CheerMedicalConditionLegend from "@/components/cheer/CheerMedicalConditionLegend";
+import CheerHealthProblemLegend from "@/components/cheer/CheerHealthProblemLegend";
 
 const CheerAttendancePage: CustomPage<{
   cheerSession: CheerPracticeSession;
@@ -183,7 +183,7 @@ const CheerAttendancePage: CustomPage<{
           end: new Date(cheerSession.date + "T" + cheerSession.end_time),
         })}
       </PageHeader>
-      <CheerMedicalConditionLegend className="my-1" />
+      <CheerHealthProblemLegend className="my-1" />
       <SplitLayout ratio="list-detail">
         <LookupListSide length={cheerSession.classrooms.length}>
           <LookupResultsList

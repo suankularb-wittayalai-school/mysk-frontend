@@ -4,7 +4,7 @@ import { MaterialIcon } from "@suankularb-components/react";
 import { Text } from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
 
-const CheerMedicalConditionLegend: StylableFC = ({ style, className }) => {
+const CheerHealthProblemLegend: StylableFC = ({ style, className }) => {
   const { t } = useTranslation("attendance/cheer");
   return (
     <ul
@@ -26,4 +26,4 @@ const CheerMedicalConditionLegend: StylableFC = ({ style, className }) => {
   );
 };
 
-export default CheerMedicalConditionLegend;
+export default CheerHealthProblemLegend;
