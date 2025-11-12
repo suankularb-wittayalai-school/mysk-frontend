@@ -4,6 +4,7 @@ import PageHeader from "@/components/common/PageHeader";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import { getTeacherFromUserID } from "@/utils/backend/account/getLoggedInPerson";
 import getCheerTeacher from "@/utils/backend/attendance/cheer/getCheerTeacher";
+import isJatuDay from "@/utils/backend/attendance/cheer/isJatuDay";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
@@ -60,14 +61,7 @@ const CheerPeriodPage: CustomPage<{
   useEffect(() => {
     if (!mysk.user) return;
     const filterCheerClass = async () => {
-      const { data: isJatuDay, error: isJatuDayError } = await mysk.fetch<
-        (CheerPracticePeriod & { classrooms: string[] })[]
-      >(`/v1/attendance/cheer/in-jaturamitr-period`, {
-        query: {
-          fetch_level: "default",
-        },
-      });
-      if (isJatuDayError) logError("CheerPeriodPage", isJatuDayError);
+      const { data: isJatu } = await isJatuDay(date, mysk);
 
       setLoading(true);
       if (mysk.user?.role == "teacher") {
@@ -76,7 +70,7 @@ const CheerPeriodPage: CustomPage<{
           mysk,
           mysk.user.id,
         );
-        if (cheerTeacherSet.has(teacher!.id) || isJatuDay) {
+        if (cheerTeacherSet.has(teacher!.id) || isJatu) {
           setFilterdCheerPeriods(cheerPeriods);
         } else {
           setFilterdCheerPeriods([]);

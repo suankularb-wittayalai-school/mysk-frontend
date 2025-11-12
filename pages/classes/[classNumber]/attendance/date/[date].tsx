@@ -8,6 +8,7 @@ import AttendanceViewSelector, {
 import HomeroomContentDialog from "@/components/attendance/HomeroomContentDialog";
 import TodaySummary from "@/components/attendance/TodaySummary";
 import PageHeader from "@/components/common/PageHeader";
+import isJatuDay from "@/utils/backend/attendance/cheer/isJatuDay";
 import getAttendanceOfClass from "@/utils/backend/attendance/getAttendanceOfClass";
 import getHomeroomOfClass from "@/utils/backend/attendance/getHomeroomOfClass";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
@@ -283,13 +284,8 @@ export const getServerSideProps: GetServerSideProps = async ({
   );
 
   // If today's Jaturamitr day, redirect to cheer attendance page.
-  const { data: jaturamitrPeriod } = await mysk.fetch<any>(
-    "/v1/attendance/cheer/in-jaturamitr-period",
-    {
-      method: "GET",
-    },
-  );
-  if (jaturamitrPeriod == true) {
+  const { data: isJatu } = await isJatuDay(date, mysk);
+  if (isJatu) {
     return {
       redirect: {
         destination: `/cheer/attendance/${getISODateString(new Date())}?fromAttendance=true`,
