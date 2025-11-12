@@ -149,7 +149,7 @@ export default async function getClassroomsForBulkPrint(
           health_problem:
             student!.cheer_practice_medical_risk_students.map(
               ({ condition, risk_priority }) =>
-                `ประเภทที่ ${risk_priority} ${condition}`,
+                `ประเภทที่ ${risk_priority} ${condition} ${risk_priority == 1 ? "(ห้ามขึ้นสแตนด์)" : "(ดูแลอย่างใกล้ชิด)"}`,
             )[0] || "",
           contacts: [],
           is_admin: null,
