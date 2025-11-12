@@ -157,6 +157,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { data: teacher, error } = (await getLoggedInPerson(supabase, mysk, {
     includeContacts: true,
     detailed: true,
+    includeElectives: true,
   })) as BackendReturn<Teacher>;
   if (error) return { notFound: true };
 
