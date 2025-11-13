@@ -151,7 +151,12 @@ const CheerAttendancePage: CustomPage<{
     let total = attendances.length;
 
     for (const attendance of attendances) {
-      if (attendance.presence === "present" || attendance.presence === "late")
+      if (
+        ((attendance.presence === "present" ||
+          attendance.presence === "late") &&
+          attendance.presence_at_end == "present") ||
+        attendance.disabled
+      )
         presence += 1;
     }
 
