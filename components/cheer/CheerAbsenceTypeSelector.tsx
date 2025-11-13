@@ -26,7 +26,7 @@ const CheerAbsenceTypeSelector: StylableFC<{
           });
         }}
       >
-        {t("chip.absenceType.missing")}
+        {t("chip.practice.absenceType.missing")}
       </FilterChip>
       <FilterChip
         selected={value == CheerAttendanceType.onLeaveNoRemedial}
@@ -38,7 +38,7 @@ const CheerAbsenceTypeSelector: StylableFC<{
           });
         }}
       >
-        {t("chip.absenceType.noRemedial")}
+        {t("chip.practice.absenceType.noRemedial")}
       </FilterChip>
       <FilterChip
         selected={value == CheerAttendanceType.onLeaveWithRemedial}
@@ -50,7 +50,7 @@ const CheerAbsenceTypeSelector: StylableFC<{
           });
         }}
       >
-        {t("chip.absenceType.withRemedial")}
+        {t("chip.practice.absenceType.withRemedial")}
       </FilterChip>
     </ChipSet>
   );

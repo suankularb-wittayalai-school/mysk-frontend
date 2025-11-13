@@ -198,6 +198,7 @@ const CheerAttendanceStaffListItem: StylableFC<{
             shownEvent={shownEvent}
             onChange={setAttendanceOfShownEvent}
             editable={!attendance.disabled}
+            isJatu={isJatuDay}
             className={cn(
               "-mr-4 -space-x-1",
               attendance.disabled
@@ -208,7 +209,7 @@ const CheerAttendanceStaffListItem: StylableFC<{
         </ListItem>
 
         {/* Absence type */}
-        {ShowAbsenceTypeSelector && (
+        {ShowAbsenceTypeSelector && !isJatuDay && (
           <CheerAbsenceTypeSelector
             attendance={attendance}
             onChange={setAttendanceOfShownEvent}
@@ -219,6 +220,7 @@ const CheerAttendanceStaffListItem: StylableFC<{
         {/* Custom reason */}
         {shownEvent == "start" &&
           attendance.presence != null &&
+          !isJatuDay &&
           [
             CheerAttendanceType.onLeaveWithRemedial,
             CheerAttendanceType.onLeaveNoRemedial,

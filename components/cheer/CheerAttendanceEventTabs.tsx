@@ -6,7 +6,16 @@ import useTranslation from "next-translate/useTranslation";
 const CheerAttendanceEventTabs: StylableFC<{
   event: CheerAttendanceEvent;
   onEventChange: (event: CheerAttendanceEvent) => void;
-}> = ({ event, onEventChange, style, className }) => {
+  isJatu: boolean;
+  isPerformingCardStunt: boolean;
+}> = ({
+  event,
+  onEventChange,
+  isJatu,
+  isPerformingCardStunt,
+  style,
+  className,
+}) => {
   const { t } = useTranslation("attendance/cheer/list");
   return (
     <TabsContainer
@@ -16,14 +25,34 @@ const CheerAttendanceEventTabs: StylableFC<{
       className={className}
     >
       <Tab
-        icon={<MaterialIcon icon="flags" />}
-        label={t("event.start")}
+        icon={
+          <MaterialIcon
+            icon={
+              isPerformingCardStunt ? (isJatu ? "apartment" : "flags") : "flags"
+            }
+          />
+        }
+        label={t(
+          `event.${isPerformingCardStunt ? (isJatu ? "jatu" : "practice") : "practice"}.start`,
+        )}
         selected={event == "start"}
         onClick={() => onEventChange("start")}
       />
       <Tab
-        icon={<MaterialIcon icon="meeting_room" />}
-        label={t("event.end")}
+        icon={
+          <MaterialIcon
+            icon={
+              isPerformingCardStunt
+                ? isJatu
+                  ? "directions_bus"
+                  : "meeting_room"
+                : "meeting_room"
+            }
+          />
+        }
+        label={t(
+          `event.${isPerformingCardStunt ? (isJatu ? "jatu" : "practice") : "practice"}.end`,
+        )}
         selected={event == "end"}
         onClick={() => onEventChange("end")}
       />

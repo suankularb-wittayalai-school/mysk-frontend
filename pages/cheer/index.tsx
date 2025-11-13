@@ -19,9 +19,10 @@ import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import { Student } from "@/utils/types/person";
 import { BackendReturn } from "@/utils/types/backend";
 import CheerAttendanceRemedialGuidelineGlance from "@/components/home/glance/CheerAttendanceRemedialGuidelineGlance";
+import isJatuDay from "@/utils/backend/attendance/cheer/isJatuDay";
 
 const CheerPage: CustomPage<{
-  attendances: CheerAttendanceRecord[];
+  attendances: (CheerAttendanceRecord & { isJatu: boolean })[];
 }> = ({ attendances }) => {
   const [event, setEvent] = useState<CheerAttendanceEvent>("start");
   const { t } = useTranslation("attendance/cheer");
@@ -44,6 +45,8 @@ const CheerPage: CustomPage<{
             <CheerAttendanceEventTabs
               event={event}
               onEventChange={setEvent}
+              isJatu={false}
+              isPerformingCardStunt={false}
               className="!h-fit !max-w-none"
             />
             {attendances.length == 0 && (
@@ -88,7 +91,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     detailed: true,
   })) as BackendReturn<Student>;
   if (!student) return { notFound: true };
-  let formattedAttendances: CheerAttendanceRecord[] = [];
+  let formattedAttendances: (CheerAttendanceRecord & { isJatu: boolean })[] =
+    [];
   const { data: practicePeriods } = await mysk.fetch<CheerPracticePeriod[]>(
     "/v1/attendance/cheer/periods",
     {
@@ -108,14 +112,24 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   );
   if (!attendances) return { notFound: true };
   for (const period of practicePeriods) {
+    const { data: isJatu, error: isJatuError } = await isJatuDay(
+      period.date,
+      mysk,
+    );
+    if (isJatuError) return { notFound: true };
     const existing = attendances?.find(
       (attendance) => attendance.practice_period.id == period.id,
     );
     if (existing) {
-      formattedAttendances.push({ ...existing, practice_period: period });
+      formattedAttendances.push({
+        ...existing,
+        practice_period: period,
+        isJatu: isJatu,
+      });
     } else {
       formattedAttendances.push({
         practice_period: period,
+        isJatu: isJatu,
         student: student,
         presence: null,
         absence_reason: null,

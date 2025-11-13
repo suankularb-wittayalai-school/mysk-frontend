@@ -5,6 +5,7 @@ import { Classroom } from "@/utils/types/classroom";
 import {
   CheerAttendanceEvent,
   CheerAttendanceRecord,
+  GRADES_PERFORMING_CARD_STUNT,
 } from "@/utils/types/cheer";
 import CheerAttendanceEventTabs from "@/components/cheer/CheerAttendanceEventTabs";
 import { List, Progress, Text } from "@suankularb-components/react";
@@ -50,6 +51,10 @@ const CheerAttendanceCard: StylableFC<{
       <CheerAttendanceEventTabs
         event={event}
         onEventChange={setEvent}
+        isJatu={isJatuDay}
+        isPerformingCardStunt={GRADES_PERFORMING_CARD_STUNT.includes(
+          Math.floor(classroom!.number / 100),
+        )}
         className="!-mt-2 !max-w-none sm:!mt-0"
       />
       {loading && (

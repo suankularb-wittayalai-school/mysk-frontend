@@ -2,24 +2,42 @@
   "date": "{{date, datelong}}",
   "time": "{{start, time}} - {{end, time}}",
   "chip": {
-    "start": {
-      "present": "มา",
-      "late": "สาย",
-      "absent": "ขาด"
+    "practice": {
+      "start": {
+        "present": "มา",
+        "late": "สาย",
+        "absent": "ขาด"
+      },
+      "end": {
+        "present": "อยู่",
+        "absent": "ไม่อยู่"
+      },
+      "absenceType": {
+        "noRemedial": "ลาไม่ต้องชดเชย",
+        "withRemedial": "ลาต้องชดเชย",
+        "missing": "ขาดซ้อม"
+      }
     },
-    "end": {
-      "present": "อยู่",
-      "absent": "ไม่อยู่"
-    },
-    "absenceType": {
-      "noRemedial": "ลาไม่ต้องชดเชย",
-      "withRemedial": "ลาต้องชดเชย",
-      "missing": "ขาดซ้อม"
+    "jatu": {
+      "start": {
+        "present": "มา",
+        "absent": "ไม่มา"
+      },
+      "end": {
+        "present": "อยู่",
+        "absent": "ไม่อยู่"
+      }
     }
   },
   "event": {
-    "start": "เริ่ม",
-    "end": "เลิก"
+    "practice": {
+      "start": "เริ่ม",
+      "end": "เลิก"
+    },
+    "jatu": {
+      "start": "ที่โรงเรียน",
+      "end": "บนรถ"
+    }
   },
   "attendanceTally": {
     "alt": "ลงทะเบียนแล้ว {{count}} คน จาก {{max}} คน",

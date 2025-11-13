@@ -2,24 +2,42 @@
   "date": "{{date, datelong}}",
   "time": "{{start, time}} - {{end, time}}",
   "chip": {
-    "start": {
-      "present": "P",
-      "late": "L",
-      "absent": "A"
+    "practice": {
+      "start": {
+        "present": "P",
+        "late": "L",
+        "absent": "A"
+      },
+      "end": {
+        "present": "P",
+        "absent": "A"
+      },
+      "absenceType": {
+        "noRemedial": "No Remedial Practice",
+        "withRemedial": "Remedial Practice",
+        "missing": "Missing"
+      }
     },
-    "end": {
-      "present": "P",
-      "absent": "A"
-    },
-    "absenceType": {
-      "noRemedial": "No Remedial Practice",
-      "withRemedial": "Remedial Practice",
-      "missing": "Missing"
+    "jatu": {
+      "start": {
+        "present": "P",
+        "absent": "A"
+      },
+      "end": {
+        "present": "P",
+        "absent": "A"
+      }
     }
   },
   "event": {
-    "start": "Start",
-    "end": "End"
+    "practice": {
+      "start": "Start",
+      "end": "End"
+    },
+    "jatu": {
+      "start": "At School",
+      "end": "On Board"
+    }
   },
   "attendanceTally": {
     "alt": "{{count}} enrolled out of {{max}}",

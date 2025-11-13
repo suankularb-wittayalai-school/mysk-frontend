@@ -18,7 +18,7 @@ import useTranslation from "next-translate/useTranslation";
 import CheerAbsenceTypeSelector from "@/components/cheer/CheerAbsenceTypeSelector";
 
 const StudentCheerAttendanceListItem: FC<{
-  attendance: CheerAttendanceRecord;
+  attendance: CheerAttendanceRecord & { isJatu: boolean };
   event: CheerAttendanceEvent;
 }> = ({ attendance, event }) => {
   const { t } = useTranslation("attendance/cheer/list");
@@ -48,9 +48,11 @@ const StudentCheerAttendanceListItem: FC<{
             editable={false}
             onChange={() => {}}
             className="-mr-4 -space-x-1"
+            isJatu={attendance.isJatu}
           />
         </ListItem>
         {event == "start" &&
+          !attendance.isJatu &&
           (attendance.presence == CheerAttendanceType.onLeaveNoRemedial ||
             attendance.presence == CheerAttendanceType.onLeaveWithRemedial ||
             attendance.presence == CheerAttendanceType.missing) && (
@@ -62,6 +64,7 @@ const StudentCheerAttendanceListItem: FC<{
             />
           )}
         {event == "start" &&
+          !attendance.isJatu &&
           (attendance.presence == CheerAttendanceType.onLeaveNoRemedial ||
             attendance.presence == CheerAttendanceType.onLeaveWithRemedial) && (
             <div className="mt-1 px-4 sm:pb-2">
