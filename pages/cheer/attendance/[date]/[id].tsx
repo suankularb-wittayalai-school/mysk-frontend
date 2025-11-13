@@ -151,7 +151,12 @@ const CheerAttendancePage: CustomPage<{
     let total = attendances.length;
 
     for (const attendance of attendances) {
-      if (attendance.presence === "present" || attendance.presence === "late")
+      if (
+        ((attendance.presence === "present" ||
+          attendance.presence === "late") &&
+          attendance.presence_at_end == "present") ||
+        attendance.disabled
+      )
         presence += 1;
     }
 
@@ -183,7 +188,7 @@ const CheerAttendancePage: CustomPage<{
           end: new Date(cheerSession.date + "T" + cheerSession.end_time),
         })}
       </PageHeader>
-      <CheerHealthProblemLegend className="my-1" />
+      <CheerHealthProblemLegend className="my-4" />
       <SplitLayout ratio="list-detail">
         <LookupListSide length={cheerSession.classrooms.length}>
           <LookupResultsList

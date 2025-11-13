@@ -13,11 +13,20 @@ const CheerAttendanceSelector: StylableFC<{
   attendance: CheerAttendanceRecord;
   shownEvent: CheerAttendanceEvent;
   editable: boolean;
+  isJatu: boolean;
   onChange: (
     attendance: CheerAttendanceRecord,
     event: CheerAttendanceEvent,
   ) => void;
-}> = ({ attendance, shownEvent, editable, onChange, style, className }) => {
+}> = ({
+  attendance,
+  shownEvent,
+  editable,
+  isJatu,
+  onChange,
+  style,
+  className,
+}) => {
   const { t } = useTranslation("attendance/cheer/list");
   const locale = useLocale();
   function isAbsent(attendance: CheerAttendanceType | null): boolean {
@@ -95,7 +104,7 @@ const CheerAttendanceSelector: StylableFC<{
 
   return (
     <ChipSet style={style} className={className}>
-      {shownEvent == "start" && (
+      {shownEvent == "start" && !isJatu && (
         <>
           <InputChip
             onClick={() => {
@@ -111,7 +120,7 @@ const CheerAttendanceSelector: StylableFC<{
                 }
               : null)}
           >
-            <span className="-mx-1">{t("chip.start.present")}</span>
+            <span className="-mx-1">{t("chip.practice.start.present")}</span>
           </InputChip>
           <InputChip
             onClick={() => {
@@ -127,7 +136,7 @@ const CheerAttendanceSelector: StylableFC<{
                 }
               : null)}
           >
-            <span className="-mx-1">{t("chip.start.late")}</span>
+            <span className="-mx-1">{t("chip.practice.start.late")}</span>
           </InputChip>
           <InputChip
             onClick={() => {
@@ -143,11 +152,47 @@ const CheerAttendanceSelector: StylableFC<{
                 }
               : null)}
           >
-            <span className="-mx-1">{t("chip.start.absent")}</span>
+            <span className="-mx-1">{t("chip.practice.start.absent")}</span>
           </InputChip>
         </>
       )}
-      {shownEvent == "end" && (
+      {shownEvent == "start" && isJatu && (
+        <>
+          <InputChip
+            onClick={() => {
+              if (!editable) return;
+              handleChange(shownEvent, CheerAttendanceType.present);
+            }}
+            {...(attendance.presence == CheerAttendanceType.present
+              ? {
+                  selected: true,
+                  className: cn(`!bg-primary-container
+                  !text-on-primary-container
+                  state-layer:!bg-on-primary-container`),
+                }
+              : null)}
+          >
+            <span className="-mx-1">{t("chip.jatu.start.present")}</span>
+          </InputChip>
+          <InputChip
+            onClick={() => {
+              if (!editable) return;
+              handleChange(shownEvent, CheerAttendanceType.missing);
+            }}
+            {...(isAbsent(attendance.presence)
+              ? {
+                  selected: true,
+                  className: cn(`!bg-secondary-container
+                  !text-on-secondary-container
+                  state-layer:!bg-on-secondary-container`),
+                }
+              : null)}
+          >
+            <span className="-mx-1">{t("chip.jatu.start.absent")}</span>
+          </InputChip>
+        </>
+      )}
+      {shownEvent == "end" && !isJatu && (
         <>
           {!isAbsent(attendance.presence) && (
             <InputChip
@@ -164,7 +209,7 @@ const CheerAttendanceSelector: StylableFC<{
                   }
                 : null)}
             >
-              <span className="-mx-1">{t("chip.end.present")}</span>
+              <span className="-mx-1">{t("chip.practice.end.present")}</span>
             </InputChip>
           )}
           <InputChip
@@ -186,7 +231,44 @@ const CheerAttendanceSelector: StylableFC<{
                 }
               : null)}
           >
-            <span className="-mx-1">{t("chip.end.absent")}</span>
+            <span className="-mx-1">{t("chip.practice.end.absent")}</span>
+          </InputChip>
+        </>
+      )}
+      {shownEvent == "end" && isJatu && (
+        <>
+          <InputChip
+            onClick={() => {
+              if (!editable) return;
+              handleChange(shownEvent, CheerAttendanceType.present);
+            }}
+            {...(attendance.presence_at_end == CheerAttendanceType.present
+              ? {
+                  selected: true,
+                  className: cn(`!bg-primary-container
+                  !text-on-primary-container
+                  state-layer:!bg-on-primary-container`),
+                }
+              : null)}
+          >
+            <span className="-mx-1">{t("chip.jatu.end.present")}</span>
+          </InputChip>
+
+          <InputChip
+            onClick={() => {
+              if (!editable) return;
+              handleChange(shownEvent, CheerAttendanceType.missing);
+            }}
+            {...(isAbsent(attendance.presence_at_end)
+              ? {
+                  selected: true,
+                  className: cn(`!bg-secondary-container
+                  !text-on-secondary-container
+                  state-layer:!bg-on-secondary-container`),
+                }
+              : null)}
+          >
+            <span className="-mx-1">{t("chip.jatu.end.absent")}</span>
           </InputChip>
         </>
       )}

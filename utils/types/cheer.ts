@@ -1,6 +1,8 @@
 import { Student } from "@/utils/types/person";
 import { Classroom } from "@/utils/types/classroom";
 
+export const GRADES_PERFORMING_CARD_STUNT = [2, 3, 4];
+
 export enum CheerAttendanceType {
   present = "present",
   late = "late",

@@ -16,9 +16,10 @@ import {
 import CheerAttendanceSelector from "@/components/cheer/CheerAttendanceSelector";
 import useTranslation from "next-translate/useTranslation";
 import CheerAbsenceTypeSelector from "@/components/cheer/CheerAbsenceTypeSelector";
+import cn from "@/utils/helpers/cn";
 
 const StudentCheerAttendanceListItem: FC<{
-  attendance: CheerAttendanceRecord;
+  attendance: CheerAttendanceRecord & { isJatu: boolean };
   event: CheerAttendanceEvent;
 }> = ({ attendance, event }) => {
   const { t } = useTranslation("attendance/cheer/list");
@@ -47,10 +48,17 @@ const StudentCheerAttendanceListItem: FC<{
             shownEvent={event}
             editable={false}
             onChange={() => {}}
-            className="-mr-4 -space-x-1"
+            className={cn(
+              "-mr-4 -space-x-1",
+              attendance.disabled
+                ? "pointer-events-none cursor-not-allowed opacity-50"
+                : null,
+            )}
+            isJatu={attendance.isJatu}
           />
         </ListItem>
         {event == "start" &&
+          !attendance.isJatu &&
           (attendance.presence == CheerAttendanceType.onLeaveNoRemedial ||
             attendance.presence == CheerAttendanceType.onLeaveWithRemedial ||
             attendance.presence == CheerAttendanceType.missing) && (
@@ -62,6 +70,7 @@ const StudentCheerAttendanceListItem: FC<{
             />
           )}
         {event == "start" &&
+          !attendance.isJatu &&
           (attendance.presence == CheerAttendanceType.onLeaveNoRemedial ||
             attendance.presence == CheerAttendanceType.onLeaveWithRemedial) && (
             <div className="mt-1 px-4 sm:pb-2">
