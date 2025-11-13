@@ -170,21 +170,7 @@ const CheerAttendanceStaffListItem: StylableFC<{
             </Interactive>
           </WithPersonDetails>
           <ListItemContent
-            title={
-              <div className="flex flex-row gap-1">
-                <span>{getLocaleName(locale, attendance.student)}</span>
-                {Boolean(attendance.condition) && isJatuDay && (
-                  <>
-                    {attendance.disabled ? (
-                      <MaterialIcon icon="sentiment_very_dissatisfied" />
-                    ) : (
-                      <MaterialIcon icon="healing" />
-                    )}
-                  </>
-                )}
-              </div>
-            }
-            alt="Student Full Name and Health Problem Icon"
+            title={getLocaleName(locale, attendance.student)}
             desc={sift([
               t("classNo", { classNo: attendance.student.class_no }),
               (attendance.student.nickname?.th ||
@@ -193,19 +179,30 @@ const CheerAttendanceStaffListItem: StylableFC<{
             ]).join(" • ")}
             className="w-0 [&>span]:!truncate"
           />
-          <CheerAttendanceSelector
-            attendance={attendance}
-            shownEvent={shownEvent}
-            onChange={setAttendanceOfShownEvent}
-            editable={!attendance.disabled}
-            isJatu={isJatuDay}
-            className={cn(
-              "-mr-4 -space-x-1",
-              attendance.disabled
-                ? "pointer-events-none cursor-not-allowed opacity-50"
-                : null,
+          <div className="flex flex-row items-center gap-1">
+            {Boolean(attendance.condition) && isJatuDay && (
+              <>
+                {attendance.disabled ? (
+                  <MaterialIcon icon="sentiment_very_dissatisfied" />
+                ) : (
+                  <MaterialIcon icon="healing" />
+                )}
+              </>
             )}
-          />
+            <CheerAttendanceSelector
+              attendance={attendance}
+              shownEvent={shownEvent}
+              onChange={setAttendanceOfShownEvent}
+              editable={!attendance.disabled}
+              isJatu={isJatuDay}
+              className={cn(
+                "-mr-4 -space-x-1",
+                attendance.disabled
+                  ? "pointer-events-none cursor-not-allowed opacity-50"
+                  : null,
+              )}
+            />
+          </div>
         </ListItem>
 
         {/* Absence type */}
