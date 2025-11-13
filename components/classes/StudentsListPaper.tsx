@@ -19,7 +19,6 @@ const StudentsListPaper: StylableFC<{
   options: OptionsType;
 }> = ({ header: PrintoutHeader, students, options, style, className }) => (
   <PrintPage
-    options={{ avoidBreakAfter: students.length === 36 }}
     style={style}
     className={cn(className, "p-4")}
   >
