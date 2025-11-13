@@ -15,7 +15,7 @@ const PrintPagesFeed: StylableFC<{
     style={style}
     className={cn(
       `-mt-8 mb-96 w-screen space-y-1 overflow-auto border-b-1 border-outline
-      sm:mt-0 sm:contents print:contents print:space-y-0`,
+      sm:mt-0 sm:contents print:block print:break-before-page print:break-inside-avoid print:space-y-0`,
       className,
     )}
   >
