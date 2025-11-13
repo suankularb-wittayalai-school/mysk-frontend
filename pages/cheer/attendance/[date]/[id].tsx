@@ -183,7 +183,7 @@ const CheerAttendancePage: CustomPage<{
           end: new Date(cheerSession.date + "T" + cheerSession.end_time),
         })}
       </PageHeader>
-      <CheerHealthProblemLegend className="my-1" />
+      <CheerHealthProblemLegend className="my-4" />
       <SplitLayout ratio="list-detail">
         <LookupListSide length={cheerSession.classrooms.length}>
           <LookupResultsList
