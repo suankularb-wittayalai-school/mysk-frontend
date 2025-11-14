@@ -33,6 +33,17 @@
       "seeHistory": "See history"
     }
   },
+  "medicalConditions": {
+    "title": "Medical Conditions",
+    "allergies": {
+      "title": "Allergies (in Thai)",
+      "empty": "No Allergies"
+    },
+    "healthProblem": {
+      "title": "Health Problems (in Thai)",
+      "empty": "No Health Problems"
+    }
+  },
   "contacts": {
     "title": "Contacts"
   },
