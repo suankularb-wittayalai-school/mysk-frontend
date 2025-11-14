@@ -33,6 +33,7 @@ import { useState } from "react";
 import CheerAttendanceEntryCard from "@/components/cheer/CheerAttendanceEntryCard";
 import isJatuDay from "@/utils/backend/attendance/cheer/isJatuDay";
 import getISODateString from "@/utils/helpers/getISODateString";
+import { toZonedTime } from "date-fns-tz";
 
 /**
  * The Teacher’s counterpart to Learn, where the user can see their Schedule
@@ -144,12 +145,17 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: isJatu } = await isJatuDay(getISODateString(new Date()), mysk);
+  const { data: isJatu } = await isJatuDay(
+    getISODateString(
+      toZonedTime(new Date(), process.env.NEXT_PUBLIC_SCHOOL_TZ),
+    ),
+    mysk,
+  );
 
   if (isJatu) {
     return {
       redirect: {
-        destination: `/cheer/attendance/${getISODateString(new Date())}?redirected=true`,
+        destination: `/cheer/attendance/${getISODateString(toZonedTime(new Date(), process.env.NEXT_PUBLIC_SCHOOL_TZ))}?redirected=true`,
         permanent: false,
       },
     };
