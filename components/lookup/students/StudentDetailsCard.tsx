@@ -14,6 +14,7 @@ import { StylableFC } from "@/utils/types/component";
 import { Student, UserRole } from "@/utils/types/person";
 import { DURATION, EASING, transition } from "@suankularb-components/react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import StudentMedicalConditionsGrid from "./StudentMedicalConditionsGrid";
 
 /**
  * A Card that contains the details of a Student in Search Students.
@@ -72,6 +73,9 @@ const StudentDetailsCard: StylableFC<{
                 <motion.div layout="position" transition={positionTransition}>
                   <PersonInformationGrid person={student} />
                 </motion.div>
+                {canSeeSensitive && (
+                  <StudentMedicalConditionsGrid student={student} />
+                )}
 
                 {student.contacts.length > 0 && (
                   <motion.section
