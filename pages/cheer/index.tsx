@@ -1,25 +1,25 @@
-import Head from "next/head";
-import { CustomPage } from "@/utils/types/common";
-import PageHeader from "@/components/common/PageHeader";
-import { ContentLayout, List, Text } from "@suankularb-components/react";
 import CheerAttendanceEventTabs from "@/components/cheer/CheerAttendanceEventTabs";
 import StudentCheerAttendanceListItem from "@/components/cheer/StudentCheerAttendanceListItem";
+import PageHeader from "@/components/common/PageHeader";
+import CheerAttendanceRemedialGuidelineGlance from "@/components/home/glance/CheerAttendanceRemedialGuidelineGlance";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import isJatuDay from "@/utils/backend/attendance/cheer/isJatuDay";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import cn from "@/utils/helpers/cn";
+import { BackendReturn } from "@/utils/types/backend";
 import {
-  CheerAttendanceRecord,
   CheerAttendanceEvent,
+  CheerAttendanceRecord,
   CheerPracticePeriod,
 } from "@/utils/types/cheer";
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import createMySKClient from "@/utils/backend/mysk/createMySKClient";
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { useState } from "react";
-import useTranslation from "next-translate/useTranslation";
-import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import { CustomPage } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
-import { BackendReturn } from "@/utils/types/backend";
-import CheerAttendanceRemedialGuidelineGlance from "@/components/home/glance/CheerAttendanceRemedialGuidelineGlance";
-import isJatuDay from "@/utils/backend/attendance/cheer/isJatuDay";
+import { ContentLayout, List, Text } from "@suankularb-components/react";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import useTranslation from "next-translate/useTranslation";
+import Head from "next/head";
+import { useState } from "react";
 
 const CheerPage: CustomPage<{
   attendances: (CheerAttendanceRecord & { isJatu: boolean })[];
@@ -35,7 +35,7 @@ const CheerPage: CustomPage<{
       <PageHeader parentURL="/learn">{t("header.student")}</PageHeader>
       <ContentLayout className="*:lg:!items-center">
         <div className={cn(`lg:w-[calc((10/12*100%)-3rem)]`)}>
-          <CheerAttendanceRemedialGuidelineGlance className="mb-8" />
+          {/* <CheerAttendanceRemedialGuidelineGlance className="mb-8" /> */}
           <div
             className={cn(
               `flex flex-col md:h-[calc(100dvh-12rem-2px)] md:overflow-auto md:rounded-lg md:border-1 md:border-outline-variant md:bg-surface-container-high [&>:first-child]:top-0 [&>:first-child]:z-10 [&>:first-child]:sm:sticky [&>:first-child]:sm:bg-surface`,

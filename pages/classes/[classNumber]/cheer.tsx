@@ -1,30 +1,30 @@
+import CheerAttendanceLegend from "@/components/cheer/CheerAttendanceLegend";
+import ClassCheerAttendanceSummary from "@/components/cheer/ClassCheerAttendanceSummary";
+import StudentCheerAttendanceSummaryCard from "@/components/cheer/StudentCheerAttendanceSummaryCard";
 import PageHeader from "@/components/common/PageHeader";
+import CheerAttendanceRemedialGuidelineGlance from "@/components/home/glance/CheerAttendanceRemedialGuidelineGlance";
+import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
+import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import tallyCheerAttendances from "@/utils/helpers/attendance/cheer/tallyCheerAttendances";
+import {
+  CheerAttendanceRecord,
+  CheerPracticePeriod,
+} from "@/utils/types/cheer";
+import { Classroom } from "@/utils/types/classroom";
+import { CustomPage } from "@/utils/types/common";
+import {
+  ContentLayout,
+} from "@suankularb-components/react";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import {
   GetServerSideProps,
   NextApiRequest,
   NextApiResponse,
 } from "next";
-import Head from "next/head";
-import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
-import { CustomPage } from "@/utils/types/common";
-import { Classroom } from "@/utils/types/classroom";
-import {
-  ContentLayout,
-} from "@suankularb-components/react";
-import CheerAttendanceLegend from "@/components/cheer/CheerAttendanceLegend";
-import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
-import {
-  CheerAttendanceRecord,
-  CheerPracticePeriod,
-} from "@/utils/types/cheer";
-import ClassCheerAttendanceSummary from "@/components/cheer/ClassCheerAttendanceSummary";
-import tallyCheerAttendances from "@/utils/helpers/attendance/cheer/tallyCheerAttendances";
-import StudentCheerAttendanceSummaryCard from "@/components/cheer/StudentCheerAttendanceSummaryCard";
 import useTranslation from "next-translate/useTranslation";
+import Head from "next/head";
 import { parallel } from "radash";
-import createMySKClient from "@/utils/backend/mysk/createMySKClient";
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import CheerAttendanceRemedialGuidelineGlance from "@/components/home/glance/CheerAttendanceRemedialGuidelineGlance";
 
 const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
   classroom: Pick<Classroom, "id" | "number">;
@@ -53,7 +53,7 @@ const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
         {t("header", { classNumber: classroom.number })}
       </PageHeader>
       <ContentLayout>
-        <CheerAttendanceRemedialGuidelineGlance />
+        {/* <CheerAttendanceRemedialGuidelineGlance /> */}
         <CheerAttendanceLegend className="my-1" />
         <ul className="mx-4 space-y-2 sm:mx-0 md:space-y-0">
           <li key={classroom.id} className="top-0 z-10 md:sticky">
