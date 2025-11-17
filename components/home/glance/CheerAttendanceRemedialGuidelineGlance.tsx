@@ -22,7 +22,7 @@ const CheerAttendanceRemedialGuidelineGlance: StylableFC = ({
       components={{
         0: (
           <a
-            href="https://drive.google.com/file/d/1JXALEZjvAshd0eL9l7FxIdCenkYpRn52/view?usp=sharing"
+            href="https://drive.google.com/file/d/1CV6jNrfpYE3mALZnPw1iHzCYTebDHwY7/view?usp=sharing"
             target="_blank"
             className="link"
           />

@@ -35,7 +35,7 @@ const CheerPage: CustomPage<{
       <PageHeader parentURL="/learn">{t("header.student")}</PageHeader>
       <ContentLayout className="*:lg:!items-center">
         <div className={cn(`lg:w-[calc((10/12*100%)-3rem)]`)}>
-          {/* <CheerAttendanceRemedialGuidelineGlance className="mb-8" /> */}
+          <CheerAttendanceRemedialGuidelineGlance className="mb-8" />
           <div
             className={cn(
               `flex flex-col md:h-[calc(100dvh-12rem-2px)] md:overflow-auto md:rounded-lg md:border-1 md:border-outline-variant md:bg-surface-container-high [&>:first-child]:top-0 [&>:first-child]:z-10 [&>:first-child]:sm:sticky [&>:first-child]:sm:bg-surface`,

@@ -13,15 +13,9 @@ import {
 } from "@/utils/types/cheer";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage } from "@/utils/types/common";
-import {
-  ContentLayout,
-} from "@suankularb-components/react";
+import { ContentLayout } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import {
-  GetServerSideProps,
-  NextApiRequest,
-  NextApiResponse,
-} from "next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { parallel } from "radash";
@@ -53,7 +47,7 @@ const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
         {t("header", { classNumber: classroom.number })}
       </PageHeader>
       <ContentLayout>
-        {/* <CheerAttendanceRemedialGuidelineGlance /> */}
+        <CheerAttendanceRemedialGuidelineGlance />
         <CheerAttendanceLegend className="my-1" />
         <ul className="mx-4 space-y-2 sm:mx-0 md:space-y-0">
           <li key={classroom.id} className="top-0 z-10 md:sticky">
