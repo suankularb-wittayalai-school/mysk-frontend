@@ -31,7 +31,7 @@ const StudentListTableBody: StylableFC<{
           (!options.filters.includes("hasAllergies") ||
             student.allergies?.length) &&
           (!options.filters.includes("hasHealthProblem") ||
-            student.health_problem),
+            student.health_problem?.firstDay != "" || student.health_problem?.secondDay != ""),
       )
       .map((student, index) => (
         <tr key={student.id}>
