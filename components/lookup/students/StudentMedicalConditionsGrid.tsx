@@ -17,6 +17,34 @@ const StudentMedicalConditionsGrid: StylableFC<{ student: Student }> = ({
         {t("medicalConditions.title")}
       </Text>
       <Columns columns={2} className="!gap-2">
+        <Card
+          appearance="outlined"
+          direction="row"
+          className="items-center !text-pretty"
+        >
+          <CardHeader
+            title={t("medicalConditions.healthProblem.title.firstDay")}
+            subtitle={
+              student.health_problem!.firstDay.length > 0
+                ? student.health_problem!.firstDay
+                : t("medicalConditions.healthProblem.empty")
+            }
+          />
+        </Card>
+        <Card
+          appearance="outlined"
+          direction="row"
+          className="items-center !text-pretty"
+        >
+          <CardHeader
+            title={t("medicalConditions.healthProblem.title.secondDay")}
+            subtitle={
+              student.health_problem!.secondDay.length > 0
+                ? student.health_problem!.secondDay
+                : t("medicalConditions.healthProblem.empty")
+            }
+          />
+        </Card>
         <Card appearance="outlined" direction="row" className="items-center">
           <CardHeader
             title={t("medicalConditions.allergies.title")}
@@ -24,21 +52,6 @@ const StudentMedicalConditionsGrid: StylableFC<{ student: Student }> = ({
               joinedAllergies?.length !== 0
                 ? joinedAllergies
                 : t("medicalConditions.allergies.empty")
-            }
-          />
-        </Card>
-
-        <Card
-          appearance="outlined"
-          direction="row"
-          className="items-center !text-pretty"
-        >
-          <CardHeader
-            title={t("medicalConditions.healthProblem.title")}
-            subtitle={
-              student.health_problem?.length !== 0
-                ? student.health_problem
-                : t("medicalConditions.healthProblem.empty")
             }
           />
         </Card>

@@ -171,6 +171,7 @@ module.exports = {
       "attendance/cheer",
       "attendance/cheer/list",
       "search/common",
+      "search/students/detail",
     ],
   },
   logBuild: false,

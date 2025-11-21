@@ -40,7 +40,10 @@
       "empty": "No Allergies"
     },
     "healthProblem": {
-      "title": "Health Problems (in Thai)",
+      "title": {
+        "firstDay": "Health Problems (for the first day of Jaturamitr Samakkee)",
+        "secondDay": "ปัญหาสุขภาพ (for the second day of Jaturamitr Samakkee)"
+      },
       "empty": "No Health Problems"
     }
   },

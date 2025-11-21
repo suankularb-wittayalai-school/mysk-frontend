@@ -35,7 +35,8 @@ export type PersonFieldsKey =
   | "classAdvisorAt"
   | "birthdate"
   | "allergies"
-  | "healthProblem"
+  | "firstDayHealthProblem"
+  | "secondDayHealthProblem"
   | "shirtSize"
   | "pantsSize";
 
@@ -203,19 +204,6 @@ const PersonFields: StylableFC<{
             inputAttr={{ type: "date" }}
             {...formProps.birthdate}
           />
-          <AllergiesField
-            allergies={form.allergies}
-            onChange={(allergies) => setForm({ ...form, allergies })}
-          />
-          {role === UserRole.student && (
-            <TextField
-              label={t("general.healthProblem")}
-              helperMsg={t("general.healthProblem_helper")}
-              appearance="outlined"
-              {...formProps.healthProblem}
-              disabled={true}
-            />
-          )}
           <Select
             appearance="outlined"
             label={t("general.shirtSize.label")}
@@ -250,6 +238,28 @@ const PersonFields: StylableFC<{
             className="[&>input]:[font-feature-settings:'calt'on]"
             {...formProps.pantsSize}
           />
+          <AllergiesField
+            allergies={form.allergies}
+            onChange={(allergies) => setForm({ ...form, allergies })}
+          />
+          {role === UserRole.student && (
+            <>
+              <TextField
+                label={t("general.healthProblem")}
+                helperMsg={t("general.healthProblem_helper.firstDay")}
+                appearance="outlined"
+                {...formProps.firstDayHealthProblem}
+                disabled={true}
+              />
+              <TextField
+                label={t("general.healthProblem")}
+                helperMsg={t("general.healthProblem_helper.secondDay")}
+                appearance="outlined"
+                {...formProps.secondDayHealthProblem}
+                disabled={true}
+              />
+            </>
+          )}
         </Columns>
       </Section>
     </div>

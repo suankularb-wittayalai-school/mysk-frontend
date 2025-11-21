@@ -1605,6 +1605,7 @@ export type Database = {
           risk_priority: number;
           student_id: string;
           condition: string;
+          practice_period_id: string;
         };
         Insert: {
           created_at?: string | null;
@@ -1612,6 +1613,7 @@ export type Database = {
           risk_priority: number;
           student_id: string;
           condition: string;
+          practice_period_id: string;
         };
         Update: {
           created_at?: string | null;
@@ -1619,6 +1621,7 @@ export type Database = {
           risk_priority?: number;
           student_id?: string;
           condition?: string;
+          practice_period_id: string;
         };
         Relationships: [
           {
@@ -1626,6 +1629,13 @@ export type Database = {
             columns: ["student_id"];
             isOneToOne: false;
             referencedRelation: "students";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cheer_practice_medical_risk_students_practice_period_id_fkey";
+            columns: ["practice_period_id"];
+            isOneToOne: false;
+            referencedRelation: "cheer_practice_periods";
             referencedColumns: ["id"];
           },
         ];

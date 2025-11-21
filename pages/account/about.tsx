@@ -106,9 +106,18 @@ const AboutYouPage: CustomPage<{
       { key: "birthdate", required: true, defaultValue: user.birthdate },
       { key: "allergies", defaultValue: user.allergies },
       {
-        key: "healthProblem",
+        key: "firstDayHealthProblem",
         defaultValue:
-          user.role === UserRole.student ? user.health_problem : undefined,
+          user.role === UserRole.student
+            ? user.health_problem!.firstDay
+            : undefined,
+      },
+      {
+        key: "secondDayHealthProblem",
+        defaultValue:
+          user.role === UserRole.student
+            ? user.health_problem!.secondDay
+            : undefined,
       },
       { key: "shirtSize", defaultValue: user.shirt_size },
       {

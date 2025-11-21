@@ -40,8 +40,7 @@ export default async function getStudentsByLookupFilters(
         person_allergies(allergy_name),
         person_contacts${filters.contact ? "!inner" : ""}(contacts!inner(value))
       ),
-      classroom_students(classrooms!inner(id, number)),
-      cheer_practice_medical_risk_students(condition)`,
+      classroom_students(classrooms!inner(id, number))`,
     )
     .eq("classroom_students.classrooms.year", getCurrentAcademicYear());
 
@@ -80,13 +79,6 @@ export default async function getStudentsByLookupFilters(
       profile: student.people?.profile || null,
       role: UserRole.student,
       classroom: student.classroom_students[0]?.classrooms || null,
-      allergies: student!.people.person_allergies.map(
-        ({ allergy_name }) => allergy_name,
-      ),
-      health_problem:
-        student!.cheer_practice_medical_risk_students.map(
-          ({ condition }) => condition,
-        )[0] || "",
     })),
     error: null,
   };

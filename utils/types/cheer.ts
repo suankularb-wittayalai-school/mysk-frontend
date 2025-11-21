@@ -3,6 +3,12 @@ import { Classroom } from "@/utils/types/classroom";
 
 export const GRADES_PERFORMING_CARD_STUNT = [2, 3, 4];
 
+// the first ID is the first day and the second ID is the second day
+export const JATU_DAY_PRACTICE_PERIODS = [
+  "a5b701d0-be27-4c52-a640-e23790457b61",
+  "0c18a3b9-3b7f-4c71-a380-1ad0c448e35a",
+];
+
 export enum CheerAttendanceType {
   present = "present",
   late = "late",

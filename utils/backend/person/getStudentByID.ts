@@ -7,6 +7,7 @@ import {
   CeremonyConfirmationStatus,
   StudentCertificateType,
 } from "@/utils/types/certificate";
+import { JATU_DAY_PRACTICE_PERIODS } from "@/utils/types/cheer";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { MySKClient } from "@/utils/types/fetch";
 import { ShirtSize, Student, UserRole } from "@/utils/types/person";
@@ -55,7 +56,7 @@ export async function getStudentByID(
         seat_code,
         rsvp_status
       ),
-      cheer_practice_medical_risk_students(condition),
+      cheer_practice_medical_risk_students(condition, practice_period_id),
       people(
         *,
         person_contacts(contacts(*)),
@@ -65,8 +66,11 @@ export async function getStudentByID(
     )
     .eq("id", studentID)
     .eq("classroom_students.classrooms.year", getCurrentAcademicYear())
+    .in(
+      "cheer_practice_medical_risk_students.practice_period_id",
+      JATU_DAY_PRACTICE_PERIODS,
+    )
     .single();
-
   if (error) {
     logError("getStudentByID", error);
     return { data: null, error };
@@ -92,7 +96,14 @@ export async function getStudentByID(
     if (error) logError("getStudentByID (electives)", error);
     if (data?.length) chosenElective = data[0];
   }
-
+  let firstDayHealthProblems = data?.cheer_practice_medical_risk_students.find(
+    (healthProblem) =>
+      healthProblem.practice_period_id == JATU_DAY_PRACTICE_PERIODS[0],
+  );
+  let secondDayHealthProblems = data?.cheer_practice_medical_risk_students.find(
+    (healthProblem) =>
+      healthProblem.practice_period_id == JATU_DAY_PRACTICE_PERIODS[1],
+  );
   const student: Student = {
     id: data!.id,
     prefix: mergeDBLocales(data!.people, "prefix"),
@@ -133,10 +144,17 @@ export async function getStudentByID(
           allergies: data!.people.person_allergies.map(
             ({ allergy_name }) => allergy_name,
           ),
-          health_problem:
-            data!.cheer_practice_medical_risk_students.map(
-              ({ condition }) => condition,
-            )[0] || "",
+          health_problem: data?.cheer_practice_medical_risk_students
+            ? {
+                firstDay: firstDayHealthProblems
+                  ? firstDayHealthProblems.condition
+                  : "",
+                secondDay: secondDayHealthProblems
+                  ? secondDayHealthProblems.condition
+                  : "",
+              }
+            : { firstDay: "", secondDay: "" },
+
           citizen_id: data!.people.citizen_id,
           birthdate: data!.people.birthdate,
           shirt_size: <ShirtSize>data!.people.shirt_size,

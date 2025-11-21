@@ -49,7 +49,10 @@
     "allergies": "Allergies (in Thai)",
     "allergies_helper": "Field is comma-seperated • Leave blank if you don’t have any.",
     "healthProblem": "Health Problems",
-    "healthProblem_helper": "For Jaturamitr Samakkee",
+    "healthProblem_helper": {
+      "firstDay": "For the First Day of Jaturamitr Samakkee",
+      "secondDay": "For the Second Day of Jaturamitr Samakkee"
+    },
     "shirtSize": {
       "label": "Shirt size",
       "metadata_one": "{{count, number}} inch",

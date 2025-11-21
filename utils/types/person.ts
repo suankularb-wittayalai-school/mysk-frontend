@@ -74,7 +74,7 @@ export type Student = Person & {
   chosen_elective: ElectiveSubject | null;
   role: UserRole.student;
   allergies: string[] | null;
-  health_problem?: string;
+  health_problem?: { firstDay: string; secondDay: string };
 };
 
 export type Teacher = Person & {
