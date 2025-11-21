@@ -104,7 +104,12 @@ const StudentListTableBody: StylableFC<{
 
           {/* Health Problem */}
           {options.columns.includes("healthProblem") && (
-            <td className="w-32 !text-pretty">{student.health_problem}</td>
+            <td className="w-32 !text-pretty">
+              {student.health_problem!.firstDay}
+              {student.health_problem!.firstDay !== "" &&
+                student.health_problem!.secondDay !== "" && <br />}
+              {student.health_problem!.secondDay}
+            </td>
           )}
 
           {/* Shirt size */}

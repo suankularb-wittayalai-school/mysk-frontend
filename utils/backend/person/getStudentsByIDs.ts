@@ -7,6 +7,7 @@ import {
   CeremonyConfirmationStatus,
   StudentCertificateType,
 } from "@/utils/types/certificate";
+import { JATU_DAY_PRACTICE_PERIODS } from "@/utils/types/cheer";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { MySKClient } from "@/utils/types/fetch";
 import { ShirtSize, Student, UserRole } from "@/utils/types/person";
@@ -44,7 +45,7 @@ export async function getStudentsByIDs(
         seat_code,
         rsvp_status
       ),
-      cheer_practice_medical_risk_students(condition, risk_priority),
+      cheer_practice_medical_risk_students(condition, practice_period_id, risk_priority),
       people(
         *,
         person_contacts(contacts(*)),
@@ -102,70 +103,88 @@ export async function getStudentsByIDs(
     );
   }
 
-  const students: Student[] = data!.map((student) => ({
-    id: student!.id,
-    prefix: mergeDBLocales(student!.people, "prefix"),
-    first_name: mergeDBLocales(student!.people, "first_name"),
-    last_name: mergeDBLocales(student!.people, "last_name"),
-    nickname: mergeDBLocales(student!.people, "nickname"),
-    middle_name: mergeDBLocales(student!.people, "middle_name"),
-    student_id: student!.student_id,
-    ...(student!.classroom_students.length > 0
-      ? {
-          classroom: student!.classroom_students[0].classrooms,
-          class_no: student!.classroom_students[0].class_no,
-        }
-      : { classroom: null, class_no: null }),
-    profile: student!.people?.profile ?? null,
-    profile_url: student!.people?.profile ?? null,
-    chosen_elective:
-      (options?.includeChosenElective && studentElectiveMap[student!.id]) ||
-      null,
-    ...(options?.detailed && student!.people
-      ? {
-          contacts: student!.people!.person_contacts.map(({ contacts }) => ({
-            ...pick(contacts!, [
-              "id",
-              "type",
-              "value",
-              "include_parents",
-              "include_students",
-              "include_teachers",
-            ]),
-            name: mergeDBLocales(contacts!, "name"),
-          })),
-          certificates: student!.student_certificates.map((certicate) => ({
-            ...certicate,
-            certificate_type: <StudentCertificateType>(
-              certicate.certificate_type
+  const students: Student[] = data!.map((student) => {
+    const firstDayHealthProblems =
+      student?.cheer_practice_medical_risk_students.find(
+        (healthProblem) =>
+          healthProblem.practice_period_id == JATU_DAY_PRACTICE_PERIODS[0],
+      );
+    const secondDayHealthProblems =
+      student?.cheer_practice_medical_risk_students.find(
+        (healthProblem) =>
+          healthProblem.practice_period_id == JATU_DAY_PRACTICE_PERIODS[1],
+      );
+
+    return {
+      id: student.id,
+      prefix: mergeDBLocales(student!.people, "prefix"),
+      first_name: mergeDBLocales(student!.people, "first_name"),
+      last_name: mergeDBLocales(student!.people, "last_name"),
+      nickname: mergeDBLocales(student!.people, "nickname"),
+      middle_name: mergeDBLocales(student!.people, "middle_name"),
+      student_id: student!.student_id,
+      ...(student!.classroom_students.length > 0
+        ? {
+            classroom: student!.classroom_students[0].classrooms,
+            class_no: student!.classroom_students[0].class_no,
+          }
+        : { classroom: null, class_no: null }),
+      profile: student!.people?.profile ?? null,
+      profile_url: student!.people?.profile ?? null,
+      chosen_elective:
+        (options?.includeChosenElective && studentElectiveMap[student!.id]) ||
+        null,
+      ...(options?.detailed && student!.people
+        ? {
+            contacts: student!.people!.person_contacts.map(({ contacts }) => ({
+              ...pick(contacts!, [
+                "id",
+                "type",
+                "value",
+                "include_parents",
+                "include_students",
+                "include_teachers",
+              ]),
+              name: mergeDBLocales(contacts!, "name"),
+            })),
+            certificates: student!.student_certificates.map((certicate) => ({
+              ...certicate,
+              certificate_type: <StudentCertificateType>(
+                certicate.certificate_type
+              ),
+              rsvp_status: <CeremonyConfirmationStatus>certicate.rsvp_status,
+            })),
+            allergies: student!.people.person_allergies.map(
+              ({ allergy_name }) => allergy_name,
             ),
-            rsvp_status: <CeremonyConfirmationStatus>certicate.rsvp_status,
-          })),
-          allergies: student!.people.person_allergies.map(
-            ({ allergy_name }) => allergy_name,
-          ),
-          health_problem:
-            student!.cheer_practice_medical_risk_students.map(
-              ({ condition, risk_priority }) =>
-                `ประเภทที่ ${risk_priority} ${condition} ${risk_priority == 1 ? "(ห้ามขึ้นสแตนด์)" : "(ดูแลอย่างใกล้ชิด)"}`,
-            )[0] || "",
-          citizen_id: student!.people.citizen_id,
-          birthdate: student!.people.birthdate,
-          shirt_size: <ShirtSize>student!.people.shirt_size,
-          pants_size: student!.people.pants_size,
-        }
-      : {
-          contacts: [],
-          certificates: [],
-          allergies: null,
-          citizen_id: null,
-          birthdate: null,
-          shirt_size: null,
-          pants_size: null,
-        }),
-    role: UserRole.student,
-    is_admin: null,
-  }));
+            health_problem: student?.cheer_practice_medical_risk_students
+              ? {
+                  firstDay: firstDayHealthProblems
+                    ? `วันที่หนึ่ง: ประเภทที่ ${firstDayHealthProblems.risk_priority} ${firstDayHealthProblems.condition} ${firstDayHealthProblems.risk_priority == 1 ? "(ห้ามขึ้นสแตนด์) " : "(ดูแลอย่างใกล้ชิด)"} `
+                    : "",
+                  secondDay: secondDayHealthProblems
+                    ? `วันที่สอง: ประเภทที่ ${secondDayHealthProblems.risk_priority} ${secondDayHealthProblems.condition} ${secondDayHealthProblems.risk_priority == 1 ? "(ห้ามขึ้นสแตนด์) " : "(ดูแลอย่างใกล้ชิด)"} `
+                    : "",
+                }
+              : { firstDay: "", secondDay: "" },
+            citizen_id: student!.people.citizen_id,
+            birthdate: student!.people.birthdate,
+            shirt_size: <ShirtSize>student!.people.shirt_size,
+            pants_size: student!.people.pants_size,
+          }
+        : {
+            contacts: [],
+            certificates: [],
+            allergies: null,
+            citizen_id: null,
+            birthdate: null,
+            shirt_size: null,
+            pants_size: null,
+          }),
+      role: UserRole.student,
+      is_admin: null,
+    };
+  });
 
   return { data: students, error: null };
 }

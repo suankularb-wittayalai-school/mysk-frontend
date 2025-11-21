@@ -3,6 +3,7 @@ import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
+import { JATU_DAY_PRACTICE_PERIODS } from "@/utils/types/cheer";
 import { Classroom } from "@/utils/types/classroom";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { MySKClient } from "@/utils/types/fetch";
@@ -52,7 +53,7 @@ export default async function getClassroomsForBulkPrint(
         students(
           id,
           student_id,
-          cheer_practice_medical_risk_students(condition, risk_priority),
+          cheer_practice_medical_risk_students(condition, practice_period_id, risk_priority),
           people(
             *,
             person_contacts(contacts(*)),
@@ -130,6 +131,16 @@ export default async function getClassroomsForBulkPrint(
     students: sort(
       classroom.classroom_students.map((classroomStudent) => {
         const student = classroomStudent.students!;
+        const firstDayHealthProblems =
+          student?.cheer_practice_medical_risk_students.find(
+            (healthProblem) =>
+              healthProblem.practice_period_id == JATU_DAY_PRACTICE_PERIODS[0],
+          );
+        const secondDayHealthProblems =
+          student?.cheer_practice_medical_risk_students.find(
+            (healthProblem) =>
+              healthProblem.practice_period_id == JATU_DAY_PRACTICE_PERIODS[1],
+          );
         return {
           id: student!.id,
           role: UserRole.student as const,
@@ -146,11 +157,16 @@ export default async function getClassroomsForBulkPrint(
             student.people?.person_allergies.map(
               (allergy) => allergy.allergy_name,
             ) || null,
-          health_problem:
-            student!.cheer_practice_medical_risk_students.map(
-              ({ condition, risk_priority }) =>
-                `ประเภทที่ ${risk_priority} ${condition} ${risk_priority == 1 ? "(ห้ามขึ้นสแตนด์)" : "(ดูแลอย่างใกล้ชิด)"}`,
-            )[0] || "",
+          health_problem: student?.cheer_practice_medical_risk_students
+              ? {
+                  firstDay: firstDayHealthProblems
+                    ? `วันที่หนึ่ง: ประเภทที่ ${firstDayHealthProblems.risk_priority} ${firstDayHealthProblems.condition} ${firstDayHealthProblems.risk_priority == 1 ? "(ห้ามขึ้นสแตนด์) " : "(ดูแลอย่างใกล้ชิด)"} `
+                    : "",
+                  secondDay: secondDayHealthProblems
+                    ? `วันที่สอง: ประเภทที่ ${secondDayHealthProblems.risk_priority} ${secondDayHealthProblems.condition} ${secondDayHealthProblems.risk_priority == 1 ? "(ห้ามขึ้นสแตนด์) " : "(ดูแลอย่างใกล้ชิด)"} `
+                    : "",
+                }
+              : { firstDay: "", secondDay: "" },
           contacts: [],
           is_admin: null,
           student_id: student.student_id,
