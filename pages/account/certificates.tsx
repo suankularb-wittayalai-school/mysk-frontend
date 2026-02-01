@@ -63,23 +63,17 @@ const CertificatesPage: CustomPage<{
             // Sort by academic year, ascending.
             ([year]) => Number(year),
             true,
-          ).map(([year, certificates]) => {
+          ).map(([year, certificates]) => (
             // Each year is a Section.
-            if (year !== "2025") {
-              return (
-                <CertificatesYearSection
-                  key={year}
-                  year={Number(year)}
-                  certificates={certificates!}
-                  person={person}
-                  rsvpStatus={rsvpStatus}
-                  enrollmentStatus={enrollmentStatus}
-                />
-              );
-            } else {
-              return <></>;
-            }
-          })
+            <CertificatesYearSection
+              key={year}
+              year={Number(year)}
+              certificates={certificates!}
+              person={person}
+              rsvpStatus={rsvpStatus}
+              enrollmentStatus={enrollmentStatus}
+            />
+          ))
         ) : (
           // If there are no certificates, display a message with a link to the
           // help form.
@@ -129,10 +123,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     detailed: true,
   });
 
-  // const { data: rsvpStatus } = await mysk.fetch(
-  //   "/v1/certificates/rsvp/in-rsvp-period",
-  // );
-  const rsvpStatus = true;
+  const { data: rsvpStatus } = await mysk.fetch(
+    "/v1/certificates/rsvp/in-rsvp-period",
+  );
   const { data: enrollmentStatus } = await mysk.fetch(
     `/v1/certificates/rsvp/${person?.id}`,
   );
