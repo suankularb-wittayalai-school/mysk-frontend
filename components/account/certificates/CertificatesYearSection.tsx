@@ -59,7 +59,11 @@ const CertificatesYearSection: StylableFC<{
       {/* Receiving procedure information */}
       {(() => {
         if (!certificates?.length) return null;
-        const { receiving_order_number, seat_code } = certificates[0];
+        const {
+          receiving_order_number,
+          seat_code,
+          rsvp_status: certificateRsvpStatus,
+        } = certificates[0];
 
         if (
           (rsvpStatus == false &&
@@ -67,16 +71,10 @@ const CertificatesYearSection: StylableFC<{
               "true") ||
           currentAcademicYear != year
         ) {
-          if (!receiving_order_number && !seat_code)
-            return (
-              <Text type="body-medium" className="mb-1">
-                {t("ineligibleForCeremony")}
-              </Text>
-            );
           return (
             <>
-              <ChipSet className="pb-2">
-                {receiving_order_number && (
+              {receiving_order_number && (
+                <ChipSet className="pb-2">
                   <>
                     <AssistChip
                       icon={<MaterialIcon icon="group" />}
@@ -90,28 +88,40 @@ const CertificatesYearSection: StylableFC<{
                       onClose={() => setOrderOpen(false)}
                     />
                   </>
-                )}
-                {seat_code && (
-                  <>
-                    <AssistChip
-                      icon={<MaterialIcon icon="event_seat" />}
-                      onClick={() => setSeatOpen(true)}
-                    >
-                      {t("action.seat", { seat: seat_code })}
-                    </AssistChip>
-                    <SeatDialog
-                      open={seatOpen}
-                      seat={seat_code}
-                      onClose={() => setSeatOpen(false)}
-                    />
-                  </>
-                )}
-              </ChipSet>
-              {year == currentAcademicYear && (
-                <Text type="label-large" className="pb-2 text-on-background">
-                  <Trans i18nKey="account/certificates:prepare" />
-                </Text>
+                  {seat_code &&
+                    certificateRsvpStatus ==
+                      CeremonyConfirmationStatus.approved && (
+                      <>
+                        <AssistChip
+                          icon={<MaterialIcon icon="event_seat" />}
+                          onClick={() => setSeatOpen(true)}
+                        >
+                          {t("action.seat", { seat: seat_code })}
+                        </AssistChip>
+                        <SeatDialog
+                          open={seatOpen}
+                          seat={seat_code}
+                          onClose={() => setSeatOpen(false)}
+                        />
+                      </>
+                    )}
+                </ChipSet>
               )}
+              {year == currentAcademicYear &&
+                seat_code &&
+                certificateRsvpStatus ==
+                  CeremonyConfirmationStatus.approved && (
+                  <Text type="label-large" className="pb-2 text-on-background">
+                    <Trans i18nKey="account/certificates:prepare" />
+                  </Text>
+                )}
+              {/* If students do not answer the rsvp or deline rsvp, they are ineligible for the ceremony*/}
+              {certificateRsvpStatus !== CeremonyConfirmationStatus.approved &&
+                currentAcademicYear == year && (
+                  <Text type="body-medium" className="mb-1">
+                    {t("ineligibleForCeremony")}
+                  </Text>
+                )}
             </>
           );
         }
