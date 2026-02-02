@@ -69,6 +69,8 @@ const CertificatesYearSection: StylableFC<{
           (rsvpStatus == false &&
             process.env.NEXT_PUBLIC_CERTIFICATES_CEREMONY_SHOW_SEATING ==
               "true") ||
+          process.env.NEXT_PUBLIC_CERTIFICATES_CEREMONY_SHOW_SEATING_ALWAYS ==
+            "true" ||
           currentAcademicYear != year
         ) {
           return (
