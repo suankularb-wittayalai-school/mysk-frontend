@@ -119,6 +119,7 @@ const CertificatesYearSection: StylableFC<{
                 )}
               {/* If students do not answer the rsvp or deline rsvp, they are ineligible for the ceremony*/}
               {certificateRsvpStatus !== CeremonyConfirmationStatus.approved &&
+                rsvpStatus == false &&
                 currentAcademicYear == year && (
                   <Text type="body-medium" className="mb-1">
                     {t("ineligibleForCeremony")}
