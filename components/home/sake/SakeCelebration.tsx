@@ -17,6 +17,9 @@ import { useEffect, useState } from "react";
 const SakeCelebration: StylableFC = ({ style, className }) => {
   const { t } = useTranslation("home", { keyPrefix: "dialog.sakeCelebration" });
 
+  // Get Sake's first-digit age based on birthyear.
+  const sakeAge = Math.floor((new Date().getFullYear() - 1987) / 10);
+
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -64,13 +67,14 @@ const SakeCelebration: StylableFC = ({ style, className }) => {
         className="absolute right-0 top-0 h-64 w-auto"
       />
       <div
-        className={cn(`mt-64 flex h-full flex-col rounded-tl-[inherit]
-          bg-surface p-6 text-on-surface sm:mt-0 sm:rounded-none
-          sm:bg-transparent sm:pr-56 sm:text-on-surface-variant`)}
+        className={cn(
+          `mt-64 flex h-full flex-col rounded-tl-[inherit] bg-surface p-6 text-on-surface sm:mt-0 sm:rounded-none sm:bg-transparent sm:pr-56 sm:text-on-surface-variant`,
+        )}
       >
         <Text type="body-large" element="p">
           {t("body", {
             year: getLocaleYear("th", new Date().getFullYear(), "AD"),
+            age: "3x" + (sakeAge < 4 ? `` : ` (+${sakeAge - 3}0)`),
           })}
         </Text>
         <div aria-hidden className="min-h-4 grow" />
