@@ -42,6 +42,12 @@ import getMultipleClassroomsByIDs from "@/utils/backend/attendance/cheer/getMult
 import isJatuDay from "@/utils/backend/attendance/cheer/isJatuDay";
 import CheerHealthProblemLegend from "@/components/cheer/CheerHealthProblemLegend";
 
+/**
+ * A page that displays detail the detail for each Cheer period.
+ *
+ * @param cheerSession - The Cheer Period to be shown
+ * @param date - The currently selected date
+ */
 const CheerAttendancePage: CustomPage<{
   cheerSession: CheerPracticeSession;
   date: string;

@@ -9,6 +9,15 @@ import { StylableFC } from "@/utils/types/common";
 import { ChipSet, InputChip } from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
 
+/**
+ * A Chip Set for selecting an Attendance of a Student.
+ *
+ * @param attendance The Attendance of a Student at start and end.
+ * @param shownEvent The Attendance Event to show.
+ * @param editable Whether the item can be edited.
+ * @param isJatu Whether today is Jatu day.
+ * @param onChange Callback when the Attendance is changed.
+ */
 const CheerAttendanceSelector: StylableFC<{
   attendance: CheerAttendanceRecord;
   shownEvent: CheerAttendanceEvent;

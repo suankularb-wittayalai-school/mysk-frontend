@@ -10,9 +10,14 @@ import router from "next/router";
 import CheerDatePickerDialog from "@/components/cheer/CheerDatePickerDialog";
 import useTranslation from "next-translate/useTranslation";
 
+/**
+ * A date selector for cheer periods that show the selected date and open a
+ * date picker.
+ *
+ * @param date The date selected.
+ */
 const CheerDateSelector: StylableFC<{ date: string }> = ({ date }) => {
   const { t } = useTranslation("attendance/cheer");
-
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
   return (

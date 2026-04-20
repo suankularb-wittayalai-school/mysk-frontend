@@ -33,13 +33,15 @@ import useTranslation from "next-translate/useTranslation";
 import logError from "@/utils/helpers/logError";
 
 /**
- * A List Item for the Attendance page.
+ * A List Item for the Staff Cheer Attendance page.
  *
- * @param attendance The Attendance of a Student at assembly and homeroom.
+ * @param isJatuDay Whether today is Jatu day.
+ * @param attendance The Attendance of a Student at start and end.
  * @param shownEvent The Attendance Event to show.
- * @param date The date of the Attendance. Used in saving.
  * @param editable Whether the Attendance is editable.
- * @param onAttendanceChange Callback when the Attendance is changed.
+ * @param saving Whether the Attendance is still saving.
+ * @param setSaving - Function to update the saving state in the parent.
+ * @param onAttendancesChange Callback when the Attendance is changed.
  */
 const CheerAttendanceStaffListItem: StylableFC<{
   isJatuDay: boolean;

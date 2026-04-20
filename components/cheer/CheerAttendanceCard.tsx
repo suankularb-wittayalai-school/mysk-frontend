@@ -14,6 +14,15 @@ import { replace } from "radash";
 import useTranslation from "next-translate/useTranslation";
 import CheerAttendanceListItem from "@/components/cheer/CheerAttendanceStaffListItem";
 
+/**
+ * A Card displaying the Student’s Attendance status today.
+ * 
+ * @param isJatuDay Whether today is Jatu day.
+ * @param attendances The Cheer attendance record for the classroom.
+ * @param classroom The Classroom selected.
+ * @param onAttendancesChange Called when attendances change. Receives the updated attendances.
+ * @param onCheerTallyCounts Called when attendances change. Receives the updated attendances with class ID for tally.
+ */
 const CheerAttendanceCard: StylableFC<{
   isJatuDay: boolean;
   classroom: Pick<Classroom, "id" | "number" | "main_room"> | null;

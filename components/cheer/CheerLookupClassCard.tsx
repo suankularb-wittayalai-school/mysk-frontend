@@ -87,7 +87,9 @@ const CheerLookupClassCard: StylableFC<{
       />
       <div className="-mt-3 mr-3 flex justify-center">
         <CheerAttendenceIndicator
-          cheerTallyCount={cheerTallyCounts.find((cheerTallyCount)=>(cheerTallyCount.id === classroom.id))}
+          cheerTallyCount={cheerTallyCounts.find(
+            (cheerTallyCount) => cheerTallyCount.id === classroom.id,
+          )}
           className={cn(
             selected
               ? `[&_.skc-progress>*]:!bg-surface-bright`

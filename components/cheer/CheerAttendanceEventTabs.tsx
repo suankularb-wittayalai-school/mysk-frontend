@@ -3,6 +3,14 @@ import { StylableFC } from "@/utils/types/common";
 import { TabsContainer, Tab, MaterialIcon } from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
 
+/**
+ * Tabs for switching between Assembly and Homeroom Attendance.
+ *
+ * @param event The currently shown Attendance Event.
+ * @param onEventChange Should change the current Attendance Event.
+ * @param isJatu Whether today is Jatu day.
+ * @param isPerformingCardStunt Whether the class is performing card stunt or carry plate.
+ */
 const CheerAttendanceEventTabs: StylableFC<{
   event: CheerAttendanceEvent;
   onEventChange: (event: CheerAttendanceEvent) => void;

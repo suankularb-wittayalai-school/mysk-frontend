@@ -16,10 +16,11 @@ import CheerLookupClassCard from "@/components/cheer/CheerLookupClassCard";
 import { CheerTallyCount, ClassroomCheerAttendance } from "@/utils/types/cheer";
 
 /**
- * A section of the Lookup Classes list that shows all Classrooms in a grade.
+ * A section of the Staff Cheer Attendance page that shows all Classrooms in a Cheer period.
  *
  * @param grade The grade of the Classrooms in this section.
- * @param classrooms The Classrooms in this section.
+ * @param classrooms The Classrooms in this Cheer period.
+ * @param cheerTallyCounts The list of tallies for classroom in a Cheer period.
  * @param selectedID The ID of the selected Classroom.
  * @param onSelectedChange The function to call when a Classroom is selected.
  * @param expandedByDefault Whether this section should be expanded by default.
