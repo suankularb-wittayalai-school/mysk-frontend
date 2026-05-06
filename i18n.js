@@ -69,7 +69,12 @@ module.exports = {
       "schedule/editor/hoverMenu",
     ],
     // Classes
-    "/classes": ["classes/list", "classes/header", "classes/detail"],
+    "/classes": [
+      "classes/list",
+      "classes/header",
+      "classes/detail",
+      "search/common",
+    ],
     "rgx:/((classes/\\[classNumber\\]|manage/(classrooms|electives))/print)$": [
       "classes/print",
     ],
