@@ -1,6 +1,13 @@
 import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 
+/**
+ * Retrieves the list of black listed student ID.
+ *
+ * @param supabase The Supabase client to use.
+ *
+ * @returns A Backend Return of an array of student ID.
+ */
 export default async function getBlackListedCheerStudents(
   supabase: DatabaseClient,
 ): Promise<BackendReturn<{ student_id: string }[]>> {

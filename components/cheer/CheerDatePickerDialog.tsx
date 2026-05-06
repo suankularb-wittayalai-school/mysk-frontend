@@ -18,7 +18,7 @@ import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 
 /**
- * A Dialog for selecting a date to jump to in the Attendance pages.
+ * A Dialog for selecting a date to jump to in the Cheer periods pages.
  *
  * @param open Whether the dialog is open and shown.
  * @param view The Attendance View of the page.

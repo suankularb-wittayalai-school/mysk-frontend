@@ -9,6 +9,16 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import { MySKClient } from "@/utils/types/fetch";
 
+/**
+ * Retrieves the Cheer Attendance records of a Classroom.
+ *
+ * @param classroom The the Classroom to retrieve Attendance records for.
+ * @param cheerSession The the Cheer Period to retrieve Attendance records for.
+ * @param supabase The Supabase client to use.
+ * @param mysk The MySK Client to use.
+ *
+ * @returns A Backend Return of an array of Student Cheer Attendances.
+ */
 export default async function getCheerAttendanceOfClass(
   classroom: ClassroomCheerAttendance,
   cheerSession: CheerPracticePeriod,
