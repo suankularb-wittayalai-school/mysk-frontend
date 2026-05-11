@@ -23,10 +23,11 @@ const ExplorePage: NextPage<{}> = ({}) => {
       <Head>
         <title>tabName</title>
       </Head>
-      <ContentLayout className="!pb-8">
-        <PageHeader parentURL="/club" className="mx-4 sm:mx-0">
-          {t("title")}
-        </PageHeader>
+      <PageHeader parentURL="/club" className="mx-4 sm:mx-0">
+        {t("title")}
+      </PageHeader>
+      <ContentLayout>
+        <></>
         {/* Add map and/or club details here */}
       </ContentLayout>
     </>

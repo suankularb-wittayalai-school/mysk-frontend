@@ -153,11 +153,11 @@ const KornorManagePage: NextPage<{
       <Head>
         <title>tabName</title>
       </Head>
-      <ContentLayout>
-        <PageHeader parentURL="/club" className="mx-4 sm:mx-0">
-          {t("title")}
-        </PageHeader>
+      <PageHeader parentURL="/club" className="mx-4 sm:mx-0">
+        {t("title")}
+      </PageHeader>
 
+      <ContentLayout>
         {/* Statistics Bubbles */}
         <Columns
           columns={2}
