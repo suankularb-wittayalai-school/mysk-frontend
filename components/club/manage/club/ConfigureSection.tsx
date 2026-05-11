@@ -2,7 +2,7 @@
 import ClubJoinPreview from "@/components/club/manage/club/ClubJoinPreview";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
-import { logAPIError, logSupabaseError } from "@/utils/debug";
+import logError from "@/utils/helpers/logError";
 import useForm from "@/utils/helpers/useForm";
 import calculateLuminance from "@/utils/helpers/club/calculateLuminance";
 import cn from "@/utils/helpers/cn";
@@ -117,7 +117,7 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
     //   }),
     // });
     // if (error) {
-    //   logAPIError("handleSubmit in ConfigureSection", error);
+    //   logError("handleSubmit in ConfigureSection", error);
     //   return;
     // }
     // const { data: organization, error: updateClubError } = await supabase
@@ -164,7 +164,7 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
       .delete()
       .or(`id.in.(${club.contacts.map((contact) => contact.id).join()})`);
     if (contactsDeletionError) {
-      logSupabaseError(
+      logError(
         "handleSubmit (delete Contacts) in ConfigureSection",
         contactsDeletionError,
       );
@@ -191,10 +191,7 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
         },
       );
       if (error) {
-        logAPIError(
-          "handleSubmit (create Contacts) in ConfigureSection",
-          error,
-        );
+        logError("handleSubmit (create Contacts) in ConfigureSection", error);
         return;
       }
     }
