@@ -1,6 +1,6 @@
 // Imports
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
-import { logAPIError } from "@/utils/debug";
+import logError from "@/utils/helpers/logError";
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -62,7 +62,7 @@ const JoinRequestCard: FC<{
       },
     );
     if (error) {
-      logAPIError("handleRespondToRequest in MembersView", error);
+      logError("handleRespondToRequest in MembersView", error);
       return;
     }
     refreshProps();

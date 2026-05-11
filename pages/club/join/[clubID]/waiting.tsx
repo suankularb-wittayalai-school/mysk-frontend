@@ -1,10 +1,10 @@
 // Imports
-import CandlesBackground from "@/components/club/join/CandlesBackground";
+// import CandlesBackground from "@/components/club/join/CandlesBackground";
 import ClubJoinLayout from "@/components/club/join/ClubJoinLayout";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
-import { logAPIError } from "@/utils/debug";
+import logError from "@/utils/helpers/logError";
 import calculateLuminance from "@/utils/helpers/club/calculateLuminance";
 import { Club, ClubJoinRequest } from "@/utils/types/club";
 import { CalculatedClubScheme } from "@/utils/types/club";
@@ -59,7 +59,7 @@ const WaitingClubJoinPage: NextPage<{
       );
 
       if (error) {
-        logAPIError("useEffect in WaitingClubJoinPage", error);
+        logError("useEffect in WaitingClubJoinPage", error);
         if (error.code === 409) router.replace("/");
         else setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
         return;
@@ -82,7 +82,7 @@ const WaitingClubJoinPage: NextPage<{
       { query: { fetch_level: "default" } },
     );
     if (error) {
-      logAPIError("checkRequestStatus in WaitingClubJoinPage", error);
+      logError("checkRequestStatus in WaitingClubJoinPage", error);
       setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
       return;
     }
