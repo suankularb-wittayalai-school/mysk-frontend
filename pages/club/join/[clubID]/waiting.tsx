@@ -155,7 +155,7 @@ const WaitingClubJoinPage: NextPage<{
         </p>
       </div>
       <Actions align="full">
-        <Button appearance="outlined" href="/" element={Link}>
+        <Button appearance="outlined" href="/club" element={Link}>
           {t("action.checkLater")}
         </Button>
       </Actions>

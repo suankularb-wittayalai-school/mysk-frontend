@@ -163,7 +163,7 @@ const WelcomeToClubPage: NextPage<{
         </div>
         <Button
           appearance="outlined"
-          href="/"
+          href="/club"
           disabled={!(manual || joined)}
           element={Link}
         >

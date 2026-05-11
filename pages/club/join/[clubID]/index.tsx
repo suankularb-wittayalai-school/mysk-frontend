@@ -104,7 +104,7 @@ const RequestClubJoinPage: NextPage<{
               },
             })
           }
-          href="/"
+          href="/club"
           element={Link}
         >
           {t("action.cancel")}

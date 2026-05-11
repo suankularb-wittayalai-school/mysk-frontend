@@ -64,7 +64,7 @@ const ClubManagePage: NextPage<{
         <title>tabName</title>
       </Head>
 
-      <PageHeader parentURL="/" className="mx-4 sm:mx-0">
+      <PageHeader parentURL="/club" className="mx-4 sm:mx-0">
         {tx("club", { name: getLocaleString(club.name, locale) })}
       </PageHeader>
 
