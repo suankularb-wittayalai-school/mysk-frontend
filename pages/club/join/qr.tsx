@@ -9,6 +9,7 @@ import {
   DialogContent,
   DialogHeader,
   MaterialIcon,
+  Text,
 } from "@suankularb-components/react";
 import { GetStaticProps, NextPage } from "next";
 import useTranslation from "next-translate/useTranslation";
@@ -107,15 +108,15 @@ const QRMethodPage: NextPage = () => {
             size={48}
             className="h-max text-primary"
           />
-          <h1 className="skc-headline-medium">
-            <Balancer>{t("qr.title")}</Balancer>
-          </h1>
-          <p className="skc-body-large">
-            <Balancer>{t("qr.desc")}</Balancer>
-          </p>
-          <p className="skc-body-large">
-            <Balancer>{t("qr.otherMethods")}</Balancer>
-          </p>
+          <Text type="headline-medium" element="h1" className="text-center">
+            {t("qr.title")}
+          </Text>
+          <Text type="body-large" element="p" className="text-center">
+            {t("qr.desc")}
+          </Text>
+          <Text type="body-large" element="p" className="text-center">
+            {t("qr.otherMethods")}
+          </Text>
         </div>
       </div>
       <Actions align="full">
