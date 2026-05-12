@@ -182,8 +182,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     user = data;
   }
   // The user must either be a staff or an admin to view the page
-  // if (!(club!.staffs.find((staff) => user!.id === staff.id) || user?.is_admin))
-  //   return { notFound: true };
+  if (!(club!.staffs.find((staff) => user!.id === staff.id) || user?.is_admin))
+    return { notFound: true };
 
   // This block of code was supposed to group Members by their Class to display
   // on the Cool Statistics Section. Unfortunately, the API does not return a
