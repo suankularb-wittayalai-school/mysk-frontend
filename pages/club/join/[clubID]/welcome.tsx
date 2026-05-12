@@ -12,6 +12,7 @@ import {
   Button,
   transition,
   useAnimationConfig,
+  Text,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -27,7 +28,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { forwardRef, useState } from "react";
-import Balancer from "react-wrap-balancer";
 import useLocale from "@/utils/helpers/useLocale";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import DiscordLogo from "@/public/images/social/discord.svg";
@@ -65,14 +65,20 @@ const WelcomeToClubPage: NextPage<{
   const [joined, setJoined] = useState(!(discordURL || lineURL));
 
   return (
-    <ClubJoinLayout club={club} pageScheme={scheme?.page} tabName={t("welcome.tabName")}>
+    <ClubJoinLayout
+      club={club}
+      pageScheme={scheme?.page}
+      tabName={t("welcome.tabName", {
+        club: getLocaleString(club.name, locale),
+      })}
+    >
       <div className="z-10 space-y-3 text-center">
-        <h1 className="skc-display-medium">
-          <Balancer>{t("welcome.title")}</Balancer>
-        </h1>
-        <p className="skc-headline-medium">
-          <Balancer>{t("welcome.subtitle")}</Balancer>
-        </p>
+        <Text type="display-medium" element="h1" className="text-center">
+          {t("welcome.title")}
+        </Text>
+        <Text type="headline-medium" element="p" className="text-center">
+          {t("welcome.subtitle")}
+        </Text>
       </div>
 
       <AnimatePresence>
@@ -136,6 +142,7 @@ const WelcomeToClubPage: NextPage<{
                 <a {...props} ref={ref} target="_blank" rel="noreferrer" />
               ))}
               className={scheme?.button}
+              style={{ backgroundColor: club.accent_color }}
             >
               {t("welcome.action.discord")}
             </TintedFilledButton>
@@ -143,7 +150,7 @@ const WelcomeToClubPage: NextPage<{
           {lineURL && (
             <TintedFilledButton
               tinted={Boolean(club.accent_color)}
-              icon={<Image src={DiscordLogo} alt="" />}
+              icon={<Image src={LineLogo} alt="" />}
               href={lineURL}
               onClick={() => {
                 plausible("Access Club Contact", {
@@ -156,6 +163,7 @@ const WelcomeToClubPage: NextPage<{
                 <a {...props} ref={ref} target="_blank" rel="noreferrer" />
               ))}
               className={scheme?.button}
+              style={{ backgroundColor: club.accent_color }}
             >
               {t("welcome.action.line")}
             </TintedFilledButton>

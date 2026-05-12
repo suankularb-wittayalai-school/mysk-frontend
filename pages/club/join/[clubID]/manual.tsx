@@ -14,6 +14,7 @@ import {
   TextField,
   transition,
   useAnimationConfig,
+  Text,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -25,7 +26,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
-import { Balancer } from "react-wrap-balancer";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 
@@ -97,7 +97,13 @@ const RequestClubJoinPage: NextPage<{
   }
 
   return (
-    <ClubJoinLayout club={club} pageScheme={scheme?.page} tabName={t("manual.tabName")}>
+    <ClubJoinLayout
+      club={club}
+      pageScheme={scheme?.page}
+      tabName={t("manual.tabName", {
+        club: getLocaleString(club.name, locale),
+      })}
+    >
       <div className="grid flex-grow place-items-center">
         <div className="flex flex-col gap-4">
           <AnimatePresence>
@@ -124,11 +130,9 @@ const RequestClubJoinPage: NextPage<{
               </motion.div>
             )}
           </AnimatePresence>
-          <h1 className="skc-headline-small z-10 text-center">
-            <Balancer>
-              {t("manual.title", { club: getLocaleString(club.name, locale) })}
-            </Balancer>
-          </h1>
+          <Text type="headline-small" element="h1" className="z-10 text-center">
+            {t("manual.title", { club: getLocaleString(club.name, locale) })}
+          </Text>
         </div>
       </div>
       <div className="my-8 flex flex-col gap-3 text-center">

@@ -10,6 +10,7 @@ import {
   Button,
   transition,
   useAnimationConfig,
+  Text,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps, NextPage } from "next";
@@ -18,7 +19,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
 import Image from "next/image";
 import Link from "next/link";
-import { Balancer } from "react-wrap-balancer";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 
@@ -43,12 +43,14 @@ const RequestClubJoinPage: NextPage<{
   const { duration, easing } = useAnimationConfig();
 
   return (
-    <ClubJoinLayout club={club} pageScheme={scheme?.page} tabName={t("club.tabName")}>
-      <h1 className="skc-headline-medium z-10 text-center">
-        <Balancer>
-          {t("club.title", { club: getLocaleString(club.name, locale) })}
-        </Balancer>
-      </h1>
+    <ClubJoinLayout
+      club={club}
+      pageScheme={scheme?.page}
+      tabName={t("club.tabName", { club: getLocaleString(club.name, locale) })}
+    >
+      <Text type="headline-medium" element="h1" className="z-10 text-center">
+        {t("club.title", { club: getLocaleString(club.name, locale) })}
+      </Text>
       <AnimatePresence>
         {club.logo_url && (
           <motion.div

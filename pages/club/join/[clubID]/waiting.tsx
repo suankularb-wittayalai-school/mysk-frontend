@@ -14,6 +14,7 @@ import {
   Button,
   MaterialIcon,
   Snackbar,
+  Text
 } from "@suankularb-components/react";
 import { GetServerSideProps, NextPage } from "next";
 import useTranslation from "next-translate/useTranslation";
@@ -21,7 +22,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
-import { Balancer } from "react-wrap-balancer";
 
 /**
  * Indicate to the user that the Club staff has recieved their request and
@@ -138,7 +138,11 @@ const WaitingClubJoinPage: NextPage<{
   }, [requestID]);
 
   return (
-    <ClubJoinLayout club={club} pageScheme={scheme?.page} tabName={t("waiting.tabName")}>
+    <ClubJoinLayout
+      club={club}
+      pageScheme={scheme?.page}
+      tabName={t("waiting.tabName")}
+    >
       {/* <CandlesBackground /> */}
       <div className="h-10" />
       <div className="flex flex-col items-center gap-3 text-center">
@@ -147,12 +151,12 @@ const WaitingClubJoinPage: NextPage<{
           size={48}
           className="animate-bounce text-primary"
         />
-        <h1 className="skc-headline-medium">
-          <Balancer>{t("waiting.title")}</Balancer>
-        </h1>
-        <p className="skc-body-medium mt-7">
-          <Balancer>{t("waiting.desc")}</Balancer>
-        </p>
+        <Text type="headline-medium" element="h1" className="text-center">
+          {t("waiting.title")}
+        </Text>
+        <Text type="body-medium" element="p" className="text-center mt-7">
+          {t("waiting.desc")}
+        </Text>
       </div>
       <Actions align="full">
         <Button appearance="outlined" href="/club" element={Link}>

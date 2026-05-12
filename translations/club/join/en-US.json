@@ -39,6 +39,7 @@
   "welcome": {
     "title": "Welcome!",
     "tabName": "Welcome to {{club}}",
+    "logoAlt": "Club logo",
     "subtitle": "Enjoy your membership.",
     "action": {
       "discord": "Join Discord server",
