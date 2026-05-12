@@ -81,8 +81,8 @@ const JoinRequestCard: FC<{
         <CardHeader
           avatar={<Avatar />}
           title={[
-            "first",
-            "last",
+            getLocaleString(request.student.first_name, locale),
+            getLocaleString(request.student.last_name, locale),
           ].join(" ")}
           subtitle={
             timerReady ? (
