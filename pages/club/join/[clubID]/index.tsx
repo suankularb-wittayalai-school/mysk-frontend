@@ -13,7 +13,7 @@ import {
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps, NextPage } from "next";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
 import Image from "next/image";
@@ -36,17 +36,17 @@ const RequestClubJoinPage: NextPage<{
   scheme?: CalculatedClubScheme | null;
 }> = ({ club, scheme }) => {
   const locale = useLocale();
-  const { t } = useTranslation("join", { keyPrefix: "club" });
+  const { t } = useTranslation("club/join");
 
   const plausible = usePlausible();
 
   const { duration, easing } = useAnimationConfig();
 
   return (
-    <ClubJoinLayout club={club} pageScheme={scheme?.page} tabName={"tabName"}>
+    <ClubJoinLayout club={club} pageScheme={scheme?.page} tabName={t("club.tabName")}>
       <h1 className="skc-headline-medium z-10 text-center">
         <Balancer>
-          {t("title", { club: getLocaleString(club.name, locale) })}
+          {t("club.title", { club: getLocaleString(club.name, locale) })}
         </Balancer>
       </h1>
       <AnimatePresence>
@@ -66,7 +66,7 @@ const RequestClubJoinPage: NextPage<{
               src={club.logo_url}
               width={352}
               height={352}
-              alt={t("logoAlt")}
+              alt={t("club.logoAlt")}
               priority
               className="h-[22rem] w-auto object-contain"
               style={{
@@ -92,7 +92,7 @@ const RequestClubJoinPage: NextPage<{
           className={scheme?.button}
           style={{ backgroundColor: club.accent_color }}
         >
-          {t("action.join", { price: 10 })}
+          {t("club.action.join", { price: 10 })}
         </TintedFilledButton>
         <Button
           appearance="outlined"
@@ -107,7 +107,7 @@ const RequestClubJoinPage: NextPage<{
           href="/club"
           element={Link}
         >
-          {t("action.cancel")}
+          {t("club.action.cancel")}
         </Button>
       </div>
     </ClubJoinLayout>

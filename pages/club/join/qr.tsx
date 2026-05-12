@@ -65,7 +65,7 @@ const QRMethodPage: NextPage = () => {
   };
 
   return (
-    <PreJoinLayout tabName={"tabName"}>
+    <PreJoinLayout tabName={t("qr.tabName")}>
       <div
         className={cn(
           `flex h-full flex-col items-center justify-center gap-3 text-center`,

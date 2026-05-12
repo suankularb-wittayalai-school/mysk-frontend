@@ -177,6 +177,10 @@ module.exports = {
     "/club": ["club"],
     "/club/explore": ["club/explore"],
     "/club/join/qr": ["club/join"],
+    "/club/join/[clubID]": ["club/join"],
+    "/club/join/[clubID]/manual": ["club/join"],
+    "/club/join/[clubID]/waiting": ["club/join"],
+    "/club/join/[clubID]/welcome": ["club/join"],
   },
   logBuild: false,
   interpolation: {

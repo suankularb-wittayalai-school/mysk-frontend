@@ -18,7 +18,7 @@ import {
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps, NextPage } from "next";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
 import Image from "next/image";
@@ -43,7 +43,7 @@ const RequestClubJoinPage: NextPage<{
   scheme?: CalculatedClubScheme | null;
 }> = ({ club, scheme }) => {
   const locale = useLocale();
-  const { t } = useTranslation("join", { keyPrefix: "manual" });
+  const { t } = useTranslation("club/join");
   const { t: tx } = useTranslation("common");
   const mysk = useMySKClient();
   const [email, setEmail] = useState("");
@@ -97,7 +97,7 @@ const RequestClubJoinPage: NextPage<{
   }
 
   return (
-    <ClubJoinLayout club={club} pageScheme={scheme?.page} tabName={"tabName"}>
+    <ClubJoinLayout club={club} pageScheme={scheme?.page} tabName={t("manual.tabName")}>
       <div className="grid flex-grow place-items-center">
         <div className="flex flex-col gap-4">
           <AnimatePresence>
@@ -114,7 +114,7 @@ const RequestClubJoinPage: NextPage<{
                   src={club.logo_url}
                   width={352}
                   height={352}
-                  alt={t("logoAlt")}
+                  alt={t("manual.logoAlt")}
                   priority
                   className="mx-auto aspect-square"
                   style={{
@@ -126,7 +126,7 @@ const RequestClubJoinPage: NextPage<{
           </AnimatePresence>
           <h1 className="skc-headline-small z-10 text-center">
             <Balancer>
-              {t("title", { club: getLocaleString(club.name, locale) })}
+              {t("manual.title", { club: getLocaleString(club.name, locale) })}
             </Balancer>
           </h1>
         </div>
@@ -134,13 +134,13 @@ const RequestClubJoinPage: NextPage<{
       <div className="my-8 flex flex-col gap-3 text-center">
         <TextField
           appearance="outlined"
-          label={t("email.fieldName")}
+          label={t("manual.email.fieldName")}
           align="right"
           trailing="@student.sk.ac.th"
           value={email}
           onChange={(text: string) => setEmail(text)}
         />
-        <p>{t("email.desc")}</p>
+        <p>{t("manual.email.desc")}</p>
       </div>
       <div className="z-10 grid max-w-md grid-cols-1 gap-3">
         <TintedFilledButton
@@ -157,7 +157,7 @@ const RequestClubJoinPage: NextPage<{
           className={scheme?.button}
           style={{ backgroundColor: club.accent_color }}
         >
-          {t("action.join", { price: 10 })}
+          {t("manual.action.join", { price: 10 })}
         </TintedFilledButton>
         <Button
           appearance="outlined"
@@ -172,7 +172,7 @@ const RequestClubJoinPage: NextPage<{
           href={`/manage/club/${club.id}`}
           element={Link}
         >
-          {t("action.cancel")}
+          {t("manual.action.cancel")}
         </Button>
       </div>
     </ClubJoinLayout>

@@ -16,7 +16,7 @@ import {
   Snackbar,
 } from "@suankularb-components/react";
 import { GetServerSideProps, NextPage } from "next";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -36,7 +36,7 @@ const WaitingClubJoinPage: NextPage<{
   club: Club;
   scheme?: CalculatedClubScheme;
 }> = ({ club, scheme }) => {
-  const { t } = useTranslation("join", { keyPrefix: "waiting" });
+  const { t } = useTranslation("club/join");
   const { t: tx } = useTranslation("common");
   const router = useRouter();
 
@@ -138,7 +138,7 @@ const WaitingClubJoinPage: NextPage<{
   }, [requestID]);
 
   return (
-    <ClubJoinLayout club={club} pageScheme={scheme?.page} tabName={"tabName"}>
+    <ClubJoinLayout club={club} pageScheme={scheme?.page} tabName={t("waiting.tabName")}>
       {/* <CandlesBackground /> */}
       <div className="h-10" />
       <div className="flex flex-col items-center gap-3 text-center">
@@ -148,15 +148,15 @@ const WaitingClubJoinPage: NextPage<{
           className="animate-bounce text-primary"
         />
         <h1 className="skc-headline-medium">
-          <Balancer>{t("title")}</Balancer>
+          <Balancer>{t("waiting.title")}</Balancer>
         </h1>
         <p className="skc-body-medium mt-7">
-          <Balancer>{t("desc")}</Balancer>
+          <Balancer>{t("waiting.desc")}</Balancer>
         </p>
       </div>
       <Actions align="full">
         <Button appearance="outlined" href="/club" element={Link}>
-          {t("action.checkLater")}
+          {t("waiting.action.checkLater")}
         </Button>
       </Actions>
     </ClubJoinLayout>

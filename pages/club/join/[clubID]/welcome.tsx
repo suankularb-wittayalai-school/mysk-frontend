@@ -20,7 +20,7 @@ import {
   GetStaticProps,
   NextPage,
 } from "next";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
 import Image from "next/image";
@@ -48,7 +48,7 @@ const WelcomeToClubPage: NextPage<{
   scheme?: CalculatedClubScheme;
 }> = ({ club, scheme }) => {
   const locale = useLocale();
-  const { t } = useTranslation("join", { keyPrefix: "welcome" });
+  const { t } = useTranslation("club/join");
   const searchParams = useSearchParams();
   const manual = Boolean(JSON.parse(searchParams.get("manual") || "false"));
 
@@ -65,13 +65,13 @@ const WelcomeToClubPage: NextPage<{
   const [joined, setJoined] = useState(!(discordURL || lineURL));
 
   return (
-    <ClubJoinLayout club={club} pageScheme={scheme?.page} tabName={"tabName"}>
+    <ClubJoinLayout club={club} pageScheme={scheme?.page} tabName={t("welcome.tabName")}>
       <div className="z-10 space-y-3 text-center">
         <h1 className="skc-display-medium">
-          <Balancer>{t("title")}</Balancer>
+          <Balancer>{t("welcome.title")}</Balancer>
         </h1>
         <p className="skc-headline-medium">
-          <Balancer>{t("subtitle")}</Balancer>
+          <Balancer>{t("welcome.subtitle")}</Balancer>
         </p>
       </div>
 
@@ -92,7 +92,7 @@ const WelcomeToClubPage: NextPage<{
               src={club.logo_url}
               width={224}
               height={224}
-              alt={t("logoAlt")}
+              alt={t("welcome.logoAlt")}
               priority
               className={cn(
                 `z-10 aspect-square h-[14rem] w-auto object-contain text-on-background [grid-area:center]`,
@@ -137,7 +137,7 @@ const WelcomeToClubPage: NextPage<{
               ))}
               className={scheme?.button}
             >
-              {t("action.discord")}
+              {t("welcome.action.discord")}
             </TintedFilledButton>
           )}
           {lineURL && (
@@ -157,7 +157,7 @@ const WelcomeToClubPage: NextPage<{
               ))}
               className={scheme?.button}
             >
-              {t("action.line")}
+              {t("welcome.action.line")}
             </TintedFilledButton>
           )}
         </div>
@@ -167,7 +167,7 @@ const WelcomeToClubPage: NextPage<{
           disabled={!(manual || joined)}
           element={Link}
         >
-          {t("action.done")}
+          {t("welcome.action.done")}
         </Button>
       </div>
     </ClubJoinLayout>
