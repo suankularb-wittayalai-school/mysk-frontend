@@ -17,9 +17,10 @@ import {
   Snackbar,
   transition,
   useAnimationConfig,
+  Text,
 } from "@suankularb-components/react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { FC, useContext, useEffect, useState } from "react";
 
@@ -32,7 +33,7 @@ const MembersView: FC<{
   club: Club;
   requests: ClubJoinRequest[];
 }> = ({ club, requests }) => {
-  const { t } = useTranslation("manage", { keyPrefix: "club.members" });
+  const { t } = useTranslation("club/manage");
   const { t: tx } = useTranslation("common");
   const refreshProps = useRefreshProps();
 
@@ -54,9 +55,11 @@ const MembersView: FC<{
         className="flex flex-col gap-4"
       >
         <div className="flex flex-col-reverse gap-6 sm:flex-row sm:items-end">
-          <h2 id="header-awaiting" className="skc-headline-medium grow">
-            {t("awaiting.title")}
-          </h2>
+          <div id="header-awaiting">
+            <Text type="headline-medium" className="grow" element="h2">
+              {t("members.awaiting.title")}
+            </Text>
+          </div>
           <Button
             appearance="filled"
             icon={<MaterialIcon icon="refresh" />}
@@ -65,10 +68,12 @@ const MembersView: FC<{
               setSnackbar(<Snackbar>{tx("snackbar.refreshed")}</Snackbar>);
             }}
           >
-            {t("awaiting.action.refresh")}
+            {t("members.awaiting.action.refresh")}
           </Button>
         </div>
-        <p className="skc-body-medium">{t("awaiting.desc")}</p>
+        <Text type="body-medium" element="p">
+          {t("members.awaiting.desc")}
+        </Text>
 
         {/* TODO: Translation, don't get this pass PR check :skull: */}
         <Columns columns={3} element="ul">
@@ -79,13 +84,15 @@ const MembersView: FC<{
             )}
           >
             <CardHeader
-              title={t("manualCard.title")}
-              subtitle={t("manualCard.desc")}
+              title={t("members.manualCard.title")}
+              subtitle={t("members.manualCard.desc")}
             />
             <CardContent>
               <Actions align="full" className="!-mt-0">
                 <Link href={`/join/club/${club.id}/manual`}>
-                  <Button appearance="filled">{t("manualCard.button")}</Button>
+                  <Button appearance="filled">
+                    {t("members.manualCard.button")}
+                  </Button>
                 </Link>
               </Actions>
             </CardContent>
@@ -103,7 +110,7 @@ const MembersView: FC<{
           ) : (
             <>
               <EmptyState className="h-full min-h-[8.75rem] md:col-span-2">
-                {t("awaiting.empty")}
+                {t("members.awaiting.empty")}
               </EmptyState>
             </>
           )}
@@ -115,14 +122,15 @@ const MembersView: FC<{
         aria-labelledby="header-approved"
         className="flex flex-col gap-4"
       >
-        <motion.h2
+        <motion.div
           id="header-approved"
           layout
           transition={transition(duration.medium2, easing.standard)}
-          className="skc-headline-medium"
         >
-          {t("approved.title")}
-        </motion.h2>
+          <Text type="headline-medium" element="h2">
+            {t("members.approved.title")}
+          </Text>
+        </motion.div>
         {club.members.length ? (
           <Columns columns={3} element="ul">
             <LayoutGroup>
@@ -134,7 +142,9 @@ const MembersView: FC<{
             </LayoutGroup>
           </Columns>
         ) : (
-          <EmptyState className="h-[8.75rem]">{t("approved.empty")}</EmptyState>
+          <EmptyState className="h-[8.75rem]">
+            {t("members.approved.empty")}
+          </EmptyState>
         )}
       </section>
     </LayoutGroup>

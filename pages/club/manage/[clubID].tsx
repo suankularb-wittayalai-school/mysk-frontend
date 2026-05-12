@@ -26,7 +26,7 @@ import {
   NextApiResponse,
   NextPage,
 } from "next";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useState } from "react";
@@ -49,7 +49,7 @@ const ClubManagePage: NextPage<{
   requests: ClubJoinRequest[];
 }> = ({ club, statistics, requests }) => {
   const locale = useLocale();
-  const { t } = useTranslation("manage", { keyPrefix: "club" });
+  const { t } = useTranslation("club/manage");
   const { t: tx } = useTranslation("common");
 
   const [allowTabChange, setAllowTabChange] = useState(true);
@@ -61,11 +61,15 @@ const ClubManagePage: NextPage<{
   return (
     <>
       <Head>
-        <title>tabName</title>
+        <title>
+          {tx("tabName", {
+            tabName: t("club", { name: getLocaleString(club.name, locale) }),
+          })}
+        </title>
       </Head>
 
       <PageHeader parentURL="/club" className="mx-4 sm:mx-0">
-        {tx("club", { name: getLocaleString(club.name, locale) })}
+        {t("club", { name: getLocaleString(club.name, locale) })}
       </PageHeader>
 
       <ContentLayout>

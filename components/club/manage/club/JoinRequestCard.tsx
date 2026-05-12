@@ -20,7 +20,7 @@ import {
 import { formatDistanceToNowStrict } from "date-fns";
 import { th } from "date-fns/locale";
 import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { FC } from "react";
 
 /**
@@ -37,9 +37,7 @@ const JoinRequestCard: FC<{
   timerReady?: boolean;
 }> = ({ request, timerReady }) => {
   const locale = useLocale();
-  const { t } = useTranslation("manage", {
-    keyPrefix: "club.members.awaiting",
-  });
+  const { t } = useTranslation("club/manage");
   const refreshProps = useRefreshProps();
 
   const { duration, easing } = useAnimationConfig();
@@ -83,8 +81,8 @@ const JoinRequestCard: FC<{
         <CardHeader
           avatar={<Avatar />}
           title={[
-            getLocaleString(request.student.first_name, locale),
-            getLocaleString(request.student.last_name, locale),
+            "first",
+            "last",
           ].join(" ")}
           subtitle={
             timerReady ? (
@@ -116,14 +114,14 @@ const JoinRequestCard: FC<{
               dangerous
               onClick={() => handleRespondToRequest(request.id, "declined")}
             >
-              {t("action.reject")}
+              {t("members.awaiting.action.reject")}
             </Button>
             <Button
               appearance="outlined"
               icon={<MaterialIcon icon="done" />}
               onClick={() => handleRespondToRequest(request.id, "approved")}
             >
-              {t("action.approve")}
+              {t("members.awaiting.action.approve")}
             </Button>
           </Actions>
         </CardContent>

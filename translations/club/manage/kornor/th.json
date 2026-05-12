@@ -1,0 +1,37 @@
+{
+  "title": "แผงผู้ดูแลระบบคณะกรรมการนักเรียน",
+  "statistics": {
+    "title": "สถิติ",
+    "people": {
+      "totalStudents": "นักเรียนที่เข้าร่วม",
+      "totalMembers": "จำนวนสมาชิกชุมนุม",
+      "totalStaff": "จำนวน staff ที่เข้าร่วม"
+    },
+    "clubs": {
+      "totalClubs": "ชุมนุมที่เข้าร่วม",
+      "totalMembers": "จำนวนสมาชิกสูงสุด",
+      "totalStaff": "จำนวนสมาชิกเฉลี่ย"
+    }
+  },
+  "data": {
+    "action": {
+      "refresh": "โหลดอีกครั้ง",
+      "export": "ดาวน์โหลด CSV"
+    },
+    "table": {
+      "thead": {
+        "clubName": "ชื่อชุมนุม",
+        "memberCount": "จำนวนสมาชิก",
+        "discord": "ลิงก์เซิร์ฟเวอร์ Discord",
+        "line": "ลิงก์กลุ่ม Line"
+      },
+      "tbody": {
+        "memberCount": "{{count, number}} คน"
+      },
+      "rowAction": {
+        "copyToClipboard": "คัดลอกไปที่คลิปบอร์ด",
+        "openLink": "เปิดลิงก์"
+      }
+    }
+  }
+}

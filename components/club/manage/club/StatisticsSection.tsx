@@ -1,8 +1,10 @@
 // Imports
 import { ClubStatistics } from "@/utils/types/club";
 import { Columns } from "@suankularb-components/react";
-import { Trans, useTranslation } from "next-i18next";
+import Trans from "next-translate/Trans";
+import useTranslation from "next-translate/useTranslation";
 import { FC } from "react";
+import { Text } from "@suankularb-components/react";
 
 /**
  * Displays some cool statistics on a Club’s membership.
@@ -14,19 +16,18 @@ import { FC } from "react";
 const StatisticsSection: FC<{
   statistics: ClubStatistics;
 }> = ({ statistics }) => {
-  const { t } = useTranslation("manage", {
-    keyPrefix: "club.overview.statistics",
-  });
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("club/manage");
 
   return (
     <section
       aria-labelledby="header-statistics"
       className="flex flex-col gap-4"
     >
-      <h2 id="header-statistics" className="skc-headline-medium">
-        {t("title")}
-      </h2>
+      <div id="header-statistics">
+        <Text type="headline-medium" element="h2">
+          {t("overview.statistics.title")}
+        </Text>
+      </div>
 
       <Columns columns={2}>
         <div className="flex flex-col gap-4">
@@ -57,14 +58,16 @@ const StatisticsSection: FC<{
           </Card> */}
 
           {/* Member count */}
-          <p className="skc-title-large">
+          <Text type="title-large" element="p">
             <Trans
-              i18nKey="club.overview.statistics.members"
-              ns="manage"
-              count={statistics.count}
-              components={[<span key={0} className="skc-display-medium" />]}
+              i18nKey="overview.statistics.members"
+              ns="club/manage"
+              values={{ count: statistics.count }}
+              components={{
+                0: <Text type="display-medium">{null}</Text>,
+              }}
             />
-          </p>
+          </Text>
         </div>
 
         {/* Member count by Class */}
@@ -79,9 +82,13 @@ const StatisticsSection: FC<{
                 }%`,
               }}
             >
-              <span className="skc-title-medium whitespace-nowrap">
-                {tx("class", { number: classStatistics.class.number })}
-              </span>
+              <Text
+                type="title-medium"
+                className="whitespace-nowrap"
+                element="span"
+              >
+                {t("class", { number: classStatistics.class.number })}
+              </Text>
             </div>
           ))}
         </div>

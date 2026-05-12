@@ -1,0 +1,38 @@
+{
+  "title": "Kornor admin panel",
+  "statistics": {
+    "title": "Statistics",
+    "people": {
+      "totalStudents": "total student participation",
+      "totalMembers": "total club members",
+      "totalStaff": "total staff participation"
+    },
+    "clubs": {
+      "totalClubs": "total active clubs",
+      "totalMembers": "top member count",
+      "totalStaff": "average member count"
+    }
+  },
+  "data": {
+    "action": {
+      "refresh": "Refresh",
+      "export": "Export CSV"
+    },
+    "table": {
+      "thead": {
+        "clubName": "Club name",
+        "memberCount": "Member count",
+        "discord": "Discord server link",
+        "line": "Line group/OpenChat link"
+      },
+      "tbody": {
+        "memberCount_one": "{{count, number}} member",
+        "memberCount_other": "{{count, number}} members"
+      },
+      "rowAction": {
+        "copyToClipboard": "Copy to clipboard",
+        "openLink": "Open link"
+      }
+    }
+  }
+}

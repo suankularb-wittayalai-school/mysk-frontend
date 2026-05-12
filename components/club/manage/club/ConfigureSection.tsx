@@ -21,11 +21,12 @@ import {
   TextField,
   transition,
   useAnimationConfig,
+  Text,
 } from "@suankularb-components/react";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Trans, useTranslation } from "next-i18next";
-import { title } from "radash";
+import Trans from "next-translate/Trans";
+import useTranslation from "next-translate/useTranslation";
 import { FC, forwardRef, useContext } from "react";
 
 /**
@@ -34,7 +35,7 @@ import { FC, forwardRef, useContext } from "react";
  * @returns A `<div>`.
  */
 const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
-  const { t } = useTranslation("manage", { keyPrefix: "club.overview" });
+  const { t } = useTranslation("club/manage");
   const { t: tx } = useTranslation("common");
   const locale = useLocale();
   const refreshProps = useRefreshProps();
@@ -208,9 +209,11 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
         aria-labelledby="header-configure"
         className="flex flex-col gap-4"
       >
-        <h2 id="header-configure" className="skc-headline-medium">
-          {t("configure.title")}
-        </h2>
+        <div id="header-configure">
+          <Text type="headline-medium" element="h2">
+            {t("overview.configure.title")}
+          </Text>
+        </div>
         <Columns columns={3} className="!gap-y-12">
           <div className="flex flex-col gap-6">
             <ClubJoinPreview {...form} />
@@ -235,7 +238,7 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
                 >
                   <MaterialIcon icon="warning" />
                   <p className="mt-0.5 font-bold">
-                    {t("configure.contrastWarning")}
+                    {t("overview.configure.contrastWarning")}
                   </p>
                 </motion.div>
               )}
@@ -246,8 +249,8 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
             <div className="sm:mb-4 lg:mb-0">
               <TextField
                 appearance="outlined"
-                label={t("configure.form.name")}
-                helperMsg={t("configure.form.name_helper")}
+                label={t("overview.configure.form.name")}
+                helperMsg={t("overview.configure.form.name_helper")}
                 locale={locale}
                 disabled
                 {...formProps.nameTH}
@@ -255,8 +258,8 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
             </div>
             <TextField
               appearance="outlined"
-              label={t("configure.form.nameEN")}
-              helperMsg={t("configure.form.nameEN_helper")}
+              label={t("overview.configure.form.nameEN")}
+              helperMsg={t("overview.configure.form.nameEN_helper")}
               locale={locale}
               disabled
               {...formProps.nameEN}
@@ -264,11 +267,11 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
             <TextField
               appearance="outlined"
               behavior="multi-line"
-              label={t("configure.form.desc")}
+              label={t("overview.configure.form.desc")}
               helperMsg={
                 <Trans
-                  i18nKey="club.overview.configure.form.desc_helper"
-                  ns="manage"
+                  i18nKey="overview.configure.form.desc_helper"
+                  ns="club/manage"
                   components={{
                     a: <a href="/explore" target="_blank" className="link" />,
                   }}
@@ -280,8 +283,8 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
             <TextField
               appearance="outlined"
               behavior="multi-line"
-              label={t("configure.form.descEN")}
-              helperMsg={t("configure.form.descEN_helper")}
+              label={t("overview.configure.form.descEN")}
+              helperMsg={t("overview.configure.form.descEN_helper")}
               disabled
               {...formProps.descEN}
             />
@@ -319,18 +322,22 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
               aria-labelledby="header-contacts"
               className="-mt-6 flex flex-col gap-5 sm:col-span-2"
             >
-              <h2 id="header-contacts" className="skc-headline-small">
-                {t("contacts.title")}
-              </h2>
-              <p className="skc-body-medium -mt-3 mb-1">{t("contacts.desc")}</p>
+              <div id="header-contacts">
+                <Text type="headline-small" element="h2">
+                  {t("overview.contacts.title")}
+                </Text>
+              </div>
+              <Text type="body-medium" element="p" className="-mt-3 mb-1">
+                {t("overview.contacts.desc")}
+              </Text>
               <TextField
                 appearance="outlined"
-                label={t("contacts.form.line")}
+                label={t("overview.contacts.form.line")}
                 trailing={
                   <Button
                     appearance="text"
                     icon={<MaterialIcon icon="open_in_new" />}
-                    alt={t("contacts.action.openLink")}
+                    alt={t("overview.contacts.action.openLink")}
                     disabled={!(form.line && formValids.line)}
                     href={form.line}
                     // eslint-disable-next-line react/display-name
@@ -343,12 +350,12 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
               />
               <TextField
                 appearance="outlined"
-                label={t("contacts.form.discord")}
+                label={t("overview.contacts.form.discord")}
                 trailing={
                   <Button
                     appearance="text"
                     icon={<MaterialIcon icon="open_in_new" />}
-                    alt={t("contacts.action.openLink")}
+                    alt={t("overview.contacts.action.openLink")}
                     disabled={!(form.discord && formValids.discord)}
                     href={form.discord}
                     // eslint-disable-next-line react/display-name
@@ -376,14 +383,14 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
                   )
                 }
               >
-                {t("configure.action.openPublicView")}
+                {t("overview.configure.action.openPublicView")}
               </Button>
               <Button
                 appearance="filled"
                 disabled={!hasAccessibleContrast}
                 onClick={handleSubmit}
               >
-                {t("configure.action.save")}
+                {t("overview.configure.action.save")}
               </Button>
             </Actions>
           </Columns>
