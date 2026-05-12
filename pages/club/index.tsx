@@ -3,7 +3,7 @@ import PageHeader from "@/components/common/PageHeader";
 import HomeHeader from "@/components/club/home/HomeHeader";
 import JoinedClubsSection from "@/components/club/home/JoinedClubsSection";
 import UsefulLinksSection from "@/components/club/home/UsefulLinksSection";
-import { Club } from "@/utils/types/club";
+import { Club, ClubJoinRequest } from "@/utils/types/club";
 import { Student } from "@/utils/types/person";
 import { LangCode } from "@/utils/types/common";
 import {
@@ -26,6 +26,8 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import ManagingClubSection from "@/components/club/home/ManagingClubSection";
+import PendingClubSection from "@/components/club/home/PendingClubsSection";
 
 /**
  * The Home page.
@@ -42,8 +44,9 @@ const IndexPage: NextPage<{
   redirect?: string;
   redirectToClub?: Club;
   joinedClubs: Club[];
+  pendingClubs: Club[];
   managingClubs: Club[];
-}> = ({ user, redirectToClub, joinedClubs, managingClubs }) => {
+}> = ({ user, redirectToClub, joinedClubs, pendingClubs, managingClubs }) => {
   const { duration, easing } = useAnimationConfig();
   const router = useRouter();
   useEffect(() => {
@@ -65,9 +68,15 @@ const IndexPage: NextPage<{
             transition={transition(duration.medium2, easing.standardDecelerate)}
           >
             <Columns columns={3} className="!gap-y-6">
-              <HomeHeader user={user} managingClubs={managingClubs} />
+              <HomeHeader user={user} />
               <div className="col-span-2 contents flex-col gap-8 sm:flex">
                 <JoinedClubsSection clubs={joinedClubs} />
+                {pendingClubs.length > 0 && (
+                  <PendingClubSection pendingClubs={pendingClubs} />
+                )}
+                {managingClubs.length > 0 && (
+                  <ManagingClubSection managingClubs={managingClubs} />
+                )}
                 <UsefulLinksSection />
               </div>
             </Columns>
@@ -92,6 +101,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   let joinedClubs: Club[] = [];
   let managingClubs: Club[] = [];
+  let pendingClubs: Club[] = [];
   let user = null;
   if (mysk.user !== null) {
     const { data } = await getLoggedInPerson(supabase, mysk);
@@ -102,7 +112,9 @@ export const getServerSideProps: GetServerSideProps = async ({
     query: {
       fetch_level: "default",
       descendant_fetch_level: "compact",
-      filter: { data: { member_ids: [user?.id] } },
+      filter: {
+        data: { member_ids: [user?.id] },
+      },
     },
   });
 
@@ -112,6 +124,25 @@ export const getServerSideProps: GetServerSideProps = async ({
       members: [],
       staffs: [],
     }));
+
+  const { data: pendingRequestsData } = await mysk.fetch<ClubJoinRequest[]>(
+    "/v1/clubs/requests",
+    {
+      query: {
+        fetch_level: "default",
+        descendant_fetch_level: "compact",
+        filter: {
+          data: { membership_status: "pending", student_ids: [user?.id] },
+        },
+      },
+    },
+  );
+
+  if (pendingRequestsData) {
+    pendingClubs = pendingRequestsData.map((request) => {
+      return request.club;
+    });
+  }
 
   const { data: managingClubsData } = await mysk.fetch<Club[]>("/v1/clubs", {
     query: {
@@ -140,6 +171,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       redirect: query.redirect || null,
       redirectToClub,
       joinedClubs,
+      pendingClubs,
       managingClubs,
     },
   };
