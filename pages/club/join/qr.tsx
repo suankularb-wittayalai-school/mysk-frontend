@@ -11,7 +11,7 @@ import {
   MaterialIcon,
 } from "@suankularb-components/react";
 import { GetStaticProps, NextPage } from "next";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -25,7 +25,7 @@ import Balancer from "react-wrap-balancer";
  * @returns A Page.
  */
 const QRMethodPage: NextPage = () => {
-  const { t } = useTranslation("join", { keyPrefix: "qr" });
+  const { t } = useTranslation("club/join");
 
   const videoRef = useRef(null);
   const router = useRouter();
@@ -87,11 +87,11 @@ const QRMethodPage: NextPage = () => {
               )}
             >
               <p>
-                <Balancer>{t("scanner.permission")}</Balancer>
+                <Balancer>{t("qr.scanner.permission")}</Balancer>
               </p>
               <p>
                 <Balancer>
-                  {t("scanner.havingProblems")} {t("otherMethods")}
+                  {t("qr.scanner.havingProblems")} {t("qr.otherMethods")}
                 </Balancer>
               </p>
             </div>
@@ -108,31 +108,31 @@ const QRMethodPage: NextPage = () => {
             className="h-max text-primary"
           />
           <h1 className="skc-headline-medium">
-            <Balancer>{t("title")}</Balancer>
+            <Balancer>{t("qr.title")}</Balancer>
           </h1>
           <p className="skc-body-large">
-            <Balancer>{t("desc")}</Balancer>
+            <Balancer>{t("qr.desc")}</Balancer>
           </p>
           <p className="skc-body-large">
-            <Balancer>{t("otherMethods")}</Balancer>
+            <Balancer>{t("qr.otherMethods")}</Balancer>
           </p>
         </div>
       </div>
       <Actions align="full">
         <Button appearance="outlined" href="/club" element={Link}>
-          {t("supportDialog.action.close")}
+          {t("qr.supportDialog.action.close")}
         </Button>
       </Actions>
       <Dialog open={failOpen} onClose={() => setFailOpen(false)}>
-        <DialogHeader desc={t("supportDialog.desc")} />
+        <DialogHeader desc={t("qr.supportDialog.desc")} />
         <DialogContent className="mx-6">
           <p className="skc-body-medium text-on-surface-variant">
-            {t("supportDialog.tryAgain")}
+            {t("qr.supportDialog.tryAgain")}
           </p>
         </DialogContent>
         <Actions>
           <Button appearance="text" onClick={() => setFailOpen(false)}>
-            {t("supportDialog.action.close")}
+            {t("qr.supportDialog.action.close")}
           </Button>
         </Actions>
       </Dialog>

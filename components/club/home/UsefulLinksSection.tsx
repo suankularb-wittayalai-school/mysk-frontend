@@ -1,6 +1,7 @@
 // Imports
 import { Text } from "@suankularb-components/react";
-import { Trans, useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
+import Trans from "next-translate/Trans";
 import { usePlausible } from "next-plausible";
 import { FC } from "react";
 
@@ -10,7 +11,7 @@ import { FC } from "react";
  * @returns A `<section>`.
  */
 const UsefulLinksSection: FC = () => {
-  const { t } = useTranslation("index", { keyPrefix: "usefulLinks" });
+  const { t } = useTranslation("club");
 
   const plausible = usePlausible();
 
@@ -20,13 +21,13 @@ const UsefulLinksSection: FC = () => {
       className="flex flex-col gap-3"
     >
       <Text type="headline-large" element="h2">
-        {t("title")}
+        {t("usefulLinks.title")}
       </Text>
       <ul className="list-disc pl-6">
         {/* Email SKIso */}
         <li>
           <Trans
-            i18nKey="usefulLinks.skiso"
+            i18nKey="club:usefulLinks.skiso"
             ns="index"
             components={{
               a: (
@@ -47,7 +48,7 @@ const UsefulLinksSection: FC = () => {
         {/* Message Kornor */}
         <li>
           <Trans
-            i18nKey="usefulLinks.kornor"
+            i18nKey="club:usefulLinks.kornor"
             ns="index"
             components={{
               a: (

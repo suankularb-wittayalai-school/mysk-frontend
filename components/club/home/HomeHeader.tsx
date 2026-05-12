@@ -4,11 +4,11 @@ import { Button, MaterialIcon } from "@suankularb-components/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FC, useState } from "react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import TopUpQRDialog from "./TopUpQRDialog";
 
 const HomeHeader: FC<{ user: Student | Teacher }> = ({ user }) => {
-  const { t } = useTranslation("index", { keyPrefix: "header" });
+  const { t } = useTranslation("club");
   const router = useRouter();
 
   const [QRDialogOpen, setQRDialogOpen] = useState<boolean>(false);

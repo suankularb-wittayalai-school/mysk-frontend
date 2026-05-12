@@ -20,6 +20,7 @@ import {
   NextApiResponse,
   NextPage,
 } from "next";
+import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -47,6 +48,10 @@ const IndexPage: NextPage<{
   pendingClubs: Club[];
   managingClubs: Club[];
 }> = ({ user, redirectToClub, joinedClubs, pendingClubs, managingClubs }) => {
+
+  const { t } = useTranslation("club");
+  const { t: tx } = useTranslation("common");
+
   const { duration, easing } = useAnimationConfig();
   const router = useRouter();
   useEffect(() => {
@@ -56,9 +61,9 @@ const IndexPage: NextPage<{
   return (
     <>
       <Head>
-        <title>tabName</title>
+        <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
-      <PageHeader>header</PageHeader>
+      <PageHeader>{t("header")}</PageHeader>
       <ContentLayout className="!pb-8 [&>*]:px-4 sm:[&>*]:px-0">
         <AnimatePresence initial={false}>
           <motion.div
@@ -162,7 +167,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     ).data;
 
   return {
-    props: {
+    props: {      
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "index",

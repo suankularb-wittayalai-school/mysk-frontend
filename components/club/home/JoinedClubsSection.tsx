@@ -11,7 +11,7 @@ import {
   Columns,
   Text,
 } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
 import { FC, forwardRef } from "react";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -24,7 +24,7 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
  * @returns A `<section>`.
  */
 const JoinedClubsSection: FC<{ clubs: Club[] }> = ({ clubs }) => {
-  const { t } = useTranslation("index", { keyPrefix: "joinedClubs" });
+  const { t } = useTranslation("club");
   const { t: tx } = useTranslation("common");
   const locale = useLocale();
 
@@ -34,7 +34,7 @@ const JoinedClubsSection: FC<{ clubs: Club[] }> = ({ clubs }) => {
       className="flex flex-col gap-4"
     >
       <Text type="headline-large" element="h2">
-        {t("title")}
+        {t("joinedClubs.title")}
       </Text>
       {clubs.length !== 0 ? (
         <Columns
@@ -77,7 +77,7 @@ const JoinedClubsSection: FC<{ clubs: Club[] }> = ({ clubs }) => {
                       />
                     ) : undefined
                   }
-                  title={tx("club", {
+                  title={tx("joinedClubs.club", {
                     name: getLocaleString(club.name, locale),
                     ns: "common",
                   })}
@@ -120,7 +120,7 @@ const JoinedClubsSection: FC<{ clubs: Club[] }> = ({ clubs }) => {
           })}
         </Columns>
       ) : (
-        <EmptyState className="h-44">{t("empty")}</EmptyState>
+        <EmptyState className="h-44">{t("joinedClubs.empty")}</EmptyState>
       )}
     </section>
   );

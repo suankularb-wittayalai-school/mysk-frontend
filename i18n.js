@@ -173,6 +173,10 @@ module.exports = {
       "search/common",
       "search/students/detail",
     ],
+    // Club
+    "/club": ["club"],
+    "/club/explore": ["club/explore"],
+    "/club/join/qr": ["club/join"],
   },
   logBuild: false,
   interpolation: {

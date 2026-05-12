@@ -2,7 +2,7 @@
 import { ContentLayout } from "@suankularb-components/react";
 import PageHeader from "@/components/common/PageHeader";
 import { GetServerSideProps, NextPage } from "next";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { LangCode } from "@/utils/types/common";
@@ -16,15 +16,15 @@ import { LangCode } from "@/utils/types/common";
  * @returns A Page.
  */
 const ExplorePage: NextPage<{}> = ({}) => {
-  const { t } = useTranslation("explore");
+  const { t } = useTranslation("club/explore");
 
   return (
     <>
       <Head>
-        <title>tabName</title>
+        <title>{t("title")}</title>
       </Head>
       <PageHeader parentURL="/club" className="mx-4 sm:mx-0">
-        {t("title")}
+        {t("header")}
       </PageHeader>
       <ContentLayout>
         <></>

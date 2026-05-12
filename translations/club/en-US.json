@@ -1,0 +1,65 @@
+{
+  "title": "Club Registry",
+  "header": "Club Registry",
+  "loggedInAs": "Logged in as {{name}}",
+  "loggedOutJoinClub": "You're joining {{club}}",
+  "action": {
+    "logOut": "Log out",
+    "join": "Join a club",
+    "join_error": "You need a phone to join clubs. Alternatively, ask a staff member to manually let you in.",
+    "explore": "Explore Activity Day"
+  },
+  "accountNotReadyDialog": {
+    "title": "Your MySK account isn't ready yet",
+    "desc": "You need to have logged in to the main MySK app at least once to get your account set up.",
+    "logInAgain": "Once you're done, you can log in again here to continue.",
+    "action": {
+      "goToMySK": "Go to MySK"
+    }
+  },
+  "accountNotFoundDialog": {
+    "title": "Account not found",
+    "desc": "There might be a problem with your account. If you are a current student, please report this issue via <0>this form</0>.",
+    "action": {
+      "gotIt": "Got it"
+    }
+  },
+  "accountDialog": {
+    "title": "MySK account",
+    "metadata": "M.{{class}} No. {{classNo}}",
+    "credit": "Information provided by MySK",
+    "action": {
+      "logOut": "Log out",
+      "goToMySK": "Go to MySK",
+      "manageClub": "Manage club",
+      "kornor": "Open admin panel"
+    }
+  },
+  "selectDialog": {
+    "desc": "Select a club to go to…",
+    "action": {
+      "cancel": "Cancel"
+    }
+  },
+  "desc": "Use the same email and password you use in MySK to continue.",
+  "logIn": {
+    "title": "Log in with MySK",
+    "form": {
+      "email": "Email",
+      "password": "Password"
+    },
+    "action": {
+      "help": "Help",
+      "continue": "Continue"
+    }
+  },
+  "joinedClubs": {
+    "title": "Joined clubs",
+    "empty": "You'll see clubs that you have joined here."
+  },
+  "usefulLinks": {
+    "title": "Useful links",
+    "skiso": "<a>Email SK IT Solutions</a> for help on the app.",
+    "kornor": "<a>Message Kornor</a> for help on Activity Day."
+  }
+}
