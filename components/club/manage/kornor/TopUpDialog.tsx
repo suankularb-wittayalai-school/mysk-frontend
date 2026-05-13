@@ -1,0 +1,69 @@
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import useLocale from "@/utils/helpers/useLocale";
+import { Student } from "@/utils/types/person";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  TextField,
+} from "@suankularb-components/react";
+import Trans from "next-translate/Trans";
+import useTranslation from "next-translate/useTranslation";
+import { pick } from "radash";
+import { FC, useEffect, useState } from "react";
+
+const TopUpDialog: FC<{
+  open: boolean;
+  onClose: () => void;
+  user: Student;
+}> = ({ open, onClose, user }) => {
+  const [topUpValue, setTopUpValue] = useState<number | null>(0);
+  const { t } = useTranslation("club/manage/kornor");
+  const locale = useLocale();
+  useEffect(() => {});
+  return (
+    <Dialog open={open} width={580} onClose={onClose}>
+      <DialogHeader
+        title={t("topUpDialog.title")}
+        desc={
+          <Trans
+            i18nKey="club/manage/kornor:topUpDialog.description"
+            values={{
+              name: getLocaleName(
+                locale,
+                pick(user, ["first_name", "last_name"]),
+              ),
+            }}
+            components={[<u style={{ textDecoration: "underline" }} />]}
+          />
+        }
+      />
+      <DialogContent className="mx-6 mb-6 flex flex-col gap-6">
+        <TextField
+          appearance="filled"
+          value={topUpValue ? topUpValue.toString() : ""}
+          trailing={t("topUpDialog.amount.unit")}
+          onChange={(value) => {
+            setTopUpValue(value !== null ? Number(value) : null);
+          }}
+          label={t("topUpDialog.amount.title")}
+          inputAttr={{ type: "number" }}
+        />
+        <div className="flex flex-col gap-2">
+          <Button
+            appearance="filled"
+            disabled={topUpValue !== null && topUpValue <= 0}
+          >
+            {t("topUpDialog.action.topUp")}
+          </Button>
+          <Button appearance="outlined" onClick={onClose}>
+            {t("topUpDialog.action.close")}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default TopUpDialog;

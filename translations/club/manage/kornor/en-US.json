@@ -34,5 +34,11 @@
         "openLink": "Open link"
       }
     }
+  },
+  "topUpDialog": {
+    "title": "Top Up Quota to Join Clubs",
+    "description": "For <0>{{name}}</0>",
+    "amount": { "title": "Amount", "unit": "Club(s)" },
+    "action": { "topUp": "Top Up", "close": "Close" }
   }
 }

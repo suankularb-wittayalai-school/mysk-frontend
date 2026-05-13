@@ -42,13 +42,20 @@ import PendingClubSection from "@/components/club/home/PendingClubsSection";
  */
 const IndexPage: NextPage<{
   user: Student;
+  isKornor: boolean;
   redirect?: string;
   redirectToClub?: Club;
   joinedClubs: Club[];
   pendingClubs: Club[];
   managingClubs: Club[];
-}> = ({ user, redirectToClub, joinedClubs, pendingClubs, managingClubs }) => {
-
+}> = ({
+  user,
+  isKornor,
+  redirectToClub,
+  joinedClubs,
+  pendingClubs,
+  managingClubs,
+}) => {
   const { t } = useTranslation("club");
   const { t: tx } = useTranslation("common");
 
@@ -73,7 +80,7 @@ const IndexPage: NextPage<{
             transition={transition(duration.medium2, easing.standardDecelerate)}
           >
             <Columns columns={3} className="!gap-y-6">
-              <HomeHeader user={user} />
+              <HomeHeader user={user} isKornor={isKornor} />
               <div className="col-span-2 contents flex-col gap-8 sm:flex">
                 <JoinedClubsSection clubs={joinedClubs} />
                 {pendingClubs.length > 0 && (
@@ -108,9 +115,11 @@ export const getServerSideProps: GetServerSideProps = async ({
   let managingClubs: Club[] = [];
   let pendingClubs: Club[] = [];
   let user = null;
+  let isKornor = false;
   if (mysk.user !== null) {
     const { data } = await getLoggedInPerson(supabase, mysk);
     user = data;
+    isKornor = mysk.user.email == "kornor@sk.ac.th";
   }
 
   const { data: joinedClubsData } = await mysk.fetch<Club[]>("/v1/clubs", {
@@ -167,12 +176,13 @@ export const getServerSideProps: GetServerSideProps = async ({
     ).data;
 
   return {
-    props: {      
+    props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "index",
       ])),
       user,
+      isKornor,
       redirect: query.redirect || null,
       redirectToClub,
       joinedClubs,

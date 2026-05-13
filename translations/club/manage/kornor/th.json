@@ -33,5 +33,11 @@
         "openLink": "เปิดลิงก์"
       }
     }
+  },
+  "topUpDialog": {
+    "title": "เติมสิทธิ์การเข้าชุมนุม",
+    "description": "ให้ <0>{{name}}</0>",
+    "amount": { "title": "จำนวน", "unit": "ชุมนุม" },
+    "action": { "topUp": "เติม", "close": "ปิด" }
   }
 }
