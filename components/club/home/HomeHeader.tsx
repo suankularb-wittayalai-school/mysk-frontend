@@ -55,11 +55,9 @@ const HomeHeader: FC<{ user: Student | Teacher; isKornor: boolean }> = ({
                       values={{ number: 5 }}
                       components={{
                         0: (
-                          <Text
-                            type="headline-small"
-                            className="text-primary"
-                            children={null}
-                          />
+                          <Text type="headline-small" className="text-primary">
+                            {null}
+                          </Text>
                         ),
                       }}
                     />
