@@ -7,30 +7,20 @@
     "join_error": "You need a phone to join clubs. Alternatively, ask a staff member to manually let you in.",
     "explore": "Explore Activity Day"
   },
-  "accountNotReadyDialog": {
-    "title": "Your MySK account isn't ready yet",
-    "desc": "You need to have logged in to the main MySK app at least once to get your account set up.",
-    "logInAgain": "Once you're done, you can log in again here to continue.",
+  "topUp": {
+    "title": "You can join <0>{{number}}</0> more clubs",
+    "desc": "You can top up your quota at the Kornor booth",
+    "topUpDialog": {
+      "title": "Top Up Quota",
+      "desc": "Show this QR code to the staff",
+      "tip": "Please refresh the page after completing the top-up",
+      "action": {
+        "close": "Close"
+      }
+    },
     "action": {
-      "goToMySK": "Go to MySK"
-    }
-  },
-  "accountNotFoundDialog": {
-    "title": "Account not found",
-    "desc": "There might be a problem with your account. If you are a current student, please report this issue via <0>this form</0>.",
-    "action": {
-      "gotIt": "Got it"
-    }
-  },
-  "accountDialog": {
-    "title": "MySK account",
-    "metadata": "M.{{class}} No. {{classNo}}",
-    "credit": "Information provided by MySK",
-    "action": {
-      "logOut": "Log out",
-      "goToMySK": "Go to MySK",
-      "manageClub": "Manage club",
-      "kornor": "Open admin panel"
+      "openTopUp": "Top Up Quota",
+      "openAdmin": "Admin Panel"
     }
   },
   "selectDialog": {

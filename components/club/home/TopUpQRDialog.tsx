@@ -10,17 +10,20 @@ import { FC } from "react";
 import QRCode from "react-qr-code";
 import TextGlance from "@/components/home/glance/TextGlance";
 import { MaterialIcon } from "@suankularb-components/react";
+import useTranslation from "next-translate/useTranslation";
 
 const TopUpQRDialog: FC<{
   open: boolean;
   onClose: () => void;
   user: Student | Teacher;
 }> = ({ open, onClose, user }) => {
+  const { t } = useTranslation("club");
+
   return (
     <Dialog open={open} width={580} onClose={onClose}>
       <DialogHeader
-        title={"Top Up (Placeholder)"}
-        desc={"Show this QR code to the staff (Placeholder)"}
+        title={t("topUp.topUpDialog.title")}
+        desc={t("topUp.topUpDialog.desc")}
       />
       <DialogContent className="flex flex-col items-center gap-4">
         <div className="grid w-full grid-cols-1 grid-rows-1 place-items-center">
@@ -53,12 +56,12 @@ const TopUpQRDialog: FC<{
           visible
           className={`w-3/4 !border-0 !bg-error-container *:!text-on-error-container`}
         >
-          Please refresh the page after topping up (Placeholder)
+          {t("topUp.topUpDialog.tip")}
         </TextGlance>
       </DialogContent>
       <Actions align="right">
         <Button appearance="text" onClick={onClose}>
-          Close (Placeholder)
+          {t("topUp.topUpDialog.action.close")}
         </Button>
       </Actions>
     </Dialog>
