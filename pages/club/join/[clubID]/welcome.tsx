@@ -22,7 +22,6 @@ import {
   NextPage,
 } from "next";
 import useTranslation from "next-translate/useTranslation";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
 import Image from "next/image";
 import Link from "next/link";
@@ -207,7 +206,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, ["common", "join"])),
       club,
       scheme,
     },

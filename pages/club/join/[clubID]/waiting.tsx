@@ -18,7 +18,6 @@ import {
 } from "@suankularb-components/react";
 import { GetServerSideProps, NextPage } from "next";
 import useTranslation from "next-translate/useTranslation";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
@@ -192,7 +191,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, ["common", "join"])),
       club,
       scheme,
     },

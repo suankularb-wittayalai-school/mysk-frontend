@@ -1,7 +1,6 @@
 // Imports
 import PreJoinLayout from "@/components/club/join/PreJoinLayout";
 import cn from "@/utils/helpers/cn";
-import { LangCode } from "@/utils/types/common";
 import {
   Actions,
   Button,
@@ -11,9 +10,8 @@ import {
   MaterialIcon,
   Text,
 } from "@suankularb-components/react";
-import { GetStaticProps, NextPage } from "next";
+import { NextPage } from "next";
 import useTranslation from "next-translate/useTranslation";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import QrScanner from "qr-scanner";
@@ -140,9 +138,5 @@ const QRMethodPage: NextPage = () => {
     </PreJoinLayout>
   );
 };
-
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: await serverSideTranslations(locale as LangCode, ["common", "join"]),
-});
 
 export default QRMethodPage;
