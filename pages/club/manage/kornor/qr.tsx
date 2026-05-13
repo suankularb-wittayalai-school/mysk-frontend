@@ -33,6 +33,7 @@ const KornorTopUpQRPage: NextPage = () => {
   const supabase = useSupabaseClient();
 
   const videoRef = useRef(null);
+  const qrScannerRef = useRef<QrScanner | null>(null);
 
   // Starts the video camera feed.
   useEffect(() => {
@@ -47,7 +48,7 @@ const KornorTopUpQRPage: NextPage = () => {
           maxScansPerSecond: 5,
         },
       );
-
+      qrScannerRef.current = qrScanner;
       qrScanner.start();
 
       return () => {
@@ -74,6 +75,17 @@ const KornorTopUpQRPage: NextPage = () => {
       setFailOpen(true);
     }
   };
+
+  useEffect(() => {
+    if (qrScannerRef.current) {
+      if (topUpDialogOpen || failOpen) {
+        qrScannerRef.current.pause();
+      } else {
+        qrScannerRef.current.start();
+      }
+    }
+  }, [topUpDialogOpen, failOpen]);
+
   return (
     <>
       <PreJoinLayout tabName={t("qr.tabName")}>
