@@ -2,7 +2,7 @@
 import useLocale from "@/utils/helpers/useLocale";
 import { Club } from "@/utils/types/club";
 import { Card, CardHeader, Columns, Text } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
 import { FC } from "react";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -11,15 +11,14 @@ import { useRouter } from "next/router";
 /**
  * A list of joined Clubs with links to Discord and Line.
  *
- * @param clubs An array of joined Clubs.
+ * @param managingClubs An array of Clubs to manage.
  *
  * @returns A `<section>`.
  */
 const ManagingClubSection: FC<{ managingClubs: Club[] }> = ({
   managingClubs,
 }) => {
-  const { t } = useTranslation("index", { keyPrefix: "joinedClubs" });
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("club");
   const locale = useLocale();
   const router = useRouter();
 
@@ -29,7 +28,7 @@ const ManagingClubSection: FC<{ managingClubs: Club[] }> = ({
       className="flex flex-col gap-4"
     >
       <Text type="headline-large" element="h2">
-        Managing Club (Placeholder)
+        {t("manageClubs.title")}
       </Text>
       <Columns
         columns={2}
@@ -59,9 +58,8 @@ const ManagingClubSection: FC<{ managingClubs: Club[] }> = ({
                   <Image src={club.logo_url} alt="" width={40} height={40} />
                 ) : undefined
               }
-              title={tx("club", {
+              title={t("manageClubs.club", {
                 name: getLocaleString(club.name, locale),
-                ns: "common",
               })}
               className="grow"
             />

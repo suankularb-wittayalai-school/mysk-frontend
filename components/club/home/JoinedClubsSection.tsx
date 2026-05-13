@@ -25,7 +25,6 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
  */
 const JoinedClubsSection: FC<{ clubs: Club[] }> = ({ clubs }) => {
   const { t } = useTranslation("club");
-  const { t: tx } = useTranslation("common");
   const locale = useLocale();
 
   return (
@@ -77,9 +76,8 @@ const JoinedClubsSection: FC<{ clubs: Club[] }> = ({ clubs }) => {
                       />
                     ) : undefined
                   }
-                  title={tx("joinedClubs.club", {
+                  title={t("joinedClubs.club", {
                     name: getLocaleString(club.name, locale),
-                    ns: "common",
                   })}
                   className="grow"
                 />

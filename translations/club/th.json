@@ -1,8 +1,6 @@
 {
   "title": "Club Registry",
   "header": "Club Registry",
-  "loggedInAs": "{{name}} เข้าสู่ระบบแล้ว",
-  "loggedOutJoinClub": "คุณกำลังเข้าร่วม{{club}}",
   "action": {
     "logOut": "ออกจากระบบ",
     "join": "เข้าร่วมชุมนุม",
@@ -55,7 +53,12 @@
   },
   "joinedClubs": {
     "title": "เป็นสมาชิกแล้ว",
+    "club": "{{name}}",
     "empty": "คุณจะเห็นชุมนุมที่คุณเข้าร่วมแล้วที่นี่"
+  },
+    "manageClubs": {
+    "title": "ชมรมที่ดูแล",
+    "club": "{{name}}"
   },
   "usefulLinks": {
     "title": "ลิงก์น่ารู้",
