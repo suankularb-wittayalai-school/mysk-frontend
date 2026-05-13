@@ -55,7 +55,9 @@ const ManagingClubSection: FC<{ managingClubs: Club[] }> = ({
             <CardHeader
               avatar={
                 club.logo_url ? (
-                  <Image src={club.logo_url} alt="" width={40} height={40} />
+                  <div className="h-10 w-10">
+                    <Image src={club.logo_url} alt="" width={40} height={40} />
+                  </div>
                 ) : undefined
               }
               title={t("manageClubs.club", {
