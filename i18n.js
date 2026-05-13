@@ -177,7 +177,7 @@ module.exports = {
     "/club": ["club"],
     "/club/explore": ["club/explore"],
     "/club/join/qr": ["club/join"],
-    "rgx:/club/join/[clubID](/(manual|waiting|welcome))?$": ["club/join"],
+    "rgx:/club/join/\\[clubID\\](/(manual|waiting|welcome))?$": ["club/join"],
     "/club/manage/[clubID]": ["club/manage"],
   },
   logBuild: false,
