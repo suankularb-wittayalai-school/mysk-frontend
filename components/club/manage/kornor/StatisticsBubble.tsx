@@ -1,6 +1,7 @@
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
 import { FC } from "react";
+import { Text } from "@suankularb-components/react";
 
 const StatisticsBubble: FC<{
   size: "large" | "small";
@@ -10,6 +11,21 @@ const StatisticsBubble: FC<{
   label: string;
 }> = ({ size, color, count, percentage, label }) => {
   const locale = useLocale();
+
+  const DisplaySize = {
+    large: "display-large",
+    small: "display-small",
+  } as const;
+    const TitleSize = {
+    large: "title-large",
+    small: "title-small",
+  } as const;
+  const TextColor = {
+    primary: `text-primary`,
+    secondary: `text-secondary`,
+    tertiary: `text-tertiary`,
+    surface: `text-on-surface-variant`,
+  } as const;
 
   return (
     <section
@@ -28,47 +44,20 @@ const StatisticsBubble: FC<{
       )}
     >
       {/* Big number */}
-      <span
-        className={
-          {
-            large: `skc-display-large`,
-            small: `skc-display-small`,
-          }[size]
-        }
-      >
-        {count.toLocaleString(locale)} {/* Percentage */}
+      <Text type={DisplaySize[size]} element="span">
+        {/* Percentage */}
+        {count.toLocaleString(locale)}
         {percentage !== undefined && (
-          <span
-            className={cn(
-              {
-                large: `skc-title-large`,
-                small: `skc-title-medium`,
-              }[size],
-              {
-                primary: `text-primary`,
-                secondary: `text-secondary`,
-                tertiary: `text-tertiary`,
-                surface: `text-on-surface-variant`,
-              }[color],
-            )}
-          >
+          <Text type={TitleSize[size]} className={TextColor[color]}>
             ({percentage.toLocaleString(locale)}%)
-          </span>
+          </Text>
         )}
-      </span>
+      </Text>
 
       {/* Label */}
-      <span
-        className={cn(
-          `whitespace-nowrap`,
-          {
-            large: `skc-title-large`,
-            small: `skc-title-medium`,
-          }[size],
-        )}
-      >
+      <Text type={TitleSize[size]} className={`whitespace-nowrap`}>
         {label}
-      </span>
+      </Text>
     </section>
   );
 };

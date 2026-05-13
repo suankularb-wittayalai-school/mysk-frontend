@@ -35,7 +35,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { GetServerSideProps, NextPage } from "next";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { sum } from "radash";
 import { useContext, useState } from "react";
@@ -58,7 +58,7 @@ const KornorManagePage: NextPage<{
   };
   clubs: Club[];
 }> = ({ statistics, clubs }) => {
-  const { t } = useTranslation("manage", { keyPrefix: "kornor" });
+    const { t } = useTranslation("club/manage/kornor");
   const { t: tx } = useTranslation("common");
   const locale = useLocale();
   const refreshProps = useRefreshProps();
@@ -77,14 +77,14 @@ const KornorManagePage: NextPage<{
     // We use the `name` property
     columnHelper.accessor((row) => getLocaleString(row.name, locale), {
       id: "clubName",
-      header: t("data.table.thead.clubName"),
+      header: () => t("data.table.thead.clubName"),
     }),
 
     // Member count
     // We use the length of `members`
     columnHelper.accessor((row) => row.member_count, {
       id: "memberCount",
-      header: t("data.table.thead.memberCount"),
+      header: () => t("data.table.thead.memberCount"),
       cell: (props) =>
         t("data.table.tbody.memberCount", { count: props.getValue() }),
     }),
@@ -96,7 +96,7 @@ const KornorManagePage: NextPage<{
         row.contacts.find((contact) => contact.type === "discord")?.value,
       {
         id: "discord",
-        header: t("data.table.thead.discord"),
+        header: () => t("data.table.thead.discord"),
         cell: (props) =>
           props.getValue() ? (
             <>
@@ -113,7 +113,7 @@ const KornorManagePage: NextPage<{
       (row) => row.contacts.find((contact) => contact.type === "line")?.value,
       {
         id: "lineOpenChat",
-        header: t("data.table.thead.line"),
+        header: () => t("data.table.thead.line"),
         cell: (props) =>
           props.getValue() ? (
             <>
@@ -252,7 +252,7 @@ const KornorManagePage: NextPage<{
           </Actions>
 
           {/* Club list */}
-          <DataTable className="[&>.skc-data-table-content]:!overflow-x-auto">
+          <DataTable className="overflow-x-auto">
             <DataTableSearch locale={locale} onChange={setGlobalFilter} />
             <DataTableContent contentWidth={960}>
               <DataTableHead
