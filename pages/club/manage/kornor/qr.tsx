@@ -11,10 +11,11 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
+  Text,
   MaterialIcon,
 } from "@suankularb-components/react";
 import { GetStaticProps, NextPage } from "next";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import QrScanner from "qr-scanner";
@@ -24,7 +25,7 @@ import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 const KornorTopUpQRPage: NextPage = () => {
-  const { t } = useTranslation("join", { keyPrefix: "qr" });
+  const { t } = useTranslation("club/manage/kornor");
   const [topUpDialogOpen, setTopUpDialogOpen] = useState(false);
   const [scannedUser, setScannedUser] = useState<Student>();
 
@@ -75,7 +76,7 @@ const KornorTopUpQRPage: NextPage = () => {
   };
   return (
     <>
-      <PreJoinLayout tabName={"tabName"}>
+      <PreJoinLayout tabName={t("qr.tabName")}>
         <div
           className={cn(
             `flex h-full flex-col items-center justify-center gap-3 text-center`,
@@ -97,7 +98,7 @@ const KornorTopUpQRPage: NextPage = () => {
                 )}
               >
                 <p>
-                  <Balancer>{t("scanner.permission")}</Balancer>
+                  <Balancer>{t("qr.scanner.permission")}</Balancer>
                 </p>
               </div>
             </div>
@@ -112,26 +113,29 @@ const KornorTopUpQRPage: NextPage = () => {
               size={48}
               className="h-max text-primary"
             />
-            <p className="skc-body-large">
-              <Balancer>{t("desc")}</Balancer>
-            </p>
+            <Text type="headline-medium" element="h1" className="text-center">
+              {t("qr.title")}
+            </Text>
+            <Text type="body-large" element="p" className="text-center">
+              {t("qr.desc")}
+            </Text>
           </div>
         </div>
         <Actions align="full">
           <Button appearance="outlined" href="/club" element={Link}>
-            {t("supportDialog.action.close")}
+            {t("qr.supportDialog.action.close")}
           </Button>
         </Actions>
         <Dialog open={failOpen} onClose={() => setFailOpen(false)}>
-          <DialogHeader desc={t("supportDialog.desc")} />
+          <DialogHeader desc={t("qr.supportDialog.desc")} />
           <DialogContent className="mx-6">
             <p className="skc-body-medium text-on-surface-variant">
-              {t("supportDialog.tryAgain")}
+              {t("qr.supportDialog.tryAgain")}
             </p>
           </DialogContent>
           <Actions>
             <Button appearance="text" onClick={() => setFailOpen(false)}>
-              {t("supportDialog.action.close")}
+              {t("qr.supportDialog.action.close")}
             </Button>
           </Actions>
         </Dialog>
