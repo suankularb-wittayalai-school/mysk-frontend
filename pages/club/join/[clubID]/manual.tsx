@@ -17,7 +17,7 @@ import {
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import useTranslation from "next-translate/useTranslation";
 import { usePlausible } from "next-plausible";
 import Image from "next/image";
@@ -26,6 +26,7 @@ import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
+import { CustomPage } from "@/utils/types/common";
 
 /**
  * A manual way to join a Club. Uses the Student's email.
@@ -36,7 +37,7 @@ import useLocale from "@/utils/helpers/useLocale";
  * @returns A Page.
  */
 
-const RequestClubJoinPage: NextPage<{
+const RequestClubJoinPage: CustomPage<{
   club: Club;
   scheme?: CalculatedClubScheme | null;
 }> = ({ club, scheme }) => {

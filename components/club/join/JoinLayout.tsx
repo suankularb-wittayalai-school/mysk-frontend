@@ -13,7 +13,7 @@ const JoinLayout: StylableFC<{
     <Head>{tabName && <title>{tabName}</title>}</Head>
     <ContentLayout
       className={cn(
-        `flex h-[calc(100vh-80px)] !p-10 supports-[height:100dvh]:h-[calc(100dvh-80px)] sm:h-full sm:supports-[height:100dvh]:h-[calc(100dvh)] [&>*:not(.skc-scrim)]:max-w-lg [&>*]:mx-auto [&>*]:w-full`,
+        `flex h-screen !p-10 supports-[height:100dvh]:h-[100dvh] [&>*:not(.skc-scrim)]:max-w-lg [&>*]:mx-auto [&>*]:w-full mb-[-80px]`,
         className,
       )}
       style={style}

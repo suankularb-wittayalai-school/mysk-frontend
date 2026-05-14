@@ -12,13 +12,14 @@ import {
   Text,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import useTranslation from "next-translate/useTranslation";
 import { usePlausible } from "next-plausible";
 import Image from "next/image";
 import Link from "next/link";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
+import { CustomPage } from "@/utils/types/common";
 
 /**
  * The result of touching the NFC in a Club booth. Prompt the user to join the
@@ -29,7 +30,7 @@ import useLocale from "@/utils/helpers/useLocale";
  *
  * @returns A Page.
  */
-const RequestClubJoinPage: NextPage<{
+const RequestClubJoinPage: CustomPage<{
   club: Club;
   scheme?: CalculatedClubScheme | null;
 }> = ({ club, scheme }) => {
@@ -113,6 +114,8 @@ const RequestClubJoinPage: NextPage<{
     </ClubJoinLayout>
   );
 };
+
+RequestClubJoinPage.navType = "hidden";
 
 export const getStaticPaths: GetStaticPaths = async () => ({
   paths: [],

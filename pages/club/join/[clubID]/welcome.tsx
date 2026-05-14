@@ -14,7 +14,7 @@ import {
   Text,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import useTranslation from "next-translate/useTranslation";
 import { usePlausible } from "next-plausible";
 import Image from "next/image";
@@ -25,6 +25,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import DiscordLogo from "@/public/images/social/discord.svg";
 import LineLogo from "@/public/images/social/line.svg";
+import { CustomPage } from "@/utils/types/common";
 
 /**
  * Shown when the user is accepted into a club.
@@ -36,7 +37,7 @@ import LineLogo from "@/public/images/social/line.svg";
  *
  * @returns A Page.
  */
-const WelcomeToClubPage: NextPage<{
+const WelcomeToClubPage: CustomPage<{
   club: Club;
   scheme?: CalculatedClubScheme;
 }> = ({ club, scheme }) => {
@@ -174,6 +175,8 @@ const WelcomeToClubPage: NextPage<{
     </ClubJoinLayout>
   );
 };
+
+WelcomeToClubPage.navType = "hidden";
 
 export const getStaticPaths: GetStaticPaths = async () => ({
   paths: [],

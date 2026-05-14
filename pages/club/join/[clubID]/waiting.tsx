@@ -15,11 +15,12 @@ import {
   Snackbar,
   Text,
 } from "@suankularb-components/react";
-import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
+import { CustomPage } from "@/utils/types/common";
 
 /**
  * Indicate to the user that the Club staff has recieved their request and
@@ -30,7 +31,7 @@ import { useContext, useEffect, useState } from "react";
  *
  * @returns A Page.
  */
-const WaitingClubJoinPage: NextPage<{
+const WaitingClubJoinPage: CustomPage<{
   club: Club;
   scheme?: CalculatedClubScheme;
 }> = ({ club, scheme }) => {
@@ -163,6 +164,8 @@ const WaitingClubJoinPage: NextPage<{
     </ClubJoinLayout>
   );
 };
+
+WaitingClubJoinPage.navType = "hidden";
 
 export const getStaticPaths: GetStaticPaths = async () => ({
   paths: [],
