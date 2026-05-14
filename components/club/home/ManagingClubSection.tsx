@@ -1,7 +1,13 @@
 // Imports
 import useLocale from "@/utils/helpers/useLocale";
 import { Club } from "@/utils/types/club";
-import { Card, CardHeader, Columns, Text } from "@suankularb-components/react";
+import {
+  Card,
+  CardHeader,
+  Columns,
+  MaterialIcon,
+  Text,
+} from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
 import { FC } from "react";
@@ -40,6 +46,8 @@ const ManagingClubSection: FC<{ managingClubs: Club[] }> = ({
             key={club.id}
             appearance="outlined"
             direction="row"
+            stateLayerEffect
+            shadowEffect
             className="min-h-[5rem] items-center"
             style={{
               backgroundImage:
@@ -65,6 +73,7 @@ const ManagingClubSection: FC<{ managingClubs: Club[] }> = ({
               })}
               className="grow"
             />
+            <MaterialIcon icon="chevron_right" className="mx-5" />
           </Card>
         ))}
       </Columns>

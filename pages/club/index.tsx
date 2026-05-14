@@ -82,12 +82,12 @@ const IndexPage: NextPage<{
             <Columns columns={3} className="!gap-y-6">
               <HomeHeader user={user} isKornor={isKornor} />
               <div className="col-span-2 contents flex-col gap-8 sm:flex">
+                {managingClubs.length > 0 && (
+                  <ManagingClubSection managingClubs={managingClubs} />
+                )}
                 <JoinedClubsSection clubs={joinedClubs} />
                 {pendingClubs.length > 0 && (
                   <PendingClubSection pendingClubs={pendingClubs} />
-                )}
-                {managingClubs.length > 0 && (
-                  <ManagingClubSection managingClubs={managingClubs} />
                 )}
                 <UsefulLinksSection />
               </div>
