@@ -10,7 +10,7 @@ import {
   MaterialIcon,
   Text,
 } from "@suankularb-components/react";
-import { NextPage } from "next";
+import { GetStaticProps, NextPage } from "next";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -137,6 +137,12 @@ const QRMethodPage: NextPage = () => {
       </Dialog>
     </PreJoinLayout>
   );
+};
+
+export const getStaticProps: GetStaticProps = async () => {
+  return {
+    props: {},
+  };
 };
 
 export default QRMethodPage;
