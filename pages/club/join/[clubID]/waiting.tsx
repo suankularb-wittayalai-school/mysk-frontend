@@ -142,8 +142,7 @@ const WaitingClubJoinPage: NextPage<{
       tabName={t("waiting.tabName")}
     >
       {/* <CandlesBackground /> */}
-      <div className="h-10" />
-      <div className="flex flex-col items-center gap-3 text-center">
+      <div className="flex grow flex-col items-center justify-center gap-3 text-center">
         <MaterialIcon
           icon="pending"
           size={48}

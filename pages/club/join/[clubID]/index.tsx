@@ -59,7 +59,7 @@ const RequestClubJoinPage: NextPage<{
               delay: duration.medium2,
             }}
             className={cn(
-              `!-mx-10 grid !w-screen !max-w-none grow place-content-center`,
+              `grid w-full !max-w-none grow place-content-center`,
             )}
           >
             <Image
@@ -76,7 +76,7 @@ const RequestClubJoinPage: NextPage<{
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="z-10 grid max-w-md grid-cols-1 gap-3">
+      <div className="z-10 grid max-w-lg grid-cols-1 gap-3">
         <TintedFilledButton
           tinted={Boolean(club.accent_color)}
           onClick={() =>

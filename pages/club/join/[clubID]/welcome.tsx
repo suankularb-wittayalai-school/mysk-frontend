@@ -84,7 +84,7 @@ const WelcomeToClubPage: NextPage<{
               delay: duration.medium2,
             }}
             className={cn(
-              `!-mx-10 grid !w-screen !max-w-none grow place-items-center text-primary [grid-template-areas:'center']`,
+              `grid !w-full !max-w-none grow place-items-center text-primary [grid-template-areas:'center']`,
             )}
           >
             <Image
@@ -117,7 +117,7 @@ const WelcomeToClubPage: NextPage<{
         )}
       </AnimatePresence>
 
-      <div className="z-10 grid max-w-md grid-cols-1 gap-6">
+      <div className="z-10 grid max-w-lg grid-cols-1 gap-6">
         <div className="grid grid-cols-1 gap-2">
           {discordURL && (
             <TintedFilledButton

@@ -144,7 +144,7 @@ const RequestClubJoinPage: NextPage<{
         />
         <p>{t("manual.email.desc")}</p>
       </div>
-      <div className="z-10 grid max-w-md grid-cols-1 gap-3">
+      <div className="z-10 grid max-w-lg grid-cols-1 gap-3">
         <TintedFilledButton
           tinted={Boolean(club.accent_color)}
           onClick={() => {
