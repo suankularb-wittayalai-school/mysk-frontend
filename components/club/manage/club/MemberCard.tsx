@@ -36,8 +36,8 @@ const MemberCard: FC<{ member: Student }> = ({ member }) => {
         <CardHeader
           avatar={<Avatar />}
           title={[
-            getLocaleString(member.first_name, locale),
-            getLocaleString(member.last_name, locale),
+            getLocaleString((member as any).person.first_name, locale),
+            getLocaleString((member as any).person.last_name, locale),
           ].join(" ")}
           subtitle={
             member.classroom

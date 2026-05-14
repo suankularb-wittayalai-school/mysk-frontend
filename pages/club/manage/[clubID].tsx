@@ -7,7 +7,6 @@ import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import { Database } from "@/utils/types/supabase";
 import { Club, ClubJoinRequest, ClubStatistics } from "@/utils/types/club";
-import { LangCode } from "@/utils/types/common";
 import { Student, Teacher } from "@/utils/types/person";
 import {
   ContentLayout,
@@ -27,11 +26,11 @@ import {
   NextPage,
 } from "next";
 import useTranslation from "next-translate/useTranslation";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useState } from "react";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
+import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 
 /**
  * Allows Club Managers to view and configure information about their club—
@@ -160,7 +159,6 @@ const ClubManagePage: NextPage<{
 };
 
 export const getServerSideProps: GetServerSideProps = async ({
-  locale,
   params,
   req,
   res,
@@ -177,7 +175,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (!params?.clubID) return { notFound: true };
   const { data: club, error } = await mysk.fetch<Club>(
     `/v1/clubs/${params.clubID}`,
-    { query: { fetch_level: "detailed", descendant_fetch_level: "compact" } },
+    { query: { fetch_level: "detailed", descendant_fetch_level: "default" } },
   );
   if (error?.code === 404) return { notFound: true };
 
@@ -202,12 +200,14 @@ export const getServerSideProps: GetServerSideProps = async ({
     byClass: [],
   };
 
+  // Fetch Requests
+  /* invalid_permission with descendant_fetch_level: "default", can only get student id*/
   const { data: requests } = await mysk.fetch<ClubJoinRequest[]>(
     "/v1/clubs/requests",
     {
       query: {
         fetch_level: "default",
-        descendant_fetch_level: "compact",
+        descendant_fetch_level: "id_only",
         filter: {
           data: {
             club_ids: [params?.clubID],
@@ -218,15 +218,33 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     },
   );
+
+  const studentIDs = requests?.map((requests) => requests.student.id) ?? []
+  const { data: students } = await getStudentsByIDs(supabase, mysk, studentIDs);
+
+  const studentMap = new Map(
+    students?.map((student) => [student.id, student]) ?? [],
+  );
+
+  const requestsWithStudents =
+    requests?.map((request) => {
+      const detailedStudent = studentMap.get(request.student.id);
+
+      return {
+        ...request,
+        student: {
+          id: detailedStudent?.id,
+          first_name: detailedStudent?.first_name,
+          last_name: detailedStudent?.last_name,
+        },
+      };
+    }) ?? [];
+
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "manage",
-      ])),
       club,
       statistics,
-      requests,
+      requests: requestsWithStudents,
     },
   };
 };

@@ -88,10 +88,10 @@ const WaitingClubJoinPage: NextPage<{
     // Check the Request status and redirect accordingly
     switch (request.membership_status) {
       case "approved":
-        router.push(`/join/club/${club.id}/welcome`);
+        router.push(`/club/join/${club.id}/welcome`);
         break;
       case "declined":
-        router.replace("/");
+        router.replace("/club");
     }
   }
 
