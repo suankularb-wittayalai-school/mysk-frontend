@@ -84,7 +84,7 @@ const WelcomeToClubPage: NextPage<{
               delay: duration.medium2,
             }}
             className={cn(
-              `!-mx-10 grid aspect-square !w-screen !max-w-none grow place-items-center text-primary [grid-template-areas:'center']`,
+              `!-mx-10 grid !w-screen !max-w-none grow place-items-center text-primary [grid-template-areas:'center']`,
             )}
           >
             <Image
