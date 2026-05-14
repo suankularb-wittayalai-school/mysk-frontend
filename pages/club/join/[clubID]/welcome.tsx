@@ -7,7 +7,6 @@ import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import cn from "@/utils/helpers/cn";
 import calculateLuminance from "@/utils/helpers/club/calculateLuminance";
 import { CalculatedClubScheme, Club } from "@/utils/types/club";
-import { LangCode } from "@/utils/types/common";
 import {
   Button,
   transition,
@@ -15,12 +14,7 @@ import {
   Text,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  GetServerSideProps,
-  GetStaticPaths,
-  GetStaticProps,
-  NextPage,
-} from "next";
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import useTranslation from "next-translate/useTranslation";
 import { usePlausible } from "next-plausible";
 import Image from "next/image";
@@ -181,12 +175,13 @@ const WelcomeToClubPage: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-  req,
-}) => {
-  const mysk = await createMySKClient(req);
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const mysk = await createMySKClient();
 
   // Fetch Club
   const { data: club, error } = await mysk.fetch<Club>(
@@ -205,6 +200,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     };
 
   return {
+    revalidate: 300,
     props: {
       club,
       scheme,

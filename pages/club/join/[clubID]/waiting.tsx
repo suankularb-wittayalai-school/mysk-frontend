@@ -8,15 +8,14 @@ import logError from "@/utils/helpers/logError";
 import calculateLuminance from "@/utils/helpers/club/calculateLuminance";
 import { Club, ClubJoinRequest } from "@/utils/types/club";
 import { CalculatedClubScheme } from "@/utils/types/club";
-import { LangCode } from "@/utils/types/common";
 import {
   Actions,
   Button,
   MaterialIcon,
   Snackbar,
-  Text
+  Text,
 } from "@suankularb-components/react";
-import { GetServerSideProps, NextPage } from "next";
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -153,7 +152,7 @@ const WaitingClubJoinPage: NextPage<{
         <Text type="headline-medium" element="h1" className="text-center">
           {t("waiting.title")}
         </Text>
-        <Text type="body-medium" element="p" className="text-center mt-7">
+        <Text type="body-medium" element="p" className="mt-7 text-center">
           {t("waiting.desc")}
         </Text>
       </div>
@@ -166,12 +165,13 @@ const WaitingClubJoinPage: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-  req,
-}) => {
-  const mysk = await createMySKClient(req);
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const mysk = await createMySKClient();
 
   // Fetch Club
   const { data: club, error } = await mysk.fetch<Club>(
@@ -190,6 +190,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     };
 
   return {
+    revalidate: 300,
     props: {
       club,
       scheme,
