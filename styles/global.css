@@ -133,11 +133,6 @@
   background-color: var(--surface-container-high) !important;
 }
 
-.skc-page-header__minimized .skc-page-header__blobs {
-  overflow: visible !important;
-  overflow-clip-margin: unset !important;
-}
-
 /* Inset card support
   Temporary until the SK Components library is updated.
   PS: this is not good code. Please don’t learn from this.
