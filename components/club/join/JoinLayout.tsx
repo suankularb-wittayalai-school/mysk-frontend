@@ -1,6 +1,7 @@
 // Imports
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
+import { ContentLayout } from "@suankularb-components/react";
 import Head from "next/head";
 import { ReactNode } from "react";
 
@@ -10,15 +11,15 @@ const JoinLayout: StylableFC<{
 }> = ({ children, tabName, className, style }) => (
   <>
     <Head>{tabName && <title>{tabName}</title>}</Head>
-    <main
+    <ContentLayout
       className={cn(
-        `relative flex h-screen flex-col justify-between gap-3 overflow-x-hidden p-10 text-on-background supports-[height:100dvh]:h-[100dvh] [&>*:not(.skc-scrim)]:max-w-lg [&>*]:mx-auto [&>*]:w-full`,
+        `flex h-screen !p-10 supports-[height:100dvh]:h-[100dvh] [&>*:not(.skc-scrim)]:max-w-lg [&>*]:mx-auto [&>*]:w-full mb-[-80px]`,
         className,
       )}
       style={style}
     >
       {children}
-    </main>
+    </ContentLayout>
   </>
 );
 

@@ -10,7 +10,7 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { FC } from "react";
 
 /**
@@ -22,7 +22,7 @@ import { FC } from "react";
  */
 const MemberCard: FC<{ member: Student }> = ({ member }) => {
   const locale = useLocale();
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("club/manage");
 
   const { duration, easing } = useAnimationConfig();
 
@@ -36,12 +36,12 @@ const MemberCard: FC<{ member: Student }> = ({ member }) => {
         <CardHeader
           avatar={<Avatar />}
           title={[
-            getLocaleString(member.first_name, locale),
-            getLocaleString(member.last_name, locale),
+            getLocaleString((member as any).person.first_name, locale),
+            getLocaleString((member as any).person.last_name, locale),
           ].join(" ")}
           subtitle={
             member.classroom
-              ? tx("class", { number: member.classroom.number, ns: "common" })
+              ? t("class", { number: member.classroom.number })
               : undefined
           }
           className="[font-feature-settings:'tnum'on,'lnum'on]"

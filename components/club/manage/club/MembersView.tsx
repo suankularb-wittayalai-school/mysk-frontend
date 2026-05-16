@@ -75,7 +75,6 @@ const MembersView: FC<{
           {t("members.awaiting.desc")}
         </Text>
 
-        {/* TODO: Translation, don't get this pass PR check :skull: */}
         <Columns columns={3} element="ul">
           <Card
             appearance="filled"
@@ -89,7 +88,7 @@ const MembersView: FC<{
             />
             <CardContent>
               <Actions align="full" className="!-mt-0">
-                <Link href={`/join/club/${club.id}/manual`}>
+                <Link href={`/club/join/${club.id}/manual`}>
                   <Button appearance="filled">
                     {t("members.manualCard.button")}
                   </Button>

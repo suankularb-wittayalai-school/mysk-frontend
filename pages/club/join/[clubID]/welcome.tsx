@@ -7,7 +7,6 @@ import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import cn from "@/utils/helpers/cn";
 import calculateLuminance from "@/utils/helpers/club/calculateLuminance";
 import { CalculatedClubScheme, Club } from "@/utils/types/club";
-import { LangCode } from "@/utils/types/common";
 import {
   Button,
   transition,
@@ -15,14 +14,8 @@ import {
   Text,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  GetServerSideProps,
-  GetStaticPaths,
-  GetStaticProps,
-  NextPage,
-} from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import useTranslation from "next-translate/useTranslation";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
 import Image from "next/image";
 import Link from "next/link";
@@ -32,6 +25,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import DiscordLogo from "@/public/images/social/discord.svg";
 import LineLogo from "@/public/images/social/line.svg";
+import { CustomPage } from "@/utils/types/common";
 
 /**
  * Shown when the user is accepted into a club.
@@ -43,7 +37,7 @@ import LineLogo from "@/public/images/social/line.svg";
  *
  * @returns A Page.
  */
-const WelcomeToClubPage: NextPage<{
+const WelcomeToClubPage: CustomPage<{
   club: Club;
   scheme?: CalculatedClubScheme;
 }> = ({ club, scheme }) => {
@@ -91,7 +85,7 @@ const WelcomeToClubPage: NextPage<{
               delay: duration.medium2,
             }}
             className={cn(
-              `!-mx-10 grid aspect-square !w-screen !max-w-none grow place-items-center text-primary [grid-template-areas:'center']`,
+              `grid !w-full !max-w-none grow place-items-center text-primary [grid-template-areas:'center']`,
             )}
           >
             <Image
@@ -124,7 +118,7 @@ const WelcomeToClubPage: NextPage<{
         )}
       </AnimatePresence>
 
-      <div className="z-10 grid max-w-md grid-cols-1 gap-6">
+      <div className="z-10 grid max-w-lg grid-cols-1 gap-6">
         <div className="grid grid-cols-1 gap-2">
           {discordURL && (
             <TintedFilledButton
@@ -182,12 +176,15 @@ const WelcomeToClubPage: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-  req,
-}) => {
-  const mysk = await createMySKClient(req);
+WelcomeToClubPage.navType = "hidden";
+
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const mysk = await createMySKClient();
 
   // Fetch Club
   const { data: club, error } = await mysk.fetch<Club>(
@@ -206,8 +203,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     };
 
   return {
+    revalidate: 300,
     props: {
-      ...(await serverSideTranslations(locale as LangCode, ["common", "join"])),
       club,
       scheme,
     },

@@ -6,10 +6,12 @@ import {
   CardContent,
   CardHeader,
   MaterialIcon,
+  Text,
 } from "@suankularb-components/react";
 import Link from "next/link";
 import { FC, useState } from "react";
 import useTranslation from "next-translate/useTranslation";
+import Trans from "next-translate/Trans";
 import TopUpQRDialog from "@/components/club/home/TopUpQRDialog";
 
 const HomeHeader: FC<{ user: Student | Teacher; isKornor: boolean }> = ({
@@ -31,7 +33,7 @@ const HomeHeader: FC<{ user: Student | Teacher; isKornor: boolean }> = ({
                 href="/club/manage/kornor/qr"
                 element={Link}
               >
-                Top Up
+                {t("topUp.action.openTopUp")}
               </Button>
               <Button
                 appearance="tonal"
@@ -39,7 +41,7 @@ const HomeHeader: FC<{ user: Student | Teacher; isKornor: boolean }> = ({
                 href="/club/manage/kornor"
                 element={Link}
               >
-                Admin Pannel
+                {t("topUp.action.openAdmin")}
               </Button>
             </>
           ) : (
@@ -47,19 +49,27 @@ const HomeHeader: FC<{ user: Student | Teacher; isKornor: boolean }> = ({
               <Card appearance="filled">
                 <CardHeader
                   title={
-                    <p>
-                      You can join <span className="text-primary">5</span> more
-                      clubs.
-                    </p>
+                    <Trans
+                      i18nKey="topUp.title"
+                      ns="club"
+                      values={{ number: 5 }}
+                      components={{
+                        0: (
+                          <Text type="headline-small" className="text-primary">
+                            {null}
+                          </Text>
+                        ),
+                      }}
+                    />
                   }
                 />
                 <CardContent>
-                  <span>You can top up at the Kornor's booth</span>
+                  <Text type="body-medium">{t("topUp.desc")}</Text>
                   <Button
                     appearance="tonal"
                     onClick={() => setQRDialogOpen(true)}
                   >
-                    Top up
+                    {t("topUp.action.openTopUp")}
                   </Button>
                 </CardContent>
               </Card>

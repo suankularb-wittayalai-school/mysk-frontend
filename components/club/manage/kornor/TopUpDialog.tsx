@@ -35,7 +35,9 @@ const TopUpDialog: FC<{
                 pick(user, ["first_name", "last_name"]),
               ),
             }}
-            components={[<u style={{ textDecoration: "underline" }} />]}
+            components={[
+              <u key="underline" style={{ textDecoration: "underline" }} />,
+            ]}
           />
         }
       />

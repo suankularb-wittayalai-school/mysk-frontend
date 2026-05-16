@@ -7,7 +7,6 @@ import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import calculateLuminance from "@/utils/helpers/club/calculateLuminance";
 import logError from "@/utils/helpers/logError";
 import { CalculatedClubScheme, Club } from "@/utils/types/club";
-import { LangCode } from "@/utils/types/common";
 import {
   Button,
   Snackbar,
@@ -18,9 +17,8 @@ import {
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { GetServerSideProps, NextPage } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import useTranslation from "next-translate/useTranslation";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePlausible } from "next-plausible";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,6 +26,7 @@ import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
+import { CustomPage } from "@/utils/types/common";
 
 /**
  * A manual way to join a Club. Uses the Student's email.
@@ -38,7 +37,7 @@ import useLocale from "@/utils/helpers/useLocale";
  * @returns A Page.
  */
 
-const RequestClubJoinPage: NextPage<{
+const RequestClubJoinPage: CustomPage<{
   club: Club;
   scheme?: CalculatedClubScheme | null;
 }> = ({ club, scheme }) => {
@@ -146,7 +145,7 @@ const RequestClubJoinPage: NextPage<{
         />
         <p>{t("manual.email.desc")}</p>
       </div>
-      <div className="z-10 grid max-w-md grid-cols-1 gap-3">
+      <div className="z-10 grid max-w-lg grid-cols-1 gap-3">
         <TintedFilledButton
           tinted={Boolean(club.accent_color)}
           onClick={() => {
@@ -183,12 +182,13 @@ const RequestClubJoinPage: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-  req,
-}) => {
-  const mysk = await createMySKClient(req);
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const mysk = await createMySKClient();
 
   // Fetch Clubs
   const { data: club, error } = await mysk.fetch<Club>(
@@ -212,8 +212,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     };
 
   return {
+    revalidate: 300,
     props: {
-      ...(await serverSideTranslations(locale as LangCode, ["common", "join"])),
       club,
       scheme,
     },

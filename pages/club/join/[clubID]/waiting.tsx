@@ -8,20 +8,19 @@ import logError from "@/utils/helpers/logError";
 import calculateLuminance from "@/utils/helpers/club/calculateLuminance";
 import { Club, ClubJoinRequest } from "@/utils/types/club";
 import { CalculatedClubScheme } from "@/utils/types/club";
-import { LangCode } from "@/utils/types/common";
 import {
   Actions,
   Button,
   MaterialIcon,
   Snackbar,
-  Text
+  Text,
 } from "@suankularb-components/react";
-import { GetServerSideProps, NextPage } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import useTranslation from "next-translate/useTranslation";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
+import { CustomPage } from "@/utils/types/common";
 
 /**
  * Indicate to the user that the Club staff has recieved their request and
@@ -32,7 +31,7 @@ import { useContext, useEffect, useState } from "react";
  *
  * @returns A Page.
  */
-const WaitingClubJoinPage: NextPage<{
+const WaitingClubJoinPage: CustomPage<{
   club: Club;
   scheme?: CalculatedClubScheme;
 }> = ({ club, scheme }) => {
@@ -90,10 +89,10 @@ const WaitingClubJoinPage: NextPage<{
     // Check the Request status and redirect accordingly
     switch (request.membership_status) {
       case "approved":
-        router.push(`/join/club/${club.id}/welcome`);
+        router.push(`/club/join/${club.id}/welcome`);
         break;
       case "declined":
-        router.replace("/");
+        router.replace("/club");
     }
   }
 
@@ -144,8 +143,7 @@ const WaitingClubJoinPage: NextPage<{
       tabName={t("waiting.tabName")}
     >
       {/* <CandlesBackground /> */}
-      <div className="h-10" />
-      <div className="flex flex-col items-center gap-3 text-center">
+      <div className="flex grow flex-col items-center justify-center gap-3 text-center">
         <MaterialIcon
           icon="pending"
           size={48}
@@ -154,7 +152,7 @@ const WaitingClubJoinPage: NextPage<{
         <Text type="headline-medium" element="h1" className="text-center">
           {t("waiting.title")}
         </Text>
-        <Text type="body-medium" element="p" className="text-center mt-7">
+        <Text type="body-medium" element="p" className="mt-7 text-center">
           {t("waiting.desc")}
         </Text>
       </div>
@@ -167,12 +165,15 @@ const WaitingClubJoinPage: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-  req,
-}) => {
-  const mysk = await createMySKClient(req);
+WaitingClubJoinPage.navType = "hidden";
+
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const mysk = await createMySKClient();
 
   // Fetch Club
   const { data: club, error } = await mysk.fetch<Club>(
@@ -191,8 +192,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     };
 
   return {
+    revalidate: 300,
     props: {
-      ...(await serverSideTranslations(locale as LangCode, ["common", "join"])),
       club,
       scheme,
     },

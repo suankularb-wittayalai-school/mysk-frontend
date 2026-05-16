@@ -1,7 +1,7 @@
 // Imports
 import PreJoinLayout from "@/components/club/join/PreJoinLayout";
 import cn from "@/utils/helpers/cn";
-import { LangCode } from "@/utils/types/common";
+import { CustomPage } from "@/utils/types/common";
 import {
   Actions,
   Button,
@@ -11,9 +11,8 @@ import {
   MaterialIcon,
   Text,
 } from "@suankularb-components/react";
-import { GetStaticProps, NextPage } from "next";
+import { GetStaticProps } from "next";
 import useTranslation from "next-translate/useTranslation";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import QrScanner from "qr-scanner";
@@ -25,7 +24,7 @@ import Balancer from "react-wrap-balancer";
  *
  * @returns A Page.
  */
-const QRMethodPage: NextPage = () => {
+const QRMethodPage: CustomPage = () => {
   const { t } = useTranslation("club/join");
 
   const videoRef = useRef(null);
@@ -141,8 +140,12 @@ const QRMethodPage: NextPage = () => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: await serverSideTranslations(locale as LangCode, ["common", "join"]),
-});
+QRMethodPage.navType = "hidden";
+
+export const getStaticProps: GetStaticProps = async () => {
+  return {
+    props: {},
+  };
+};
 
 export default QRMethodPage;

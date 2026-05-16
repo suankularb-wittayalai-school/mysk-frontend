@@ -25,7 +25,6 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
  */
 const JoinedClubsSection: FC<{ clubs: Club[] }> = ({ clubs }) => {
   const { t } = useTranslation("club");
-  const { t: tx } = useTranslation("common");
   const locale = useLocale();
 
   return (
@@ -69,17 +68,18 @@ const JoinedClubsSection: FC<{ clubs: Club[] }> = ({ clubs }) => {
                 <CardHeader
                   avatar={
                     club.logo_url ? (
-                      <Image
-                        src={club.logo_url}
-                        alt=""
-                        width={40}
-                        height={40}
-                      />
+                      <div className="h-10 w-10">
+                        <Image
+                          src={club.logo_url}
+                          alt=""
+                          width={40}
+                          height={40}
+                        />
+                      </div>
                     ) : undefined
                   }
-                  title={tx("joinedClubs.club", {
+                  title={t("joinedClubs.club", {
                     name: getLocaleString(club.name, locale),
-                    ns: "common",
                   })}
                   className="grow"
                 />
