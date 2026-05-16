@@ -22,6 +22,7 @@ import {
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
+import router from "next/router";
 import { FC, useContext, useEffect, useState } from "react";
 
 /**
@@ -50,36 +51,36 @@ const MembersView: FC<{
 
   return (
     <LayoutGroup>
+      {/* Members Section */}
       <section
-        aria-labelledby="header-awaiting"
+        aria-labelledby="header-approved"
         className="flex flex-col gap-4"
       >
-        <div className="flex flex-col-reverse gap-6 sm:flex-row sm:items-end">
-          <div id="header-awaiting">
-            <Text type="headline-medium" className="grow" element="h2">
-              {t("members.awaiting.title")}
+        <motion.div
+          id="header-approved"
+          layout
+          transition={transition(duration.medium2, easing.standard)}
+          className="flex flex-col justify-between gap-4 md:flex-row md:gap-32"
+        >
+          <div className="flex shrink-0 flex-col gap-6">
+            <Text type="headline-medium" element="h2">
+              {t("members.approved.title")}
             </Text>
+            <Button
+              appearance="filled"
+              icon={<MaterialIcon icon="refresh" />}
+              onClick={async () => {
+                await refreshProps();
+                setSnackbar(<Snackbar>{tx("snackbar.refreshed")}</Snackbar>);
+              }}
+            >
+              {t("members.awaiting.action.refresh")}
+            </Button>
           </div>
-          <Button
-            appearance="filled"
-            icon={<MaterialIcon icon="refresh" />}
-            onClick={async () => {
-              await refreshProps();
-              setSnackbar(<Snackbar>{tx("snackbar.refreshed")}</Snackbar>);
-            }}
-          >
-            {t("members.awaiting.action.refresh")}
-          </Button>
-        </div>
-        <Text type="body-medium" element="p">
-          {t("members.awaiting.desc")}
-        </Text>
-
-        <Columns columns={3} element="ul">
           <Card
             appearance="filled"
             className={cn(
-              `h-full w-full !bg-primary-container !text-on-primary-container`,
+              `col-span-2 h-full w-full !bg-primary-container !text-on-primary-container`,
             )}
           >
             <CardHeader
@@ -96,39 +97,6 @@ const MembersView: FC<{
               </Actions>
             </CardContent>
           </Card>
-          {requests?.length ? (
-            <AnimatePresence initial={false}>
-              {requests.map((request) => (
-                <JoinRequestCard
-                  key={request.id}
-                  request={request}
-                  timerReady={now !== undefined}
-                />
-              ))}
-            </AnimatePresence>
-          ) : (
-            <>
-              <EmptyState className="h-full min-h-[8.75rem] md:col-span-2">
-                {t("members.awaiting.empty")}
-              </EmptyState>
-            </>
-          )}
-        </Columns>
-      </section>
-
-      {/* Approved Members Section */}
-      <section
-        aria-labelledby="header-approved"
-        className="flex flex-col gap-4"
-      >
-        <motion.div
-          id="header-approved"
-          layout
-          transition={transition(duration.medium2, easing.standard)}
-        >
-          <Text type="headline-medium" element="h2">
-            {t("members.approved.title")}
-          </Text>
         </motion.div>
         {club.members.length ? (
           <Columns columns={3} element="ul">
