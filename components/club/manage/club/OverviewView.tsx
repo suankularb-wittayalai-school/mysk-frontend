@@ -22,7 +22,7 @@ const OverviewView: FC<{
 
   return (
     <>
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-col gap-12 sm:gap-0">
         <ConfigureSection club={club} />
         <StatisticsSection statistics={statistics} />
       </div>
