@@ -151,6 +151,18 @@ const Layout: FC<
             href="/classes"
             element={Link}
           />
+          {mysk.user &&
+            [UserRole.student, UserRole.organization].includes(
+              mysk.user.role,
+            ) && (
+              <NavDrawerItem
+                icon={<MaterialIcon icon="hub" />}
+                label={t("navigation.clubs")}
+                selected={router.pathname.startsWith("/club")}
+                href="/club"
+                element={Link}
+              />
+            )}
           <NavDrawerItem
             icon={<MaterialIcon icon="search" />}
             label={t("navigation.search")}
@@ -318,6 +330,18 @@ const Layout: FC<
             href="/classes"
             element={Link}
           />
+          {mysk.user &&
+            [UserRole.student, UserRole.organization].includes(
+              mysk.user.role,
+            ) && (
+              <NavBarItem
+                icon={<MaterialIcon icon="hub" />}
+                label={t("navigation.clubs")}
+                selected={router.pathname.startsWith("/club")}
+                href="/clubs"
+                element={Link}
+              />
+            )}
           <NavBarItem
             icon={<MaterialIcon icon="search" />}
             label={t("navigation.search")}
@@ -325,13 +349,14 @@ const Layout: FC<
             href="/search"
             element={Link}
           />
-          <NavBarItem
+          {/* Removed to make space for the /club page */}
+          {/* <NavBarItem
             icon={<MaterialIcon icon="newsmode" />}
             label={t("navigation.news")}
             selected={router.pathname.startsWith("/news")}
             href="/news"
             element={Link}
-          />
+          /> */}
           {(!mysk.user ||
             [UserRole.student, UserRole.teacher].includes(mysk.user.role)) && (
             <NavBarItem
