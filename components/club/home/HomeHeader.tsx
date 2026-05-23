@@ -18,9 +18,12 @@ import cn from "@/utils/helpers/cn";
 const HomeHeader: FC<{
   user: Student | Teacher;
   isKornor: boolean;
-  clubQuotas: number;
-}> = ({ user, isKornor, clubQuotas }) => {
+  quota: number;
+  fetchQuota: () => void;
+}> = ({ user, isKornor, quota, fetchQuota }) => {
   const { t } = useTranslation("club");
+
+  const disabled = quota <= 0;
 
   const [QRDialogOpen, setQRDialogOpen] = useState<boolean>(false);
   return (
@@ -54,13 +57,13 @@ const HomeHeader: FC<{
                     <Trans
                       i18nKey="topUp.title"
                       ns="club"
-                      values={{ number: clubQuotas }}
+                      values={{ number: quota }}
                       components={{
                         0: (
                           <Text
                             type="headline-small"
                             className={cn(
-                              `${clubQuotas <= 0 ? "text-error" : "text-primary"}`,
+                              `${disabled ? "text-error" : "text-primary"}`,
                             )}
                           >
                             {null}
@@ -84,7 +87,8 @@ const HomeHeader: FC<{
                 appearance="filled"
                 icon={<MaterialIcon icon="qr_code_scanner" />}
                 href="/club/join/qr"
-                disabled={clubQuotas <= 0}
+                element={disabled ? undefined : Link}
+                disabled={disabled}
               >
                 {t("action.join")}
               </Button>
@@ -105,6 +109,7 @@ const HomeHeader: FC<{
           open={true}
           onClose={() => {
             setQRDialogOpen(false);
+            fetchQuota();
           }}
           user={user}
         />

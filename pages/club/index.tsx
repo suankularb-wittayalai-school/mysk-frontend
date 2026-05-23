@@ -4,7 +4,7 @@ import HomeHeader from "@/components/club/home/HomeHeader";
 import JoinedClubsSection from "@/components/club/home/JoinedClubsSection";
 import UsefulLinksSection from "@/components/club/home/UsefulLinksSection";
 import { Club } from "@/utils/types/club";
-import { Student } from "@/utils/types/person";
+import { Student, UserRole } from "@/utils/types/person";
 import { LangCode } from "@/utils/types/common";
 import {
   Columns,
@@ -24,10 +24,11 @@ import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import ManagingClubSection from "@/components/club/home/ManagingClubSection";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 
 /**
  * The Home page.
@@ -39,30 +40,45 @@ import ManagingClubSection from "@/components/club/home/ManagingClubSection";
  *
  * @returns A Page.
  */
-const IndexPage: NextPage<{
+const ClubPage: NextPage<{
   user: Student;
   isKornor: boolean;
   redirect?: string;
   redirectToClub?: Club;
   joinedClubs: Club[];
   managingClubs: Club[];
-  clubQuotas: number;
+  maxClubQuotas: number;
 }> = ({
   user,
   isKornor,
   redirectToClub,
   joinedClubs,
   managingClubs,
-  clubQuotas,
+  maxClubQuotas,
 }) => {
+  const mysk = useMySKClient();
+
   const { t } = useTranslation("club");
   const { t: tx } = useTranslation("common");
 
   const { duration, easing } = useAnimationConfig();
   const router = useRouter();
+
+  const [quota, setQuota] = useState<number>(
+    (maxClubQuotas ?? 0) - joinedClubs.length,
+  );
+
   useEffect(() => {
     if (redirectToClub) router.replace(`/join/club/${redirectToClub.id}`);
   }, [redirectToClub]);
+
+  /* Refetch after close topUp dialog */
+  const fetchQuota = async () => {
+    const { data: quota } = await mysk.fetch<number>(
+      `/v1/students/${user?.id}/clubs/quota`,
+    );
+    setQuota((quota ?? 0) - joinedClubs.length);
+  };
 
   return (
     <>
@@ -80,7 +96,8 @@ const IndexPage: NextPage<{
           >
             <Columns columns={3} className="!gap-y-6">
               <HomeHeader
-                clubQuotas={clubQuotas}
+                quota={quota}
+                fetchQuota={fetchQuota}
                 user={user}
                 isKornor={isKornor}
               />
@@ -113,13 +130,16 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   let joinedClubs: Club[] = [];
   let managingClubs: Club[] = [];
+  let redirectToClub: Club | null = null;
   let user = null;
   let isKornor = false;
+
   if (mysk.user !== null) {
     const { data } = await getLoggedInPerson(supabase, mysk);
     user = data;
-    isKornor = mysk.user.email == "kornor@sk.ac.th";
   }
+
+  if (mysk.user?.role === UserRole.organization) isKornor = true;
 
   const { data: joinedClubsData } = await mysk.fetch<Club[]>("/v1/clubs", {
     query: {
@@ -147,7 +167,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   if (managingClubsData) managingClubs = managingClubsData;
 
-  let redirectToClub: Club | null = null;
   if (query.club)
     redirectToClub = (
       await mysk.fetch<Club>(`/v1/clubs/${query.club}`, {
@@ -159,7 +178,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { data: maxClubQuotas } = await mysk.fetch<number>(
     `/v1/students/${user?.id}/clubs/quota`,
   );
-  const clubQuotas = (maxClubQuotas ?? 0) - joinedClubs.length;
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
@@ -172,9 +191,9 @@ export const getServerSideProps: GetServerSideProps = async ({
       redirectToClub,
       joinedClubs,
       managingClubs,
-      clubQuotas,
+      maxClubQuotas,
     },
   };
 };
 
-export default IndexPage;
+export default ClubPage;

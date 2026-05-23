@@ -38,8 +38,14 @@
   "topUpDialog": {
     "title": "Top Up Quota to Join Clubs",
     "description": "For <0>{{name}}</0>",
-    "amount": { "title": "Amount", "unit": "Club(s)" },
-    "action": { "topUp": "Top Up", "close": "Close" }
+    "amount": {
+      "title": "Amount",
+      "unit": "Club(s)"
+    },
+    "action": {
+      "topUp": "Top Up",
+      "close": "Close"
+    }
   },
   "qr": {
     "title": "Scan QR code to top up quota to join clubs",
@@ -54,6 +60,9 @@
       "action": {
         "close": "Close"
       }
+    },
+    "snackbar": {
+      "success": "Quota Added"
     }
   }
 }
