@@ -338,7 +338,7 @@ const Layout: FC<
                 icon={<MaterialIcon icon="hub" />}
                 label={t("navigation.clubs")}
                 selected={router.pathname.startsWith("/club")}
-                href="/clubs"
+                href="/club"
                 element={Link}
               />
             )}
