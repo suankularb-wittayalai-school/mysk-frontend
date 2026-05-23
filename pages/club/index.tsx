@@ -46,7 +46,15 @@ const IndexPage: NextPage<{
   redirectToClub?: Club;
   joinedClubs: Club[];
   managingClubs: Club[];
-}> = ({ user, isKornor, redirectToClub, joinedClubs, managingClubs }) => {
+  clubQuotas: number;
+}> = ({
+  user,
+  isKornor,
+  redirectToClub,
+  joinedClubs,
+  managingClubs,
+  clubQuotas,
+}) => {
   const { t } = useTranslation("club");
   const { t: tx } = useTranslation("common");
 
@@ -71,7 +79,11 @@ const IndexPage: NextPage<{
             transition={transition(duration.medium2, easing.standardDecelerate)}
           >
             <Columns columns={3} className="!gap-y-6">
-              <HomeHeader user={user} isKornor={isKornor} />
+              <HomeHeader
+                clubQuotas={clubQuotas}
+                user={user}
+                isKornor={isKornor}
+              />
               <div className="col-span-2 contents flex-col gap-8 sm:flex">
                 {managingClubs.length > 0 && (
                   <ManagingClubSection managingClubs={managingClubs} />
@@ -143,6 +155,11 @@ export const getServerSideProps: GetServerSideProps = async ({
       })
     ).data;
 
+  /* Fetch Club Quotas */
+  const { data: maxClubQuotas } = await mysk.fetch<number>(
+    `/v1/students/${user?.id}/clubs/quota`,
+  );
+  const clubQuotas = (maxClubQuotas ?? 0) - joinedClubs.length;
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
@@ -155,6 +172,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       redirectToClub,
       joinedClubs,
       managingClubs,
+      clubQuotas,
     },
   };
 };

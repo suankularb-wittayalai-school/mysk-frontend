@@ -13,11 +13,13 @@ import { FC, useState } from "react";
 import useTranslation from "next-translate/useTranslation";
 import Trans from "next-translate/Trans";
 import TopUpQRDialog from "@/components/club/home/TopUpQRDialog";
+import cn from "@/utils/helpers/cn";
 
-const HomeHeader: FC<{ user: Student | Teacher; isKornor: boolean }> = ({
-  user,
-  isKornor,
-}) => {
+const HomeHeader: FC<{
+  user: Student | Teacher;
+  isKornor: boolean;
+  clubQuotas: number;
+}> = ({ user, isKornor, clubQuotas }) => {
   const { t } = useTranslation("club");
 
   const [QRDialogOpen, setQRDialogOpen] = useState<boolean>(false);
@@ -52,10 +54,15 @@ const HomeHeader: FC<{ user: Student | Teacher; isKornor: boolean }> = ({
                     <Trans
                       i18nKey="topUp.title"
                       ns="club"
-                      values={{ number: 5 }}
+                      values={{ number: clubQuotas }}
                       components={{
                         0: (
-                          <Text type="headline-small" className="text-primary">
+                          <Text
+                            type="headline-small"
+                            className={cn(
+                              `${clubQuotas <= 0 ? "text-error" : "text-primary"}`,
+                            )}
+                          >
                             {null}
                           </Text>
                         ),
@@ -77,7 +84,7 @@ const HomeHeader: FC<{ user: Student | Teacher; isKornor: boolean }> = ({
                 appearance="filled"
                 icon={<MaterialIcon icon="qr_code_scanner" />}
                 href="/club/join/qr"
-                element={Link}
+                disabled={clubQuotas <= 0}
               >
                 {t("action.join")}
               </Button>
