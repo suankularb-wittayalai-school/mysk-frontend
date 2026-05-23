@@ -55,10 +55,10 @@ const QRMethodPage: CustomPage = () => {
   // Validates the scanner QR code path.
   const [failOpen, setFailOpen] = useState(false);
   const validateScannedPath = (path: string) => {
-    const regex = /^https:\/\/clubs\.mysk\.school\/join\/club/;
+    const regex = /^https:\/\/mysk\.school\/club/;
 
     if (regex.test(path)) {
-      router.push(path.replace("https://clubs.mysk.school", ""));
+      router.push(path.replace("https://mysk.school", ""));
     } else {
       setFailOpen(true);
     }
