@@ -77,9 +77,6 @@ const IndexPage: NextPage<{
                   <ManagingClubSection managingClubs={managingClubs} />
                 )}
                 <JoinedClubsSection clubs={joinedClubs} />
-                {managingClubs.length > 0 && (
-                  <ManagingClubSection managingClubs={managingClubs} />
-                )}
                 <UsefulLinksSection />
               </div>
             </Columns>
