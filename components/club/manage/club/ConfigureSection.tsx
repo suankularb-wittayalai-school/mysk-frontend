@@ -268,6 +268,7 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
               appearance="outlined"
               behavior="multi-line"
               label={t("overview.configure.form.desc")}
+              className="h-32 [&>*:nth-child(2)]:!h-full"
               helperMsg={
                 <Trans
                   i18nKey="overview.configure.form.desc_helper"
@@ -284,6 +285,7 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
               appearance="outlined"
               behavior="multi-line"
               label={t("overview.configure.form.descEN")}
+              className="h-32 [&>*:nth-child(2)]:!h-full"
               helperMsg={t("overview.configure.form.descEN_helper")}
               disabled
               {...formProps.descEN}
@@ -320,7 +322,7 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
             {/* Contacts Information Section */}
             <section
               aria-labelledby="header-contacts"
-              className="-mt-6 flex flex-col gap-5 sm:col-span-2"
+              className=" flex flex-col gap-5 sm:col-span-2"
             >
               <div id="header-contacts">
                 <Text type="headline-small" element="h2">
