@@ -58,7 +58,7 @@ const KornorManagePage: NextPage<{
   };
   clubs: Club[];
 }> = ({ statistics, clubs }) => {
-    const { t } = useTranslation("club/manage/kornor");
+  const { t } = useTranslation("club/manage/kornor");
   const { t: tx } = useTranslation("common");
   const locale = useLocale();
   const refreshProps = useRefreshProps();
@@ -282,7 +282,8 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   const mysk = await createMySKClient(req);
 
-  if (!mysk.user?.is_admin) return { notFound: true };
+  if (!mysk.user?.is_admin && mysk.user?.email !== "kornor@sk.ac.th")
+    return { notFound: true };
 
   // Fetch Clubs
   const { data: clubs } = await mysk.fetch("/v1/clubs", {
