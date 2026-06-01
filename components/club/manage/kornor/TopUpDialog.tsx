@@ -49,6 +49,7 @@ const TopUpDialog: FC<{
 
     if (!error) {
       setSnackbar(<Snackbar>{t("qr.snackbar.success")}</Snackbar>);
+      onClose();
     }
 
     if (error) {
