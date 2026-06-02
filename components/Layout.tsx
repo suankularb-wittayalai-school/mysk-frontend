@@ -335,7 +335,12 @@ const Layout: FC<
               mysk.user.role,
             ) && (
               <NavBarItem
-                icon={<MaterialIcon icon="hub" />}
+                icon={
+                  <MaterialIcon
+                    icon="hub"
+                    className="!overflow-x-visible !overflow-y-visible"
+                  />
+                }
                 label={t("navigation.clubs")}
                 selected={router.pathname.startsWith("/club")}
                 href="/club"
