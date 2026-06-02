@@ -129,7 +129,11 @@ const RequestClubJoinPage: CustomPage<{
               </motion.div>
             )}
           </AnimatePresence>
-          <Text type="headline-small" element="h1" className="z-10 text-center">
+          <Text
+            type="headline-small"
+            element="h1"
+            className="z-10 text-center text-on-background"
+          >
             {t("manual.title", { club: getLocaleString(club.name, locale) })}
           </Text>
         </div>

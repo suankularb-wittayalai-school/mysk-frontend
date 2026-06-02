@@ -47,7 +47,11 @@ const RequestClubJoinPage: CustomPage<{
       pageScheme={scheme?.page}
       tabName={t("club.tabName", { club: getLocaleString(club.name, locale) })}
     >
-      <Text type="headline-medium" element="h1" className="z-10 text-center">
+      <Text
+        type="headline-medium"
+        element="h1"
+        className="z-10 text-center text-on-background"
+      >
         {t("club.title", { club: getLocaleString(club.name, locale) })}
       </Text>
       <AnimatePresence>
@@ -59,9 +63,7 @@ const RequestClubJoinPage: CustomPage<{
               ...transition(duration.long2, easing.standardDecelerate),
               delay: duration.medium2,
             }}
-            className={cn(
-              `grid w-full !max-w-none grow place-content-center`,
-            )}
+            className={cn(`grid w-full !max-w-none grow place-content-center`)}
           >
             <Image
               src={club.logo_url}

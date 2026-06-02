@@ -149,10 +149,18 @@ const WaitingClubJoinPage: CustomPage<{
           size={48}
           className="animate-bounce text-primary"
         />
-        <Text type="headline-medium" element="h1" className="text-center">
+        <Text
+          type="headline-medium"
+          element="h1"
+          className="text-center text-on-background"
+        >
           {t("waiting.title")}
         </Text>
-        <Text type="body-medium" element="p" className="mt-7 text-center">
+        <Text
+          type="body-medium"
+          element="p"
+          className="mt-7 text-center text-on-background"
+        >
           {t("waiting.desc")}
         </Text>
       </div>

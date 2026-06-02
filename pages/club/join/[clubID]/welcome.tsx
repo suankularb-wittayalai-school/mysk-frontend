@@ -67,10 +67,18 @@ const WelcomeToClubPage: CustomPage<{
       })}
     >
       <div className="z-10 space-y-3 text-center">
-        <Text type="display-medium" element="h1" className="text-center">
+        <Text
+          type="display-medium"
+          element="h1"
+          className="text-center text-on-background"
+        >
           {t("welcome.title")}
         </Text>
-        <Text type="headline-medium" element="p" className="text-center">
+        <Text
+          type="headline-medium"
+          element="p"
+          className="text-center text-on-background"
+        >
           {t("welcome.subtitle")}
         </Text>
       </div>
