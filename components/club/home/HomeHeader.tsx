@@ -29,7 +29,7 @@ const HomeHeader: FC<{
   return (
     <>
       <div className="flex flex-col gap-8 sm:col-span-2 md:col-span-1">
-        <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-1 lg:contents">
+        <div className="grid gap-2 md:grid-cols-1">
           {isKornor ? (
             <>
               <Button
@@ -51,7 +51,7 @@ const HomeHeader: FC<{
             </>
           ) : (
             <>
-              <Card appearance="filled">
+              <Card appearance="filled" className="mb-6">
                 <CardHeader
                   title={
                     <Trans
