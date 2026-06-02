@@ -43,8 +43,7 @@ const WaitingClubJoinPage: CustomPage<{
 
   const mysk = useMySKClient();
 
-  const [requestID, setRequestID] = useState<ClubJoinRequest["id"]>();
-
+  
   // Create a Join Request
   useEffect(() => {
     (async () => {
@@ -63,78 +62,11 @@ const WaitingClubJoinPage: CustomPage<{
         else setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
         return;
       }
-
-      setRequestID(request.id);
+      
+      if (!error) router.push(`/club/join/${club.id}/welcome`);
     })();
   }, []);
 
-  /**
-   * Fetch a Join Request via its ID and redirect the user if the Request is
-   * approved or rejected.
-   *
-   * @param requestID The ID of the Request.
-   */
-  async function checkRequestStatus(requestID: ClubJoinRequest["id"]) {
-    // Fetch the Join Request
-    const { data: request, error } = await mysk.fetch<ClubJoinRequest>(
-      `/v1/clubs/requests/${requestID}`,
-      { query: { fetch_level: "default" } },
-    );
-    if (error) {
-      logError("checkRequestStatus in WaitingClubJoinPage", error);
-      setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
-      return;
-    }
-
-    // Check the Request status and redirect accordingly
-    switch (request.membership_status) {
-      case "approved":
-        router.push(`/club/join/${club.id}/welcome`);
-        break;
-      case "declined":
-        router.replace("/club");
-    }
-  }
-
-  useEffect(() => {
-    if (!requestID) return;
-
-    // We will check if the Request is approved every second to give the
-    // illusion of this being real-time
-
-    // We create an interval that runs every 1 second (1000 ms), the interval
-    // is cleared after 10 seconds as to not overwhelm the server
-
-    let requestCheckInterval = setInterval(
-      () => checkRequestStatus(requestID),
-      1000,
-    );
-
-    // After 10 seconds, the interval now runs every 5 seconds
-    let interval10SecClearTimeout = setTimeout(() => {
-      clearInterval(requestCheckInterval);
-      requestCheckInterval = setInterval(
-        () => checkRequestStatus(requestID),
-        5000,
-      );
-    }, 10000);
-
-    // After 1 minute, the interval runs every minute
-    let interval1MinClearTimeout = setTimeout(() => {
-      clearInterval(requestCheckInterval);
-      requestCheckInterval = setInterval(
-        () => checkRequestStatus(requestID),
-        60000,
-      );
-    }, 60000);
-
-    // Clear intervals and timeouts if the user prematurely exits the page
-    return () => {
-      clearInterval(requestCheckInterval);
-      clearTimeout(interval10SecClearTimeout);
-      clearTimeout(interval1MinClearTimeout);
-    };
-  }, [requestID]);
 
   return (
     <ClubJoinLayout
