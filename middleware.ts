@@ -49,6 +49,7 @@ export async function middleware(req: NextRequest) {
     else if (route.startsWith("/teach")) return "teacher";
     else if (route.startsWith("/manage")) return "management";
     else if (route.startsWith("/cheer/attendance")) return "cheer";
+    else if (route.startsWith("/club")) return "club";
     else return "user";
   })();
 
@@ -117,6 +118,7 @@ export async function middleware(req: NextRequest) {
           permitted(user, UserPermissionKey.can_see_management)) ||
         // Allow cheer staffs to take cheer attendance
         (pageRole === "cheer" && (isCheerStaff || user?.role == "teacher")) ||
+        (pageRole === "club" && (user?.role == "student" || user?.email == "kornor@sk.ac.th"))||
         // Allow all users to visit user pages
         pageRole === "user" ||
         // Allow users with the correct roles
@@ -168,5 +170,6 @@ export const config = {
     "/admin/:path*",
     "/maintenance",
     "/cheer/:path*",
+    "/club/:path*",
   ],
 };

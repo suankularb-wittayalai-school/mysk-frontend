@@ -139,7 +139,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     user = data;
   }
 
-  if (mysk.user?.role === UserRole.organization) isKornor = true;
+  if (mysk.user?.email == "kornor@sk.ac.th") isKornor = true;
 
   const { data: joinedClubsData } = await mysk.fetch<Club[]>("/v1/clubs", {
     query: {

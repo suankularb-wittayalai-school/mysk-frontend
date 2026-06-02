@@ -14,7 +14,7 @@ import {
   Text,
   MaterialIcon,
 } from "@suankularb-components/react";
-import { GetStaticProps, NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import useTranslation from "next-translate/useTranslation";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
@@ -23,6 +23,7 @@ import { useEffect, useRef, useState } from "react";
 import Balancer from "react-wrap-balancer";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 
 const KornorTopUpQRPage: NextPage = () => {
   const { t } = useTranslation("club/manage/kornor");
@@ -165,8 +166,20 @@ const KornorTopUpQRPage: NextPage = () => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: await serverSideTranslations(locale as LangCode, ["common", "join"]),
-});
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+}) => {
+  const mysk = await createMySKClient(req);
+  console.log(mysk.user?.is_admin, "isadmin");
+  if (!mysk.user?.is_admin && mysk.user?.email !== "kornor@sk.ac.th")
+    return { notFound: true };
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, ["common", "join"])),
+    },
+  };
+};
 
 export default KornorTopUpQRPage;
