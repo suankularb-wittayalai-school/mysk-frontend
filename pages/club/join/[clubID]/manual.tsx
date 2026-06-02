@@ -91,7 +91,7 @@ const RequestClubJoinPage: CustomPage<{
       setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
     } else
       router.push(
-        `/join/club/${club.id}/welcome?manual=true&student=${student?.id}`,
+        `/club/join/${club.id}/welcome?manual=true&student=${student?.id}`,
       );
   }
 
