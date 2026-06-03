@@ -15,6 +15,8 @@ export default function getHomeURLofRole(role: UserRole) {
       return "/teach";
     case UserRole.management:
       return "/manage";
+    /* Default organization to /club. Don't know what else its use for
+     and /organization doesn't exist */
     case UserRole.organization:
       return "/organization";
     case UserRole.staff:

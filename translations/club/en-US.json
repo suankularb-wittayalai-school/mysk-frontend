@@ -1,0 +1,58 @@
+{
+  "title": "Club Registry",
+  "header": "Club Registry",
+  "action": {
+    "logOut": "Log out",
+    "join": "Join a club",
+    "join_error": "You need a phone to join clubs. Alternatively, ask a staff member to manually let you in.",
+    "explore": "Explore Activity Day"
+  },
+  "topUp": {
+    "title": "You can join <0>{{number}}</0> more clubs",
+    "desc": "You can top up your quota at the Kornor booth",
+    "topUpDialog": {
+      "title": "Top Up Quota",
+      "desc": "Show this QR code to the staff",
+      "tip": "Please refresh the page after completing the top-up",
+      "action": {
+        "close": "Close"
+      }
+    },
+    "action": {
+      "openTopUp": "Top Up Quota",
+      "openAdmin": "Admin Panel"
+    }
+  },
+  "selectDialog": {
+    "desc": "Select a club to go to…",
+    "action": {
+      "cancel": "Cancel"
+    }
+  },
+  "desc": "Use the same email and password you use in MySK to continue.",
+  "logIn": {
+    "title": "Log in with MySK",
+    "form": {
+      "email": "Email",
+      "password": "Password"
+    },
+    "action": {
+      "help": "Help",
+      "continue": "Continue"
+    }
+  },
+  "joinedClubs": {
+    "title": "Joined clubs",
+    "club": "{{name}}",
+    "empty": "You'll see clubs that you have joined here."
+  },
+  "manageClubs": {
+    "title": "Manage your clubs",
+    "club": "{{name}}"
+  },
+  "usefulLinks": {
+    "title": "Useful links",
+    "skiso": "<a>Email SK IT Solutions</a> for help on the app.",
+    "kornor": "<a>Message Kornor</a> for help on Activity Day."
+  }
+}

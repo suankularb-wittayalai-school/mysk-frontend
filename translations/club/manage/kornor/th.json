@@ -1,0 +1,71 @@
+{
+  "title": "แผงผู้ดูแลระบบคณะกรรมการนักเรียน",
+  "statistics": {
+    "title": "สถิติ",
+    "people": {
+      "totalStudents": "นักเรียนที่เข้าร่วม",
+      "totalMembers": "จำนวนสมาชิกชุมนุม",
+      "totalStaff": "จำนวน staff ที่เข้าร่วม"
+    },
+    "clubs": {
+      "totalClubs": "ชุมนุมที่เข้าร่วม",
+      "totalMembers": "จำนวนสมาชิกสูงสุด",
+      "totalStaff": "จำนวนสมาชิกเฉลี่ย"
+    }
+  },
+  "data": {
+    "action": {
+      "refresh": "โหลดอีกครั้ง",
+      "export": "ดาวน์โหลด CSV"
+    },
+    "table": {
+      "thead": {
+        "clubName": "ชื่อชุมนุม",
+        "memberCount": "จำนวนสมาชิก",
+        "discord": "ลิงก์เซิร์ฟเวอร์ Discord",
+        "line": "ลิงก์กลุ่ม Line"
+      },
+      "tbody": {
+        "memberCount": "{{count, number}} คน"
+      },
+      "rowAction": {
+        "copyToClipboard": "คัดลอกไปที่คลิปบอร์ด",
+        "openLink": "เปิดลิงก์"
+      }
+    }
+  },
+  "topUpDialog": {
+    "title": "เติมสิทธิ์การเข้าชุมนุม",
+    "description": "ให้ <0>{{name}}</0>",
+    "amount": {
+      "title": "จำนวน",
+      "unit": "ชุมนุม"
+    },
+    "action": {
+      "topUp": "เติม",
+      "close": "ปิด"
+    }
+  },
+  "qr": {
+    "title": "แสกนคิวอาร์โค้ดเพื่อเติมสิทธิ์การเข้าชุมนุม",
+    "tabName": "แสกนคิวอาร์โค้ด",
+    "scanner": {
+      "permission": "อนุญาตให้ MySK Club Registry เข้าถึงกล้องของคุณ",
+      "havingProblems": "พบปัญหาอยู่หรือเปล่า ?"
+    },
+    "desc": "โทรศัพท์มือถือของคุณอาจขอสิทธิ์การเข้าถึงกล้องถ่ายรูปของคุณเพื่อแสกนคิวอาร์โค้ดนี้",
+    "action": {
+      "gotIt": "เข้าใจแล้ว"
+    },
+    "supportDialog": {
+      "desc": "นั่นไม่ใช่คิวอาร์โค้ดของ MySK Club Registry! ",
+      "tryAgain": "เช็คให้ชัวร์ว่าคุณกำลังแสกนคิวอาร์ที่ถูกต้อง แล้วโปรดลองใหม่อีกครั้ง",
+      "action": {
+        "close": "ปิด"
+      }
+    },
+    "snackbar": {
+      "success": "เพิ่มสิทธิ์แล้ว"
+    }
+  }
+}

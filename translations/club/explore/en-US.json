@@ -1,0 +1,19 @@
+{
+  "title": "Explore Activity Day",
+  "header": "Explore Activity Day",
+  "map": {
+    "title": "Activity Day map",
+    "alt": "Activity Day map",
+    "empty": {
+      "fine": "Hover on a booth to learn more about the club.",
+      "coarse": "Hold your finger on a booth to learn more about the club."
+    },
+    "selected": {
+      "kornor": "<strong>Kornor</strong> booth"
+    }
+  },
+  "house": {
+    "title": "Explore by house",
+    "desc": "Let us be your sorting hat! Explore the list of clubs in each house."
+  }
+}

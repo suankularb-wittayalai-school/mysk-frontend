@@ -1,0 +1,77 @@
+{
+  "club": "{{name}}",
+  "class": "M.{{number}}",
+  "tab": {
+    "overview": "Overview",
+    "members": "Members"
+  },
+  "overview": {
+    "configure": {
+      "title": "Configure identity",
+      "form": {
+        "name": "Club name",
+        "name_helper": "Your full club name as it appears in the founding document (without “Club”)",
+        "nameEN": "English club name",
+        "nameEN_helper": "Replaces the Thai name for English users.",
+        "desc": "Short description",
+        "desc_helper": "This is shown in your entry in the <a>Explore page</a>.",
+        "descEN": "English short description",
+        "descEN_helper": "Replaces the Thai description for English users. Not required.",
+        "logo": "Logo",
+        "accentColor": "Accent color",
+        "backgroundColor": "Background color"
+      },
+      "contrastWarning": "Your chosen colors do not meet contrast guidelines and may be unreadable.",
+      "action": {
+        "save": "Save",
+        "openPublicView": "Open public view"
+      }
+    },
+    "contacts": {
+      "title": "Contact information",
+      "desc": "New club members will get a chance to join these groups after you approve them.",
+      "form": {
+        "line": "Line group/OpenChat link",
+        "discord": "Discord server link"
+      },
+      "action": {
+        "save": "Save",
+        "openLink": "Open link"
+      }
+    },
+    "statistics": {
+      "title": "Cool statistics",
+      "onLeaderboard": {
+        "headline": "Congratulations, you're number {{order}} on the leaderboard!",
+        "desc_one": "You're {{count, number}} member behind {{club}} Club, which is at number {{order}}.",
+        "desc_other": "You're {{count, number}} members behind {{club}} Club, which is at number {{order}}."
+      },
+      "members_one": "<0>{{count, number}}</0> member",
+      "members_other": "<0>{{count, number}}</0> members",
+      "classes_one": "and {{count, number}} more class",
+      "classes_other": "and {{count, number}} more classes"
+    }
+  },
+  "members": {
+    "manualCard": {
+      "title": "Add a member manually",
+      "desc": "Use school email to enroll into your club.",
+      "button": "Open invite window"
+    },
+    "awaiting": {
+      "title": "Awaiting approval",
+      "desc": "Only approve those who have already paid the entry fee.",
+      "empty": "When students ask to join your club, their requests show up here.",
+      "action": {
+        "refresh": "Refresh",
+        "reject": "Reject",
+        "approve": "Approve"
+      }
+    },
+    "approved": {
+      "title": "Approved members",
+      "empty": "You don't have any members yet. When you approve new members, they'll show up here."
+    }
+  },
+  "trademark": "iPhone is a trademark of Apple Inc."
+}

@@ -178,6 +178,13 @@ module.exports = {
       "search/common",
       "search/students/detail",
     ],
+    // Club
+    "/club": ["club"],
+    "/club/explore": ["club/explore"],
+    "/club/join/qr": ["club/join"],
+    "rgx:/club/join/\\[clubID\\](/(manual|waiting|welcome))?$": ["club/join"],
+    "/club/manage/[clubID]": ["club/manage"],
+    "rgx:^/club/manage/kornor": ["club/manage/kornor"],
   },
   logBuild: false,
   interpolation: {

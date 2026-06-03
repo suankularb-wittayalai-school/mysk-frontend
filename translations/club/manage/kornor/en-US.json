@@ -1,0 +1,68 @@
+{
+  "title": "Kornor admin panel",
+  "statistics": {
+    "title": "Statistics",
+    "people": {
+      "totalStudents": "total student participation",
+      "totalMembers": "total club members",
+      "totalStaff": "total staff participation"
+    },
+    "clubs": {
+      "totalClubs": "total active clubs",
+      "totalMembers": "top member count",
+      "totalStaff": "average member count"
+    }
+  },
+  "data": {
+    "action": {
+      "refresh": "Refresh",
+      "export": "Export CSV"
+    },
+    "table": {
+      "thead": {
+        "clubName": "Club name",
+        "memberCount": "Member count",
+        "discord": "Discord server link",
+        "line": "Line group/OpenChat link"
+      },
+      "tbody": {
+        "memberCount_one": "{{count, number}} member",
+        "memberCount_other": "{{count, number}} members"
+      },
+      "rowAction": {
+        "copyToClipboard": "Copy to clipboard",
+        "openLink": "Open link"
+      }
+    }
+  },
+  "topUpDialog": {
+    "title": "Top Up Quota to Join Clubs",
+    "description": "For <0>{{name}}</0>",
+    "amount": {
+      "title": "Amount",
+      "unit": "Club(s)"
+    },
+    "action": {
+      "topUp": "Top Up",
+      "close": "Close"
+    }
+  },
+  "qr": {
+    "title": "Scan QR code to top up quota to join clubs",
+    "tabName": "Scan QR code",
+    "scanner": {
+      "permission": "Allow MySK Club Registry to access to your camera."
+    },
+    "desc": "Your phone may ask for your permission to use your camera to scan the QR code.",
+    "supportDialog": {
+      "desc": "That's not a MySK Club Registry QR code!",
+      "tryAgain": "Make sure you're scanning the correct QR code, and please try again.",
+      "action": {
+        "close": "Close"
+      }
+    },
+    "snackbar": {
+      "success": "Quota Added"
+    }
+  }
+}
