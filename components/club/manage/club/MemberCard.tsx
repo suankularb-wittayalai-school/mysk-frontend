@@ -39,11 +39,6 @@ const MemberCard: FC<{ member: Student }> = ({ member }) => {
             getLocaleString((member as any).person.first_name, locale),
             getLocaleString((member as any).person.last_name, locale),
           ].join(" ")}
-          subtitle={
-            member.classroom
-              ? t("class", { number: member.classroom.number })
-              : undefined
-          }
           className="[font-feature-settings:'tnum'on,'lnum'on]"
         />
       </Card>
