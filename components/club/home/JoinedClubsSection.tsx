@@ -81,7 +81,7 @@ const JoinedClubsSection: FC<{ clubs: Club[] }> = ({ clubs }) => {
                   title={t("joinedClubs.club", {
                     name: getLocaleString(club.name, locale),
                   })}
-                  className="grow"
+                  className="grow [&>*:nth-child(2)]:line-clamp-2"
                 />
                 <div className="mr-3 flex flex-row">
                   <Button

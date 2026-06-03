@@ -39,7 +39,7 @@ const MemberCard: FC<{ member: Student }> = ({ member }) => {
             getLocaleString((member as any).person.first_name, locale),
             getLocaleString((member as any).person.last_name, locale),
           ].join(" ")}
-          className="[font-feature-settings:'tnum'on,'lnum'on]"
+          className="[font-feature-settings:'tnum'on,'lnum'on] [&>:nth-child(2)]:truncate"
         />
       </Card>
     </motion.li>
