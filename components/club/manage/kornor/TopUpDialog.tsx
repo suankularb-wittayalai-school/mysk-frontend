@@ -57,6 +57,7 @@ const TopUpDialog: FC<{
       logError("Update Club Quota", error);
       return false;
     }
+    setTopUpValue(null);
   };
 
   return (

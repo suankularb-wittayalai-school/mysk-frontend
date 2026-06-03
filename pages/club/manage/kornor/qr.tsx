@@ -171,7 +171,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
 }) => {
   const mysk = await createMySKClient(req);
-  console.log(mysk.user?.is_admin, "isadmin");
   if (!mysk.user?.is_admin && mysk.user?.email !== "kornor@sk.ac.th")
     return { notFound: true };
 
