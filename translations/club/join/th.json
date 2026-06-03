@@ -24,7 +24,7 @@
     "tabName": "เข้า{{club}}",
     "logoAlt": "โลโก้ชุมนุม",
     "action": {
-      "join": "เข้าร่วม (฿{{price, number}})",
+      "join": "เข้าร่วม",
       "cancel": "ยกเลิก"
     }
   },

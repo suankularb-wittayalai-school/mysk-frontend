@@ -95,7 +95,7 @@ const RequestClubJoinPage: CustomPage<{
           className={scheme?.button}
           style={{ backgroundColor: club.accent_color }}
         >
-          {t("club.action.join", { price: 10 })}
+          {t("club.action.join")}
         </TintedFilledButton>
         <Button
           appearance="outlined"

@@ -24,7 +24,7 @@
     "tabName": "Join {{club}}",
     "logoAlt": "Club logo",
     "action": {
-      "join": "Join (฿{{price, number}})",
+      "join": "Join",
       "cancel": "Cancel"
     }
   },
