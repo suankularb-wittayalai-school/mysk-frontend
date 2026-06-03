@@ -43,7 +43,6 @@ const WaitingClubJoinPage: CustomPage<{
 
   const mysk = useMySKClient();
 
-  
   // Create a Join Request
   useEffect(() => {
     (async () => {
@@ -59,14 +58,18 @@ const WaitingClubJoinPage: CustomPage<{
       if (error) {
         logError("useEffect in WaitingClubJoinPage", error);
         if (error.code === 409) router.replace("/");
-        else setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+        else {
+          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+          setTimeout(() => {
+            router.push("/club");
+          }, 3000);
+        }
         return;
       }
-      
+
       if (!error) router.push(`/club/join/${club.id}/welcome`);
     })();
   }, []);
-
 
   return (
     <ClubJoinLayout
