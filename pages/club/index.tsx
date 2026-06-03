@@ -144,7 +144,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { data: joinedClubsData } = await mysk.fetch<Club[]>("/v1/clubs", {
     query: {
       fetch_level: "default",
-      descendant_fetch_level: "compact",
+      descendant_fetch_level: "detailed",
       filter: {
         data: { member_ids: [user?.id] },
       },
