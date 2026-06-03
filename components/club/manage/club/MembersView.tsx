@@ -62,7 +62,7 @@ const MembersView: FC<{
           transition={transition(duration.medium2, easing.standard)}
           className="flex flex-col justify-between gap-4 md:flex-row md:gap-32"
         >
-          <div className="flex shrink-0 flex-col gap-6">
+          <div className="flex shrink-0 gap-6">
             <Text type="headline-medium" element="h2">
               {t("members.approved.title")}
             </Text>
@@ -77,7 +77,7 @@ const MembersView: FC<{
               {t("members.awaiting.action.refresh")}
             </Button>
           </div>
-          <Card
+          {/* <Card
             appearance="filled"
             className={cn(
               `col-span-2 h-full w-full !bg-primary-container !text-on-primary-container`,
@@ -96,7 +96,7 @@ const MembersView: FC<{
                 </Link>
               </Actions>
             </CardContent>
-          </Card>
+          </Card> */}
         </motion.div>
         {club.members.length ? (
           <Columns columns={3} element="ul">

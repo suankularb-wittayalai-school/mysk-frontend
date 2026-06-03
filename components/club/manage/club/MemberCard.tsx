@@ -44,7 +44,7 @@ const MemberCard: FC<{ member: Student }> = ({ member }) => {
               ? t("class", { number: member.classroom.number })
               : undefined
           }
-          className="[font-feature-settings:'tnum'on,'lnum'on]"
+          className="[font-feature-settings:'tnum'on,'lnum'on] [&>:nth-child(2)]:truncate"
         />
       </Card>
     </motion.li>

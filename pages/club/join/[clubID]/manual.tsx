@@ -17,7 +17,7 @@ import {
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import useTranslation from "next-translate/useTranslation";
 import { usePlausible } from "next-plausible";
 import Image from "next/image";
@@ -27,6 +27,9 @@ import { useContext, useState } from "react";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { CustomPage } from "@/utils/types/common";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import { supabase } from "@/utils/supabase-backend";
+import { Student, Teacher } from "@/utils/types/person";
 
 /**
  * A manual way to join a Club. Uses the Student's email.
@@ -186,25 +189,38 @@ const RequestClubJoinPage: CustomPage<{
   );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => ({
-  paths: [],
-  fallback: "blocking",
-});
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  req,
+  res,
+}) => {
+  ({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const mysk = await createMySKClient();
+  return { notFound: true };
+  //No Quota check for backend
+
+  /*
+  const mysk = await createMySKClient(req);
+  let user: Student | Teacher | null = null;
 
   // Fetch Clubs
+  if (!params?.clubID) return { notFound: true };
   const { data: club, error } = await mysk.fetch<Club>(
     `/v1/clubs/${params?.clubID}`,
-    {
-      query: {
-        fetch_level: "default",
-        descendant_fetch_level: "id_only",
-      },
-    },
+    { query: { fetch_level: "default", descendant_fetch_level: "default" } },
   );
   if (error?.code === 404) return { notFound: true };
+
+  if (mysk.user !== null) {
+    const { data } = await getLoggedInPerson(supabase, mysk);
+    user = data;
+  }
+  // The user must either be a staff or an admin to view the page
+  if (!(club!.staffs.find((staff) => user!.id === staff.id) || user?.is_admin))
+    return { notFound: true };
 
   // Calculate what scheme the page should use based on the luminance of the
   // background color
@@ -216,12 +232,11 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     };
 
   return {
-    revalidate: 300,
     props: {
       club,
       scheme,
     },
-  };
+  }; */
 };
 
 export default RequestClubJoinPage;
