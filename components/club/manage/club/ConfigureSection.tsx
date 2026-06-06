@@ -374,7 +374,7 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
                 className="!whitespace-nowrap"
                 onClick={() =>
                   window.open(
-                    `/join/club/${club.id}`,
+                    `/club/join/${club.id}`,
                     "_blank",
                     "popup, width=393, height=793",
                   )
