@@ -13,6 +13,7 @@
     "topUpDialog": {
       "title": "Top Up Quota",
       "desc": "Show this QR code to the staff",
+      "tip": "Please refresh the page after completing the top-up",
       "action": {
         "close": "Close"
       }
