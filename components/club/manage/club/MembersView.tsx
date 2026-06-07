@@ -1,17 +1,11 @@
 // Imports
 import EmptyState from "@/components/club/EmptyState";
-import JoinRequestCard from "@/components/club/manage/club/JoinRequestCard";
 import MemberCard from "@/components/club/manage/club/MemberCard";
 import SnackbarContext from "@/contexts/SnackbarContext";
-import cn from "@/utils/helpers/cn";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
-import { Club, ClubJoinRequest } from "@/utils/types/club";
+import { Club } from "@/utils/types/club";
 import {
-  Actions,
   Button,
-  Card,
-  CardContent,
-  CardHeader,
   Columns,
   MaterialIcon,
   Snackbar,
@@ -21,8 +15,6 @@ import {
 } from "@suankularb-components/react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import useTranslation from "next-translate/useTranslation";
-import Link from "next/link";
-import router from "next/router";
 import { FC, useContext, useEffect, useState } from "react";
 
 /**
@@ -32,8 +24,7 @@ import { FC, useContext, useEffect, useState } from "react";
  */
 const MembersView: FC<{
   club: Club;
-  requests: ClubJoinRequest[];
-}> = ({ club, requests }) => {
+}> = ({ club }) => {
   const { t } = useTranslation("club/manage");
   const { t: tx } = useTranslation("common");
   const refreshProps = useRefreshProps();
