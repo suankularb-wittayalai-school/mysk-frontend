@@ -4,7 +4,6 @@ import MembersView from "@/components/club/manage/club/MembersView";
 import OverviewView from "@/components/club/manage/club/OverviewView";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
-import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import { Database } from "@/utils/types/supabase";
 import { Club, ClubJoinRequest, ClubStatistics } from "@/utils/types/club";
 import { Student, Teacher } from "@/utils/types/person";
@@ -30,7 +29,6 @@ import Head from "next/head";
 import { useState } from "react";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
-import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 
 /**
  * Allows Club Managers to view and configure information about their club—
@@ -45,8 +43,7 @@ import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 const ClubManagePage: NextPage<{
   club: Club;
   statistics: ClubStatistics;
-  requests: ClubJoinRequest[];
-}> = ({ club, statistics, requests }) => {
+}> = ({ club, statistics }) => {
   const locale = useLocale();
   const { t } = useTranslation("club/manage");
   const { t: tx } = useTranslation("common");
@@ -144,7 +141,7 @@ const ClubManagePage: NextPage<{
               )}
               className="flex flex-col gap-6 [&>*]:mx-4 sm:[&>*]:mx-0"
             >
-              <MembersView club={club} requests={requests} />
+              <MembersView club={club} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -200,51 +197,10 @@ export const getServerSideProps: GetServerSideProps = async ({
     byClass: [],
   };
 
-  // Fetch Requests
-  /* invalid_permission with descendant_fetch_level: "default", can only get student id*/
-  const { data: requests } = await mysk.fetch<ClubJoinRequest[]>(
-    "/v1/clubs/requests",
-    {
-      query: {
-        fetch_level: "default",
-        descendant_fetch_level: "id_only",
-        filter: {
-          data: {
-            club_ids: [params?.clubID],
-            membership_status: "pending",
-            year: getCurrentAcademicYear(),
-          },
-        },
-      },
-    },
-  );
-
-  const studentIDs = requests?.map((requests) => requests.student.id) ?? []
-  const { data: students } = await getStudentsByIDs(supabase, mysk, studentIDs);
-
-  const studentMap = new Map(
-    students?.map((student) => [student.id, student]) ?? [],
-  );
-
-  const requestsWithStudents =
-    requests?.map((request) => {
-      const detailedStudent = studentMap.get(request.student.id);
-
-      return {
-        ...request,
-        student: {
-          id: detailedStudent?.id,
-          first_name: detailedStudent?.first_name,
-          last_name: detailedStudent?.last_name,
-        },
-      };
-    }) ?? [];
-
   return {
     props: {
       club,
       statistics,
-      requests: requestsWithStudents,
     },
   };
 };
