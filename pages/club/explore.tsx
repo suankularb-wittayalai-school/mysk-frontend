@@ -1,7 +1,7 @@
 // Imports
 import { ContentLayout } from "@suankularb-components/react";
 import PageHeader from "@/components/common/PageHeader";
-import { GetServerSideProps, NextPage } from "next";
+import { GetStaticProps, NextPage } from "next";
 import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -35,19 +35,8 @@ const ExplorePage: NextPage<{}> = ({}) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "explore",
-        "common",
-      ])),
-    },
-  };
-};
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: await serverSideTranslations(locale as LangCode, ["explore"]),
+});
 
 export default ExplorePage;
