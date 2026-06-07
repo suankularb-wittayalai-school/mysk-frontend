@@ -54,23 +54,32 @@ const HomeHeader: FC<{
               <Card appearance="filled" className="mb-6">
                 <CardHeader
                   title={
-                    <Trans
-                      i18nKey="topUp.title"
-                      ns="club"
-                      values={{ number: quota }}
-                      components={{
-                        0: (
-                          <Text
-                            type="headline-small"
-                            className={cn(
-                              `${disabled ? "text-error" : "text-primary"}`,
-                            )}
-                          >
-                            {null}
-                          </Text>
-                        ),
-                      }}
-                    />
+                    <div className="flex justify-between mr-3 -mb-4">
+                      <div>
+                        <Trans
+                          i18nKey="topUp.title"
+                          ns="club"
+                          values={{ number: quota }}
+                          components={{
+                            0: (
+                              <Text
+                                type="headline-small"
+                                className={cn(
+                                  `${disabled ? "text-error" : "text-primary"}`,
+                                )}
+                              >
+                                {null}
+                              </Text>
+                            ),
+                          }}
+                        />
+                      </div>
+                      <Button
+                        appearance="text"
+                        onClick={fetchQuota}
+                        icon={<MaterialIcon icon="refresh" />}
+                      />
+                    </div>
                   }
                 />
                 <CardContent>
