@@ -7,7 +7,7 @@ import Head from "next/head";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { LangCode } from "@/utils/types/common";
 import Image from "next/image";
-import ClubMap from "@/public/images/club-map.png";
+import ClubMap from "@/public/images/club-map.svg";
 
 /**
  * A jumping off point for exploring everything Activity Day has to offer.
