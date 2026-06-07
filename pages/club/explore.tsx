@@ -6,6 +6,8 @@ import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { LangCode } from "@/utils/types/common";
+import Image from "next/image";
+import ClubMap from "@/public/images/club-map.png";
 
 /**
  * A jumping off point for exploring everything Activity Day has to offer.
@@ -27,8 +29,7 @@ const ExplorePage: NextPage<{}> = ({}) => {
         {t("header")}
       </PageHeader>
       <ContentLayout>
-        <></>
-        {/* Add map and/or club details here */}
+        <Image src={ClubMap} alt="map" />
       </ContentLayout>
     </>
   );
