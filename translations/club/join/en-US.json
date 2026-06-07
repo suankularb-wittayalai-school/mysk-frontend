@@ -29,17 +29,12 @@
     }
   },
   "waiting": {
-    "success": {
-      "title": "Please wait…",
-      "tabName": "Processing",
-      "desc": "Leave the booth. You should be in soon."
-    },
-    "error": {
-      "title": "Something went wrong.",
-      "tabName": "Failure",
-      "desc": "Please check if you have enough quota to join a club."
-    },
-    "action": { "close": "Close" }
+    "title": "Waiting for staff approval…",
+    "tabName": "Waiting approval",
+    "desc": "Leave the booth. A staff member should allow you in soon.",
+    "action": {
+      "checkLater": "Check back later"
+    }
   },
   "welcome": {
     "title": "Welcome!",

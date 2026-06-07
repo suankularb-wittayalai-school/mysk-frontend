@@ -1,6 +1,7 @@
 // Imports
 // import CandlesBackground from "@/components/club/join/CandlesBackground";
 import ClubJoinLayout from "@/components/club/join/ClubJoinLayout";
+import SnackbarContext from "@/contexts/SnackbarContext";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import logError from "@/utils/helpers/logError";
@@ -11,13 +12,14 @@ import {
   Actions,
   Button,
   MaterialIcon,
+  Snackbar,
   Text,
 } from "@suankularb-components/react";
 import { GetStaticPaths, GetStaticProps } from "next";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CustomPage } from "@/utils/types/common";
 
 /**
@@ -34,9 +36,10 @@ const WaitingClubJoinPage: CustomPage<{
   scheme?: CalculatedClubScheme;
 }> = ({ club, scheme }) => {
   const { t } = useTranslation("club/join");
+  const { t: tx } = useTranslation("common");
   const router = useRouter();
 
-  const [joinErrorStatus, setjoinErrorStatus] = useState(false);
+  const { setSnackbar } = useContext(SnackbarContext);
 
   const mysk = useMySKClient();
 
@@ -56,7 +59,10 @@ const WaitingClubJoinPage: CustomPage<{
         logError("useEffect in WaitingClubJoinPage", error);
         if (error.code === 409) router.replace("/");
         else {
-          setjoinErrorStatus(true);
+          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+          setTimeout(() => {
+            router.push("/club");
+          }, 3000);
         }
         return;
       }
@@ -69,11 +75,12 @@ const WaitingClubJoinPage: CustomPage<{
     <ClubJoinLayout
       club={club}
       pageScheme={scheme?.page}
-      tabName={t(`waiting.${joinErrorStatus ? "error" : "success"}.tabName`)}
+      tabName={t("waiting.tabName")}
     >
+      {/* <CandlesBackground /> */}
       <div className="flex grow flex-col items-center justify-center gap-3 text-center">
         <MaterialIcon
-          icon={joinErrorStatus ? "warning_amber" : "pending"}
+          icon="pending"
           size={48}
           className="animate-bounce text-primary"
         />
@@ -82,23 +89,21 @@ const WaitingClubJoinPage: CustomPage<{
           element="h1"
           className="text-center text-on-background"
         >
-          {t(`waiting.${joinErrorStatus ? "error" : "success"}.title`)}
+          {t("waiting.title")}
         </Text>
         <Text
           type="body-medium"
           element="p"
           className="mt-7 text-center text-on-background"
         >
-          {t(`waiting.${joinErrorStatus ? "error" : "success"}.desc`)}
+          {t("waiting.desc")}
         </Text>
       </div>
-      {joinErrorStatus && (
-        <Actions align="full">
-          <Button appearance="outlined" href="/club" element={Link}>
-            {t("waiting.action.close")}
-          </Button>
-        </Actions>
-      )}
+      <Actions align="full">
+        <Button appearance="outlined" href="/club" element={Link}>
+          {t("waiting.action.checkLater")}
+        </Button>
+      </Actions>
     </ClubJoinLayout>
   );
 };
