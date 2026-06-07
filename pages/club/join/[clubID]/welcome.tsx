@@ -170,11 +170,10 @@ const WelcomeToClubPage: CustomPage<{
               {t("welcome.action.line")}
             </TintedFilledButton>
           )}
-        </div>
+        </div> 
         <Button
           appearance="outlined"
           href="/club"
-          disabled={!(manual || joined)}
           element={Link}
         >
           {t("welcome.action.done")}
@@ -198,7 +197,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { data: club, error } = await mysk.fetch<Club>(
     `/v1/clubs/${params?.clubID}`,
     {
-      query: { fetch_level: "default" },
+      query: { fetch_level: "default", descendant_fetch_level: "default" },
     },
   );
   if (error?.code === 404) return { notFound: true };
