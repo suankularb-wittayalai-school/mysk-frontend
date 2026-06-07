@@ -120,7 +120,11 @@ const LearnPage: CustomPage<{
             isElectiveEligible={isElectiveEligible}
           />
         </motion.section>
-        <motion.section
+        {/* 
+        Temporary solution for hiding cheer practice cards. Should have a
+        control panel to control this.
+        */}
+        {/* <motion.section
           className="skc-section"
           layout="position"
           transition={transition(DURATION.medium4, EASING.standard)}
@@ -129,7 +133,7 @@ const LearnPage: CustomPage<{
           <Columns columns={3} element="ul">
             <CheerAttendanceEntryCard isCheerStaff={isCheerStaff} />
           </Columns>
-        </motion.section>
+        </motion.section> */}
       </LayoutGroup>
     </HomeLayout>
   );

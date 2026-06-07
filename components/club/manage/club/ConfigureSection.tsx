@@ -44,21 +44,11 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
 
   const { duration, easing } = useAnimationConfig();
 
+  // Name and description were removed from the from since they are uneditable
+  // for AY2026 activity day
   const { form, setForm, formValids, formOK, formProps } = useForm<
-    | "nameTH"
-    | "nameEN"
-    | "descTH"
-    | "descEN"
-    | "logo"
-    | "accentColor"
-    | "backgroundColor"
-    | "line"
-    | "discord"
+    "logo" | "accentColor" | "backgroundColor" | "line" | "discord"
   >([
-    { key: "nameTH", required: true, defaultValue: club.name.th },
-    { key: "nameEN", defaultValue: club.name["en-US"] },
-    { key: "descTH", required: true, defaultValue: club.description?.th },
-    { key: "descEN", defaultValue: club.description?.["en-US"] },
     { key: "logo", required: true, defaultValue: club.logo_url },
     {
       key: "backgroundColor",
@@ -253,7 +243,7 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
                 helperMsg={t("overview.configure.form.name_helper")}
                 locale={locale}
                 disabled
-                {...formProps.nameTH}
+                value={club.name.th}
               />
             </div>
             <TextField
@@ -262,9 +252,14 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
               helperMsg={t("overview.configure.form.nameEN_helper")}
               locale={locale}
               disabled
-              {...formProps.nameEN}
+              value={club.name["en-US"] || ""}
             />
-            <TextField
+            {/* 
+            The description field is removed because it is supposed to be 
+            displayed in the explore page, but an explore page is now only the 
+            event map
+            */}
+            {/* <TextField
               appearance="outlined"
               behavior="multi-line"
               label={t("overview.configure.form.desc")}
@@ -279,7 +274,7 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
                 />
               }
               disabled
-              {...formProps.descTH}
+              value={club.description?.th}
             />
             <TextField
               appearance="outlined"
@@ -288,8 +283,8 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
               className="h-32 [&>*:nth-child(2)]:!h-full"
               helperMsg={t("overview.configure.form.descEN_helper")}
               disabled
-              {...formProps.descEN}
-            />
+              value={club.description?.["en-US"] || ""}
+            /> */}
             {/* <TextField
               appearance="outlined"
               label={t("configure.form.logo")}
@@ -322,7 +317,7 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
             {/* Contacts Information Section */}
             <section
               aria-labelledby="header-contacts"
-              className=" flex flex-col gap-5 sm:col-span-2"
+              className="flex flex-col gap-5 sm:col-span-2"
             >
               <div id="header-contacts">
                 <Text type="headline-small" element="h2">
@@ -379,7 +374,7 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
                 className="!whitespace-nowrap"
                 onClick={() =>
                   window.open(
-                    `/join/club/${club.id}`,
+                    `/club/join/${club.id}`,
                     "_blank",
                     "popup, width=393, height=793",
                   )

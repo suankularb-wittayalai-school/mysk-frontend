@@ -80,7 +80,7 @@ const ClubManagePage: NextPage<{
               label={t("tab.overview")}
               selected={view === "overview"}
               onClick={() => {
-                if (allowTabChange) {
+                if (allowTabChange && view !== "overview") {
                   setView("overview");
                   setAllowTabChange(false);
                 }
@@ -91,7 +91,7 @@ const ClubManagePage: NextPage<{
               label={t("tab.members")}
               selected={view === "members"}
               onClick={() => {
-                if (allowTabChange) {
+                if (allowTabChange && view !== "members") {
                   setView("members");
                   setAllowTabChange(false);
                 }

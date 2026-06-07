@@ -8,8 +8,6 @@ import {
 } from "@suankularb-components/react";
 import { FC } from "react";
 import QRCode from "react-qr-code";
-import TextGlance from "@/components/home/glance/TextGlance";
-import { MaterialIcon } from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
 
 const TopUpQRDialog: FC<{
@@ -51,13 +49,6 @@ const TopUpQRDialog: FC<{
           className="object-fit h-full select-none"
         /> */}
         </div>
-        <TextGlance
-          icon={<MaterialIcon icon="refresh" size={20} />}
-          visible
-          className={`w-3/4 !border-0 !bg-error-container *:!text-on-error-container`}
-        >
-          {t("topUp.topUpDialog.tip")}
-        </TextGlance>
       </DialogContent>
       <Actions align="right">
         <Button appearance="text" onClick={onClose}>

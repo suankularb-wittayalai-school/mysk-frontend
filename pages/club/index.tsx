@@ -4,8 +4,7 @@ import HomeHeader from "@/components/club/home/HomeHeader";
 import JoinedClubsSection from "@/components/club/home/JoinedClubsSection";
 import UsefulLinksSection from "@/components/club/home/UsefulLinksSection";
 import { Club } from "@/utils/types/club";
-import { Student, UserRole } from "@/utils/types/person";
-import { LangCode } from "@/utils/types/common";
+import { Student } from "@/utils/types/person";
 import {
   Columns,
   ContentLayout,
@@ -21,7 +20,6 @@ import {
   NextPage,
 } from "next";
 import useTranslation from "next-translate/useTranslation";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -65,7 +63,7 @@ const ClubPage: NextPage<{
   const router = useRouter();
 
   const [quota, setQuota] = useState<number>(
-    (maxClubQuotas ?? 0) - joinedClubs.length,
+    maxClubQuotas - joinedClubs.length,
   );
 
   useEffect(() => {
@@ -117,7 +115,6 @@ const ClubPage: NextPage<{
 };
 
 export const getServerSideProps: GetServerSideProps = async ({
-  locale,
   query,
   req,
   res,
@@ -133,6 +130,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   let redirectToClub: Club | null = null;
   let user = null;
   let isKornor = false;
+  let maxClubQuotas = 0;
 
   if (mysk.user !== null) {
     const { data } = await getLoggedInPerson(supabase, mysk);
@@ -141,50 +139,49 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   if (mysk.user?.email == "kornor@sk.ac.th") isKornor = true;
 
-  const { data: joinedClubsData } = await mysk.fetch<Club[]>("/v1/clubs", {
-    query: {
-      fetch_level: "default",
-      descendant_fetch_level: "detailed",
-      filter: {
-        data: { member_ids: [user?.id] },
+  if (user && user.id != null) {
+    const { data: joinedClubsData } = await mysk.fetch<Club[]>("/v1/clubs", {
+      query: {
+        fetch_level: "default",
+        descendant_fetch_level: "detailed",
+        filter: {
+          data: { member_ids: [user?.id] },
+        },
       },
-    },
-  });
+    });
 
-  if (joinedClubsData)
-    joinedClubs = joinedClubsData.map((club) => ({
-      ...club,
-      members: [],
-      staffs: [],
-    }));
+    if (joinedClubsData)
+      joinedClubs = joinedClubsData.map((club) => ({
+        ...club,
+        members: [],
+        staffs: [],
+      }));
 
-  const { data: managingClubsData } = await mysk.fetch<Club[]>("/v1/clubs", {
-    query: {
-      fetch_level: "compact",
-      filter: { data: { staff_ids: [user?.id] } },
-    },
-  });
+    const { data: managingClubsData } = await mysk.fetch<Club[]>("/v1/clubs", {
+      query: {
+        fetch_level: "compact",
+        filter: { data: { staff_ids: [user?.id] } },
+      },
+    });
 
-  if (managingClubsData) managingClubs = managingClubsData;
+    if (managingClubsData) managingClubs = managingClubsData;
 
-  if (query.club)
-    redirectToClub = (
-      await mysk.fetch<Club>(`/v1/clubs/${query.club}`, {
-        query: { fetch_level: "compact" },
-      })
-    ).data;
+    if (query.club)
+      redirectToClub = (
+        await mysk.fetch<Club>(`/v1/clubs/${query.club}`, {
+          query: { fetch_level: "compact" },
+        })
+      ).data;
 
-  /* Fetch Club Quotas */
-  const { data: maxClubQuotas } = await mysk.fetch<number>(
-    `/v1/students/${user?.id}/clubs/quota`,
-  );
+    /* Fetch Club Quotas */
+    const { data: maxClubQuotasData } = await mysk.fetch<number>(
+      `/v1/students/${user?.id}/clubs/quota`,
+    );
+    maxClubQuotas = maxClubQuotasData ?? 0;
+  }
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "index",
-      ])),
       user,
       isKornor,
       redirect: query.redirect || null,
