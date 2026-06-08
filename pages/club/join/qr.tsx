@@ -56,12 +56,12 @@ const QRMethodPage: CustomPage = () => {
   const [failOpen, setFailOpen] = useState(false);
   const validateScannedPath = (path: string) => {
     const regex = /^https:\/\/mysk\.school\/club/;
-
-    if (regex.test(path)) {
-      router.push(path.replace("https://mysk.school", ""));
-    } else {
-      setFailOpen(true);
-    }
+    setFailOpen(true);
+    // if (regex.test(path)) {
+    //   router.push(path.replace("https://mysk.school", ""));
+    // } else {
+    //   setFailOpen(true);
+    // }
   };
 
   return (
@@ -124,12 +124,12 @@ const QRMethodPage: CustomPage = () => {
         </Button>
       </Actions>
       <Dialog open={failOpen} onClose={() => setFailOpen(false)}>
-        <DialogHeader desc={t("qr.supportDialog.desc")} />
-        <DialogContent className="mx-6">
+        <DialogHeader desc={t("qr.supportDialog.systemClosed")} />
+        {/* <DialogContent className="mx-6">
           <p className="skc-body-medium text-on-surface-variant">
             {t("qr.supportDialog.tryAgain")}
           </p>
-        </DialogContent>
+        </DialogContent> */}
         <Actions>
           <Button appearance="text" onClick={() => setFailOpen(false)}>
             {t("qr.supportDialog.action.close")}

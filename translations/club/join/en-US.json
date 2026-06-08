@@ -16,7 +16,8 @@
       "tryAgain": "Make sure you're scanning the correct QR code, and please try again.",
       "action": {
         "close": "Close"
-      }
+      },
+      "systemClosed": "The system is closed. Thank you for your participation!"
     }
   },
   "club": {
