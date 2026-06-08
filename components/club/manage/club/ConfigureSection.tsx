@@ -382,11 +382,7 @@ const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
               >
                 {t("overview.configure.action.openPublicView")}
               </Button>
-              <Button
-                appearance="filled"
-                disabled={!hasAccessibleContrast}
-                onClick={handleSubmit}
-              >
+              <Button appearance="filled" onClick={handleSubmit}>
                 {t("overview.configure.action.save")}
               </Button>
             </Actions>
