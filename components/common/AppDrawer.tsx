@@ -58,12 +58,6 @@ const AppDrawer: StylableFC = ({ style, className }) => {
           onClick={() => trackAppOpen("MySK")}
           href="https://www.mysk.school/"
         />
-        <AppDrawerItem
-          logo={<Image src={ClubRegistryLogo} alt="" />}
-          name={t("mysk.clubRegistry")}
-          onClick={() => trackAppOpen("MySK Club Registry")}
-          href="https://clubs.mysk.school/"
-        />
       </AppDrawerSegment>
 
       {/* School apps */}
@@ -73,18 +67,6 @@ const AppDrawer: StylableFC = ({ style, className }) => {
           name={t("school.mainSite")}
           onClick={() => trackAppOpen("sk.ac.th")}
           href="http://www.sk.ac.th/"
-        />
-        <AppDrawerItem
-          logo={<Image src={SamakLogo} alt="" />}
-          name={t("school.samak")}
-          onClick={() => trackAppOpen("Samak")}
-          href="http://samak.sk.ac.th/"
-        />
-        <AppDrawerItem
-          logo={<Image src={ShoppingLogo} alt="" />}
-          name={t("school.shopping")}
-          onClick={() => trackAppOpen("SK Shopping")}
-          href="https://shopping.skkornor.org/"
         />
         <AppDrawerItem
           logo={<Image src={SchoolICTLogo} alt="" />}
@@ -103,12 +85,6 @@ const AppDrawer: StylableFC = ({ style, className }) => {
           name={t("school.ita")}
           onClick={() => trackAppOpen("ITA")}
           href="https://sites.google.com/sk.ac.th/oit"
-        />
-        <AppDrawerItem
-          logo={<Image src={KularbLuangLogo} alt="" />}
-          name={t("school.basedLine")}
-          onClick={() => trackAppOpen("Based Line")}
-          href="http://43.229.77.153/~ztrad/sk/"
         />
         <AppDrawerItem
           logo={<Image src={KularbLuangLogo} alt="" />}

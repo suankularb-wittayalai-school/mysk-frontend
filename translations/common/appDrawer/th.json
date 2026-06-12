@@ -1,18 +1,14 @@
 {
   "mysk": {
     "title": "แอพ MySK",
-    "mysk": "MySK",
-    "clubRegistry": "ทะเบียนชุมนุม"
+    "mysk": "MySK"
   },
   "school": {
     "title": "แอพโรงเรียน",
     "mainSite": "เว็บหลัก",
-    "samak": "สมัคร",
-    "shopping": "SK Shopping",
     "schoolICT": "School ICT",
     "sar": "ระบบ SAR",
     "ita": "ระบบ ITA",
-    "basedLine": "Based Line",
     "kularbLuang": "กุหลาบหลวง"
   },
   "learning": {
