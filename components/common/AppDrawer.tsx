@@ -7,6 +7,7 @@ import LibraryOPACLogo from "@/public/images/drawer/library-opac.png";
 import LibraryLogo from "@/public/images/drawer/library.svg";
 import MainSiteLogo from "@/public/images/drawer/main-site.png";
 import MySKLogo from "@/public/images/drawer/mysk.svg";
+import MySKMourningLogo from "@/public/images/drawer/mysk-mourning.svg";
 import SamakLogo from "@/public/images/drawer/samak.svg";
 import SARLogo from "@/public/images/drawer/sar.png";
 import SchoolICTLogo from "@/public/images/drawer/school-ict.png";
@@ -52,7 +53,7 @@ const AppDrawer: StylableFC = ({ style, className }) => {
       {/* MySK apps */}
       <AppDrawerSegment title={t("mysk.title")}>
         <AppDrawerItem
-          logo={<Image src={MySKLogo} alt="" />}
+          logo={<Image src={MySKMourningLogo} alt="" />}
           name={t("mysk.mysk")}
           onClick={() => trackAppOpen("MySK")}
           href="https://www.mysk.school/"
