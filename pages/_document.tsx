@@ -9,10 +9,14 @@ export default function Document() {
         <link
           rel="apple-touch-icon"
           sizes="180x180"
-          href="/icons/apple-touch-icon.png"
+          href="/icons/apple-touch-mourning-icon.png"
         />
-        <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
-        <link rel="icon" type="image/png" href="/icons/favicon.png" />
+        <link
+          rel="icon"
+          type="image/svg+xml"
+          href="/icons/favicon-mourning.svg"
+        />
+        <link rel="icon" type="image/png" href="/icons/favicon-mourning.png" />
         <link rel="manifest" href="/site.webmanifest" />
         <link
           rel="mask-icon"

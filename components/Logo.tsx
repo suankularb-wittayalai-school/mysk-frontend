@@ -1,8 +1,10 @@
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
-import MySKVariantLogoDark from "@/public/icons/petals-dark-variant.svg";
+import MySKPrideLogoDark from "@/public/icons/petals-dark-pride.svg";
 import MySKLogoDark from "@/public/icons/petals-dark.svg";
-import MySKVariantLogoLight from "@/public/icons/petals-light-variant.svg";
+import MySKPrideLogoLight from "@/public/icons/petals-light-pride.svg";
 import MySKLogoLight from "@/public/icons/petals-light.svg";
+import MySKMourningLogoLight from "@/public/icons/petals-light-mourning.svg";
+import MySKMourningLogoDark from "@/public/icons/petals-dark-mourning.svg";
 import { toZonedTime } from "date-fns-tz";
 import Image from "next/image";
 import { ComponentProps, FC } from "react";
@@ -17,9 +19,11 @@ const Logo: FC<Omit<ComponentProps<typeof Image>, "src">> = (props) => {
 
   return (
     <MultiSchemeImage
-      {...(pride
-        ? { srcLight: MySKVariantLogoLight, srcDark: MySKVariantLogoDark }
-        : { srcLight: MySKLogoLight, srcDark: MySKLogoDark })}
+      // {...(pride
+      //   ? { srcLight: MySKPrideLogoLight, srcDark: MySKPrideLogoDark }
+      //   : { srcLight: MySKLogoLight, srcDark: MySKLogoDark })}
+      srcLight={MySKMourningLogoLight}
+      srcDark={MySKMourningLogoDark}
       {...props}
     />
   );
