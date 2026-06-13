@@ -1,18 +1,14 @@
 {
   "mysk": {
     "title": "MySK apps",
-    "mysk": "MySK",
-    "clubRegistry": "Club Registry"
+    "mysk": "MySK"
   },
   "school": {
     "title": "School apps",
     "mainSite": "Main Site",
-    "samak": "Samak",
-    "shopping": "SK Shopping",
     "schoolICT": "School ICT",
     "sar": "SAR",
     "ita": "ITA",
-    "basedLine": "Based Line",
     "kularbLuang": "Kularb Luang"
   },
   "learning": {

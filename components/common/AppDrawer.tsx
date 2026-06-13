@@ -7,6 +7,7 @@ import LibraryOPACLogo from "@/public/images/drawer/library-opac.png";
 import LibraryLogo from "@/public/images/drawer/library.svg";
 import MainSiteLogo from "@/public/images/drawer/main-site.png";
 import MySKLogo from "@/public/images/drawer/mysk.svg";
+import MySKMourningLogo from "@/public/images/drawer/mysk-mourning.svg";
 import SamakLogo from "@/public/images/drawer/samak.svg";
 import SARLogo from "@/public/images/drawer/sar.png";
 import SchoolICTLogo from "@/public/images/drawer/school-ict.png";
@@ -52,16 +53,10 @@ const AppDrawer: StylableFC = ({ style, className }) => {
       {/* MySK apps */}
       <AppDrawerSegment title={t("mysk.title")}>
         <AppDrawerItem
-          logo={<Image src={MySKLogo} alt="" />}
+          logo={<Image src={MySKMourningLogo} alt="" />}
           name={t("mysk.mysk")}
           onClick={() => trackAppOpen("MySK")}
           href="https://www.mysk.school/"
-        />
-        <AppDrawerItem
-          logo={<Image src={ClubRegistryLogo} alt="" />}
-          name={t("mysk.clubRegistry")}
-          onClick={() => trackAppOpen("MySK Club Registry")}
-          href="https://clubs.mysk.school/"
         />
       </AppDrawerSegment>
 
@@ -72,18 +67,6 @@ const AppDrawer: StylableFC = ({ style, className }) => {
           name={t("school.mainSite")}
           onClick={() => trackAppOpen("sk.ac.th")}
           href="http://www.sk.ac.th/"
-        />
-        <AppDrawerItem
-          logo={<Image src={SamakLogo} alt="" />}
-          name={t("school.samak")}
-          onClick={() => trackAppOpen("Samak")}
-          href="http://samak.sk.ac.th/"
-        />
-        <AppDrawerItem
-          logo={<Image src={ShoppingLogo} alt="" />}
-          name={t("school.shopping")}
-          onClick={() => trackAppOpen("SK Shopping")}
-          href="https://shopping.skkornor.org/"
         />
         <AppDrawerItem
           logo={<Image src={SchoolICTLogo} alt="" />}
@@ -102,12 +85,6 @@ const AppDrawer: StylableFC = ({ style, className }) => {
           name={t("school.ita")}
           onClick={() => trackAppOpen("ITA")}
           href="https://sites.google.com/sk.ac.th/oit"
-        />
-        <AppDrawerItem
-          logo={<Image src={KularbLuangLogo} alt="" />}
-          name={t("school.basedLine")}
-          onClick={() => trackAppOpen("Based Line")}
-          href="http://43.229.77.153/~ztrad/sk/"
         />
         <AppDrawerItem
           logo={<Image src={KularbLuangLogo} alt="" />}
