@@ -18,6 +18,13 @@ import useTranslation from "next-translate/useTranslation";
 import CheerAbsenceTypeSelector from "@/components/cheer/CheerAbsenceTypeSelector";
 import cn from "@/utils/helpers/cn";
 
+/**
+ * A List Item displaying a Student’s Attendance at a practice period, as seen
+ * on the Student’s own Cheer Attendance page.
+ *
+ * @param attendance The Student’s Attendance record at the practice period.
+ * @param event The Attendance Event to show.
+ */
 const StudentCheerAttendanceListItem: FC<{
   attendance: CheerAttendanceRecord & { isJatu: boolean };
   event: CheerAttendanceEvent;

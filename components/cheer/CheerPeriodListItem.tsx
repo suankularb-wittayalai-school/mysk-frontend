@@ -12,6 +12,12 @@ import { motion } from "framer-motion";
 import useTranslation from "next-translate/useTranslation";
 import React from "react";
 
+/**
+ * A List Item representing a Cheer period.
+ *
+ * @param cheerSession The Cheer period to display.
+ * @param onSessionSelect Called when the item is clicked. Receive session ID.
+ */
 const CheerPeriodListItem: StylableFC<{
   cheerSession: CheerPracticeSession;
   onSessionSelect: (id: string) => void;

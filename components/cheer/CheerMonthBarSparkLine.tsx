@@ -4,6 +4,12 @@ import tallyCheerAttendances from "@/utils/helpers/attendance/cheer/tallyCheerAt
 import { sum } from "radash";
 import { CheerPracticePeriod } from "@/utils/types/cheer";
 const CHART_HEIGHT = 48;
+/**
+ * A stacked bar chart showing the proportion of each Cheer Attendance Type in
+ * a practice day, as seen in the Class Cheer Attendance summary.
+ *
+ * @param summary The counts of each Cheer Attendance Type for the day.
+ */
 const CheerMonthBarSparkLine: StylableFC<{
   summary: { practice_period: CheerPracticePeriod } & ReturnType<
     typeof tallyCheerAttendances

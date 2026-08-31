@@ -27,6 +27,17 @@ import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 
+/**
+ * A page that displays all Cheer Periods for staff based on the selected date.
+ *
+ * Visibility:
+ * - Only student staff and Cheer teachers can view Cheer Periods.
+ * - On Jatu day, student staff and all teachers are allowed access.
+ *
+ * @param cheerPeriods - The Cheer Periods to be shown
+ * @param date - The currently selected date
+ * @param cheerTeachers - The list of Cheer teachers
+ */
 const CheerPeriodPage: CustomPage<{
   cheerPeriods: CheerPracticeSession[];
   date: string;
@@ -58,6 +69,8 @@ const CheerPeriodPage: CustomPage<{
     cheerTeachers.map((teacher) => teacher.teacher_id),
   );
 
+  // On practice day, Cheer teachers allowed
+  // On Jatu day, all teachers allowed
   useEffect(() => {
     if (!mysk.user) return;
     const filterCheerClass = async () => {

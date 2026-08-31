@@ -21,6 +21,16 @@ import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { useState } from "react";
 
+/**
+ * The Cheer page for Students, displaying their attendance at each Cheer
+ * practice period.
+ *
+ * Visibility:
+ * - Students can only view their own attendance.
+ *
+ * @param attendances The Student’s attendance at each practice period, with
+ * whether each period is on a Jatu day.
+ */
 const CheerPage: CustomPage<{
   attendances: (CheerAttendanceRecord & { isJatu: boolean })[];
 }> = ({ attendances }) => {

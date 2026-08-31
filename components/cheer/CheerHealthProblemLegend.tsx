@@ -4,6 +4,10 @@ import { MaterialIcon } from "@suankularb-components/react";
 import { Text } from "@suankularb-components/react";
 import useTranslation from "next-translate/useTranslation";
 
+/**
+ * A Legend explaining the meaning of each Health Problem icon shown in Cheer
+ * Attendance.
+ */
 const CheerHealthProblemLegend: StylableFC = ({ style, className }) => {
   const { t } = useTranslation("attendance/cheer");
   return (

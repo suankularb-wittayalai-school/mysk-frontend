@@ -8,8 +8,7 @@ import { CheerTallyCount } from "@/utils/types/cheer";
 /**
  * An indicator showing the number of student that have already check their attendance.
  *
- * @param classSize The number that have already taken attendance.
- * @param capSize The number of student in classroom.
+ * @param cheerTallyCount The tally of this class attendance 
  */
 const CheerAttendanceIndicator: StylableFC<{
   cheerTallyCount?: CheerTallyCount;

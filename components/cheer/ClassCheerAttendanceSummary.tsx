@@ -9,6 +9,15 @@ import CheerMonthBarSparkLine from "./CheerMonthBarSparkLine";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import useTranslation from "next-translate/useTranslation";
 
+/**
+ * A Card in the Class Cheer Attendance summary displaying the summary of a
+ * Classroom’s attendance in each practice day as bar charts.
+ *
+ * @param classroom The Classroom to display.
+ * @param practiceDates All practice dates shown in the summary.
+ * @param summaries The counts of each Cheer Attendance Type for each practice
+ * date.
+ */
 const ClassCheerAttendanceSummary: StylableFC<{
   classroom: Pick<Classroom, "number">;
   practiceDates: string[];

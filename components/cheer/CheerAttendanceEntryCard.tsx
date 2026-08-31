@@ -11,6 +11,13 @@ import Link from "next/link";
 import useTranslation from "next-translate/useTranslation";
 import getISODateString from "@/utils/helpers/getISODateString";
 
+/**
+ * A Card linking to Cheer Attendance, either as a Cheer staff or a Student,
+ * as shown on the home page.
+ *
+ * @param isCheerStaff Whether the user is a Cheer staff, in which case the
+ * Card links to the Attendance taking page instead.
+ */
 const CheerAttendanceEntryCard: StylableFC<{ isCheerStaff: boolean }> = ({
   isCheerStaff,
   style,

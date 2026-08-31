@@ -3,6 +3,12 @@ import cn from "@/utils/helpers/cn";
 import { MaterialIcon } from "@suankularb-components/react";
 import tallyCheerAttendances from "@/utils/helpers/attendance/cheer/tallyCheerAttendances";
 
+/**
+ * A Grid of the counts of each Cheer Attendance Type for a Student or Classroom,
+ * each accompanied by an icon.
+ *
+ * @param counts The counts of each Cheer Attendance Type.
+ */
 const CheerAttendanceCountGrid: StylableFC<{
   counts: ReturnType<typeof tallyCheerAttendances>;
 }> = ({ counts, style, className }) => {
