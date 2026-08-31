@@ -3,6 +3,13 @@ import {
   CheerAttendanceType,
 } from "@/utils/types/cheer";
 
+/**
+ * Summarizes an array of Cheer Attendance records.
+ *
+ * @param attendances An array of Cheer Attendance records.
+ *
+ * @returns An object of counts.
+ */
 export default function tallyCheerAttendances(
   attendances: Pick<CheerAttendanceRecord, "presence" | "presence_at_end">[],
 ) {

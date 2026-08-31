@@ -11,6 +11,12 @@ enum CellType {
   empty,
 }
 
+/**
+ * A single colored cell representing a Cheer Attendance Type at an Event, as
+ * seen in the Cheer Attendance summary table.
+ *
+ * @param attendance The Attendance Type to display.
+ */
 const CheerAttendanceFigureEvent: StylableFC<{
   attendance: CheerAttendanceType | null;
 }> = ({ attendance, style, className }) => {

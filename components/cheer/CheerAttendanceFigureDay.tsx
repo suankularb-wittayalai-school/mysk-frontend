@@ -4,6 +4,15 @@ import { Text } from "@suankularb-components/react";
 import cn from "@/utils/helpers/cn";
 import useTranslation from "next-translate/useTranslation";
 
+/**
+ * A column in the Cheer Attendance summary table representing one practice
+ * day, labeled with the date.
+ *
+ * @param children The cells representing the Attendances on this day.
+ * @param practiceDates All practice dates shown in the table, used to add a
+ * separator between days.
+ * @param date The date this column represents.
+ */
 const CheerAttendanceFigureDay: StylableFC<{
   children: ReactNode;
   practiceDates: string[];

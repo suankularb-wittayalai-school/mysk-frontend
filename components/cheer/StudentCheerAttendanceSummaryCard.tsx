@@ -12,6 +12,15 @@ import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import { sift } from "radash";
 import useTranslation from "next-translate/useTranslation";
+/**
+ * A Card in the Class Cheer Attendance summary displaying a Student’s
+ * attendance in each practice day, along with a count grid of their
+ * attendance types.
+ *
+ * @param student The Student to display.
+ * @param practiceDates All practice dates shown in the summary.
+ * @param attendances The Student’s attendances for each practice date.
+ */
 const StudentCheerAttendanceSummaryCard: StylableFC<{
   student: CheerAttendanceRecord["student"];
   practiceDates: string[];

@@ -4,6 +4,10 @@ import { MaterialIcon } from "@suankularb-components/react";
 import cn from "@/utils/helpers/cn";
 import Trans from "next-translate/Trans";
 
+/**
+ * A Glance displaying the guideline for Cheer Attendance remedial, as seen on
+ * the home page.
+ */
 const CheerAttendanceRemedialGuidelineGlance: StylableFC = ({
   style,
   className,

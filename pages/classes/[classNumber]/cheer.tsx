@@ -20,6 +20,20 @@ import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import { parallel } from "radash";
 
+/**
+ * A page displaying a Classroom’s Cheer Attendance summary, with each
+ * Student’s attendance per practice day.
+ *
+ * Visibility:
+ * - Students can only view the summary of their own Classroom.
+ *
+ * @param classroom The Classroom to display.
+ * @param studentsWithAttendances The Students of the Classroom, each with
+ * their attendance at each practice period.
+ * @param practiceDates All practice dates shown in the summary.
+ * @param summaries The counts of each Cheer Attendance Type for each practice
+ * period.
+ */
 const ClassroomCheerAtttendanceSummaryPage: CustomPage<{
   classroom: Pick<Classroom, "id" | "number">;
   studentsWithAttendances: {

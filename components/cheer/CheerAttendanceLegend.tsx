@@ -5,6 +5,10 @@ import { Text } from "@suankularb-components/react";
 import { CheerAttendanceType } from "@/utils/types/cheer";
 import useTranslation from "next-translate/useTranslation";
 
+/**
+ * A Legend explaining the meaning of each color in the Cheer Attendance
+ * summary.
+ */
 const CheerAttendanceLegend: StylableFC = ({ style, className }) => {
   const { t } = useTranslation("classes/cheer");
   return (
