@@ -21,13 +21,11 @@ import { useEffect, useState } from "react";
 import { CustomPage } from "@/utils/types/common";
 
 /**
- * Indicate to the user that the Club staff has recieved their request and
+ * Indicate to the user that the Club staff has received their request and
  * instruct the user what to do next.
  *
  * @param club The Club the user requested to join.
  * @param scheme The calculated color scheme of the page.
- *
- * @returns A Page.
  */
 const WaitingClubJoinPage: CustomPage<{
   club: Club;

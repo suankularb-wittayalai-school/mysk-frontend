@@ -26,9 +26,7 @@ import { CustomPage } from "@/utils/types/common";
  * Club.
  *
  * @param club The Club the user is considering joining.
- * @param pageScheme The calculated color scheme of the page.
- *
- * @returns A Page.
+ * @param scheme The calculated color scheme of the page.
  */
 const RequestClubJoinPage: CustomPage<{
   club: Club;

@@ -12,10 +12,6 @@ import ClubMap from "@/public/images/club-map.svg";
 /**
  * A jumping off point for exploring everything Activity Day has to offer.
  * Interact with the Map and browse the list of Clubs in each of the 4 Houses.
- *
- * @param clubs The full list of Clubs with location to be indexed into by the Map.
- *
- * @returns A Page.
  */
 const ExplorePage: NextPage<{}> = ({}) => {
   const { t } = useTranslation("club/explore");

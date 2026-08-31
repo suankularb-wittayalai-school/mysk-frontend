@@ -25,6 +25,10 @@ import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 
+/**
+ * A QR code scanner for Kornor to scan Student IDs to top up their Club
+ * quota.
+ */
 const KornorTopUpQRPage: NextPage = () => {
   const { t } = useTranslation("club/manage/kornor");
   const [topUpDialogOpen, setTopUpDialogOpen] = useState(false);

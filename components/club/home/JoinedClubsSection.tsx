@@ -20,8 +20,6 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
  * A list of joined Clubs with links to Discord and Line.
  *
  * @param clubs An array of joined Clubs.
- *
- * @returns A `<section>`.
  */
 const JoinedClubsSection: FC<{ clubs: Club[] }> = ({ clubs }) => {
   const { t } = useTranslation("club");

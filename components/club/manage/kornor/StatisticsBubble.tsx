@@ -1,8 +1,18 @@
+// Imports
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
 import { FC } from "react";
 import { Text } from "@suankularb-components/react";
 
+/**
+ * A bubble that displays a statistic count, with an optional percentage.
+ *
+ * @param size The size of the bubble.
+ * @param color The color scheme of the bubble.
+ * @param count The count to display.
+ * @param percentage The percentage to display next to the count.
+ * @param label The label of the statistic.
+ */
 const StatisticsBubble: FC<{
   size: "large" | "small";
   color: "primary" | "secondary" | "tertiary" | "surface";
@@ -16,7 +26,7 @@ const StatisticsBubble: FC<{
     large: "display-large",
     small: "display-small",
   } as const;
-    const TitleSize = {
+  const TitleSize = {
     large: "title-large",
     small: "title-small",
   } as const;

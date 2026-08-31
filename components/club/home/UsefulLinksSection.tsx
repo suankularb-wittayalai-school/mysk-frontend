@@ -7,8 +7,6 @@ import { FC } from "react";
 
 /**
  * Links to SK IT Solutions and SK Kornor.
- *
- * @returns A `<section>`.
  */
 const UsefulLinksSection: FC = () => {
   const { t } = useTranslation("club");

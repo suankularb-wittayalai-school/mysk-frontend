@@ -6,7 +6,7 @@ import { FC } from "react";
 /**
  * A filled Button with a tint for better contrast with the label.
  *
- * @returns A Button.
+ * @param tinted Whether to apply the tint over the Button.
  */
 const TintedFilledButton: FC<
   Omit<ButtonProps, "appearance"> & { tinted?: boolean }

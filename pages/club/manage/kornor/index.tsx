@@ -44,9 +44,8 @@ import Head from "next/head";
 /**
  * A summary of Activity Day data and statistics for Kornor.
  *
+ * @param statistics Aggregate statistics of Clubs and their members.
  * @param clubs The entire list of Clubs.
- *
- * @returns A Page.
  */
 const KornorManagePage: NextPage<{
   statistics: {

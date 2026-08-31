@@ -21,8 +21,6 @@ import Balancer from "react-wrap-balancer";
 
 /**
  * Give information on how to use the QR code method.
- *
- * @returns A Page.
  */
 const QRMethodPage: CustomPage = () => {
   const { t } = useTranslation("club/join");

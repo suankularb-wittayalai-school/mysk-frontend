@@ -30,9 +30,10 @@ import useTranslation from "next-translate/useTranslation";
 import { FC, forwardRef, useContext } from "react";
 
 /**
- * A Section to configure a Club’s identity (name, logo, colors) and Contacts.
+ * A Section to preview a Club's identity (name, logo, colors) and configure
+ * its Contacts.
  *
- * @returns A `<div>`.
+ * @param club The Club to display.
  */
 const ConfigureSection: FC<{ club: Club }> = ({ club }) => {
   const { t } = useTranslation("club/manage");

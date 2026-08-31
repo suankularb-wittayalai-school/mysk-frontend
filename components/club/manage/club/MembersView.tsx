@@ -18,9 +18,9 @@ import useTranslation from "next-translate/useTranslation";
 import { FC, useContext, useEffect, useState } from "react";
 
 /**
- * A view of Manage Club to view existing and approve new Members into a Club.
+ * A view of Manage Club to view existing Members of a Club.
  *
- * @returns A Fragment.
+ * @param club The Club to display.
  */
 const MembersView: FC<{
   club: Club;

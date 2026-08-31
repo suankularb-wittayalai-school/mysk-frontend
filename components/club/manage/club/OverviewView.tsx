@@ -9,10 +9,8 @@ import { Text } from "@suankularb-components/react";
 /**
  * A view of Manage Club to configure Club identity and view statistics.
  *
- * @param club A Club instance.
+ * @param club The Club to display.
  * @param statistics Statistics to show in the Cool Statistics Section.
- *
- * @returns A fragment with a Columns.
  */
 const OverviewView: FC<{
   club: Club;

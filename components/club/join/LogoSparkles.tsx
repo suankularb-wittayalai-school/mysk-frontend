@@ -2,9 +2,7 @@
 import { StylableFC } from "@/utils/types/common";
 
 /**
- * Rays and sparkles, should be placed behind a club logo.
- *
- * @returns An `<svg>`.
+ * Sparkles, should be placed behind a club logo.
  */
 const LogoSparkles: StylableFC = ({ className, style }) => (
   // THE FOLLOWING SVG CONTENT IS GENERATED FROM FIGMA, DO NOT ATTEMPT TO EDIT

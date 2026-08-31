@@ -1,3 +1,4 @@
+// Imports
 import SnackbarContext from "@/contexts/SnackbarContext";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getLocaleName from "@/utils/helpers/getLocaleName";
@@ -17,6 +18,14 @@ import useTranslation from "next-translate/useTranslation";
 import { pick } from "radash";
 import { FC, useContext, useState } from "react";
 
+/**
+ * A Dialog for Kornor to top up a Student's Club quota after scanning their
+ * ID.
+ *
+ * @param open Whether the Dialog is open and shown.
+ * @param onClose Triggers when the Dialog is closed.
+ * @param user The Student to top up the Club quota of.
+ */
 const TopUpDialog: FC<{
   open: boolean;
   onClose: () => void;

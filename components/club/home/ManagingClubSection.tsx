@@ -15,11 +15,9 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
 import { useRouter } from "next/router";
 
 /**
- * A list of joined Clubs with links to Discord and Line.
+ * A list of Clubs the user manages, each linking to its Manage Club page.
  *
  * @param managingClubs An array of Clubs to manage.
- *
- * @returns A `<section>`.
  */
 const ManagingClubSection: FC<{ managingClubs: Club[] }> = ({
   managingClubs,

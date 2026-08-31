@@ -9,7 +9,7 @@ import { FC, ReactNode } from "react";
  * Approval, etc.
  *
  * @param children The content.
- * @param club A Club instance, used for background and accent color.
+ * @param club The Club to use for background and accent color.
  * @param pageScheme The color scheme appropriate for the background, should be calculated on the server and passed in.
  * @param tabName The text to display on the browser tab.
  *

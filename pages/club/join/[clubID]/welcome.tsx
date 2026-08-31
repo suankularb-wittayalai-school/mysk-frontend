@@ -30,12 +30,9 @@ import { CustomPage } from "@/utils/types/common";
 /**
  * Shown when the user is accepted into a club.
  *
- * @param club A Club instance.
- * @param pageScheme The color scheme appropriate for the background.
- * @param manual A bool to specify if this page was redirected from a QR scan or
- * a manual add.
- *
- * @returns A Page.
+ * @param club The Club to display.
+ * @param scheme The color scheme appropriate for the background, calculated on
+ *   the server.
  */
 const WelcomeToClubPage: CustomPage<{
   club: Club;
@@ -170,12 +167,8 @@ const WelcomeToClubPage: CustomPage<{
               {t("welcome.action.line")}
             </TintedFilledButton>
           )}
-        </div> 
-        <Button
-          appearance="outlined"
-          href="/club"
-          element={Link}
-        >
+        </div>
+        <Button appearance="outlined" href="/club" element={Link}>
           {t("welcome.action.done")}
         </Button>
       </div>

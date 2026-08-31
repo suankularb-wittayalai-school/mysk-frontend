@@ -15,6 +15,15 @@ import Trans from "next-translate/Trans";
 import TopUpQRDialog from "@/components/club/home/TopUpQRDialog";
 import cn from "@/utils/helpers/cn";
 
+/**
+ * The header of the Club Home page, showing the user's remaining Club quota
+ * and actions to join or manage Clubs.
+ *
+ * @param user The current user data.
+ * @param isKornor Whether the current user is Kornor.
+ * @param quota The number of Clubs the user can still join.
+ * @param fetchQuota Triggers when the quota is refreshed.
+ */
 const HomeHeader: FC<{
   user: Student | Teacher;
   isKornor: boolean;
@@ -54,7 +63,7 @@ const HomeHeader: FC<{
               <Card appearance="filled" className="mb-6">
                 <CardHeader
                   title={
-                    <div className="flex justify-between mr-3 -mb-4">
+                    <div className="-mb-4 mr-3 flex justify-between">
                       <div>
                         <Trans
                           i18nKey="topUp.title"

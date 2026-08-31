@@ -27,10 +27,8 @@ import { FC } from "react";
  * A Card for when a Student requests a membership at your Club. Show a live
  * relative timestamp as well as Buttons to reject or approve the membership.
  *
- * @param request A Club Join Request instance.
+ * @param request The Club Join Request to display.
  * @param timerReady Whether the relative timestamp can be safely shown without messing up the hydration.
- *
- * @returns A Card.
  */
 const JoinRequestCard: FC<{
   request: ClubJoinRequest;

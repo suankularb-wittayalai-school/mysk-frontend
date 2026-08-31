@@ -16,9 +16,7 @@ import { FC } from "react";
 /**
  * A Card for a Club Member.
  *
- * @param member A Student instance.
- *
- * @returns A Card.
+ * @param member The Student to display.
  */
 const MemberCard: FC<{ member: Student }> = ({ member }) => {
   const locale = useLocale();

@@ -34,11 +34,8 @@ import useLocale from "@/utils/helpers/useLocale";
  * Allows Club Managers to view and configure information about their club—
  * including identity, Contacts, and statistics—and approve new members.
  *
- * @param club A Club instance.
+ * @param club The Club to display.
  * @param statistics Statistics to show in the Cool Statistics Section.
- * @param requests An array of Club Join Requests, shown in the Members tab.
- *
- * @returns A Page.
  */
 const ClubManagePage: NextPage<{
   club: Club;

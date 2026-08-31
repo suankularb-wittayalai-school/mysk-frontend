@@ -32,11 +32,14 @@ import useMySKClient from "@/utils/backend/mysk/useMySKClient";
  * The Home page.
  *
  * @param user The current user data.
- * @param redirectToClub The Club the log in Button redirects to.
+ * @param isKornor Whether the current user is Kornor.
+ * @param redirect A path to redirect to after the user has logged in, from the
+ *   query string.
+ * @param redirectToClub The Club the user is prompted to join, from the query
+ *   string.
  * @param joinedClubs An array of Clubs the user has already joined.
- * @param managingClubs An array of Clubs the user manage.
- *
- * @returns A Page.
+ * @param managingClubs An array of Clubs the user manages.
+ * @param maxClubQuotas The maximum number of Clubs the user can join.
  */
 const ClubPage: NextPage<{
   user: Student;

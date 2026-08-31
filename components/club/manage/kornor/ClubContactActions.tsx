@@ -7,8 +7,6 @@ import { FC, forwardRef } from "react";
  * Buttons to open a Contact link or copy the link to clipboard.
  *
  * @param value The URL of the Contact.
- *
- * @returns A `<div>` that is similar to an Actions.
  */
 const ClubContactActions: FC<{ value: string }> = ({ value }) => {
   const { t } = useTranslation("manage", {

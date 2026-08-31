@@ -10,8 +10,6 @@ import Balancer from "react-wrap-balancer";
  * place. Replaces the content.
  *
  * @param children The verbiage to display.
- *
- * @returns A Card.
  */
 const EmptyState: StylableFC<{
   children: ReactNode;

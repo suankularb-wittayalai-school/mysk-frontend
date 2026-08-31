@@ -10,8 +10,6 @@ import { Text } from "@suankularb-components/react";
  * Displays some cool statistics on a Club’s membership.
  *
  * @param statistics Statistics on the Members of a Club.
- *
- * @returns A `<section>`.
  */
 const StatisticsSection: FC<{
   statistics: ClubStatistics;

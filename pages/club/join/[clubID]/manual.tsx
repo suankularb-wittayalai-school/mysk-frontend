@@ -35,11 +35,8 @@ import { Student, Teacher } from "@/utils/types/person";
  * A manual way to join a Club. Uses the Student's email.
  *
  * @param club The Club the user is considering joining.
- * @param pageScheme The calculated color scheme of the page.
- *
- * @returns A Page.
+ * @param scheme The calculated color scheme of the page.
  */
-
 const RequestClubJoinPage: CustomPage<{
   club: Club;
   scheme?: CalculatedClubScheme | null;

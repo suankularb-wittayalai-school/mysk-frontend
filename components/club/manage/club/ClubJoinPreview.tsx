@@ -13,8 +13,6 @@ import { FC } from "react";
  * @param logo A Club’s logo URL.
  * @param backgroundColor A Club’s configured background color.
  * @param accentColor A Club’s configured accent color.
- *
- * @returns A `<div>`.
  */
 const ClubJoinPreview: FC<{
   logo: string;

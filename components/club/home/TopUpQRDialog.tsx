@@ -1,3 +1,4 @@
+// Imports
 import { Student, Teacher } from "@/utils/types/person";
 import {
   Actions,
@@ -10,6 +11,14 @@ import { FC } from "react";
 import QRCode from "react-qr-code";
 import useTranslation from "next-translate/useTranslation";
 
+/**
+ * A Dialog showing a QR code of the user's ID, for Kornor to scan at the
+ * booth to top up the user's Club quota.
+ *
+ * @param open Whether the Dialog is open and shown.
+ * @param onClose Triggers when the Dialog is closed.
+ * @param user The current user.
+ */
 const TopUpQRDialog: FC<{
   open: boolean;
   onClose: () => void;
