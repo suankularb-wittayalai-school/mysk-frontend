@@ -1,6 +1,6 @@
 // Imports
 import { Button, MaterialIcon } from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { FC, forwardRef } from "react";
 
 /**
@@ -9,16 +9,14 @@ import { FC, forwardRef } from "react";
  * @param value The URL of the Contact.
  */
 const ClubContactActions: FC<{ value: string }> = ({ value }) => {
-  const { t } = useTranslation("manage", {
-    keyPrefix: "kornor.data.table.rowAction",
-  });
+  const { t } = useTranslation("club/manage/kornor");
 
   return (
     <div className="-my-2.5 -mr-2 flex flex-row -space-x-1">
       <Button
         appearance="text"
         icon={<MaterialIcon icon="open_in_new" />}
-        tooltip={t("copyToClipboard")}
+        tooltip={t("data.table.rowAction.openLink")}
         href={value}
         // eslint-disable-next-line react/display-name
         element={forwardRef<HTMLAnchorElement>((props, ref) => (
@@ -28,7 +26,7 @@ const ClubContactActions: FC<{ value: string }> = ({ value }) => {
       <Button
         appearance="text"
         icon={<MaterialIcon icon="content_copy" />}
-        tooltip={t("openLink")}
+        tooltip={t("data.table.rowAction.copyToClipboard")}
         onClick={() => navigator.clipboard.writeText(value)}
       />
     </div>
