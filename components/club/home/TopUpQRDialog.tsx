@@ -34,12 +34,12 @@ const TopUpQRDialog: FC<{
       />
       <DialogContent className="flex flex-col items-center gap-4">
         <div className="grid w-full grid-cols-1 grid-rows-1 place-items-center">
-          <div className="border-primary-border col-start-1 row-start-1 aspect-square w-3/4 rounded-lg border-2 bg-white p-2">
+          <div className="border-primary-border light col-start-1 row-start-1 aspect-square w-3/4 rounded-lg border-2 bg-white p-2">
             <QRCode
               value={user.id}
               level="Q"
-              bgColor="transparent"
-              fgColor="var(--teitiary)"
+              bgColor="var(--background)"
+              fgColor="var(--on-background)"
               className="aspect-square h-min w-full select-none"
             />
           </div>
