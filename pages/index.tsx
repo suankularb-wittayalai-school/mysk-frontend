@@ -9,6 +9,7 @@ import flagUserAsOnboarded from "@/utils/backend/account/flagUserAsOnboarded";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
+import getSafeRedirectPath from "@/utils/helpers/getSafeRedirectPath";
 import prefixLocale from "@/utils/helpers/prefixLocale";
 import useLocale from "@/utils/helpers/useLocale";
 import { CustomPage, LangCode } from "@/utils/types/common";
@@ -73,7 +74,8 @@ const LandingPage: CustomPage = () => {
           router.push("/account");
         // Otherwise redirect to home page (middleware redirects further).
         else router.push("/learn");
-      } else router.push("/learn");
+      } else
+        router.replace(getSafeRedirectPath(router.query.redirect) || "/learn");
     })();
   }, [mysk.user]);
 

@@ -21,8 +21,7 @@ import {
 } from "next";
 import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import ManagingClubSection from "@/components/club/home/ManagingClubSection";
@@ -33,10 +32,6 @@ import useMySKClient from "@/utils/backend/mysk/useMySKClient";
  *
  * @param user The current user data.
  * @param isKornor Whether the current user is Kornor.
- * @param redirect A path to redirect to after the user has logged in, from the
- *   query string.
- * @param redirectToClub The Club the user is prompted to join, from the query
- *   string.
  * @param joinedClubs An array of Clubs the user has already joined.
  * @param managingClubs An array of Clubs the user manages.
  * @param maxClubQuotas The maximum number of Clubs the user can join.
@@ -44,34 +39,20 @@ import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 const ClubPage: NextPage<{
   user: Student;
   isKornor: boolean;
-  redirect?: string;
-  redirectToClub?: Club;
   joinedClubs: Club[];
   managingClubs: Club[];
   maxClubQuotas: number;
-}> = ({
-  user,
-  isKornor,
-  redirectToClub,
-  joinedClubs,
-  managingClubs,
-  maxClubQuotas,
-}) => {
+}> = ({ user, isKornor, joinedClubs, managingClubs, maxClubQuotas }) => {
   const mysk = useMySKClient();
 
   const { t } = useTranslation("club");
   const { t: tx } = useTranslation("common");
 
   const { duration, easing } = useAnimationConfig();
-  const router = useRouter();
 
   const [quota, setQuota] = useState<number>(
     maxClubQuotas - joinedClubs.length,
   );
-
-  useEffect(() => {
-    if (redirectToClub) router.replace(`/join/club/${redirectToClub.id}`);
-  }, [redirectToClub]);
 
   /* Refetch after close topUp dialog */
   const fetchQuota = async () => {
@@ -117,11 +98,7 @@ const ClubPage: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  query,
-  req,
-  res,
-}) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
@@ -130,7 +107,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   let joinedClubs: Club[] = [];
   let managingClubs: Club[] = [];
-  let redirectToClub: Club | null = null;
   let user = null;
   let isKornor = false;
   let maxClubQuotas = 0;
@@ -169,13 +145,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 
     if (managingClubsData) managingClubs = managingClubsData;
 
-    if (query.club)
-      redirectToClub = (
-        await mysk.fetch<Club>(`/v1/clubs/${query.club}`, {
-          query: { fetch_level: "compact" },
-        })
-      ).data;
-
     /* Fetch Club Quotas */
     const { data: maxClubQuotasData } = await mysk.fetch<number>(
       `/v1/students/${user?.id}/clubs/quota`,
@@ -187,8 +156,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     props: {
       user,
       isKornor,
-      redirect: query.redirect || null,
-      redirectToClub,
       joinedClubs,
       managingClubs,
       maxClubQuotas,

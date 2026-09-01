@@ -102,7 +102,8 @@ export async function middleware(req: NextRequest) {
       return `/cheer/attendance/${getISODateString(new Date())}`;
 
     // Disallow public users from visiting private pages
-    if (pageRole !== "public" && !user) return "/";
+    if (pageRole !== "public" && !user)
+      return `/?redirect=${encodeURIComponent(route + req.nextUrl.search)}`;
 
     // Disallow logged in users from visiting certain pages under certain
     // circumstances

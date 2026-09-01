@@ -5,6 +5,7 @@ import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import fetchMySKProxy from "@/utils/backend/mysk/fetchMySKProxy";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import saveAccessToken from "@/utils/helpers/account/saveAccessToken";
+import getSafeRedirectPath from "@/utils/helpers/getSafeRedirectPath";
 import logError from "@/utils/helpers/logError";
 import useLocale from "@/utils/helpers/useLocale";
 import { OAuthResponseData } from "@/utils/types/fetch";
@@ -99,7 +100,8 @@ export default function useGoogleIdentityServices(
     );
     if (person) setPerson(person);
 
-    if (router.asPath !== "/") await router.push("/learn");
+    if (router.asPath !== "/")
+      await router.push(getSafeRedirectPath(router.query.redirect) || "/learn");
   }
 
   /**
