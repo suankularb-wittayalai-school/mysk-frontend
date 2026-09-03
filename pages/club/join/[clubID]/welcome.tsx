@@ -20,7 +20,7 @@ import { usePlausible } from "next-plausible";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { forwardRef, useState } from "react";
+import { forwardRef } from "react";
 import useLocale from "@/utils/helpers/useLocale";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import DiscordLogo from "@/public/images/social/discord.svg";
@@ -53,7 +53,6 @@ const WelcomeToClubPage: CustomPage<{
   const lineURL = club.contacts.find(
     (contact) => contact.type === "line",
   )?.value;
-  const [joined, setJoined] = useState(!(discordURL || lineURL));
 
   return (
     <ClubJoinLayout
@@ -134,7 +133,6 @@ const WelcomeToClubPage: CustomPage<{
                 plausible("Access Club Contact", {
                   props: { club: getLocaleString(club.name, "en-US") },
                 });
-                setJoined(true);
               }}
               // eslint-disable-next-line react/display-name
               element={forwardRef<HTMLAnchorElement>((props, ref) => (
@@ -155,7 +153,6 @@ const WelcomeToClubPage: CustomPage<{
                 plausible("Access Club Contact", {
                   props: { club: getLocaleString(club.name, "en-US") },
                 });
-                setJoined(true);
               }}
               // eslint-disable-next-line react/display-name
               element={forwardRef<HTMLAnchorElement>((props, ref) => (
