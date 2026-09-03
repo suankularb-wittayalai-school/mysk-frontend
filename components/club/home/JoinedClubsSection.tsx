@@ -34,11 +34,7 @@ const JoinedClubsSection: FC<{ clubs: Club[] }> = ({ clubs }) => {
         {t("joinedClubs.title")}
       </Text>
       {clubs.length !== 0 ? (
-        <Columns
-          columns={2}
-          element="li"
-          className="sm:!grid-cols-1 md:!grid-cols-2"
-        >
+        <Columns columns={2} className="sm:!grid-cols-1 md:!grid-cols-2">
           {clubs.map((club) => {
             const discordURL = club.contacts.find(
               (contact) => contact.type === "discord",

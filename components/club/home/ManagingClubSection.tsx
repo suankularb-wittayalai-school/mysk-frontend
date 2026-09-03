@@ -34,11 +34,7 @@ const ManagingClubSection: FC<{ managingClubs: Club[] }> = ({
       <Text type="headline-large" element="h2">
         {t("manageClubs.title")}
       </Text>
-      <Columns
-        columns={2}
-        element="li"
-        className="sm:!grid-cols-1 md:!grid-cols-2"
-      >
+      <Columns columns={2} className="sm:!grid-cols-1 md:!grid-cols-2">
         {managingClubs.map((club) => (
           <Card
             key={club.id}
