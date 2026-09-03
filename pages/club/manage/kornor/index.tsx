@@ -209,9 +209,11 @@ const KornorManagePage: NextPage<{
               color="primary"
               count={statistics.club_members + statistics.club_staffs}
               percentage={
-                ((statistics.club_members + statistics.club_staffs) /
-                  statistics.total_students) *
-                100
+                statistics.total_students > 0
+                  ? ((statistics.club_members + statistics.club_staffs) /
+                      statistics.total_students) *
+                    100
+                  : undefined
               }
               label={t("statistics.people.totalStudents")}
             />
@@ -242,7 +244,9 @@ const KornorManagePage: NextPage<{
               color="secondary"
               count={statistics.active_clubs}
               percentage={
-                (statistics.active_clubs / statistics.total_clubs) * 100
+                statistics.total_clubs > 0
+                  ? (statistics.active_clubs / statistics.total_clubs) * 100
+                  : undefined
               }
               label={t("statistics.clubs.totalClubs")}
             />
