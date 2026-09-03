@@ -67,10 +67,13 @@ const KornorManagePage: NextPage<{
   // Tanstack Table configurations
   const data = clubs;
   const columnHelper = createColumnHelper<Club>();
-  const maxMemberCount = Math.max(...clubs.map((club) => club.member_count));
+  const maxMemberCount = clubs.length
+    ? Math.max(...clubs.map((club) => club.member_count))
+    : 0;
   // Average member count
-  const averageMemberCount =
-    sum(clubs.map((club) => club.member_count)) / clubs.length;
+  const averageMemberCount = clubs.length
+    ? sum(clubs.map((club) => club.member_count)) / clubs.length
+    : 0;
   const columns = [
     // Club name
     // We use the `name` property
@@ -147,10 +150,42 @@ const KornorManagePage: NextPage<{
     getPaginationRowModel: getPaginationRowModel(),
   });
 
+  /**
+   * Export the list of Clubs as a CSV file.
+   */
+  function handleExportCSV() {
+    const header = [
+      t("data.table.thead.clubName"),
+      t("data.table.thead.memberCount"),
+      t("data.table.thead.discord"),
+      t("data.table.thead.line"),
+    ];
+    const rows = clubs.map((club) => [
+      getLocaleString(club.name, locale),
+      String(club.member_count),
+      club.contacts.find((contact) => contact.type === "discord")?.value ?? "",
+      club.contacts.find((contact) => contact.type === "line")?.value ?? "",
+    ]);
+    const csv = [header, ...rows]
+      .map((row) =>
+        row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(","),
+      )
+      .join("\n");
+    const blob = new Blob(["\ufeff" + csv], {
+      type: "text/csv;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "clubs.csv";
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <>
       <Head>
-        <title>tabName</title>
+        <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
       <PageHeader parentURL="/club" className="mx-4 sm:mx-0">
         {t("title")}
@@ -244,7 +279,7 @@ const KornorManagePage: NextPage<{
             <Button
               appearance="outlined"
               icon={<MaterialIcon icon="download" />}
-              onClick={() => {}}
+              onClick={handleExportCSV}
             >
               {t("data.action.export")}
             </Button>
@@ -285,7 +320,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     return { notFound: true };
 
   // Fetch Clubs
-  const { data: clubs } = await mysk.fetch("/v1/clubs", {
+  const { data: clubs } = await mysk.fetch<Club[]>("/v1/clubs", {
     query: {
       fetch_level: "default",
       descendant_fetch_level: "default",
