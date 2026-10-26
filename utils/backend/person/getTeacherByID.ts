@@ -23,7 +23,24 @@ export async function getTeacherByID(
     .from("teachers")
     .select(
       `*,
-      people(*, person_contacts(contacts(*)), person_allergies(allergy_name)),
+      people(
+        prefix_th,
+        prefix_en,
+        first_name_th,
+        first_name_en,
+        middle_name_th,
+        middle_name_en,
+        last_name_th,
+        last_name_en,
+        nickname_th,
+        nickname_en,
+        birthdate,
+        profile,
+        shirt_size,
+        pants_size,
+        person_contacts(contacts(*)),
+        person_allergies(allergy_name)
+      ),
       classroom_advisors(classrooms!inner(id, number)),
       subject_groups(id, name_en, name_th),
       subject_teachers(
@@ -108,7 +125,7 @@ export async function getTeacherByID(
       : null,
     profile: data!.people?.profile ?? null,
     profile_url: data!.people?.profile ?? null,
-    citizen_id: options?.detailed ? (data!.people?.citizen_id ?? null) : null,
+    citizen_id: null,
     shirt_size:
       options?.detailed && data?.people?.shirt_size
         ? {

@@ -55,7 +55,20 @@ export default async function getClassroomsForBulkPrint(
           student_id,
           cheer_practice_medical_risk_students(condition, practice_period_id, risk_priority),
           people(
-            *,
+            prefix_th,
+            prefix_en,
+            first_name_th,
+            first_name_en,
+            middle_name_th,
+            middle_name_en,
+            last_name_th,
+            last_name_en,
+            nickname_th,
+            nickname_en,
+            birthdate,
+            profile,
+            shirt_size,
+            pants_size,
             person_contacts(contacts(*)),
             person_allergies(allergy_name)),
             classroom_students(class_no, classrooms!inner(id, number)
@@ -158,15 +171,15 @@ export default async function getClassroomsForBulkPrint(
               (allergy) => allergy.allergy_name,
             ) || null,
           health_problem: student?.cheer_practice_medical_risk_students
-              ? {
-                  firstDay: firstDayHealthProblems
-                    ? `วันที่หนึ่ง: ประเภทที่ ${firstDayHealthProblems.risk_priority} ${firstDayHealthProblems.condition} ${firstDayHealthProblems.risk_priority == 1 ? "(ห้ามขึ้นสแตนด์) " : "(ดูแลอย่างใกล้ชิด)"} `
-                    : "",
-                  secondDay: secondDayHealthProblems
-                    ? `วันที่สอง: ประเภทที่ ${secondDayHealthProblems.risk_priority} ${secondDayHealthProblems.condition} ${secondDayHealthProblems.risk_priority == 1 ? "(ห้ามขึ้นสแตนด์) " : "(ดูแลอย่างใกล้ชิด)"} `
-                    : "",
-                }
-              : { firstDay: "", secondDay: "" },
+            ? {
+                firstDay: firstDayHealthProblems
+                  ? `วันที่หนึ่ง: ประเภทที่ ${firstDayHealthProblems.risk_priority} ${firstDayHealthProblems.condition} ${firstDayHealthProblems.risk_priority == 1 ? "(ห้ามขึ้นสแตนด์) " : "(ดูแลอย่างใกล้ชิด)"} `
+                  : "",
+                secondDay: secondDayHealthProblems
+                  ? `วันที่สอง: ประเภทที่ ${secondDayHealthProblems.risk_priority} ${secondDayHealthProblems.condition} ${secondDayHealthProblems.risk_priority == 1 ? "(ห้ามขึ้นสแตนด์) " : "(ดูแลอย่างใกล้ชิด)"} `
+                  : "",
+              }
+            : { firstDay: "", secondDay: "" },
           contacts: [],
           is_admin: null,
           student_id: student.student_id,

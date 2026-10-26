@@ -58,7 +58,20 @@ export async function getStudentByID(
       ),
       cheer_practice_medical_risk_students(condition, practice_period_id),
       people(
-        *,
+        prefix_th,
+        prefix_en,
+        first_name_th,
+        first_name_en,
+        middle_name_th,
+        middle_name_en,
+        last_name_th,
+        last_name_en,
+        nickname_th,
+        nickname_en,
+        birthdate,
+        profile,
+        shirt_size,
+        pants_size,
         person_contacts(contacts(*)),
         person_allergies(allergy_name)),
         classroom_students(class_no, classrooms!inner(id, number)
@@ -155,7 +168,7 @@ export async function getStudentByID(
               }
             : { firstDay: "", secondDay: "" },
 
-          citizen_id: data!.people.citizen_id,
+          citizen_id: null,
           birthdate: data!.people.birthdate,
           shirt_size: <ShirtSize>data!.people.shirt_size,
           pants_size: data!.people.pants_size,

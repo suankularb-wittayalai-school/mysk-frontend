@@ -30,7 +30,20 @@ export async function getStudentsForBulkPrint(
     .select(
       `*,
       people(
-        *,
+        prefix_th,
+        prefix_en,
+        first_name_th,
+        first_name_en,
+        middle_name_th,
+        middle_name_en,
+        last_name_th,
+        last_name_en,
+        nickname_th,
+        nickname_en,
+        birthdate,
+        profile,
+        shirt_size,
+        pants_size,
         person_allergies(allergy_name)),
         classroom_students!inner(class_no, classrooms!inner(id, number)
       )`,
@@ -107,7 +120,7 @@ export async function getStudentsForBulkPrint(
       student!.people?.person_allergies.map(
         ({ allergy_name }) => allergy_name,
       ) || null,
-    citizen_id: student!.people?.citizen_id || null,
+    citizen_id: null,
     birthdate: student!.people?.birthdate || null,
     shirt_size: <ShirtSize>student!.people?.shirt_size || null,
     pants_size: student!.people?.pants_size || null,

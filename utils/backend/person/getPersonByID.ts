@@ -11,7 +11,23 @@ export async function getPersonByID(
 ): Promise<BackendReturn<Person>> {
   let { data: personData, error: personError } = await supabase
     .from("people")
-    .select("*")
+    .select(
+      `id,
+      prefix_th,
+      prefix_en,
+      first_name_th,
+      first_name_en,
+      middle_name_th,
+      middle_name_en,
+      last_name_th,
+      last_name_en,
+      nickname_th,
+      nickname_en,
+      birthdate,
+      profile,
+      shirt_size,
+      pants_size`,
+    )
     .eq("id", personID)
     .single();
 
@@ -90,7 +106,7 @@ export async function getPersonByID(
       contacts: contacts,
       profile: personData!.profile,
       profile_url: personData!.profile,
-      citizen_id: options?.detailed ? personData!.citizen_id : null,
+      citizen_id: null,
       shirt_size:
         options?.detailed && personData?.shirt_size
           ? {
