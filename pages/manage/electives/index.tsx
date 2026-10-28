@@ -40,7 +40,7 @@ const ManageElectivesPage: CustomPage<{
 }> = ({ electiveSubjects }) => {
   const { locale, locales } = useRouter() as {
     locale: LangCode;
-    locales: LangCode[];
+    locales?: readonly LangCode[];
   };
   const { t } = useTranslation("elective/list");
 

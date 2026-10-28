@@ -18,7 +18,7 @@ const ElectiveStudentList: StylableFC<{
   electiveSubject: ElectiveSubject;
   query: string;
 }> = ({ electiveSubject, query, style, className }) => {
-  const { locales } = useRouter() as { locales: LangCode[] };
+  const { locales } = useRouter() as { locales?: readonly LangCode[] };
   const { t } = useTranslation("elective/detail/students");
 
   /** Convert `applicable_classrooms` into an indexable format. */

@@ -1,5 +1,6 @@
 // Imports
 import { useRouter } from "next/router";
+import type { NextRouter } from "next/router";
 
 /**
  * Creates a function that, when called, runs `getServerSideProps` again
@@ -10,10 +11,10 @@ import { useRouter } from "next/router";
  * @returns A function.
  */
 export default function useRefreshProps(
-  options?: Parameters<typeof router.replace>[2],
+  options?: Parameters<NextRouter["replace"]>[2],
 ) {
   const router = useRouter();
-  return (callOptions?: Parameters<typeof router.replace>[2]) =>
+  return (callOptions?: Parameters<NextRouter["replace"]>[2]) =>
     router.replace(router.asPath, undefined, {
       scroll: false,
       ...options,
