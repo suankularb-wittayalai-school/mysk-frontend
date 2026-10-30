@@ -33,11 +33,13 @@ export async function middleware(req: NextRequest) {
     );
 
   // Ignore all page requests if under maintenance
-  if (process.env.CLOSED_FOR_MAINTENANCE === "true")
-    return NextResponse.redirect(
-      new URL(getLocalePath("/maintenance", locale), req.url),
-    );
-  else if (route === "/maintenance")
+  if (process.env.CLOSED_FOR_MAINTENANCE === "true") {
+    if (route !== "/maintenance")
+      return NextResponse.redirect(
+        new URL(getLocalePath("/maintenance", locale), req.url),
+      );
+    return res;
+  } else if (route === "/maintenance")
     return NextResponse.redirect(new URL(getLocalePath("/", locale), req.url));
 
   // Get current page protection type
