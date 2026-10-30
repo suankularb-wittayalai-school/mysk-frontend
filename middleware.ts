@@ -33,13 +33,11 @@ export async function middleware(req: NextRequest) {
     );
 
   // Ignore all page requests if under maintenance
-  if (process.env.CLOSED_FOR_MAINTENANCE === "true") {
-    if (route !== "/maintenance")
-      return NextResponse.redirect(
-        new URL(getLocalePath("/maintenance", locale), req.url),
-      );
-    return res;
-  } else if (route === "/maintenance")
+  if (process.env.CLOSED_FOR_MAINTENANCE === "true")
+    return NextResponse.redirect(
+      new URL(getLocalePath("/maintenance", locale), req.url),
+    );
+  else if (route === "/maintenance")
     return NextResponse.redirect(new URL(getLocalePath("/", locale), req.url));
 
   // Get current page protection type
@@ -104,8 +102,7 @@ export async function middleware(req: NextRequest) {
       return `/cheer/attendance/${getISODateString(new Date())}`;
 
     // Disallow public users from visiting private pages
-    if (pageRole !== "public" && !user)
-      return `/?redirect=${encodeURIComponent(route + req.nextUrl.search)}`;
+    if (pageRole !== "public" && !user) return "/";
 
     // Disallow logged in users from visiting certain pages under certain
     // circumstances
