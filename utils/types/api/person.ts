@@ -31,3 +31,26 @@ export type APIStudent = {
   } | null;
   person: APIPerson;
 };
+
+/**
+ * A Teacher from the MySK API.
+ */
+export type APITeacher = {
+  id: string;
+  teacher_id: string | null;
+  class_advisor_at: {
+    id: string;
+    number: number;
+  } | null;
+  person: APIPerson;
+  subject_group: {
+    id: number;
+    name: MultiLangString;
+  };
+  subjects_in_charge: {
+    id: string;
+    name: MultiLangString;
+    code: MultiLangString;
+    short_name: MultiLangString;
+  }[];
+};
