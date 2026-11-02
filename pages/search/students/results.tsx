@@ -55,7 +55,12 @@ const SearchStudentsResultsPage: CustomPage<{
     onDetailsClose,
   } = useListDetail<StudentLookupItem, Student>(
     students,
-    (id) => getStudentByID(supabase, mysk, id, { detailed: true }),
+    (id) =>
+      getStudentByID(supabase, mysk, id, {
+        detailed: true,
+        includeContacts: true,
+        includeCheerMedicalRisk: true,
+      }),
     {
       firstByDefault: true,
       initialSelectDelay: DURATION.medium2,

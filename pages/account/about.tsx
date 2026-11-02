@@ -218,6 +218,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 
   const { data: user } = await getLoggedInPerson(supabase, mysk, {
     detailed: true,
+    includeCheerMedicalRisk: true,
   });
 
   const { data: subjectGroups } = await getSubjectGroups(supabase);

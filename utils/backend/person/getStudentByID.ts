@@ -1,17 +1,18 @@
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import logError from "@/utils/helpers/logError";
-import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
+import { APIStudent } from "@/utils/types/api/person";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import {
   CeremonyConfirmationStatus,
+  StudentCertificate,
   StudentCertificateType,
 } from "@/utils/types/certificate";
 import { JATU_DAY_PRACTICE_PERIODS } from "@/utils/types/cheer";
+import { Contact } from "@/utils/types/contact";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { MySKClient } from "@/utils/types/fetch";
-import { ShirtSize, Student, UserRole } from "@/utils/types/person";
-import { pick } from "radash";
+import { Student, UserRole } from "@/utils/types/person";
 
 /**
  * Get a Student by their ID.
@@ -29,6 +30,7 @@ import { pick } from "radash";
  * @param options.detailed Whether to include detailed information about the Student.
  * @param options.includeContacts Whether to include Contacts of the student.
  * @param options.includeCertificates Whether to include Student Certificates of the Student.
+ * @param options.includeCheerMedicalRisk Whether to include Cheer medical risk information of the Student.
  *
  * @returns A Backend Return with the Student.
  */
@@ -41,124 +43,153 @@ export async function getStudentByID(
     includeContacts: boolean;
     includeCertificates: boolean;
     includeElectives: boolean;
+    includeCheerMedicalRisk: boolean;
   }>,
 ): Promise<BackendReturn<Student>> {
-  let { data: data, error: error } = await supabase
-    .from("students")
-    .select(
-      `*,
-      student_certificates(
-        id,
-        year,
-        certificate_type,
-        certificate_detail,
-        receiving_order_number,
-        seat_code,
-        rsvp_status
-      ),
-      cheer_practice_medical_risk_students(condition, practice_period_id),
-      people(
-        *,
-        person_contacts(contacts(*)),
-        person_allergies(allergy_name)),
-        classroom_students(class_no, classrooms!inner(id, number)
-      )`,
-    )
-    .eq("id", studentID)
-    .eq("classroom_students.classrooms.year", getCurrentAcademicYear())
-    .in(
-      "cheer_practice_medical_risk_students.practice_period_id",
-      JATU_DAY_PRACTICE_PERIODS,
-    )
-    .single();
-  if (error) {
+  //Fetch initial student data
+  const { data, error } = await mysk.fetch<APIStudent>(
+    `/v1/students/${studentID}`,
+    {
+      query: {
+        fetch_level: "default",
+        descendant_fetch_level: "compact",
+      },
+    },
+  );
+
+  if (!data || error) {
     logError("getStudentByID", error);
-    return { data: null, error };
+    return { data: null, error: error };
   }
 
+  //Fetch elective if included in options
   let chosenElective: ElectiveSubject | null = null;
   if (options?.includeElectives) {
-    const { data, error } = await mysk.fetch<ElectiveSubject[]>(
-      "/v1/subjects/electives",
-      {
-        query: {
-          fetch_level: "compact",
-          filter: {
-            data: {
-              student_ids: [studentID],
-              year: getCurrentAcademicYear(),
-              semester: getCurrentSemester(),
-            },
+    const { data: electives, error: electivesError } = await mysk.fetch<
+      ElectiveSubject[]
+    >("/v1/subjects/electives", {
+      query: {
+        fetch_level: "compact",
+        filter: {
+          data: {
+            student_ids: [studentID],
+            year: getCurrentAcademicYear(),
+            semester: getCurrentSemester(),
           },
         },
       },
-    );
-    if (error) logError("getStudentByID (electives)", error);
-    if (data?.length) chosenElective = data[0];
+    });
+    if (electivesError || !electives) {
+      logError("getStudentByID (electives)", electivesError);
+      return {
+        data: null,
+        error: electivesError ?? { detail: "Could not fetch electives." },
+      };
+    }
+    if (electives.length) chosenElective = electives[0];
   }
-  let firstDayHealthProblems = data?.cheer_practice_medical_risk_students.find(
-    (healthProblem) =>
-      healthProblem.practice_period_id == JATU_DAY_PRACTICE_PERIODS[0],
-  );
-  let secondDayHealthProblems = data?.cheer_practice_medical_risk_students.find(
-    (healthProblem) =>
-      healthProblem.practice_period_id == JATU_DAY_PRACTICE_PERIODS[1],
-  );
-  const student: Student = {
-    id: data!.id,
-    prefix: mergeDBLocales(data!.people, "prefix"),
-    first_name: mergeDBLocales(data!.people, "first_name"),
-    last_name: mergeDBLocales(data!.people, "last_name"),
-    nickname: mergeDBLocales(data!.people, "nickname"),
-    middle_name: mergeDBLocales(data!.people, "middle_name"),
-    student_id: data!.student_id,
-    ...(data!.classroom_students.length > 0
-      ? {
-          classroom: data!.classroom_students[0].classrooms,
-          class_no: data!.classroom_students[0].class_no,
-        }
-      : { classroom: null, class_no: null }),
-    contacts: data!.people!.person_contacts.map(({ contacts }) => ({
-      ...pick(contacts!, [
-        "id",
-        "type",
-        "value",
-        "include_parents",
-        "include_students",
-        "include_teachers",
-      ]),
-      name: mergeDBLocales(contacts!, "name"),
-    })),
-    certificates: options?.includeCertificates
-      ? data!.student_certificates.map((certicate) => ({
-          ...certicate,
-          certificate_type: <StudentCertificateType>certicate.certificate_type,
-          rsvp_status: <CeremonyConfirmationStatus>certicate.rsvp_status,
-        }))
-      : [],
-    chosen_elective: chosenElective,
-    profile: data!.people?.profile ?? null,
-    profile_url: data!.people?.profile ?? null,
-    ...(options?.detailed && data!.people
-      ? {
-          allergies: data!.people.person_allergies.map(
-            ({ allergy_name }) => allergy_name,
-          ),
-          health_problem: data?.cheer_practice_medical_risk_students
-            ? {
-                firstDay: firstDayHealthProblems
-                  ? firstDayHealthProblems.condition
-                  : "",
-                secondDay: secondDayHealthProblems
-                  ? secondDayHealthProblems.condition
-                  : "",
-              }
-            : { firstDay: "", secondDay: "" },
 
-          citizen_id: data!.people.citizen_id,
-          birthdate: data!.people.birthdate,
-          shirt_size: <ShirtSize>data!.people.shirt_size,
-          pants_size: data!.people.pants_size,
+  //Fetch Cheer Medical Risk if included in options
+  let cheerMedicalRisk = { firstDay: "", secondDay: "" };
+  if (options?.includeCheerMedicalRisk) {
+    let { data: cheerMedicalRiskData, error: cheerMedicalRiskError } =
+      await supabase
+        .from("cheer_practice_medical_risk_students")
+        .select(`condition, practice_period_id`)
+        .eq("student_id", studentID)
+        .in("practice_period_id", JATU_DAY_PRACTICE_PERIODS);
+
+    if (cheerMedicalRiskError) {
+      logError("getStudentByID (cheer medical risk)", cheerMedicalRiskError);
+      return { data: null, error: cheerMedicalRiskError };
+    }
+    cheerMedicalRisk = {
+      firstDay:
+        cheerMedicalRiskData?.find(
+          (risk) => risk.practice_period_id === JATU_DAY_PRACTICE_PERIODS[0],
+        )?.condition ?? "",
+      secondDay:
+        cheerMedicalRiskData?.find(
+          (risk) => risk.practice_period_id === JATU_DAY_PRACTICE_PERIODS[1],
+        )?.condition ?? "",
+    };
+  }
+
+  let certificates: StudentCertificate[] = [];
+  if (options?.includeCertificates) {
+    const { data: certificatesData, error: certificatesError } = await supabase
+      .from("student_certificates")
+      .select("*")
+      .eq("student_id", studentID);
+
+    if (certificatesError) {
+      logError("getStudentByID (certificates)", certificatesError);
+      return { data: null, error: certificatesError };
+    }
+
+    certificates = (certificatesData ?? []).map((certificate) => ({
+      ...certificate,
+      certificate_type: certificate.certificate_type as StudentCertificateType,
+      rsvp_status: certificate.rsvp_status as CeremonyConfirmationStatus,
+    }));
+  }
+
+  let contacts: Contact[] = [];
+  if (options?.includeContacts) {
+    const { data: contactsData, error: contactsError } = await mysk.fetch<
+      Contact[]
+    >("/v1/contacts", {
+      query: {
+        fetch_level: "default",
+        filter: {
+          data: {
+            student_ids: [studentID],
+          },
+        },
+      },
+    });
+    if (contactsError || !contactsData) {
+      logError("getStudentByID (contacts)", contactsError);
+      return { data: null, error: contactsError };
+    }
+    contacts = contactsData;
+  }
+
+  const student: Student = {
+    id: data.id,
+    prefix: data.person.prefix,
+    first_name: data.person.first_name,
+    last_name: data.person.last_name,
+    middle_name: data.person.middle_name,
+    nickname: data.person.nickname,
+    student_id: data.student_id ?? "",
+    classroom: data.classroom
+      ? { id: data.classroom.id, number: data.classroom.number }
+      : null,
+    class_no: data.class_no,
+    contacts: contacts.map((contact) => ({
+      id: contact.id,
+      name: contact.name
+        ? { th: contact.name.th ?? "", "en-US": contact.name["en-US"] }
+        : null,
+      type: contact.type,
+      value: contact.value,
+      include_parents: null,
+      include_students: null,
+      include_teachers: null,
+    })),
+    certificates: certificates,
+    chosen_elective: chosenElective,
+    profile: null,
+    profile_url: data.person.profile ?? null,
+    ...(options?.detailed
+      ? {
+          allergies: data.person.allergies,
+          health_problem: cheerMedicalRisk,
+          citizen_id: null,
+          birthdate: data.person.birthdate,
+          shirt_size: data.person.shirt_size,
+          pants_size: data.person.pants_size,
         }
       : {
           allergies: null,
