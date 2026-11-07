@@ -3,20 +3,31 @@ import { Head, Html, Main, NextScript } from "next/document";
 const APP_NAME = "MySK";
 
 export default function Document() {
+  /** Should the mourning logo be displayed? */
+  const mourning = process.env.NEXT_PUBLIC_MOURNING_LOGO === "true";
+
   return (
     <Html>
       <Head>
         <link
           rel="apple-touch-icon"
           sizes="180x180"
-          href="/icons/apple-touch-mourning-icon.png"
+          href={
+            mourning
+              ? "/icons/apple-touch-mourning-icon.png"
+              : "/icons/apple-touch-icon.png"
+          }
         />
         <link
           rel="icon"
           type="image/svg+xml"
-          href="/icons/favicon-mourning.svg"
+          href={mourning ? "/icons/favicon-mourning.svg" : "/icons/favicon.svg"}
         />
-        <link rel="icon" type="image/png" href="/icons/favicon-mourning.png" />
+        <link
+          rel="icon"
+          type="image/png"
+          href={mourning ? "/icons/favicon-mourning.png" : "/icons/favicon.png"}
+        />
         <link rel="manifest" href="/site.webmanifest" />
         <link
           rel="mask-icon"

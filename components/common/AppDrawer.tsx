@@ -32,6 +32,9 @@ const AppDrawer: StylableFC = ({ style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("common/appDrawer");
 
+  /** Should the mourning logo be displayed? */
+  const mourning = process.env.NEXT_PUBLIC_MOURNING_LOGO === "true";
+
   const plausible = usePlausible();
 
   /**
@@ -53,7 +56,7 @@ const AppDrawer: StylableFC = ({ style, className }) => {
       {/* MySK apps */}
       <AppDrawerSegment title={t("mysk.title")}>
         <AppDrawerItem
-          logo={<Image src={MySKMourningLogo} alt="" />}
+          logo={<Image src={mourning ? MySKMourningLogo : MySKLogo} alt="" />}
           name={t("mysk.mysk")}
           onClick={() => trackAppOpen("MySK")}
           href="https://www.mysk.school/"
