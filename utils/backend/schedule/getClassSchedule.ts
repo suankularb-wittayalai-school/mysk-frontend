@@ -1,4 +1,5 @@
 // Imports
+import { getTeachersByIDs } from "@/utils/backend/person/getTeachersByIDs";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import logError from "@/utils/helpers/logError";
@@ -6,16 +7,25 @@ import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { arePeriodsOverlapping } from "@/utils/helpers/schedule/arePeriodsOverlapping";
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
+import { MySKClient } from "@/utils/types/fetch";
+import { Teacher } from "@/utils/types/person";
 import { PeriodContentItem, Schedule } from "@/utils/types/schedule";
-import { list, omit, pick, unique } from "radash";
+import { list, omit, pick, sift, unique } from "radash";
 
 /**
  * Construct a Schedule from Schedule Items from the student’s perspective.
  *
+ * @param supabase The Supabase Client to use.
+ * @param mysk The MySK Client to use.
  * @param classroomID The Supabase ID of the class the user is a part of.
+ * @param options Options.
+ * @param options.keepOverlapping Whether to keep overlapping periods.
+ *
+ * @returns A Backend Return with the Schedule.
  */
 export default async function getClassSchedule(
   supabase: DatabaseClient,
+  mysk: MySKClient,
   classroomID: string,
   options: Partial<{ keepOverlapping: boolean }> = {},
 ): Promise<BackendReturn<Schedule>> {
@@ -41,17 +51,7 @@ export default async function getClassSchedule(
       schedule_item_classrooms!inner(
         classrooms!inner(id, number)
       ),
-      schedule_item_teachers!inner(
-        teachers!inner(
-          id,
-          people(
-            first_name_en,
-            last_name_en,
-            first_name_th,
-            last_name_th
-          )
-        )
-      ),
+      schedule_item_teachers!inner(teacher_id),
       schedule_item_rooms!inner(room)
     `,
     )
@@ -62,6 +62,41 @@ export default async function getClassSchedule(
   if (scheduleItemsError) {
     logError("getClassSchedule (scheduleItems)", scheduleItemsError);
     return { data: null, error: scheduleItemsError };
+  }
+
+  const teacherIDs = unique(
+    scheduleItems!.flatMap((scheduleItem) =>
+      scheduleItem.schedule_item_teachers.map((teacher) => teacher.teacher_id),
+    ),
+  );
+  const { data: teachers, error: teachersError } = await getTeachersByIDs(
+    supabase,
+    mysk,
+    teacherIDs,
+  );
+  if (teachersError) logError("getClassSchedule (teachers)", teachersError);
+  const teacherMap: Record<
+    string,
+    Pick<Teacher, "id" | "first_name" | "last_name">
+  > = Object.fromEntries(
+    (teachers ?? []).map((teacher) => [
+      teacher.id,
+      {
+        id: teacher.id,
+        first_name: teacher.first_name,
+        last_name: teacher.last_name,
+      },
+    ]),
+  );
+  if (!teachersError) {
+    const missingTeacherIDs = teacherIDs.filter((id) => !teacherMap[id]);
+    if (missingTeacherIDs.length)
+      logError("getClassSchedule (teachers)", {
+        code: 0,
+        error_type: "Some Teachers were not found",
+        detail: missingTeacherIDs.join(", "),
+        source: "getClassSchedule",
+      });
   }
 
   schedule.classroom =
@@ -79,11 +114,11 @@ export default async function getClassSchedule(
         name: mergeDBLocales(scheduleItem.subjects, "name"),
         short_name: mergeDBLocales(scheduleItem.subjects, "short_name"),
       },
-      teachers: scheduleItem.schedule_item_teachers.map((teacher) => ({
-        id: teacher.teachers!.id,
-        first_name: mergeDBLocales(teacher.teachers!.people, "first_name"),
-        last_name: mergeDBLocales(teacher.teachers!.people, "last_name"),
-      })),
+      teachers: sift(
+        scheduleItem.schedule_item_teachers.map(
+          (teacher) => teacherMap[teacher.teacher_id],
+        ),
+      ),
       rooms: scheduleItem.schedule_item_rooms.map((room) => room.room),
     }));
 

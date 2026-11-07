@@ -1,5 +1,6 @@
 // Imports
 import LookupScheduleCard from "@/components/lookup/LookupScheduleCard";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
 import getTeacherSchedule from "@/utils/backend/schedule/getTeacherSchedule";
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
@@ -22,6 +23,7 @@ const PersonScheduleCard: StylableFC<{
 }> = ({ person, open, style, className }) => {
   const [loading, setLoading] = useState(true);
   const supabase = useSupabaseClient();
+  const mysk = useMySKClient();
 
   const [schedule, setSchedule] = useState<ScheduleType>(
     createEmptySchedule(1, 5),
@@ -33,8 +35,8 @@ const PersonScheduleCard: StylableFC<{
     if (person.role === "student" && !person.classroom) return;
     (async () => {
       const { data } = await (person.role === UserRole.teacher
-        ? getTeacherSchedule(supabase, person.id)
-        : getClassSchedule(supabase, person.classroom!.id));
+        ? getTeacherSchedule(supabase, mysk, person.id)
+        : getClassSchedule(supabase, mysk, person.classroom!.id));
       if (data) setSchedule(data);
       setLoading(false);
       return true;

@@ -176,7 +176,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     };
 
   const [schedule, teachingSubjects] = await Promise.all([
-    (await getTeacherSchedule(supabase, teacher.id)).data,
+    (await getTeacherSchedule(supabase, mysk, teacher.id)).data,
     (await getTeachingSubjects(supabase, teacher.id)).data,
   ]);
 

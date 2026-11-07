@@ -166,8 +166,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     { data: inEnrollmentPeriod },
     { data: availableElectives },
   ] = await Promise.all([
-    await getBirthdayBoysOfClassroom(supabase, classroom.id),
-    await getClassSchedule(supabase, classroom.id),
+    await getBirthdayBoysOfClassroom(supabase, mysk, classroom.id),
+    await getClassSchedule(supabase, mysk, classroom.id),
     await getClassroomSubjectsOfClass(supabase, classroom.id),
     await getCheerStaffs(supabase),
     await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"),

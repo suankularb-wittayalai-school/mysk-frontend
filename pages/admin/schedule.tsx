@@ -1,6 +1,7 @@
 import GetClassroomScheduleDialog from "@/components/admin/GetClassroomScheduleDialog";
 import PageHeader from "@/components/common/PageHeader";
 import Schedule from "@/components/schedule/Schedule";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -36,6 +37,7 @@ const ScheduleEditorPage: CustomPage = () => {
   const { t: tx } = useTranslation("common");
 
   const supabase = useSupabaseClient();
+  const mysk = useMySKClient();
 
   const [schedule, setSchedule] = useState<ScheduleType | null>(null);
 
@@ -55,9 +57,14 @@ const ScheduleEditorPage: CustomPage = () => {
     classroom: Pick<Classroom, "id"> | null = schedule?.classroom || null,
   ) {
     if (!classroom) return;
-    const { data, error } = await getClassSchedule(supabase, classroom.id, {
-      keepOverlapping: !mergeOverlapping,
-    });
+    const { data, error } = await getClassSchedule(
+      supabase,
+      mysk,
+      classroom.id,
+      {
+        keepOverlapping: !mergeOverlapping,
+      },
+    );
     if (error) return;
     setSchedule(data);
   }
@@ -134,7 +141,7 @@ const ScheduleEditorPage: CustomPage = () => {
         ) : (
           <Card
             appearance="outlined"
-            className="grid h-[27.75rem] place-content-center mx-4"
+            className="mx-4 grid h-[27.75rem] place-content-center"
           >
             <Text
               type="body-medium"

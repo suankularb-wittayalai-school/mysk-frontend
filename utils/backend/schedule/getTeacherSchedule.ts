@@ -1,4 +1,5 @@
 // Imports
+import { getTeachersByIDs } from "@/utils/backend/person/getTeachersByIDs";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import logError from "@/utils/helpers/logError";
@@ -6,16 +7,23 @@ import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { arePeriodsOverlapping } from "@/utils/helpers/schedule/arePeriodsOverlapping";
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
+import { MySKClient } from "@/utils/types/fetch";
+import { Teacher } from "@/utils/types/person";
 import { PeriodContentItem, Schedule } from "@/utils/types/schedule";
-import { list, omit, pick } from "radash";
+import { list, omit, pick, sift, unique } from "radash";
 
 /**
- * Construct a Schedule from Schedule Items from the student’s perspective.
+ * Construct a Schedule from Schedule Items from the teacher’s perspective.
  *
+ * @param supabase The Supabase Client to use.
+ * @param mysk The MySK Client to use.
  * @param teacherID The Supabase ID of the teacher.
+ *
+ * @returns A Backend Return with the Schedule.
  */
 export default async function getTeacherSchedule(
   supabase: DatabaseClient,
+  mysk: MySKClient,
   teacherID: string,
 ): Promise<BackendReturn<Schedule>> {
   // Schedule filled with empty periods
@@ -40,17 +48,7 @@ export default async function getTeacherSchedule(
       schedule_item_classrooms!inner(
         classrooms(id, number)
       ),
-      schedule_item_teachers!inner(
-        teachers(
-          id,
-          people(
-            first_name_en,
-            last_name_en,
-            first_name_th,
-            last_name_th
-          )
-        )
-      ),
+      schedule_item_teachers!inner(teacher_id),
       schedule_item_rooms!inner(room)
     `,
     )
@@ -59,8 +57,43 @@ export default async function getTeacherSchedule(
     .eq("semester", getCurrentSemester());
 
   if (scheduleItemsError) {
-    logError("getClassSchedule (scheduleItems)", scheduleItemsError);
+    logError("getTeacherSchedule (scheduleItems)", scheduleItemsError);
     return { data: null, error: scheduleItemsError };
+  }
+
+  const teacherIDs = unique(
+    scheduleItems!.flatMap((scheduleItem) =>
+      scheduleItem.schedule_item_teachers.map((teacher) => teacher.teacher_id),
+    ),
+  );
+  const { data: teachers, error: teachersError } = await getTeachersByIDs(
+    supabase,
+    mysk,
+    teacherIDs,
+  );
+  if (teachersError) logError("getTeacherSchedule (teachers)", teachersError);
+  const teacherMap: Record<
+    string,
+    Pick<Teacher, "id" | "first_name" | "last_name">
+  > = Object.fromEntries(
+    (teachers ?? []).map((teacher) => [
+      teacher.id,
+      {
+        id: teacher.id,
+        first_name: teacher.first_name,
+        last_name: teacher.last_name,
+      },
+    ]),
+  );
+  if (!teachersError) {
+    const missingTeacherIDs = teacherIDs.filter((id) => !teacherMap[id]);
+    if (missingTeacherIDs.length)
+      logError("getTeacherSchedule (teachers)", {
+        code: 0,
+        error_type: "Some Teachers were not found",
+        detail: missingTeacherIDs.join(", "),
+        source: "getTeacherSchedule",
+      });
   }
 
   const periodsItems: (PeriodContentItem & { day: number })[] =
@@ -75,11 +108,11 @@ export default async function getTeacherSchedule(
         name: mergeDBLocales(scheduleItem.subjects, "name"),
         short_name: mergeDBLocales(scheduleItem.subjects, "short_name"),
       },
-      teachers: scheduleItem.schedule_item_teachers.map((teacher) => ({
-        id: teacher.teachers!.id,
-        first_name: mergeDBLocales(teacher.teachers!.people, "first_name"),
-        last_name: mergeDBLocales(teacher.teachers!.people, "last_name"),
-      })),
+      teachers: sift(
+        scheduleItem.schedule_item_teachers.map(
+          (teacher) => teacherMap[teacher.teacher_id],
+        ),
+      ),
       classrooms: scheduleItem.schedule_item_classrooms.map(
         (classroom) => classroom.classrooms!,
       ),
